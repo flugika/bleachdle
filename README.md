@@ -1,6 +1,7 @@
 # BLEACHDLE
 
 > A Wordle-style character guessing game for Bleach fans — unlimited mode, attribute-based feedback, Soul Society aesthetic.
+
 Lastest Updated: 29 June 2026, 9:30 PM.
 
 [![Next.js](https://img.shields.io/badge/Next.js-15-black?logo=next.js)](https://nextjs.org/)
