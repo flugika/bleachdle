@@ -110,35 +110,36 @@ export const GameOverModal = ({ isOpen, onClose, guesses, target, isWin, stats =
                 </button>
 
                 {/* 🎬 EXPANDABLE CHRONICLE STORAGE */}
-                <div
-                    className={`w-full overflow-hidden transition-all duration-300 ease-in-out ${isHistoryExpanded ? 'max-h-[92px] opacity-100 mt-2.5' : 'max-h-0 opacity-0'
-                        }`}
-                >
-                    {/* Grid เค้าโครง 2 คอลัมน์ ล็อคความสูงที่ 92px พอดีกับขนาดยอดฮิต 2 แถว */}
+                <div className={`w-full overflow-hidden transition-all duration-300 ease-in-out ${isHistoryExpanded ? 'max-h-[92px] opacity-100 mt-2.5' : 'max-h-0 opacity-0'
+                    }`}>
                     <div className="grid grid-cols-2 gap-1.5 max-h-[90px] overflow-y-auto pr-1 text-left scrollbar-thin scrollbar-thumb-white/10">
-                        {guesses.map((entry: any, i: number) => (
-                            <div
-                                key={i}
-                                className="flex items-center gap-2 border border-white/5 bg-black/40 p-1.5 rounded-[2px] hover:border-[#c8a96e]/30 transition-colors"
-                            >
-                                {/* ลำดับการเดาฟอนต์ Mono */}
-                                <span className="font-mono text-[9px] text-white/30 shrink-0">
-                                    #{String(i + 1).padStart(2, '0')}
-                                </span>
 
-                                {/* 🎯 FIXED: เข้าถึง path .guess.image ให้ถูกต้อง */}
-                                <img
-                                    src={`/assets/characters/${entry.guess.image}`}
-                                    alt={entry.guess.name}
-                                    className="w-7 h-7 rounded-[1px] border border-white/10 object-cover shrink-0 bg-neutral-900"
-                                />
+                        {/* 🔮 แก้ไข: จองเลขลำดับ index ก่อน แล้วค่อย reverse จะได้ลำดับที่ถูกต้องครับ */}
+                        {[...guesses]
+                            .map((entry, i) => ({ entry, originalIndex: i + 1 }))
+                            .reverse()
+                            .map(({ entry, originalIndex }, index) => (
+                                <div
+                                    key={index}
+                                    className="flex items-center gap-2 border border-white/5 bg-black/40 p-1.5 rounded-[2px] hover:border-[#c8a96e]/30 transition-colors"
+                                >
+                                    {/* ใช้ originalIndex ที่ล็อคไว้ จะไม่รวนแน่นอน */}
+                                    <span className="font-mono text-[9px] text-white/30 shrink-0">
+                                        #{String(originalIndex).padStart(2, '0')}
+                                    </span>
 
-                                {/* 🎯 FIXED: เข้าถึง path .guess.name ให้ถูกต้อง */}
-                                <span className="text-[10px] font-medium text-white/80 tracking-wide truncate">
-                                    {entry.guess.name}
-                                </span>
-                            </div>
-                        ))}
+                                    <img
+                                        src={`/assets/characters/${entry.guess.image}`}
+                                        alt={entry.guess.name}
+                                        className="w-7 h-7 rounded-[1px] border border-white/10 object-cover shrink-0 bg-neutral-900"
+                                    />
+
+                                    <span className="text-[10px] font-medium text-white/80 tracking-wide truncate">
+                                        {entry.guess.name}
+                                    </span>
+                                </div>
+                            ))
+                        }
                     </div>
                 </div>
             </div>
