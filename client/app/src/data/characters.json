@@ -1,0 +1,4801 @@
+[
+    {
+        "id": "c7a8b9d0-1e2f-4a3b-8c5d-6e7f8a9b0c1d",
+        "name": "Ichigo Kurosaki",
+        "gender": "Male",
+        "race": [
+            "Shinigami",
+            "Quincy",
+            "Hollow",
+            "Human",
+            "Fullbringer"
+        ],
+        "affiliation": "Independent",
+        "heightCm": 181,
+        "age": 19,
+        "eyeColor": "Brown",
+        "hairColor": "Orange",
+        "firstAppearanceChapter": "Agent of the Shinigami",
+        "weapon": [
+            "Weaponized"
+        ],
+        "release": [
+            "Shikai",
+            "Bankai"
+        ],
+        "primaryAbility": [
+            "Physical"
+        ],
+        "image": "Ichigo_Kurosaki.webp"
+    },
+    {
+        "id": "a1b2c3d4-e5f6-4a5b-8c9d-0e1f2a3b4c5d",
+        "name": "Orihime Inoue",
+        "gender": "Female",
+        "race": [
+            "Human"
+        ],
+        "affiliation": "Independent",
+        "heightCm": 157,
+        "age": 19,
+        "eyeColor": "Brown",
+        "hairColor": "Orange",
+        "firstAppearanceChapter": "Agent of the Shinigami",
+        "weapon": [
+            "Weaponized"
+        ],
+        "release": [
+            "None"
+        ],
+        "primaryAbility": [
+            "Support"
+        ],
+        "image": "Orihime_Inoue.webp"
+    },
+    {
+        "id": "f8c3d2e1-b4a5-4c6d-9e7f-8a0b1c2d3e4f",
+        "name": "Yasutora Sado",
+        "gender": "Male",
+        "race": [
+            "Fullbringer"
+        ],
+        "affiliation": "Independent",
+        "heightCm": 197,
+        "age": 19,
+        "eyeColor": "Brown",
+        "hairColor": "Black",
+        "firstAppearanceChapter": "Agent of the Shinigami",
+        "weapon": [
+            "Weaponized"
+        ],
+        "release": [
+            "None"
+        ],
+        "primaryAbility": [
+            "Physical"
+        ],
+        "image": "Yasutora_Sado.webp"
+    },
+    {
+        "id": "d4e5f6a7-b8c9-0d1e-2f3a-4b5c6d7e8f9a",
+        "name": "Kugo Ginjo",
+        "gender": "Male",
+        "race": [
+            "Fullbringer"
+        ],
+        "affiliation": "Independent",
+        "heightCm": 187,
+        "age": 30,
+        "eyeColor": "Brown",
+        "hairColor": "Black",
+        "firstAppearanceChapter": "Lost Substitute Shinigami",
+        "weapon": [
+            "Weaponized"
+        ],
+        "release": [
+            "Shikai",
+            "Bankai"
+        ],
+        "primaryAbility": [
+            "Physical",
+            "Special"
+        ],
+        "image": "Kugo_Ginjo.webp"
+    },
+    {
+        "id": "1a2b3c4d-5e6f-7a8b-9c0d-1e2f3a4b5c6d",
+        "name": "Shukuro Tsukishima",
+        "gender": "Male",
+        "race": [
+            "Fullbringer"
+        ],
+        "affiliation": "Independent",
+        "heightCm": 198,
+        "age": -1,
+        "eyeColor": "Brown",
+        "hairColor": "Black",
+        "firstAppearanceChapter": "Lost Substitute Shinigami",
+        "weapon": [
+            "Weaponized"
+        ],
+        "release": [
+            "None"
+        ],
+        "primaryAbility": [
+            "Special"
+        ],
+        "image": "Shukuro_Tsukishima.webp"
+    },
+    {
+        "id": "9f8e7d6c-5b4a-3f2e-1d0c-9b8a7f6e5d4c",
+        "name": "Riruka Dokugamine",
+        "gender": "Female",
+        "race": [
+            "Fullbringer"
+        ],
+        "affiliation": "Independent",
+        "heightCm": 156,
+        "age": 16,
+        "eyeColor": "Brown",
+        "hairColor": "Pink",
+        "firstAppearanceChapter": "Lost Substitute Shinigami",
+        "weapon": [
+            "Weaponized"
+        ],
+        "release": [
+            "None"
+        ],
+        "primaryAbility": [
+            "Special"
+        ],
+        "image": "Riruka_Dokugamine.webp"
+    },
+    {
+        "id": "2b3c4d5e-6f7a-8b9c-0d1e-2f3a4b5c6d7e",
+        "name": "Don Kanonji",
+        "gender": "Male",
+        "race": [
+            "Human"
+        ],
+        "affiliation": "Human",
+        "heightCm": 185,
+        "age": -1,
+        "eyeColor": "Unknown",
+        "hairColor": "Black",
+        "firstAppearanceChapter": "Agent of the Shinigami",
+        "weapon": [
+            "Weaponized"
+        ],
+        "release": [
+            "None"
+        ],
+        "primaryAbility": [
+            "Kido"
+        ],
+        "image": "Don_Kanonji.webp"
+    },
+    {
+        "id": "3c4d5e6f-7a8b-9c0d-1e2f-3a4b5c6d7e8f",
+        "name": "Yukio Hans Vorarlberna",
+        "gender": "Male",
+        "race": [
+            "Fullbringer"
+        ],
+        "affiliation": "Xcution",
+        "heightCm": 154,
+        "age": 16,
+        "eyeColor": "Brown",
+        "hairColor": "Blonde",
+        "firstAppearanceChapter": "Lost Substitute Shinigami",
+        "weapon": [
+            "Weaponized"
+        ],
+        "release": [
+            "None"
+        ],
+        "primaryAbility": [
+            "Special"
+        ],
+        "image": "Yukio_Hans_Vorarlberna.webp"
+    },
+    {
+        "id": "4d5e6f7a-8b9c-0d1e-2f3a-4b5c6d7e8f9b",
+        "name": "Tatsuki Arisawa",
+        "gender": "Female",
+        "race": [
+            "Human"
+        ],
+        "affiliation": "Human",
+        "heightCm": 155,
+        "age": 19,
+        "eyeColor": "Brown",
+        "hairColor": "Blue",
+        "firstAppearanceChapter": "Agent of the Shinigami",
+        "weapon": [
+            "Unarmed"
+        ],
+        "release": [
+            "None"
+        ],
+        "primaryAbility": [
+            "Physical"
+        ],
+        "image": "Tatsuki_Arisawa.webp"
+    },
+    {
+        "id": "5e6f7a8b-9c0d-1e2f-3a4b-5c6d7e8f9b0c",
+        "name": "Karin Kurosaki",
+        "gender": "Female",
+        "race": [
+            "Human"
+        ],
+        "affiliation": "Human",
+        "heightCm": 136,
+        "age": 15,
+        "eyeColor": "Brown",
+        "hairColor": "Black",
+        "firstAppearanceChapter": "Agent of the Shinigami",
+        "weapon": [
+            "Unarmed"
+        ],
+        "release": [
+            "None"
+        ],
+        "primaryAbility": [
+            "Physical"
+        ],
+        "image": "Karin_Kurosaki.webp"
+    },
+    {
+        "id": "b1a2c3d4-e5f6-4a7b-8c9d-0e1f2a3b4c5d",
+        "name": "Keigo Asano",
+        "gender": "Male",
+        "race": [
+            "Human"
+        ],
+        "affiliation": "Human",
+        "heightCm": 172,
+        "age": 19,
+        "eyeColor": "Brown",
+        "hairColor": "Brown",
+        "firstAppearanceChapter": "Agent of the Shinigami",
+        "weapon": [
+            "None"
+        ],
+        "release": [
+            "None"
+        ],
+        "primaryAbility": [
+            "None"
+        ],
+        "image": "Keigo_Asano.webp"
+    },
+    {
+        "id": "c2b3d4e5-f6a7-4b8c-9d0e-1f2a3b4c5d6e",
+        "name": "Mizuho Asano",
+        "gender": "Female",
+        "race": [
+            "Human"
+        ],
+        "affiliation": "Human",
+        "heightCm": 162,
+        "age": -1,
+        "eyeColor": "Brown",
+        "hairColor": "Brown",
+        "firstAppearanceChapter": "Agent of the Shinigami",
+        "weapon": [
+            "None"
+        ],
+        "release": [
+            "None"
+        ],
+        "primaryAbility": [
+            "None"
+        ],
+        "image": "Mizuho_Asano.webp"
+    },
+    {
+        "id": "d3c4e5f6-a7b8-4c9d-0e1f-2a3b4c5d6e7f",
+        "name": "Oscar Joaquin de la Rosa",
+        "gender": "Male",
+        "race": [
+            "Human"
+        ],
+        "affiliation": "Human",
+        "heightCm": -1,
+        "age": -1,
+        "eyeColor": "Unknown",
+        "hairColor": "Grey",
+        "firstAppearanceChapter": "Agent of the Shinigami",
+        "weapon": [
+            "None"
+        ],
+        "release": [
+            "None"
+        ],
+        "primaryAbility": [
+            "None"
+        ],
+        "image": "Oscar_Joaquin_de_la_Rosa.webp"
+    },
+    {
+        "id": "f5e6f7a8-b9c0-4e1f-2a3b-4c5d6e7f8a9b",
+        "name": "Chizuru Honsho",
+        "gender": "Female",
+        "race": [
+            "Human"
+        ],
+        "affiliation": "Human",
+        "heightCm": 163,
+        "age": 19,
+        "eyeColor": "Blue",
+        "hairColor": "Red",
+        "firstAppearanceChapter": "Agent of the Shinigami",
+        "weapon": [
+            "None"
+        ],
+        "release": [
+            "None"
+        ],
+        "primaryAbility": [
+            "None"
+        ],
+        "image": "Chizuru_Honsho.webp"
+    },
+    {
+        "id": "2c8h9b0c-1d2e-4h3f-4a5b-6c7d8e9f0a1e",
+        "name": "Kagine",
+        "gender": "Male",
+        "race": [
+            "Human"
+        ],
+        "affiliation": "Human",
+        "heightCm": -1,
+        "age": -1,
+        "eyeColor": "Brown",
+        "hairColor": "Black",
+        "firstAppearanceChapter": "Agent of the Shinigami",
+        "weapon": [
+            "None"
+        ],
+        "release": [
+            "None"
+        ],
+        "primaryAbility": [
+            "None"
+        ],
+        "image": "Kagine.webp"
+    },
+    {
+        "id": "a5e8c1b2-3d4f-4a6b-9c8d-7e6f5a4b3c2d",
+        "name": "Mizuiro Kojima",
+        "gender": "Male",
+        "race": [
+            "Human"
+        ],
+        "affiliation": "Human",
+        "heightCm": 154,
+        "age": 19,
+        "eyeColor": "Blue",
+        "hairColor": "Black",
+        "firstAppearanceChapter": "Agent of the Shinigami",
+        "weapon": [
+            "None"
+        ],
+        "release": [
+            "None"
+        ],
+        "primaryAbility": [
+            "None"
+        ],
+        "image": "Mizuiro_Kojima.webp"
+    },
+    {
+        "id": "f8d9b7a6-5c4d-4e3b-9a2f-1b0c9d8e7f6a",
+        "name": "Ryo Kunieda",
+        "gender": "Female",
+        "race": [
+            "Human"
+        ],
+        "affiliation": "Human",
+        "heightCm": 166,
+        "age": 19,
+        "eyeColor": "Black",
+        "hairColor": "Black",
+        "firstAppearanceChapter": "Agent of the Shinigami",
+        "weapon": [
+            "None"
+        ],
+        "release": [
+            "None"
+        ],
+        "primaryAbility": [
+            "None"
+        ],
+        "image": "Ryo_Kunieda.webp"
+    },
+    {
+        "id": "b3c4d5e6-f7a8-49b0-9c1d-2e3f4a5b6c7d",
+        "name": "Yuzu Kurosaki",
+        "gender": "Female",
+        "race": [
+            "Human"
+        ],
+        "affiliation": "Human",
+        "heightCm": 137,
+        "age": 13,
+        "eyeColor": "Brown",
+        "hairColor": "Brown",
+        "firstAppearanceChapter": "Agent of the Shinigami",
+        "weapon": [
+            "None"
+        ],
+        "release": [
+            "None"
+        ],
+        "primaryAbility": [
+            "None"
+        ],
+        "image": "Yuzu_Kurosaki.webp"
+    },
+    {
+        "id": "e2f3a4b5-c6d7-4e8f-9a0b-1c2d3e4f5a6b",
+        "name": "Mahana Natsui",
+        "gender": "Female",
+        "race": [
+            "Human"
+        ],
+        "affiliation": "Human",
+        "heightCm": 169,
+        "age": 19,
+        "eyeColor": "Black",
+        "hairColor": "Brown",
+        "firstAppearanceChapter": "Agent of the Shinigami",
+        "weapon": [
+            "None"
+        ],
+        "release": [
+            "None"
+        ],
+        "primaryAbility": [
+            "None"
+        ],
+        "image": "Mahana_Natsui.webp"
+    },
+    {
+        "id": "d1e2f3a4-b5c6-4d7e-8f9a-0b1c2d3e4f5a",
+        "name": "Misato Ochi",
+        "gender": "Female",
+        "race": [
+            "Human"
+        ],
+        "affiliation": "Human",
+        "heightCm": -1,
+        "age": -1,
+        "eyeColor": "Brown",
+        "hairColor": "Black",
+        "firstAppearanceChapter": "Agent of the Shinigami",
+        "weapon": [
+            "None"
+        ],
+        "release": [
+            "None"
+        ],
+        "primaryAbility": [
+            "None"
+        ],
+        "image": "Misato_Ochi.webp"
+    },
+    {
+        "id": "c0d1e2f3-a4b5-4c6d-7e8f-9a0b1c2d3e4f",
+        "name": "Michiru Ogawa",
+        "gender": "Female",
+        "race": [
+            "Human"
+        ],
+        "affiliation": "Human",
+        "heightCm": 153,
+        "age": 19,
+        "eyeColor": "Brown",
+        "hairColor": "Brown",
+        "firstAppearanceChapter": "Agent of the Shinigami",
+        "weapon": [
+            "None"
+        ],
+        "release": [
+            "None"
+        ],
+        "primaryAbility": [
+            "None"
+        ],
+        "image": "Michiru_Ogawa.webp"
+    },
+    {
+        "id": "8a9b0c1d-2e3f-4a5b-6c7d-8e9f0a1b2c3d",
+        "name": "Gitano Shigeo",
+        "gender": "Male",
+        "race": [
+            "Human"
+        ],
+        "affiliation": "Human",
+        "heightCm": -1,
+        "age": -1,
+        "eyeColor": "Black",
+        "hairColor": "Blonde",
+        "firstAppearanceChapter": "Agent of the Shinigami",
+        "weapon": [
+            "None"
+        ],
+        "release": [
+            "None"
+        ],
+        "primaryAbility": [
+            "None"
+        ],
+        "image": "Gitano_Shigeo.webp"
+    },
+    {
+        "id": "6e7f8a9b-0c1d-4e2f-3a4b-5c6d7e8f9a0b",
+        "name": "Ikumi Unagiya",
+        "gender": "Female",
+        "race": [
+            "Human"
+        ],
+        "affiliation": "Independent",
+        "heightCm": 181,
+        "age": 33,
+        "eyeColor": "Black",
+        "hairColor": "Black",
+        "firstAppearanceChapter": "Lost Substitute Shinigami",
+        "weapon": [
+            "None"
+        ],
+        "release": [
+            "None"
+        ],
+        "primaryAbility": [
+            "None"
+        ],
+        "image": "Ikumi_Unagiya.webp"
+    },
+    {
+        "id": "5d6e7f8a-9b0c-4d1e-2f3a-4b5c6d7e8f9a",
+        "name": "Kaoru Unagiya",
+        "gender": "Male",
+        "race": [
+            "Human"
+        ],
+        "affiliation": "Human",
+        "heightCm": -1,
+        "age": 10,
+        "eyeColor": "Black",
+        "hairColor": "Black",
+        "firstAppearanceChapter": "Lost Substitute Shinigami",
+        "weapon": [
+            "None"
+        ],
+        "release": [
+            "None"
+        ],
+        "primaryAbility": [
+            "None"
+        ],
+        "image": "Kaoru_Unagiya.webp"
+    },
+    {
+        "id": "e7b1a2d3-f4c5-4a6b-9d8e-7f6a5b4c3d2e",
+        "name": "Giriko Kutsuzawa",
+        "gender": "Male",
+        "race": [
+            "Fullbringer"
+        ],
+        "affiliation": "Xcution",
+        "heightCm": 194,
+        "age": 45,
+        "eyeColor": "Black",
+        "hairColor": "Black",
+        "firstAppearanceChapter": "Lost Substitute Shinigami",
+        "weapon": [
+            "Unarmed"
+        ],
+        "release": [
+            "None"
+        ],
+        "primaryAbility": [
+            "Special"
+        ],
+        "image": "Giriko_Kutsuzawa.webp"
+    },
+    {
+        "id": "f8a9b7c6-d5e4-4b3a-9c2d-1f0e9d8c7b6a",
+        "name": "Moe Shishigawara",
+        "gender": "Male",
+        "race": [
+            "Fullbringer"
+        ],
+        "affiliation": "Xcution",
+        "heightCm": 157,
+        "age": 19,
+        "eyeColor": "Brown",
+        "hairColor": "Blonde",
+        "firstAppearanceChapter": "Lost Substitute Shinigami",
+        "weapon": [
+            "Weaponized"
+        ],
+        "release": [
+            "None"
+        ],
+        "primaryAbility": [
+            "Special"
+        ],
+        "image": "Moe_Shishigawara.webp"
+    },
+    {
+        "id": "c4d5e6f7-a8b9-4c0d-1e2f-3a4b5c6d7e8f",
+        "name": "Jackie Tristan",
+        "gender": "Female",
+        "race": [
+            "Fullbringer"
+        ],
+        "affiliation": "Xcution",
+        "heightCm": 193,
+        "age": 25,
+        "eyeColor": "Brown",
+        "hairColor": "Black",
+        "firstAppearanceChapter": "Lost Substitute Shinigami",
+        "weapon": [
+            "Weaponized"
+        ],
+        "release": [
+            "None"
+        ],
+        "primaryAbility": [
+            "Physical"
+        ],
+        "image": "Jackie_Tristan.webp"
+    },
+    {
+        "id": "e4f8b9d1-c2a3-4a6b-8d7e-9f0a1b2c3d4e",
+        "name": "Renji Abarai",
+        "gender": "Male",
+        "race": [
+            "Shinigami"
+        ],
+        "affiliation": "Gotei 13",
+        "heightCm": 188,
+        "age": 100,
+        "eyeColor": "Brown",
+        "hairColor": "Red",
+        "firstAppearanceChapter": "Soul Society",
+        "weapon": [
+            "Weaponized"
+        ],
+        "release": [
+            "Shikai",
+            "Bankai"
+        ],
+        "primaryAbility": [
+            "Physical"
+        ],
+        "image": "Renji_Abarai.webp"
+    },
+    {
+        "id": "6adb1439-598a-47aa-afde-002c4bc0cbb0",
+        "name": "Sousuke Aizen",
+        "gender": "Male",
+        "race": [
+            "Shinigami"
+        ],
+        "affiliation": "Independent",
+        "heightCm": 186,
+        "age": 500,
+        "eyeColor": "Brown",
+        "hairColor": "Brown",
+        "firstAppearanceChapter": "Soul Society",
+        "weapon": [
+            "Weaponized",
+            "Energy"
+        ],
+        "release": [
+            "Shikai"
+        ],
+        "primaryAbility": [
+            "Special",
+            "Kido"
+        ],
+        "image": "Sousuke_Aizen.webp"
+    },
+    {
+        "id": "05177074-0809-47a8-9bad-00f04bca9fac",
+        "name": "Akon",
+        "gender": "Male",
+        "race": [
+            "Shinigami"
+        ],
+        "affiliation": "Gotei 13",
+        "heightCm": 172,
+        "age": 500,
+        "eyeColor": "Black",
+        "hairColor": "Blue",
+        "firstAppearanceChapter": "Soul Society",
+        "weapon": [
+            "None"
+        ],
+        "release": [
+            "None"
+        ],
+        "primaryAbility": [
+            "Scientific"
+        ],
+        "image": "Akon.webp"
+    },
+    {
+        "id": "19eb93a9-3893-41cf-8b7f-419e150901f3",
+        "name": "Makizo Aramaki",
+        "gender": "Male",
+        "race": [
+            "Shinigami"
+        ],
+        "affiliation": "Gotei 13",
+        "heightCm": -1,
+        "age": 600,
+        "eyeColor": "Black",
+        "hairColor": "Black",
+        "firstAppearanceChapter": "Soul Society",
+        "weapon": [
+            "Weaponized"
+        ],
+        "release": [
+            "Shikai"
+        ],
+        "primaryAbility": [
+            "Physical"
+        ],
+        "image": "Makizo_Aramaki.webp"
+    },
+    {
+        "id": "2bbc0f70-1259-4585-a08c-b140552af192",
+        "name": "Yumichika Ayasegawa",
+        "gender": "Male",
+        "race": [
+            "Shinigami"
+        ],
+        "affiliation": "Gotei 13",
+        "heightCm": 169,
+        "age": 100,
+        "eyeColor": "Blue",
+        "hairColor": "Black",
+        "firstAppearanceChapter": "Soul Society",
+        "weapon": [
+            "Weaponized"
+        ],
+        "release": [
+            "Shikai"
+        ],
+        "primaryAbility": [
+            "Special",
+            "Support"
+        ],
+        "image": "Yumichika_Ayasegawa.webp"
+    },
+    {
+        "id": "1046be8f-3da9-460a-bedf-cc6f616edced",
+        "name": "Tatsufusa Enjoji",
+        "gender": "Male",
+        "race": [
+            "Shinigami"
+        ],
+        "affiliation": "Gotei 13",
+        "heightCm": 203,
+        "age": 100,
+        "eyeColor": "Unknown",
+        "hairColor": "Brown",
+        "firstAppearanceChapter": "Soul Society",
+        "weapon": [
+            "Weaponized"
+        ],
+        "release": [
+            "Shikai"
+        ],
+        "primaryAbility": [
+            "Physical"
+        ],
+        "image": "Tatsufusa_Enjoji.webp"
+    },
+    {
+        "id": "df47e923-a12b-4e01-9a7d-536f9b1836d1",
+        "name": "Kirio Hikifune",
+        "gender": "Female",
+        "race": [
+            "Shinigami"
+        ],
+        "affiliation": "Royal Guard",
+        "heightCm": 174,
+        "age": 1000,
+        "eyeColor": "Pink",
+        "hairColor": "Pink",
+        "firstAppearanceChapter": "Thousand-Year Blood War",
+        "weapon": [
+            "Weaponized"
+        ],
+        "release": [
+            "Shikai",
+            "Bankai"
+        ],
+        "primaryAbility": [
+            "Scientific",
+            "Support"
+        ],
+        "image": "Kirio_Hikifune.webp"
+    },
+    {
+        "id": "2d8f9a1c-3b4e-47c0-a8d6-444a1763a822",
+        "name": "Momo Hinamori",
+        "gender": "Female",
+        "race": [
+            "Shinigami"
+        ],
+        "affiliation": "Gotei 13",
+        "heightCm": 151,
+        "age": 100,
+        "eyeColor": "Black",
+        "hairColor": "Black",
+        "firstAppearanceChapter": "Soul Society",
+        "weapon": [
+            "Weaponized",
+            "Energy"
+        ],
+        "release": [
+            "Shikai"
+        ],
+        "primaryAbility": [
+            "Kido",
+            "Element"
+        ],
+        "image": "Momo_Hinamori.webp"
+    },
+    {
+        "id": "5f9b4c8a-7d1e-4503-bc92-385c49d2110a",
+        "name": "Shuhei Hisagi",
+        "gender": "Male",
+        "race": [
+            "Shinigami"
+        ],
+        "affiliation": "Gotei 13",
+        "heightCm": 181,
+        "age": 100,
+        "eyeColor": "Grey",
+        "hairColor": "Black",
+        "firstAppearanceChapter": "Soul Society",
+        "weapon": [
+            "Weaponized"
+        ],
+        "release": [
+            "Shikai",
+            "Bankai"
+        ],
+        "primaryAbility": [
+            "Physical"
+        ],
+        "image": "Shuhei_Hisagi.webp"
+    },
+    {
+        "id": "9e2a3c7b-841d-4e9f-a2c1-23f4a56b7c8d",
+        "name": "Toshiro Hitsugaya",
+        "gender": "Male",
+        "race": [
+            "Shinigami"
+        ],
+        "affiliation": "Gotei 13",
+        "heightCm": 134,
+        "age": 100,
+        "eyeColor": "Turquoise",
+        "hairColor": "White",
+        "firstAppearanceChapter": "Soul Society",
+        "weapon": [
+            "Weaponized"
+        ],
+        "release": [
+            "Shikai",
+            "Bankai"
+        ],
+        "primaryAbility": [
+            "Element"
+        ],
+        "image": "Toshiro_Hitsugaya.webp"
+    },
+    {
+        "id": "b7d1a2c3-e45f-460d-9b8a-12f34567890a",
+        "name": "Hiyosu",
+        "gender": "Male",
+        "race": [
+            "Shinigami"
+        ],
+        "affiliation": "Gotei 13",
+        "heightCm": -1,
+        "age": 200,
+        "eyeColor": "Grey",
+        "hairColor": "Bald",
+        "firstAppearanceChapter": "Soul Society",
+        "weapon": [
+            "None"
+        ],
+        "release": [
+            "None"
+        ],
+        "primaryAbility": [
+            "Scientific"
+        ],
+        "image": "Hiyosu.webp"
+    },
+    {
+        "id": "a5c9d8e7-f6b5-4a4c-8d3e-21f0a9b8c7d6",
+        "name": "Ichibe'e Hyosube",
+        "gender": "Male",
+        "race": [
+            "Shinigami"
+        ],
+        "affiliation": "Royal Guard",
+        "heightCm": 181,
+        "age": 2000,
+        "eyeColor": "Black",
+        "hairColor": "Bald",
+        "firstAppearanceChapter": "Thousand-Year Blood War",
+        "weapon": [
+            "Weaponized"
+        ],
+        "release": [
+            "Shikai",
+            "Bankai"
+        ],
+        "primaryAbility": [
+            "Special"
+        ],
+        "image": "Ichibe'e_Hyosube.webp"
+    },
+    {
+        "id": "e4c5b6a7-d8f9-4a0b-b1c2-d3e4f5a6b7c8",
+        "name": "Tetsuzaemon Iba",
+        "gender": "Male",
+        "race": [
+            "Shinigami"
+        ],
+        "affiliation": "Gotei 13",
+        "heightCm": 182,
+        "age": 200,
+        "eyeColor": "Unknown",
+        "hairColor": "Black",
+        "firstAppearanceChapter": "Soul Society",
+        "weapon": [
+            "Weaponized"
+        ],
+        "release": [
+            "Shikai"
+        ],
+        "primaryAbility": [
+            "Physical"
+        ],
+        "image": "Tetsuzaemon_Iba.webp"
+    },
+    {
+        "id": "f5d6e7f8-a9b0-4c1d-8e2f-3a4b5c6d7e8f",
+        "name": "Gin Ichimaru",
+        "gender": "Male",
+        "race": [
+            "Shinigami"
+        ],
+        "affiliation": "Independent",
+        "heightCm": 185,
+        "age": 400,
+        "eyeColor": "Blue",
+        "hairColor": "Silver",
+        "firstAppearanceChapter": "Soul Society",
+        "weapon": [
+            "Weaponized"
+        ],
+        "release": [
+            "Shikai",
+            "Bankai"
+        ],
+        "primaryAbility": [
+            "Special"
+        ],
+        "image": "Gin_Ichimaru.webp"
+    },
+    {
+        "id": "760794a0-2546-44d3-89fb-21b64924c640",
+        "name": "Yasochika Iemura",
+        "gender": "Male",
+        "race": [
+            "Shinigami"
+        ],
+        "affiliation": "Gotei 13",
+        "heightCm": 179,
+        "age": 100,
+        "eyeColor": "Brown",
+        "hairColor": "Black",
+        "firstAppearanceChapter": "Soul Society",
+        "weapon": [
+            "Weaponized"
+        ],
+        "release": [
+            "Shikai"
+        ],
+        "primaryAbility": [
+            "Support"
+        ],
+        "image": "Yasochika_Iemura.webp"
+    },
+    {
+        "id": "42d9fd25-eadf-4813-b5e8-2d69117184f9",
+        "name": "Jirobo Ikkanzaka",
+        "gender": "Male",
+        "race": [
+            "Shinigami"
+        ],
+        "affiliation": "Gotei 13",
+        "heightCm": 231,
+        "age": 100,
+        "eyeColor": "Brown",
+        "hairColor": "Black",
+        "firstAppearanceChapter": "Soul Society",
+        "weapon": [
+            "Weaponized"
+        ],
+        "release": [
+            "Shikai"
+        ],
+        "primaryAbility": [
+            "Physical"
+        ],
+        "image": "Jirobo_Ikkanzaka.webp"
+    },
+    {
+        "id": "18bf35c0-0109-4610-9577-2138175c84db",
+        "name": "Nanao Ise",
+        "gender": "Female",
+        "race": [
+            "Shinigami"
+        ],
+        "affiliation": "Gotei 13",
+        "heightCm": 164,
+        "age": 100,
+        "eyeColor": "Black",
+        "hairColor": "Black",
+        "firstAppearanceChapter": "Soul Society",
+        "weapon": [
+            "Weaponized",
+            "Energy"
+        ],
+        "release": [
+            "None"
+        ],
+        "primaryAbility": [
+            "Kido",
+            "Special"
+        ],
+        "image": "Nanao_Ise.webp"
+    },
+    {
+        "id": "5d2784d2-69e8-45b7-a6c3-d581ba62e5ac",
+        "name": "Hidetomo Kajomaru",
+        "gender": "Male",
+        "race": [
+            "Shinigami"
+        ],
+        "affiliation": "Gotei 13",
+        "heightCm": 178,
+        "age": 100,
+        "eyeColor": "Brown",
+        "hairColor": "Brown",
+        "firstAppearanceChapter": "Thousand-Year Blood War",
+        "weapon": [
+            "Weaponized"
+        ],
+        "release": [
+            "Shikai"
+        ],
+        "primaryAbility": [
+            "Physical"
+        ],
+        "image": "Hidetomo_Kajomaru.webp"
+    },
+    {
+        "id": "b1c2d3e4-f5a6-4789-b0c1-2d3e4f5a6b7c",
+        "name": "Asuka Katakura",
+        "gender": "Male",
+        "race": [
+            "Shinigami"
+        ],
+        "affiliation": "Gotei 13",
+        "heightCm": -1,
+        "age": 500,
+        "eyeColor": "Black",
+        "hairColor": "Black",
+        "firstAppearanceChapter": "Thousand-Year Blood War",
+        "weapon": [
+            "Weaponized"
+        ],
+        "release": [
+            "Shikai"
+        ],
+        "primaryAbility": [
+            "Physical"
+        ],
+        "image": "Asuka_Katakura.webp"
+    },
+    {
+        "id": "c2d3e4f5-a6b7-4890-c1d2-3e4f5a6b7c8d",
+        "name": "Kenpachi Kiganjo",
+        "gender": "Male",
+        "race": [
+            "Shinigami"
+        ],
+        "affiliation": "Gotei 13",
+        "heightCm": -1,
+        "age": 500,
+        "eyeColor": "Brown",
+        "hairColor": "Black",
+        "firstAppearanceChapter": "Soul Society",
+        "weapon": [
+            "Weaponized"
+        ],
+        "release": [
+            "Shikai",
+            "Bankai"
+        ],
+        "primaryAbility": [
+            "Physical"
+        ],
+        "image": "Kenpachi_Kiganjo.webp"
+    },
+    {
+        "id": "d3e4f5a6-b7c8-4901-d2e3-4f5a6b7c8d9e",
+        "name": "Izuru Kira",
+        "gender": "Male",
+        "race": [
+            "Shinigami"
+        ],
+        "affiliation": "Gotei 13",
+        "heightCm": 173,
+        "age": 100,
+        "eyeColor": "Blue",
+        "hairColor": "Blonde",
+        "firstAppearanceChapter": "Soul Society",
+        "weapon": [
+            "Weaponized"
+        ],
+        "release": [
+            "Shikai"
+        ],
+        "primaryAbility": [
+            "Physical",
+            "Special"
+        ],
+        "image": "Izuru_Kira.webp"
+    },
+    {
+        "id": "e4f5a6b7-c8d9-4012-e3f4-5a6b7c8d9e0f",
+        "name": "Tenjiro Kirinji",
+        "gender": "Male",
+        "race": [
+            "Shinigami"
+        ],
+        "affiliation": "Royal Guard",
+        "heightCm": 193,
+        "age": 1000,
+        "eyeColor": "Black",
+        "hairColor": "Black",
+        "firstAppearanceChapter": "Thousand-Year Blood War",
+        "weapon": [
+            "Weaponized"
+        ],
+        "release": [
+            "Shikai",
+            "Bankai"
+        ],
+        "primaryAbility": [
+            "Support",
+            "Physical"
+        ],
+        "image": "Tenjiro_Kirinji.webp"
+    },
+    {
+        "id": "2c5f3195-25fe-4810-bc78-2463913b221e",
+        "name": "Sajin Komamura",
+        "gender": "Male",
+        "race": [
+            "Shinigami"
+        ],
+        "affiliation": "Gotei 13",
+        "heightCm": 288,
+        "age": 100,
+        "eyeColor": "Gold",
+        "hairColor": "Brown",
+        "firstAppearanceChapter": "Soul Society",
+        "weapon": [
+            "Weaponized"
+        ],
+        "release": [
+            "Shikai",
+            "Bankai"
+        ],
+        "primaryAbility": [
+            "Physical"
+        ],
+        "image": "Sajin_Komamura.webp"
+    },
+    {
+        "id": "703d15a5-927b-402a-928d-294b41a54a77",
+        "name": "Isane Kotetsu",
+        "gender": "Female",
+        "race": [
+            "Shinigami"
+        ],
+        "affiliation": "Gotei 13",
+        "heightCm": 187,
+        "age": 200,
+        "eyeColor": "Brown",
+        "hairColor": "Silver",
+        "firstAppearanceChapter": "Soul Society",
+        "weapon": [
+            "Weaponized",
+            "Kido"
+        ],
+        "release": [
+            "Shikai"
+        ],
+        "primaryAbility": [
+            "Physical",
+            "Support"
+        ],
+        "image": "Isane_Kotetsu.webp"
+    },
+    {
+        "id": "c8e235e1-512c-4731-97b7-58f00224d56f",
+        "name": "Kiyone Kotetsu",
+        "gender": "Female",
+        "race": [
+            "Shinigami"
+        ],
+        "affiliation": "Gotei 13",
+        "heightCm": 154,
+        "age": 100,
+        "eyeColor": "Blue",
+        "hairColor": "Blonde",
+        "firstAppearanceChapter": "Soul Society",
+        "weapon": [
+            "Weaponized"
+        ],
+        "release": [
+            "Shikai"
+        ],
+        "primaryAbility": [
+            "Kido"
+        ],
+        "image": "Kiyone_Kotetsu.webp"
+    },
+    {
+        "id": "b1b6d1e4-846f-4c57-810a-3c07246b95d1",
+        "name": "Sentaro Kotsubaki",
+        "gender": "Male",
+        "race": [
+            "Shinigami"
+        ],
+        "affiliation": "Gotei 13",
+        "heightCm": 183,
+        "age": 100,
+        "eyeColor": "Brown",
+        "hairColor": "Black",
+        "firstAppearanceChapter": "Soul Society",
+        "weapon": [
+            "Weaponized"
+        ],
+        "release": [
+            "Shikai"
+        ],
+        "primaryAbility": [
+            "Physical"
+        ],
+        "image": "Sentaro_Kotsubaki.webp"
+    },
+    {
+        "id": "e9a8f2c3-9d10-4f5a-8b2c-1d0e9f8a7b6c",
+        "name": "Byakuya Kuchiki",
+        "gender": "Male",
+        "race": [
+            "Shinigami"
+        ],
+        "affiliation": "Gotei 13",
+        "heightCm": 180,
+        "age": 300,
+        "eyeColor": "Grey",
+        "hairColor": "Black",
+        "firstAppearanceChapter": "Soul Society",
+        "weapon": [
+            "Weaponized"
+        ],
+        "release": [
+            "Shikai",
+            "Bankai"
+        ],
+        "primaryAbility": [
+            "Element",
+            "Physical",
+            "Kido"
+        ],
+        "image": "Byakuya_Kuchiki.webp"
+    },
+    {
+        "id": "f5d4e3b2-a198-4c76-9d5a-4b3c2d1e0f9a",
+        "name": "Ginrei Kuchiki",
+        "gender": "Male",
+        "race": [
+            "Shinigami"
+        ],
+        "affiliation": "Gotei 13",
+        "heightCm": 179,
+        "age": 500,
+        "eyeColor": "Blue",
+        "hairColor": "Silver",
+        "firstAppearanceChapter": "Soul Society",
+        "weapon": [
+            "Weaponized"
+        ],
+        "release": [
+            "Shikai",
+            "Bankai"
+        ],
+        "primaryAbility": [
+            "Physical"
+        ],
+        "image": "Ginrei_Kuchiki.webp"
+    },
+    {
+        "id": "2b215353-631f-4e96-a3f8-68f831bc0d8b",
+        "name": "Rukia Kuchiki",
+        "gender": "Female",
+        "race": [
+            "Shinigami"
+        ],
+        "affiliation": "Gotei 13",
+        "heightCm": 144,
+        "age": 100,
+        "eyeColor": "Blue",
+        "hairColor": "Black",
+        "firstAppearanceChapter": "Agent of the Shinigami",
+        "weapon": [
+            "Weaponized"
+        ],
+        "release": [
+            "Shikai",
+            "Bankai"
+        ],
+        "primaryAbility": [
+            "Element",
+            "Kido"
+        ],
+        "image": "Rukia_Kuchiki.webp"
+    },
+    {
+        "id": "e7b8c9a1-5d2f-4a3b-9e4c-1f6d7a8b9c0d",
+        "name": "Niko Kuna",
+        "gender": "Female",
+        "race": [
+            "Shinigami"
+        ],
+        "affiliation": "Gotei 13",
+        "heightCm": -1,
+        "age": 100,
+        "eyeColor": "Brown",
+        "hairColor": "Black",
+        "firstAppearanceChapter": "Arrancar",
+        "weapon": [
+            "None"
+        ],
+        "release": [
+            "None"
+        ],
+        "primaryAbility": [
+            "Scientific"
+        ],
+        "image": "Niko_Kuna.webp"
+    },
+    {
+        "id": "d2c3b4a5-e6f7-4890-a1b2-c3d4e5f6a7b8",
+        "name": "Isshin Kurosaki",
+        "gender": "Male",
+        "race": [
+            "Shinigami"
+        ],
+        "affiliation": "Independent",
+        "heightCm": 186,
+        "age": 500,
+        "eyeColor": "Brown",
+        "hairColor": "Black",
+        "firstAppearanceChapter": "Agent of the Shinigami",
+        "weapon": [
+            "Weaponized"
+        ],
+        "release": [
+            "Shikai",
+            "Bankai"
+        ],
+        "primaryAbility": [
+            "Physical",
+            "Element"
+        ],
+        "image": "Isshin_Kurosaki.webp"
+    },
+    {
+        "id": "d8137a31-a6f2-44a5-96d9-f0b3afac9758",
+        "name": "Mayuri Kurotsuchi",
+        "gender": "Male",
+        "race": [
+            "Shinigami"
+        ],
+        "affiliation": "Gotei 13",
+        "heightCm": 174,
+        "age": 300,
+        "eyeColor": "Gold",
+        "hairColor": "Black",
+        "firstAppearanceChapter": "Soul Society",
+        "weapon": [
+            "Weaponized"
+        ],
+        "release": [
+            "Shikai",
+            "Bankai"
+        ],
+        "primaryAbility": [
+            "Scientific"
+        ],
+        "image": "Mayuri_Kurotsuchi.webp"
+    },
+    {
+        "id": "7360750e-2615-4771-841c-197dae5e466c",
+        "name": "Nemu Kurotsuchi",
+        "gender": "Female",
+        "race": [
+            "Mod Soul",
+            "Shinigami"
+        ],
+        "affiliation": "Gotei 13",
+        "heightCm": 167,
+        "age": 100,
+        "eyeColor": "Black",
+        "hairColor": "Black",
+        "firstAppearanceChapter": "Soul Society",
+        "weapon": [
+            "Unarmed"
+        ],
+        "release": [
+            "None"
+        ],
+        "primaryAbility": [
+            "Physical",
+            "Kido",
+            "Scientific",
+            "Special",
+            "Support"
+        ],
+        "image": "Nemu_Kurotsuchi.webp"
+    },
+    {
+        "id": "a1b2c3d4-e5f6-4789-9a0b-1c2d3e4f5a6b",
+        "name": "Zennosuke Kurumadani",
+        "gender": "Male",
+        "race": [
+            "Shinigami"
+        ],
+        "affiliation": "Gotei 13",
+        "heightCm": -1,
+        "age": 100,
+        "eyeColor": "Black",
+        "hairColor": "Black",
+        "firstAppearanceChapter": "Agent of the Shinigami",
+        "weapon": [
+            "Weaponized"
+        ],
+        "release": [
+            "Shikai"
+        ],
+        "primaryAbility": [
+            "Physical"
+        ],
+        "image": "Zennosuke_Kurumadani.webp"
+    },
+    {
+        "id": "1a31da77-a955-44e4-b613-a6f8a7eb8c23",
+        "name": "Yachiru Kusajishi",
+        "gender": "Female",
+        "race": [
+            "Shinigami"
+        ],
+        "affiliation": "Gotei 13",
+        "heightCm": 109,
+        "age": 200,
+        "eyeColor": "Black",
+        "hairColor": "Pink",
+        "firstAppearanceChapter": "Soul Society",
+        "weapon": [
+            "Weaponized"
+        ],
+        "release": [
+            "Shikai"
+        ],
+        "primaryAbility": [
+            "Special"
+        ],
+        "image": "Yachiru_Kusajishi.webp"
+    },
+    {
+        "id": "d0e1f2a3-b4c5-4d6e-9f7a-8b9c0d1e2f3a",
+        "name": "Shunsui Kyoraku",
+        "gender": "Male",
+        "race": [
+            "Shinigami"
+        ],
+        "affiliation": "Gotei 13",
+        "heightCm": 192,
+        "age": 1000,
+        "eyeColor": "Brown",
+        "hairColor": "Black",
+        "firstAppearanceChapter": "Soul Society",
+        "weapon": [
+            "Weaponized"
+        ],
+        "release": [
+            "Shikai",
+            "Bankai"
+        ],
+        "primaryAbility": [
+            "Special",
+            "Kido"
+        ],
+        "image": "Shunsui_Kyoraku.webp"
+    },
+    {
+        "id": "e4288acb-131a-4f7c-ad15-499ad402f4f7",
+        "name": "Shunzan Kyoraku",
+        "gender": "Male",
+        "race": [
+            "Shinigami"
+        ],
+        "affiliation": "Gotei 13",
+        "heightCm": -1,
+        "age": 1000,
+        "eyeColor": "Black",
+        "hairColor": "Black",
+        "firstAppearanceChapter": "Thousand-Year Blood War",
+        "weapon": [
+            "Weaponized"
+        ],
+        "release": [
+            "Shikai"
+        ],
+        "primaryAbility": [
+            "Physical"
+        ],
+        "image": "Shunzan_Kyoraku.webp"
+    },
+    {
+        "id": "110774d4-a3d8-4c66-875c-0602ceb7e805",
+        "name": "Ikkaku Madarame",
+        "gender": "Male",
+        "race": [
+            "Shinigami"
+        ],
+        "affiliation": "Gotei 13",
+        "heightCm": 182,
+        "age": 200,
+        "eyeColor": "Brown",
+        "hairColor": "Bald",
+        "firstAppearanceChapter": "Soul Society",
+        "weapon": [
+            "Weaponized"
+        ],
+        "release": [
+            "Shikai",
+            "Bankai"
+        ],
+        "primaryAbility": [
+            "Physical"
+        ],
+        "image": "Ikkaku_Madarame.webp"
+    },
+    {
+        "id": "01b009eb-67f3-43d7-a86f-cc86ae70eb7b",
+        "name": "Shino Madarame",
+        "gender": "Female",
+        "race": [
+            "Shinigami"
+        ],
+        "affiliation": "Gotei 13",
+        "heightCm": 159,
+        "age": 100,
+        "eyeColor": "Black",
+        "hairColor": "Black",
+        "firstAppearanceChapter": "Thousand-Year Blood War",
+        "weapon": [
+            "Weaponized"
+        ],
+        "release": [
+            "Shikai"
+        ],
+        "primaryAbility": [
+            "Physical"
+        ],
+        "image": "Shino_Madarame.webp"
+    },
+    {
+        "id": "ca71b70d-91c6-436f-8357-ea4704a8bc99",
+        "name": "Rangiku Matsumoto",
+        "gender": "Female",
+        "race": [
+            "Shinigami"
+        ],
+        "affiliation": "Gotei 13",
+        "heightCm": 172,
+        "age": 200,
+        "eyeColor": "Blue",
+        "hairColor": "Blonde",
+        "firstAppearanceChapter": "Soul Society",
+        "weapon": [
+            "Weaponized"
+        ],
+        "release": [
+            "Shikai"
+        ],
+        "primaryAbility": [
+            "Element",
+            "Kido"
+        ],
+        "image": "Rangiku_Matsumoto.webp"
+    },
+    {
+        "id": "4640ae0c-90e3-402f-99ee-6ece04079f55",
+        "name": "Oetsu Nimaiya",
+        "gender": "Male",
+        "race": [
+            "Shinigami"
+        ],
+        "affiliation": "Royal Guard",
+        "heightCm": 172,
+        "age": 2000,
+        "eyeColor": "Black",
+        "hairColor": "Black",
+        "firstAppearanceChapter": "Thousand-Year Blood War",
+        "weapon": [
+            "Weaponized"
+        ],
+        "release": [
+            "Shikai",
+            "Bankai"
+        ],
+        "primaryAbility": [
+            "Physical"
+        ],
+        "image": "Oetsu_Nimaiya.webp"
+    },
+    {
+        "id": "dae2fb6d-9633-4ad7-90a7-9299012cd9bd",
+        "name": "Genshiro Okikiba",
+        "gender": "Male",
+        "race": [
+            "Shinigami"
+        ],
+        "affiliation": "Gotei 13",
+        "heightCm": -1,
+        "age": 200,
+        "eyeColor": "Black",
+        "hairColor": "Black and White",
+        "firstAppearanceChapter": "Thousand-Year Blood War",
+        "weapon": [
+            "Weaponized"
+        ],
+        "release": [
+            "Shikai"
+        ],
+        "primaryAbility": [
+            "Element"
+        ],
+        "image": "Genshiro_Okikiba.webp"
+    },
+    {
+        "id": "f8a9b0c1-d2e3-4456-a7b8-c9d0e1f2a3b4",
+        "name": "Chojiro Sasakibe",
+        "gender": "Male",
+        "race": [
+            "Shinigami"
+        ],
+        "affiliation": "Gotei 13",
+        "heightCm": 179,
+        "age": 2000,
+        "eyeColor": "Gold",
+        "hairColor": "Silver",
+        "firstAppearanceChapter": "Soul Society",
+        "weapon": [
+            "Weaponized"
+        ],
+        "release": [
+            "Shikai",
+            "Bankai"
+        ],
+        "primaryAbility": [
+            "Element"
+        ],
+        "image": "Chojiro_Sasakibe.webp"
+    },
+    {
+        "id": "9511ad4d-0ed2-4183-a78d-2f85b1652f96",
+        "name": "Kaien Shiba",
+        "gender": "Male",
+        "race": [
+            "Shinigami"
+        ],
+        "affiliation": "Gotei 13",
+        "heightCm": 183,
+        "age": 150,
+        "eyeColor": "Black",
+        "hairColor": "Black",
+        "firstAppearanceChapter": "Soul Society",
+        "weapon": [
+            "Weaponized"
+        ],
+        "release": [
+            "Shikai"
+        ],
+        "primaryAbility": [
+            "Element"
+        ],
+        "image": "Kaien_Shiba.webp"
+    },
+    {
+        "id": "2f5fb687-904b-437c-b29f-7e9b8684d619",
+        "name": "Miyako Shiba",
+        "gender": "Female",
+        "race": [
+            "Shinigami"
+        ],
+        "affiliation": "Gotei 13",
+        "heightCm": -1,
+        "age": 150,
+        "eyeColor": "Black",
+        "hairColor": "Black",
+        "firstAppearanceChapter": "Soul Society",
+        "weapon": [
+            "Weaponized"
+        ],
+        "release": [
+            "None"
+        ],
+        "primaryAbility": [
+            "Kido"
+        ],
+        "image": "Miyako_Shiba.webp"
+    },
+    {
+        "id": "c9d0e1f2-a3b4-4c5d-9e6f-7a8b9c0d1e2f",
+        "name": "Yoruichi Shihoin",
+        "gender": "Female",
+        "race": [
+            "Shinigami"
+        ],
+        "affiliation": "Independent",
+        "heightCm": 162,
+        "age": 500,
+        "eyeColor": "Gold",
+        "hairColor": "Blue",
+        "firstAppearanceChapter": "Agent of the Shinigami",
+        "weapon": [
+            "Unarmed"
+        ],
+        "release": [
+            "Shunko"
+        ],
+        "primaryAbility": [
+            "Physical",
+            "Element"
+        ],
+        "image": "Yoruichi_Shihoin.webp"
+    },
+    {
+        "id": "f5a6b7c8-d9e0-4123-f4a5-6b7c8d9e0f1a",
+        "name": "Senjumaru Shutara",
+        "gender": "Female",
+        "race": [
+            "Shinigami"
+        ],
+        "affiliation": "Royal Guard",
+        "heightCm": 158,
+        "age": 2000,
+        "eyeColor": "Black",
+        "hairColor": "Black",
+        "firstAppearanceChapter": "Thousand-Year Blood War",
+        "weapon": [
+            "Weaponized"
+        ],
+        "release": [
+            "Shikai",
+            "Bankai"
+        ],
+        "primaryAbility": [
+            "Special"
+        ],
+        "image": "Senjumaru_Shutara.webp"
+    },
+    {
+        "id": "4e941316-fa6f-4af6-9a90-b58cec9f49dd",
+        "name": "Sui Feng",
+        "gender": "Female",
+        "race": [
+            "Shinigami"
+        ],
+        "affiliation": "Gotei 13",
+        "heightCm": 150,
+        "age": 200,
+        "eyeColor": "Grey",
+        "hairColor": "Black",
+        "firstAppearanceChapter": "Soul Society",
+        "weapon": [
+            "Weaponized"
+        ],
+        "release": [
+            "Shikai",
+            "Bankai"
+        ],
+        "primaryAbility": [
+            "Physical"
+        ],
+        "image": "Sui_Feng.webp"
+    },
+    {
+        "id": "2b9a7c8d-1e5f-4a90-bd7c-5f4a3b2c1d0e",
+        "name": "Marechiyo Omaeda",
+        "gender": "Male",
+        "race": [
+            "Shinigami"
+        ],
+        "affiliation": "Gotei 13",
+        "heightCm": 210,
+        "age": 200,
+        "eyeColor": "Black",
+        "hairColor": "Black",
+        "firstAppearanceChapter": "Soul Society",
+        "weapon": [
+            "Weaponized"
+        ],
+        "release": [
+            "Shikai"
+        ],
+        "primaryAbility": [
+            "Physical"
+        ],
+        "image": "Marechiyo_Omaeda.webp"
+    },
+    {
+        "id": "c7514156-a344-4f1b-8f54-8653cf79b635",
+        "name": "Riku Togakushi",
+        "gender": "Male",
+        "race": [
+            "Shinigami"
+        ],
+        "affiliation": "Gotei 13",
+        "heightCm": -1,
+        "age": 500,
+        "eyeColor": "Black",
+        "hairColor": "Blonde",
+        "firstAppearanceChapter": "Thousand-Year Blood War",
+        "weapon": [
+            "Weaponized"
+        ],
+        "release": [
+            "Shikai"
+        ],
+        "primaryAbility": [
+            "Physical"
+        ],
+        "image": "Riku_Togakushi.webp"
+    },
+    {
+        "id": "7dd17627-d39b-4a1e-8e80-76b75e951576",
+        "name": "Rin Tsubokura",
+        "gender": "Male",
+        "race": [
+            "Shinigami"
+        ],
+        "affiliation": "Gotei 13",
+        "heightCm": 133,
+        "age": 100,
+        "eyeColor": "Black",
+        "hairColor": "Black",
+        "firstAppearanceChapter": "Soul Society",
+        "weapon": [
+            "None"
+        ],
+        "release": [
+            "None"
+        ],
+        "primaryAbility": [
+            "Scientific"
+        ],
+        "image": "Rin_Tsubokura.webp"
+    },
+    {
+        "id": "b0160228-2a46-4748-81e4-3d7c048ff0df",
+        "name": "Tessai Tsukabishi",
+        "gender": "Male",
+        "race": [
+            "Shinigami"
+        ],
+        "affiliation": "Independent",
+        "heightCm": 200,
+        "age": 500,
+        "eyeColor": "Black",
+        "hairColor": "Black",
+        "firstAppearanceChapter": "Agent of the Shinigami",
+        "weapon": [
+            "Energy"
+        ],
+        "release": [
+            "None"
+        ],
+        "primaryAbility": [
+            "Kido"
+        ],
+        "image": "Tessai_Tsukabishi.webp"
+    },
+    {
+        "id": "b7c8d9e0-f1a2-4b3c-9d4e-5f6a7b8c9d0e",
+        "name": "Jushiro Ukitake",
+        "gender": "Male",
+        "race": [
+            "Shinigami"
+        ],
+        "affiliation": "Gotei 13",
+        "heightCm": 187,
+        "age": 1000,
+        "eyeColor": "Brown",
+        "hairColor": "Silver",
+        "firstAppearanceChapter": "Soul Society",
+        "weapon": [
+            "Weaponized"
+        ],
+        "release": [
+            "Shikai",
+            "Bankai"
+        ],
+        "primaryAbility": [
+            "Special"
+        ],
+        "image": "Jushiro_Ukitake.webp"
+    },
+    {
+        "id": "a2b3c4d5-e6f7-4890-a1b2-c3d4e5f6g7h8",
+        "name": "Retsu Unohana",
+        "gender": "Female",
+        "race": [
+            "Shinigami"
+        ],
+        "affiliation": "Gotei 13",
+        "heightCm": 159,
+        "age": 1000,
+        "eyeColor": "Blue",
+        "hairColor": "Black",
+        "firstAppearanceChapter": "Soul Society",
+        "weapon": [
+            "Weaponized"
+        ],
+        "release": [
+            "Shikai",
+            "Bankai"
+        ],
+        "primaryAbility": [
+            "Support",
+            "Kido",
+            "Physical"
+        ],
+        "image": "Retsu_Unohana.webp"
+    },
+    {
+        "id": "50c41038-028f-4131-b660-84a123f8510a",
+        "name": "Kisuke Urahara",
+        "gender": "Male",
+        "race": [
+            "Shinigami"
+        ],
+        "affiliation": "Independent",
+        "heightCm": 183,
+        "age": 500,
+        "eyeColor": "Black",
+        "hairColor": "Blonde",
+        "firstAppearanceChapter": "Agent of the Shinigami",
+        "weapon": [
+            "Weaponized",
+            "Energy"
+        ],
+        "release": [
+            "Shikai",
+            "Bankai"
+        ],
+        "primaryAbility": [
+            "Scientific",
+            "Kido"
+        ],
+        "image": "Kisuke_Urahara.webp"
+    },
+    {
+        "id": "e422f6d5-45dc-4c8d-8a03-75bf05471d87",
+        "name": "Hanataro Yamada",
+        "gender": "Male",
+        "race": [
+            "Shinigami"
+        ],
+        "affiliation": "Gotei 13",
+        "heightCm": 153,
+        "age": 100,
+        "eyeColor": "Blue",
+        "hairColor": "Blue",
+        "firstAppearanceChapter": "Soul Society",
+        "weapon": [
+            "Weaponized"
+        ],
+        "release": [
+            "Shikai"
+        ],
+        "primaryAbility": [
+            "Support"
+        ],
+        "image": "Hanataro_Yamada.webp"
+    },
+    {
+        "id": "b3e05a89-2917-48f8-86d7-c91723e9a7e4",
+        "name": "Genryusai Shigekuni Yamamoto",
+        "gender": "Male",
+        "race": [
+            "Shinigami"
+        ],
+        "affiliation": "Gotei 13",
+        "heightCm": 168,
+        "age": 2000,
+        "eyeColor": "Black",
+        "hairColor": "Bald",
+        "firstAppearanceChapter": "Soul Society",
+        "weapon": [
+            "Weaponized"
+        ],
+        "release": [
+            "Shikai",
+            "Bankai"
+        ],
+        "primaryAbility": [
+            "Element"
+        ],
+        "image": "Genryusai_Shigekuni_Yamamoto.webp"
+    },
+    {
+        "id": "d134a6bc-92d5-4556-b072-4d80a91e5d7a",
+        "name": "Ryunosuke Yuki",
+        "gender": "Male",
+        "race": [
+            "Shinigami"
+        ],
+        "affiliation": "Gotei 13",
+        "heightCm": -1,
+        "age": 50,
+        "eyeColor": "Brown",
+        "hairColor": "Black",
+        "firstAppearanceChapter": "Thousand-Year Blood War",
+        "weapon": [
+            "Weaponized"
+        ],
+        "release": [
+            "None"
+        ],
+        "primaryAbility": [
+            "Physical"
+        ],
+        "image": "Ryunosuke_Yuki.webp"
+    },
+    {
+        "id": "f5198e3d-73b2-4d56-a947-66c3a1d9b8e2",
+        "name": "Kenpachi Zaraki",
+        "gender": "Male",
+        "race": [
+            "Shinigami"
+        ],
+        "affiliation": "Gotei 13",
+        "heightCm": 202,
+        "age": 1000,
+        "eyeColor": "Black",
+        "hairColor": "Black",
+        "firstAppearanceChapter": "Soul Society",
+        "weapon": [
+            "Weaponized"
+        ],
+        "release": [
+            "Shikai",
+            "Bankai"
+        ],
+        "primaryAbility": [
+            "Physical"
+        ],
+        "image": "Kenpachi_Zaraki.webp"
+    },
+    {
+        "id": "7a3c2b1d-9e8f-4d7c-b6a5-4f3e2d1c0b9a",
+        "name": "Love Aikawa",
+        "gender": "Male",
+        "race": [
+            "Shinigami",
+            "Hollow"
+        ],
+        "affiliation": "Visored",
+        "heightCm": 189,
+        "age": 500,
+        "eyeColor": "Unknown",
+        "hairColor": "Black",
+        "firstAppearanceChapter": "Arrancar",
+        "weapon": [
+            "Weaponized"
+        ],
+        "release": [
+            "Shikai",
+            "Bankai"
+        ],
+        "primaryAbility": [
+            "Physical"
+        ],
+        "image": "Love_Aikawa.webp"
+    },
+    {
+        "id": "d1c2b3a4-e5f6-4789-8a9b-0c1d2e3f4a5b",
+        "name": "Shinji Hirako",
+        "gender": "Male",
+        "race": [
+            "Shinigami",
+            "Hollow"
+        ],
+        "affiliation": "Visored",
+        "heightCm": 176,
+        "age": 500,
+        "eyeColor": "Brown",
+        "hairColor": "Blonde",
+        "firstAppearanceChapter": "Arrancar",
+        "weapon": [
+            "Weaponized"
+        ],
+        "release": [
+            "Shikai",
+            "Bankai"
+        ],
+        "primaryAbility": [
+            "Special"
+        ],
+        "image": "Shinji_Hirako.webp"
+    },
+    {
+        "id": "b2c3d4e5-f6a7-4890-9b0c-1d2e3f4a5b6c",
+        "name": "Mashiro Kuna",
+        "gender": "Female",
+        "race": [
+            "Shinigami",
+            "Hollow"
+        ],
+        "affiliation": "Visored",
+        "heightCm": 153,
+        "age": 400,
+        "eyeColor": "Brown",
+        "hairColor": "Green",
+        "firstAppearanceChapter": "Arrancar",
+        "weapon": [
+            "Unarmed"
+        ],
+        "release": [
+            "None"
+        ],
+        "primaryAbility": [
+            "Physical"
+        ],
+        "image": "Mashiro_Kuna.webp"
+    },
+    {
+        "id": "c3d4e5f6-a7b8-4901-ac1d-2e3f4a5b6c7d",
+        "name": "Kensei Muguruma",
+        "gender": "Male",
+        "race": [
+            "Shinigami",
+            "Hollow"
+        ],
+        "affiliation": "Visored",
+        "heightCm": 179,
+        "age": 500,
+        "eyeColor": "Blue",
+        "hairColor": "Silver",
+        "firstAppearanceChapter": "Arrancar",
+        "weapon": [
+            "Weaponized"
+        ],
+        "release": [
+            "Shikai",
+            "Bankai"
+        ],
+        "primaryAbility": [
+            "Physical"
+        ],
+        "image": "Kensei_Muguruma.webp"
+    },
+    {
+        "id": "d4e5f6a7-b8c9-4012-bd2e-3f4a5b6c7d8e",
+        "name": "Rojuro Otoribashi",
+        "gender": "Male",
+        "race": [
+            "Shinigami",
+            "Hollow"
+        ],
+        "affiliation": "Visored",
+        "heightCm": 187,
+        "age": 500,
+        "eyeColor": "Brown",
+        "hairColor": "Blonde",
+        "firstAppearanceChapter": "Arrancar",
+        "weapon": [
+            "Weaponized"
+        ],
+        "release": [
+            "Shikai",
+            "Bankai"
+        ],
+        "primaryAbility": [
+            "Element"
+        ],
+        "image": "Rojuro_Otoribashi.webp"
+    },
+    {
+        "id": "e5f6a7b8-c9d0-4123-ce3f-4a5b6c7d8e9f",
+        "name": "Hiyori Sarugaki",
+        "gender": "Female",
+        "race": [
+            "Shinigami",
+            "Hollow"
+        ],
+        "affiliation": "Visored",
+        "heightCm": 133,
+        "age": 300,
+        "eyeColor": "Brown",
+        "hairColor": "Blonde",
+        "firstAppearanceChapter": "Arrancar",
+        "weapon": [
+            "Weaponized"
+        ],
+        "release": [
+            "Shikai"
+        ],
+        "primaryAbility": [
+            "Physical"
+        ],
+        "image": "Hiyori_Sarugaki.webp"
+    },
+    {
+        "id": "f6a7b8c9-d0e1-4234-df4a-5b6c7d8e9f0a",
+        "name": "Hachigen Ushoda",
+        "gender": "Male",
+        "race": [
+            "Shinigami",
+            "Hollow"
+        ],
+        "affiliation": "Visored",
+        "heightCm": 257,
+        "age": 400,
+        "eyeColor": "Black",
+        "hairColor": "Black",
+        "firstAppearanceChapter": "Arrancar",
+        "weapon": [
+            "Energy"
+        ],
+        "release": [
+            "None"
+        ],
+        "primaryAbility": [
+            "Kido"
+        ],
+        "image": "Hachigen_Ushoda.webp"
+    },
+    {
+        "id": "1a2b3c4d-5e6f-7890-a1b2-c3d4e5f6a7b8",
+        "name": "Lisa Yadomaru",
+        "gender": "Female",
+        "race": [
+            "Shinigami",
+            "Hollow"
+        ],
+        "affiliation": "Visored",
+        "heightCm": 162,
+        "age": 300,
+        "eyeColor": "Brown",
+        "hairColor": "Black",
+        "firstAppearanceChapter": "Arrancar",
+        "weapon": [
+            "Weaponized"
+        ],
+        "release": [
+            "Shikai"
+        ],
+        "primaryAbility": [
+            "Physical"
+        ],
+        "image": "Lisa_Yadomaru.webp"
+    },
+    {
+        "id": "2b3c4d5e-6f7a-8901-b2c3-4d5e6f7a8901",
+        "name": "Kaname Tosen",
+        "gender": "Male",
+        "race": [
+            "Shinigami",
+            "Hollow"
+        ],
+        "affiliation": "Independent",
+        "heightCm": 176,
+        "age": 300,
+        "eyeColor": "Unknown",
+        "hairColor": "Blue",
+        "firstAppearanceChapter": "Soul Society",
+        "weapon": [
+            "Weaponized"
+        ],
+        "release": [
+            "Shikai",
+            "Bankai"
+        ],
+        "primaryAbility": [
+            "Physical",
+            "Special"
+        ],
+        "image": "Kaname_Tosen.webp"
+    },
+    {
+        "id": "a5d8f1e2-b3c4-4d5e-9f0a-1b2c3d4e5f6a",
+        "name": "Jidanbo Ikkanzaka",
+        "gender": "Male",
+        "race": [
+            "Soul"
+        ],
+        "affiliation": "Gotei 13",
+        "heightCm": 988,
+        "age": 500,
+        "eyeColor": "Black",
+        "hairColor": "Black",
+        "firstAppearanceChapter": "Soul Society",
+        "weapon": [
+            "Weaponized"
+        ],
+        "release": [
+            "None"
+        ],
+        "primaryAbility": [
+            "Physical"
+        ],
+        "image": "Jidanbo_Ikkanzaka.webp"
+    },
+    {
+        "id": "b6e9f2a3-c4d5-4e6f-0a1b-2c3d4e5f6a7b",
+        "name": "Isuzu Ise",
+        "gender": "Female",
+        "race": [
+            "Soul"
+        ],
+        "affiliation": "Gotei 13",
+        "heightCm": 164,
+        "age": 1000,
+        "eyeColor": "Black",
+        "hairColor": "Black",
+        "firstAppearanceChapter": "Thousand-Year Blood War",
+        "weapon": [
+            "None"
+        ],
+        "release": [
+            "None"
+        ],
+        "primaryAbility": [
+            "None"
+        ],
+        "image": "Isuzu_Ise.webp"
+    },
+    {
+        "id": "c7f0a3b4-d5e6-4f7a-1b2c-3d4e5f6a7b8c",
+        "name": "Hisana Kuchiki",
+        "gender": "Female",
+        "race": [
+            "Soul"
+        ],
+        "affiliation": "Independent",
+        "heightCm": 144,
+        "age": 200,
+        "eyeColor": "Black",
+        "hairColor": "Black",
+        "firstAppearanceChapter": "Soul Society",
+        "weapon": [
+            "None"
+        ],
+        "release": [
+            "None"
+        ],
+        "primaryAbility": [
+            "None"
+        ],
+        "image": "Hisana_Kuchiki.webp"
+    },
+    {
+        "id": "d8a1b4c5-e6f7-4a8b-2c3d-4e5f6a7b8c9d",
+        "name": "Ganju Shiba",
+        "gender": "Male",
+        "race": [
+            "Soul"
+        ],
+        "affiliation": "Independent",
+        "heightCm": 182,
+        "age": 100,
+        "eyeColor": "Black",
+        "hairColor": "Black",
+        "firstAppearanceChapter": "Soul Society",
+        "weapon": [
+            "Weaponized"
+        ],
+        "release": [
+            "None"
+        ],
+        "primaryAbility": [
+            "Physical"
+        ],
+        "image": "Ganju_Shiba.webp"
+    },
+    {
+        "id": "e9b2c5d6-f7a8-4b9c-3d4e-5f6a7b8c9d0e",
+        "name": "Kukaku Shiba",
+        "gender": "Female",
+        "race": [
+            "Soul"
+        ],
+        "affiliation": "Independent",
+        "heightCm": 168,
+        "age": 300,
+        "eyeColor": "Black",
+        "hairColor": "Black",
+        "firstAppearanceChapter": "Soul Society",
+        "weapon": [
+            "Weaponized"
+        ],
+        "release": [
+            "None"
+        ],
+        "primaryAbility": [
+            "Kido"
+        ],
+        "image": "Kukaku_Shiba.webp"
+    },
+    {
+        "id": "f0c3d6e7-a8b9-4c0d-4e5f-6a7b8c9d0e1f",
+        "name": "Yushiro Shihoin",
+        "gender": "Male",
+        "race": [
+            "Soul"
+        ],
+        "affiliation": "Independent",
+        "heightCm": 160,
+        "age": 100,
+        "eyeColor": "Gold",
+        "hairColor": "Blue",
+        "firstAppearanceChapter": "Thousand-Year Blood War",
+        "weapon": [
+            "Unarmed"
+        ],
+        "release": [
+            "Shunko"
+        ],
+        "primaryAbility": [
+            "Physical"
+        ],
+        "image": "Yushiro_Shihoin.webp"
+    },
+    {
+        "id": "33600e87-bb9d-498e-91ee-95888efcc86e",
+        "name": "Loly Aivirrne",
+        "gender": "Female",
+        "race": [
+            "Arrancar"
+        ],
+        "affiliation": "Arrancar Army",
+        "heightCm": 155,
+        "age": 100,
+        "eyeColor": "Black",
+        "hairColor": "Black",
+        "firstAppearanceChapter": "Arrancar",
+        "weapon": [
+            "Weaponized"
+        ],
+        "release": [
+            "Resurreccion"
+        ],
+        "primaryAbility": [
+            "Physical"
+        ],
+        "image": "Loly_Aivirrne.webp"
+    },
+    {
+        "id": "feb5604b-a87a-4c94-accf-447f241e9407",
+        "name": "Luppi Antenor",
+        "gender": "Male",
+        "race": [
+            "Arrancar"
+        ],
+        "affiliation": "Espada",
+        "heightCm": 161,
+        "age": 100,
+        "eyeColor": "Grey",
+        "hairColor": "Black",
+        "firstAppearanceChapter": "Arrancar",
+        "weapon": [
+            "Weaponized"
+        ],
+        "release": [
+            "Resurreccion"
+        ],
+        "primaryAbility": [
+            "Physical"
+        ],
+        "image": "Luppi_Antenor.webp"
+    },
+    {
+        "id": "1a173eeb-4583-43a1-93b7-25d43e1a7a6e",
+        "name": "Emilou Apacci",
+        "gender": "Female",
+        "race": [
+            "Arrancar"
+        ],
+        "affiliation": "Arrancar Army",
+        "heightCm": 156,
+        "age": 300,
+        "eyeColor": "Blue",
+        "hairColor": "Black",
+        "firstAppearanceChapter": "Arrancar",
+        "weapon": [
+            "Weaponized"
+        ],
+        "release": [
+            "Resurreccion"
+        ],
+        "primaryAbility": [
+            "Element"
+        ],
+        "image": "Emilou_Apacci.webp"
+    },
+    {
+        "id": "f5dd64aa-d837-4108-8cba-a163fc233273",
+        "name": "Aaroniero Arruruerie",
+        "gender": "Male",
+        "race": [
+            "Arrancar"
+        ],
+        "affiliation": "Espada",
+        "heightCm": 205,
+        "age": 300,
+        "eyeColor": "Unknown",
+        "hairColor": "Unknown",
+        "firstAppearanceChapter": "Arrancar",
+        "weapon": [
+            "Weaponized"
+        ],
+        "release": [
+            "Resurreccion"
+        ],
+        "primaryAbility": [
+            "Special"
+        ],
+        "image": "Aaroniero_Arruruerie.webp"
+    },
+    {
+        "id": "a73100a0-c62b-4bf7-9247-b1d72d9d259a",
+        "name": "Dondochakka Bilstin",
+        "gender": "Male",
+        "race": [
+            "Arrancar"
+        ],
+        "affiliation": "Arrancar Army",
+        "heightCm": 204,
+        "age": 300,
+        "eyeColor": "Gold",
+        "hairColor": "Unknown",
+        "firstAppearanceChapter": "Arrancar",
+        "weapon": [
+            "Weaponized"
+        ],
+        "release": [
+            "Resurreccion"
+        ],
+        "primaryAbility": [
+            "Support"
+        ],
+        "image": "Dondochakka_Bilstin.webp"
+    },
+    {
+        "id": "77a666c5-d845-44eb-9368-4483b0906789",
+        "name": "Findorr Calius",
+        "gender": "Male",
+        "race": [
+            "Arrancar"
+        ],
+        "affiliation": "Arrancar Army",
+        "heightCm": 180,
+        "age": 100,
+        "eyeColor": "Blue",
+        "hairColor": "Blonde",
+        "firstAppearanceChapter": "Arrancar",
+        "weapon": [
+            "Weaponized"
+        ],
+        "release": [
+            "Resurreccion"
+        ],
+        "primaryAbility": [
+            "Physical"
+        ],
+        "image": "Findorr_Calius.webp"
+    },
+    {
+        "id": "dcb055e0-a296-44e7-a02f-d0fa9f94d24d",
+        "name": "Rudbornn Chelute",
+        "gender": "Male",
+        "race": [
+            "Arrancar"
+        ],
+        "affiliation": "Arrancar Army",
+        "heightCm": 172,
+        "age": 100,
+        "eyeColor": "Black",
+        "hairColor": "Unknown",
+        "firstAppearanceChapter": "Arrancar",
+        "weapon": [
+            "Weaponized"
+        ],
+        "release": [
+            "Resurreccion"
+        ],
+        "primaryAbility": [
+            "Special"
+        ],
+        "image": "Rudbornn_Chelute.webp"
+    },
+    {
+        "id": "43a01629-ae26-4f31-9624-582add4a4d53",
+        "name": "Charlotte Chuhlhourne",
+        "gender": "Male",
+        "race": [
+            "Arrancar"
+        ],
+        "affiliation": "Independent",
+        "heightCm": 192,
+        "age": 100,
+        "eyeColor": "Green",
+        "hairColor": "Blue",
+        "firstAppearanceChapter": "Arrancar",
+        "weapon": [
+            "Weaponized"
+        ],
+        "release": [
+            "Resurreccion"
+        ],
+        "primaryAbility": [
+            "Physical"
+        ],
+        "image": "Charlotte_Chuhlhourne.webp"
+    },
+    {
+        "id": "7c8d9e0f-1a2b-4c3d-8e4f-5a6b7c8d9e0f",
+        "name": "Ulquiorra Cifer",
+        "gender": "Male",
+        "race": [
+            "Arrancar"
+        ],
+        "affiliation": "Espada",
+        "heightCm": 169,
+        "age": 200,
+        "eyeColor": "Green",
+        "hairColor": "Black",
+        "firstAppearanceChapter": "Arrancar",
+        "weapon": [
+            "Weaponized",
+            "Energy"
+        ],
+        "release": [
+            "Resurreccion"
+        ],
+        "primaryAbility": [
+            "Physical",
+            "Special"
+        ],
+        "image": "Ulquiorra_Cifer.webp"
+    },
+    {
+        "id": "8d9e0f1a-2b3c-4d4e-9f5a-6b7c8d9e0f1a",
+        "name": "Dordoni Alessandro Del Socaccio",
+        "gender": "Male",
+        "race": [
+            "Arrancar"
+        ],
+        "affiliation": "Arrancar Army",
+        "heightCm": 190,
+        "age": 300,
+        "eyeColor": "Black",
+        "hairColor": "Black",
+        "firstAppearanceChapter": "Hueco Mundo",
+        "weapon": [
+            "Weaponized"
+        ],
+        "release": [
+            "Resurreccion"
+        ],
+        "primaryAbility": [
+            "Element"
+        ],
+        "image": "Dordoni_Alessandro_Del_Socaccio.webp"
+    },
+    {
+        "id": "9e0f1a2b-3c4d-5e5f-0a6b-7c8d9e0f1a2b",
+        "name": "Asguiaro Ebern",
+        "gender": "Male",
+        "race": [
+            "Quincy",
+            "Arrancar"
+        ],
+        "affiliation": "Wandenreich",
+        "heightCm": 181,
+        "age": 100,
+        "eyeColor": "Brown",
+        "hairColor": "Red",
+        "firstAppearanceChapter": "Thousand-Year Blood War",
+        "weapon": [
+            "Weaponized"
+        ],
+        "release": [
+            "None"
+        ],
+        "primaryAbility": [
+            "Physical"
+        ],
+        "image": "Asguiaro_Ebern.webp"
+    },
+    {
+        "id": "0f1a2b3c-4d5e-6f6a-1b7c-8d9e0f1a2b3c",
+        "name": "Luders Friegen",
+        "gender": "Male",
+        "race": [
+            "Quincy"
+        ],
+        "affiliation": "Wandenreich",
+        "heightCm": 184,
+        "age": 100,
+        "eyeColor": "Brown",
+        "hairColor": "Black and White",
+        "firstAppearanceChapter": "Thousand-Year Blood War",
+        "weapon": [
+            "Weaponized"
+        ],
+        "release": [
+            "None"
+        ],
+        "primaryAbility": [
+            "Physical"
+        ],
+        "image": "Luders_Friegen.webp"
+    },
+    {
+        "id": "1a2b3c4d-5e6f-7a7b-2c8d-9e0f1a2b3c4d",
+        "name": "Nnoitra Gilga",
+        "gender": "Male",
+        "race": [
+            "Arrancar"
+        ],
+        "affiliation": "Espada",
+        "heightCm": 215,
+        "age": 500,
+        "eyeColor": "Black",
+        "hairColor": "Black",
+        "firstAppearanceChapter": "Arrancar",
+        "weapon": [
+            "Weaponized"
+        ],
+        "release": [
+            "Resurreccion"
+        ],
+        "primaryAbility": [
+            "Physical"
+        ],
+        "image": "Nnoitra_Gilga.webp"
+    },
+    {
+        "id": "2b3c4d5e-6f7a-8b8c-3d9e-0f1a2b3c4d5e",
+        "name": "Lilynette Gingerbuck",
+        "gender": "Female",
+        "race": [
+            "Arrancar"
+        ],
+        "affiliation": "Espada",
+        "heightCm": 142,
+        "age": 100,
+        "eyeColor": "Blue",
+        "hairColor": "Blonde",
+        "firstAppearanceChapter": "Arrancar",
+        "weapon": [
+            "Weaponized",
+            "Energy"
+        ],
+        "release": [
+            "None"
+        ],
+        "primaryAbility": [
+            "Physical"
+        ],
+        "image": "Lilynette_Gingerbuck.webp"
+    },
+    {
+        "id": "3c4d5e6f-7a8b-9c9d-4e0f-1a2b3c4d5e6f",
+        "name": "Szayelaporro Granz",
+        "gender": "Male",
+        "race": [
+            "Arrancar"
+        ],
+        "affiliation": "Espada",
+        "heightCm": 185,
+        "age": 500,
+        "eyeColor": "Gold",
+        "hairColor": "Pink",
+        "firstAppearanceChapter": "Arrancar",
+        "weapon": [
+            "None"
+        ],
+        "release": [
+            "Resurreccion"
+        ],
+        "primaryAbility": [
+            "Scientific",
+            "Special"
+        ],
+        "image": "Szayelaporro_Granz.webp"
+    },
+    {
+        "id": "4d5e6f7a-8b9c-0d0e-5f1a-2b3c4d5e6f7a",
+        "name": "Yylfordt Granz",
+        "gender": "Male",
+        "race": [
+            "Arrancar"
+        ],
+        "affiliation": "Arrancar Army",
+        "heightCm": 185,
+        "age": 200,
+        "eyeColor": "Brown",
+        "hairColor": "Pink",
+        "firstAppearanceChapter": "Arrancar",
+        "weapon": [
+            "Weaponized"
+        ],
+        "release": [
+            "Resurreccion"
+        ],
+        "primaryAbility": [
+            "Physical"
+        ],
+        "image": "Yylfordt_Granz.webp"
+    },
+    {
+        "id": "e9a2b7c4-5d6f-4a8b-9e0c-1d2f3a4b5c6d",
+        "name": "Nakeem Grindina",
+        "gender": "Male",
+        "race": [
+            "Arrancar"
+        ],
+        "affiliation": "Arrancar Army",
+        "heightCm": 180,
+        "age": 100,
+        "eyeColor": "Black",
+        "hairColor": "Black",
+        "firstAppearanceChapter": "Arrancar",
+        "weapon": [
+            "Weaponized"
+        ],
+        "release": [
+            "Resurreccion"
+        ],
+        "primaryAbility": [
+            "Physical"
+        ],
+        "image": "Nakeem_Grindina.webp"
+    },
+    {
+        "id": "f0b3c8d5-6e7f-4b9c-0f1d-2e3f4a5b6c7d",
+        "name": "Pesche Guatiche",
+        "gender": "Male",
+        "race": [
+            "Arrancar"
+        ],
+        "affiliation": "Arrancar Army",
+        "heightCm": 175,
+        "age": 500,
+        "eyeColor": "Gold",
+        "hairColor": "Unknown",
+        "firstAppearanceChapter": "Arrancar",
+        "weapon": [
+            "Weaponized"
+        ],
+        "release": [
+            "Resurreccion"
+        ],
+        "primaryAbility": [
+            "Special"
+        ],
+        "image": "Pesche_Guatiche.webp"
+    },
+    {
+        "id": "a1c4d9e6-7f8a-4c0d-1f2e-3f4a5b6c7d8e",
+        "name": "Tier Harribel",
+        "gender": "Female",
+        "race": [
+            "Arrancar"
+        ],
+        "affiliation": "Espada",
+        "heightCm": 175,
+        "age": 300,
+        "eyeColor": "Green",
+        "hairColor": "Blonde",
+        "firstAppearanceChapter": "Arrancar",
+        "weapon": [
+            "Weaponized"
+        ],
+        "release": [
+            "Resurreccion"
+        ],
+        "primaryAbility": [
+            "Element"
+        ],
+        "image": "Tier_Harribel.webp"
+    },
+    {
+        "id": "b2d5e0f7-8a9b-4d1e-2f3a-4f5b6c7d8e9f",
+        "name": "Grimmjow Jaegerjaquez",
+        "gender": "Male",
+        "race": [
+            "Arrancar"
+        ],
+        "affiliation": "Espada",
+        "heightCm": 186,
+        "age": 300,
+        "eyeColor": "Blue",
+        "hairColor": "Blue",
+        "firstAppearanceChapter": "Arrancar",
+        "weapon": [
+            "Weaponized"
+        ],
+        "release": [
+            "Resurreccion"
+        ],
+        "primaryAbility": [
+            "Physical"
+        ],
+        "image": "Grimmjow_Jaegerjaquez.webp"
+    },
+    {
+        "id": "c3e6f1a8-9b0c-4e2f-3a4b-5f6c7d8e9f0a",
+        "name": "Shawlong Koufang",
+        "gender": "Male",
+        "race": [
+            "Arrancar"
+        ],
+        "affiliation": "Arrancar Army",
+        "heightCm": 190,
+        "age": 300,
+        "eyeColor": "Black",
+        "hairColor": "Black",
+        "firstAppearanceChapter": "Arrancar",
+        "weapon": [
+            "Weaponized"
+        ],
+        "release": [
+            "Resurreccion"
+        ],
+        "primaryAbility": [
+            "Physical"
+        ],
+        "image": "Shawlong_Koufang.webp"
+    },
+    {
+        "id": "d4f7a2b9-0c1d-4f3a-4b5c-6f7d8e9f0a1b",
+        "name": "Kukkapuro",
+        "gender": "Male",
+        "race": [
+            "Arrancar"
+        ],
+        "affiliation": "Arrancar Army",
+        "heightCm": 34,
+        "age": 100,
+        "eyeColor": "Unknown",
+        "hairColor": "Brown",
+        "firstAppearanceChapter": "Arrancar",
+        "weapon": [
+            "None"
+        ],
+        "release": [
+            "None"
+        ],
+        "primaryAbility": [
+            "None"
+        ],
+        "image": "Kukkapuro.webp"
+    },
+    {
+        "id": "e5a8b3c0-1d2e-4a4b-5c6d-7f8e9f0a1b2c",
+        "name": "Tesra Lindocruz",
+        "gender": "Male",
+        "race": [
+            "Arrancar"
+        ],
+        "affiliation": "Arrancar Army",
+        "heightCm": 178,
+        "age": 100,
+        "eyeColor": "Brown",
+        "hairColor": "Blonde",
+        "firstAppearanceChapter": "Arrancar",
+        "weapon": [
+            "Weaponized"
+        ],
+        "release": [
+            "Resurreccion"
+        ],
+        "primaryAbility": [
+            "Physical"
+        ],
+        "image": "Tesra_Lindocruz.webp"
+    },
+    {
+        "id": "f6b9c4d1-2e3f-4b5c-6d7e-8f9a0b1c2d3e",
+        "name": "Edrad Liones",
+        "gender": "Male",
+        "race": [
+            "Arrancar"
+        ],
+        "affiliation": "Arrancar Army",
+        "heightCm": 200,
+        "age": 200,
+        "eyeColor": "Black",
+        "hairColor": "Black",
+        "firstAppearanceChapter": "Arrancar",
+        "weapon": [
+            "Weaponized"
+        ],
+        "release": [
+            "Resurreccion"
+        ],
+        "primaryAbility": [
+            "Element"
+        ],
+        "image": "Edrad_Liones.webp"
+    },
+    {
+        "id": "1b2c3d4e-5f6a-4b7c-8d9e-0f1a2b3c4d5e",
+        "name": "Yammy Llargo",
+        "gender": "Male",
+        "race": [
+            "Arrancar"
+        ],
+        "affiliation": "Espada",
+        "heightCm": 230,
+        "age": 300,
+        "eyeColor": "Black",
+        "hairColor": "Bald",
+        "firstAppearanceChapter": "Arrancar",
+        "weapon": [
+            "Weaponized"
+        ],
+        "release": [
+            "Resurreccion"
+        ],
+        "primaryAbility": [
+            "Physical"
+        ],
+        "image": "Yammy_Llargo.webp"
+    },
+    {
+        "id": "2c3d4e5f-6a7b-4c8d-9e0f-1a2b3c4d5e6f",
+        "name": "Baraggan Louisenbairn",
+        "gender": "Male",
+        "race": [
+            "Arrancar"
+        ],
+        "affiliation": "Espada",
+        "heightCm": 166,
+        "age": 1000,
+        "eyeColor": "Brown",
+        "hairColor": "Silver",
+        "firstAppearanceChapter": "Arrancar",
+        "weapon": [
+            "Weaponized"
+        ],
+        "release": [
+            "Resurreccion"
+        ],
+        "primaryAbility": [
+            "Special"
+        ],
+        "image": "Baraggan_Louisenbairn.webp"
+    },
+    {
+        "id": "3d4e5f6a-7b8c-4d9e-0f1a-2b3c4d5e6f7a",
+        "name": "Lumina and Verona",
+        "gender": "Male",
+        "race": [
+            "Arrancar"
+        ],
+        "affiliation": "Arrancar Army",
+        "heightCm": -1,
+        "age": 100,
+        "eyeColor": "Black",
+        "hairColor": "Black",
+        "firstAppearanceChapter": "Arrancar",
+        "weapon": [
+            "None"
+        ],
+        "release": [
+            "None"
+        ],
+        "primaryAbility": [
+            "Support"
+        ],
+        "image": "Lumina_and_Verona.webp"
+    },
+    {
+        "id": "4e5f6a7b-8c9d-4e0f-1a2b-3c4d5e6f7a8b",
+        "name": "Gantenbainne Mosqueda",
+        "gender": "Male",
+        "race": [
+            "Arrancar"
+        ],
+        "affiliation": "Arrancar Army",
+        "heightCm": 201,
+        "age": -1,
+        "eyeColor": "Brown",
+        "hairColor": "Orange",
+        "firstAppearanceChapter": "Hueco Mundo",
+        "weapon": [
+            "Weaponized"
+        ],
+        "release": [
+            "Resurreccion"
+        ],
+        "primaryAbility": [
+            "Physical"
+        ],
+        "image": "Gantenbainne_Mosqueda.webp"
+    },
+    {
+        "id": "5f6a7b8c-9d0e-4f1a-2b3c-4d5e6f7a8b9c",
+        "name": "Menoly Mallia",
+        "gender": "Female",
+        "race": [
+            "Arrancar"
+        ],
+        "affiliation": "Arrancar Army",
+        "heightCm": 160,
+        "age": 100,
+        "eyeColor": "Green",
+        "hairColor": "Blonde",
+        "firstAppearanceChapter": "Arrancar",
+        "weapon": [
+            "Weaponized"
+        ],
+        "release": [
+            "None"
+        ],
+        "primaryAbility": [
+            "Physical"
+        ],
+        "image": "Menoly_Mallia.webp"
+    },
+    {
+        "id": "6a7b8c9d-0e1f-4a2b-3c4d-5e6f7a8b9c0d",
+        "name": "Wonderweiss Margela",
+        "gender": "Male",
+        "race": [
+            "Arrancar"
+        ],
+        "affiliation": "Arrancar Army",
+        "heightCm": 155,
+        "age": 100,
+        "eyeColor": "Blue",
+        "hairColor": "Blonde",
+        "firstAppearanceChapter": "Arrancar",
+        "weapon": [
+            "Weaponized"
+        ],
+        "release": [
+            "Resurreccion"
+        ],
+        "primaryAbility": [
+            "Special"
+        ],
+        "image": "Wonderweiss_Margela.webp"
+    },
+    {
+        "id": "7b8c9d0e-1f2a-4b3c-4d5e-6f7a8b9c0d1e",
+        "name": "Medazeppi",
+        "gender": "Male",
+        "race": [
+            "Arrancar"
+        ],
+        "affiliation": "Arrancar Army",
+        "heightCm": -1,
+        "age": 100,
+        "eyeColor": "Gold",
+        "hairColor": "Black",
+        "firstAppearanceChapter": "Arrancar",
+        "weapon": [
+            "None"
+        ],
+        "release": [
+            "None"
+        ],
+        "primaryAbility": [
+            "None"
+        ],
+        "image": "Medazeppi.webp"
+    },
+    {
+        "id": "8c9d0e1f-2a3b-4c4d-5e6f-7a8b9c0d1e2f",
+        "name": "Nelliel Tu Odelschwanck",
+        "gender": "Female",
+        "race": [
+            "Arrancar"
+        ],
+        "affiliation": "Espada",
+        "heightCm": 176,
+        "age": 500,
+        "eyeColor": "Green",
+        "hairColor": "Green",
+        "firstAppearanceChapter": "Arrancar",
+        "weapon": [
+            "Weaponized"
+        ],
+        "release": [
+            "Resurreccion"
+        ],
+        "primaryAbility": [
+            "Physical"
+        ],
+        "image": "Nelliel_Tu_Odelschwanck.webp"
+    },
+    {
+        "id": "b2c3d4e5-f6a7-4b8c-9d0e-1f2a3b4c5d6e",
+        "name": "Choe Neng Poww",
+        "gender": "Male",
+        "race": [
+            "Arrancar"
+        ],
+        "affiliation": "Arrancar Army",
+        "heightCm": 391,
+        "age": 100,
+        "eyeColor": "Black",
+        "hairColor": "Black",
+        "firstAppearanceChapter": "Arrancar",
+        "weapon": [
+            "Weaponized"
+        ],
+        "release": [
+            "Resurreccion"
+        ],
+        "primaryAbility": [
+            "Physical"
+        ],
+        "image": "Choe_Neng_Poww.webp"
+    },
+    {
+        "id": "c3d4e5f6-a7b8-4c9d-0e1f-2a3b4c5d6e7f",
+        "name": "Nirgge Parduoc",
+        "gender": "Male",
+        "race": [
+            "Arrancar"
+        ],
+        "affiliation": "Arrancar Army",
+        "heightCm": 212,
+        "age": 100,
+        "eyeColor": "Black",
+        "hairColor": "Blonde",
+        "firstAppearanceChapter": "Arrancar",
+        "weapon": [
+            "Weaponized"
+        ],
+        "release": [
+            "Resurreccion"
+        ],
+        "primaryAbility": [
+            "Physical"
+        ],
+        "image": "Nirgge_Parduoc.webp"
+    },
+    {
+        "id": "d4e5f6a7-b8c9-4d0e-1f2a-3b4c5d6e7f8a",
+        "name": "Abirama Redder",
+        "gender": "Male",
+        "race": [
+            "Arrancar"
+        ],
+        "affiliation": "Espada",
+        "heightCm": 183,
+        "age": 100,
+        "eyeColor": "Gold",
+        "hairColor": "Blue",
+        "firstAppearanceChapter": "Arrancar",
+        "weapon": [
+            "Weaponized"
+        ],
+        "release": [
+            "Resurreccion"
+        ],
+        "primaryAbility": [
+            "Physical"
+        ],
+        "image": "Abirama_Redder.webp"
+    },
+    {
+        "id": "e5f6a7b8-c9d0-4e1f-2a3b-4c5d6e7f8a9b",
+        "name": "Di Roy Rinker",
+        "gender": "Male",
+        "race": [
+            "Arrancar"
+        ],
+        "affiliation": "Arrancar Army",
+        "heightCm": 168,
+        "age": 100,
+        "eyeColor": "Black",
+        "hairColor": "Silver",
+        "firstAppearanceChapter": "Arrancar",
+        "weapon": [
+            "Weaponized"
+        ],
+        "release": [
+            "Resurreccion"
+        ],
+        "primaryAbility": [
+            "Physical"
+        ],
+        "image": "Di_Roy_Rinker.webp"
+    },
+    {
+        "id": "f6a7b8c9-d0e1-4f2a-3b4c-5d6e7f8a9b0c",
+        "name": "Franceska Mila Rose",
+        "gender": "Female",
+        "race": [
+            "Arrancar"
+        ],
+        "affiliation": "Arrancar Army",
+        "heightCm": 177,
+        "age": 300,
+        "eyeColor": "Black",
+        "hairColor": "Black",
+        "firstAppearanceChapter": "Arrancar",
+        "weapon": [
+            "Weaponized"
+        ],
+        "release": [
+            "Resurreccion"
+        ],
+        "primaryAbility": [
+            "Physical"
+        ],
+        "image": "Franceska_Mila_Rose.webp"
+    },
+    {
+        "id": "0a1b2c3d-4e5f-4a6b-7c8d-9e0f1a2b3c4d",
+        "name": "Zommari Rureaux",
+        "gender": "Male",
+        "race": [
+            "Arrancar"
+        ],
+        "affiliation": "Espada",
+        "heightCm": 193,
+        "age": -1,
+        "eyeColor": "Gold",
+        "hairColor": "Bald",
+        "firstAppearanceChapter": "Arrancar",
+        "weapon": [
+            "Weaponized"
+        ],
+        "release": [
+            "Resurreccion"
+        ],
+        "primaryAbility": [
+            "Special"
+        ],
+        "image": "Zommari_Rureaux.webp"
+    },
+    {
+        "id": "22792a2c-766d-43f1-8472-aba17580da4b",
+        "name": "Cirucci Sanderwicci",
+        "gender": "Female",
+        "race": [
+            "Arrancar"
+        ],
+        "affiliation": "Arrancar Army",
+        "heightCm": 158,
+        "age": 100,
+        "eyeColor": "Black",
+        "hairColor": "Blue",
+        "firstAppearanceChapter": "Arrancar",
+        "weapon": [
+            "Weaponized"
+        ],
+        "release": [
+            "Resurreccion"
+        ],
+        "primaryAbility": [
+            "Physical"
+        ],
+        "image": "Cirucci_Sanderwicci.webp"
+    },
+    {
+        "id": "c7a8b9d0-1e2f-4a3b-8c4d-5e6f7a8b9c0d",
+        "name": "Coyote Starrk",
+        "gender": "Male",
+        "race": [
+            "Arrancar"
+        ],
+        "affiliation": "Espada",
+        "heightCm": 187,
+        "age": 200,
+        "eyeColor": "Grey",
+        "hairColor": "Brown",
+        "firstAppearanceChapter": "Arrancar",
+        "weapon": [
+            "Weaponized",
+            "Energy"
+        ],
+        "release": [
+            "Resurreccion"
+        ],
+        "primaryAbility": [
+            "Physical"
+        ],
+        "image": "Coyote_Starrk.webp"
+    },
+    {
+        "id": "d8b9c0e1-2f3a-4b4c-9d5e-6f7a8b9c0d1e",
+        "name": "Cyan Sung Sun",
+        "gender": "Female",
+        "race": [
+            "Arrancar"
+        ],
+        "affiliation": "Arrancar Army",
+        "heightCm": 154,
+        "age": 300,
+        "eyeColor": "Black",
+        "hairColor": "Black",
+        "firstAppearanceChapter": "Arrancar",
+        "weapon": [
+            "Weaponized"
+        ],
+        "release": [
+            "Resurreccion"
+        ],
+        "primaryAbility": [
+            "Element"
+        ],
+        "image": "Cyan_Sung_Sun.webp"
+    },
+    {
+        "id": "e9c0d1f2-3a4b-4c5d-0e6f-7a8b9c0d1e2f",
+        "name": "Ggio Vega",
+        "gender": "Male",
+        "race": [
+            "Arrancar"
+        ],
+        "affiliation": "Arrancar Army",
+        "heightCm": 163,
+        "age": 100,
+        "eyeColor": "Gold",
+        "hairColor": "Black",
+        "firstAppearanceChapter": "Hueco Mundo",
+        "weapon": [
+            "Weaponized"
+        ],
+        "release": [
+            "Resurreccion"
+        ],
+        "primaryAbility": [
+            "Physical"
+        ],
+        "image": "Ggio_Vega.webp"
+    },
+    {
+        "id": "f0d1e2a3-4b5c-4d6e-1f7a-8b9c0d1e2f3a",
+        "name": "Aisslinger Wernarr",
+        "gender": "Male",
+        "race": [
+            "Arrancar"
+        ],
+        "affiliation": "Arrancar Army",
+        "heightCm": 173,
+        "age": 200,
+        "eyeColor": "Silver",
+        "hairColor": "Silver",
+        "firstAppearanceChapter": "Agent of the Shinigami",
+        "weapon": [
+            "Weaponized"
+        ],
+        "release": [
+            "Resurreccion"
+        ],
+        "primaryAbility": [
+            "Physical"
+        ],
+        "image": "Aisslinger_Wernarr.webp"
+    },
+    {
+        "id": "a1e2f3b4-5c6d-4e7f-2a8b-9c0d1e2f3a4b",
+        "name": "Demoura Zodd",
+        "gender": "Male",
+        "race": [
+            "Arrancar"
+        ],
+        "affiliation": "Arrancar Army",
+        "heightCm": 350,
+        "age": 100,
+        "eyeColor": "Red",
+        "hairColor": "Black",
+        "firstAppearanceChapter": "Arrancar",
+        "weapon": [
+            "None"
+        ],
+        "release": [
+            "None"
+        ],
+        "primaryAbility": [
+            "Physical"
+        ],
+        "image": "Demoura_Zodd.webp"
+    },
+    {
+        "id": "1a2b3c4d-5e6f-4g7h-8i9j-0k1l2m3n4o5p",
+        "name": "Ayon",
+        "gender": "Male",
+        "race": [
+            "Hollow"
+        ],
+        "affiliation": "Independent",
+        "heightCm": 400,
+        "age": 500,
+        "eyeColor": "Gold",
+        "hairColor": "Brown",
+        "firstAppearanceChapter": "Arrancar",
+        "weapon": [
+            "Unarmed"
+        ],
+        "release": [
+            "None"
+        ],
+        "primaryAbility": [
+            "Physical"
+        ],
+        "image": "Ayon.webp"
+    },
+    {
+        "id": "2b3c4d5e-6f7g-4h8i-9j0k-1l2m3n4o5p6q",
+        "name": "Bawabawa",
+        "gender": "Male",
+        "race": [
+            "Hollow"
+        ],
+        "affiliation": "Independent",
+        "heightCm": -1,
+        "age": 100,
+        "eyeColor": "Unknown",
+        "hairColor": "Unknown",
+        "firstAppearanceChapter": "Arrancar",
+        "weapon": [
+            "None"
+        ],
+        "release": [
+            "None"
+        ],
+        "primaryAbility": [
+            "Physical"
+        ],
+        "image": "Bawabawa.webp"
+    },
+    {
+        "id": "3c4d5e6f-7g8h-4i9j-0k1l-2m3n4o5p6q7r",
+        "name": "Fishbone D",
+        "gender": "Male",
+        "race": [
+            "Hollow"
+        ],
+        "affiliation": "Independent",
+        "heightCm": -1,
+        "age": 100,
+        "eyeColor": "Gold",
+        "hairColor": "Unknown",
+        "firstAppearanceChapter": "Agent of the Shinigami",
+        "weapon": [
+            "None"
+        ],
+        "release": [
+            "None"
+        ],
+        "primaryAbility": [
+            "Physical"
+        ],
+        "image": "Fishbone_D.webp"
+    },
+    {
+        "id": "4d5e6f7g-8h9i-4j0k-1l2m-3n4o5p6q7r8s",
+        "name": "Grand Fisher",
+        "gender": "Male",
+        "race": [
+            "Arrancar"
+        ],
+        "affiliation": "Arrancar Army",
+        "heightCm": 342,
+        "age": 100,
+        "eyeColor": "Brown",
+        "hairColor": "Brown",
+        "firstAppearanceChapter": "Agent of the Shinigami",
+        "weapon": [
+            "Weaponized"
+        ],
+        "release": [
+            "None"
+        ],
+        "primaryAbility": [
+            "Special"
+        ],
+        "image": "Grand_Fisher.webp"
+    },
+    {
+        "id": "5e6f7g8h-9i0j-4k1l-2m3n-4o5p6q7r8s9t",
+        "name": "Hooleer",
+        "gender": "Male",
+        "race": [
+            "Hollow"
+        ],
+        "affiliation": "Arrancar Army",
+        "heightCm": -1,
+        "age": 1000,
+        "eyeColor": "Gold",
+        "hairColor": "Unknown",
+        "firstAppearanceChapter": "Arrancar",
+        "weapon": [
+            "None"
+        ],
+        "release": [
+            "None"
+        ],
+        "primaryAbility": [
+            "Support"
+        ],
+        "image": "Hooleer.webp"
+    },
+    {
+        "id": "6f7g8h9i-0j1k-4l2m-3n4o-5p6q7r8s9t0u",
+        "name": "Runuganga",
+        "gender": "Unknown",
+        "race": [
+            "Hollow"
+        ],
+        "affiliation": "Arrancar Army",
+        "heightCm": -1,
+        "age": 500,
+        "eyeColor": "Unknown",
+        "hairColor": "Unknown",
+        "firstAppearanceChapter": "Hueco Mundo",
+        "weapon": [
+            "Unarmed"
+        ],
+        "release": [
+            "None"
+        ],
+        "primaryAbility": [
+            "Element",
+            "Physical"
+        ],
+        "image": "Runuganga.webp"
+    },
+    {
+        "id": "7g8h9i0j-1k2l-4m3n-4o5p-6q7r8s9t0u1v",
+        "name": "White",
+        "gender": "Male",
+        "race": [
+            "Hollow"
+        ],
+        "affiliation": "Arrancar Army",
+        "heightCm": -1,
+        "age": 100,
+        "eyeColor": "Unknown",
+        "hairColor": "Unknown",
+        "firstAppearanceChapter": "Thousand-Year Blood War",
+        "weapon": [
+            "Weaponized"
+        ],
+        "release": [
+            "None"
+        ],
+        "primaryAbility": [
+            "Physical"
+        ],
+        "image": "White.webp"
+    },
+    {
+        "id": "8h9i0j1k-2l3m-4n4o-5p6q-7r8s9t0u1v2w",
+        "name": "Shrieker",
+        "gender": "Male",
+        "race": [
+            "Hollow"
+        ],
+        "affiliation": "Independent",
+        "heightCm": -1,
+        "age": 100,
+        "eyeColor": "Gold",
+        "hairColor": "Unknown",
+        "firstAppearanceChapter": "Agent of the Shinigami",
+        "weapon": [
+            "Weaponized"
+        ],
+        "release": [
+            "None"
+        ],
+        "primaryAbility": [
+            "Physical"
+        ],
+        "image": "Shrieker.webp"
+    },
+    {
+        "id": "1e8a9b2c-3d4e-4f5a-6b7c-8d9e0f1a2b3c",
+        "name": "Robert Accutrone",
+        "gender": "Male",
+        "race": [
+            "Quincy"
+        ],
+        "affiliation": "Sternritter",
+        "heightCm": 176,
+        "age": 500,
+        "eyeColor": "Brown",
+        "hairColor": "Blonde",
+        "firstAppearanceChapter": "Thousand-Year Blood War",
+        "weapon": [
+            "Weaponized"
+        ],
+        "release": [
+            "Vollständig"
+        ],
+        "primaryAbility": [
+            "Physical"
+        ],
+        "image": "Robert_Accutrone.webp"
+    },
+    {
+        "id": "2f9b0c3d-4e5f-5g6a-7b8c-9d0e1f2a3b4c",
+        "name": "Lille Barro",
+        "gender": "Male",
+        "race": [
+            "Quincy"
+        ],
+        "affiliation": "Sternritter",
+        "heightCm": 182,
+        "age": 1000,
+        "eyeColor": "Black",
+        "hairColor": "Brown",
+        "firstAppearanceChapter": "Thousand-Year Blood War",
+        "weapon": [
+            "Weaponized"
+        ],
+        "release": [
+            "Vollständig"
+        ],
+        "primaryAbility": [
+            "Physical",
+            "Special"
+        ],
+        "image": "Lille_Barro.webp"
+    },
+    {
+        "id": "3g0c1d4e-5f6g-6h7b-8c9d-0e1f2a3b4c5d",
+        "name": "Bambietta Basterbine",
+        "gender": "Female",
+        "race": [
+            "Quincy"
+        ],
+        "affiliation": "Sternritter",
+        "heightCm": 156,
+        "age": 100,
+        "eyeColor": "Blue",
+        "hairColor": "Black",
+        "firstAppearanceChapter": "Thousand-Year Blood War",
+        "weapon": [
+            "Weaponized"
+        ],
+        "release": [
+            "Vollständig"
+        ],
+        "primaryAbility": [
+            "Physical",
+            "Special"
+        ],
+        "image": "Bambietta_Basterbine.webp"
+    },
+    {
+        "id": "4h1d2e5f-6g7h-7i8c-9d0e-1f2a3b4c5d6e",
+        "name": "Bazz B",
+        "gender": "Male",
+        "race": [
+            "Quincy"
+        ],
+        "affiliation": "Sternritter",
+        "heightCm": 179,
+        "age": 1000,
+        "eyeColor": "Brown",
+        "hairColor": "Red",
+        "firstAppearanceChapter": "Thousand-Year Blood War",
+        "weapon": [
+            "Weaponized"
+        ],
+        "release": [
+            "Vollständig"
+        ],
+        "primaryAbility": [
+            "Physical",
+            "Element"
+        ],
+        "image": "Bazz_B.webp"
+    },
+    {
+        "id": "5i2e3f6g-7h8i-8j9d-0e1f-2a3b4c5d6e7f",
+        "name": "Driscoll Berci",
+        "gender": "Male",
+        "race": [
+            "Quincy"
+        ],
+        "affiliation": "Sternritter",
+        "heightCm": 235,
+        "age": 100,
+        "eyeColor": "Unknown",
+        "hairColor": "Black",
+        "firstAppearanceChapter": "Thousand-Year Blood War",
+        "weapon": [
+            "Weaponized"
+        ],
+        "release": [
+            "Vollständig"
+        ],
+        "primaryAbility": [
+            "Physical",
+            "Special"
+        ],
+        "image": "Driscoll_Berci.webp"
+    },
+    {
+        "id": "6j3f4g7h-8i9j-9k0e-1f2a-3b4c5d6e7f8g",
+        "name": "BG9",
+        "gender": "Male",
+        "race": [
+            "Quincy"
+        ],
+        "affiliation": "Sternritter",
+        "heightCm": 190,
+        "age": 100,
+        "eyeColor": "Unknown",
+        "hairColor": "Unknown",
+        "firstAppearanceChapter": "Thousand-Year Blood War",
+        "weapon": [
+            "Weaponized"
+        ],
+        "release": [
+            "Vollständig"
+        ],
+        "primaryAbility": [
+            "Physical"
+        ],
+        "image": "BG9.webp"
+    },
+    {
+        "id": "7k4g5h8i-9j0k-0l1f-2a3b-4c5d6e7f8g9h",
+        "name": "Candice Catnipp",
+        "gender": "Female",
+        "race": [
+            "Quincy"
+        ],
+        "affiliation": "Sternritter",
+        "heightCm": 166,
+        "age": 100,
+        "eyeColor": "Green",
+        "hairColor": "Green",
+        "firstAppearanceChapter": "Thousand-Year Blood War",
+        "weapon": [
+            "Weaponized"
+        ],
+        "release": [
+            "Vollständig"
+        ],
+        "primaryAbility": [
+            "Physical",
+            "Element"
+        ],
+        "image": "Candice_Catnipp.webp"
+    },
+    {
+        "id": "8l5h6i9j-0k1l-1m2g-3b4c-5d6e7f8g9h0i",
+        "name": "Nikita Deslock",
+        "gender": "Male",
+        "race": [
+            "Quincy"
+        ],
+        "affiliation": "Wandenreich",
+        "heightCm": -1,
+        "age": 100,
+        "eyeColor": "Black",
+        "hairColor": "Blonde",
+        "firstAppearanceChapter": "Thousand-Year Blood War",
+        "weapon": [
+            "Weaponized"
+        ],
+        "release": [
+            "None"
+        ],
+        "primaryAbility": [
+            "Physical"
+        ],
+        "image": "Nikita_Deslock.webp"
+    },
+    {
+        "id": "9m6i7j0k-1l2m-2n3h-4c5d-6e7f8g9h0i1j",
+        "name": "Shaz Domino",
+        "gender": "Male",
+        "race": [
+            "Quincy"
+        ],
+        "affiliation": "Sternritter",
+        "heightCm": -1,
+        "age": -1,
+        "eyeColor": "Unknown",
+        "hairColor": "Blonde",
+        "firstAppearanceChapter": "Thousand-Year Blood War",
+        "weapon": [
+            "Weaponized"
+        ],
+        "release": [
+            "None"
+        ],
+        "primaryAbility": [
+            "Physical"
+        ],
+        "image": "Shaz_Domino.webp"
+    },
+    {
+        "id": "0n7j8k1l-2m3n-3o4i-5d6e-7f8g9h0i1j2k",
+        "name": "Cang Du",
+        "gender": "Male",
+        "race": [
+            "Quincy"
+        ],
+        "affiliation": "Sternritter",
+        "heightCm": 177,
+        "age": 100,
+        "eyeColor": "Black",
+        "hairColor": "Black",
+        "firstAppearanceChapter": "Thousand-Year Blood War",
+        "weapon": [
+            "Weaponized"
+        ],
+        "release": [
+            "Vollständig"
+        ],
+        "primaryAbility": [
+            "Physical"
+        ],
+        "image": "Cang_Du.webp"
+    },
+    {
+        "id": "1o8k9l2m-3n4o-4p5j-6e7f-8g9h0i1j2k3l",
+        "name": "Berenice Gabrielli",
+        "gender": "Male",
+        "race": [
+            "Quincy"
+        ],
+        "affiliation": "Wandenreich",
+        "heightCm": 174,
+        "age": 100,
+        "eyeColor": "Brown",
+        "hairColor": "Blonde",
+        "firstAppearanceChapter": "Thousand-Year Blood War",
+        "weapon": [
+            "Weaponized"
+        ],
+        "release": [
+            "None"
+        ],
+        "primaryAbility": [
+            "Special"
+        ],
+        "image": "Berenice_Gabrielli.webp"
+    },
+    {
+        "id": "2p9l0m3n-4o5p-5q6k-7f8g-9h0i1j2k3l4m",
+        "name": "Giselle Gewelle",
+        "gender": "Female",
+        "race": [
+            "Quincy"
+        ],
+        "affiliation": "Sternritter",
+        "heightCm": 160,
+        "age": 100,
+        "eyeColor": "Black",
+        "hairColor": "Black",
+        "firstAppearanceChapter": "Thousand-Year Blood War",
+        "weapon": [
+            "Weaponized"
+        ],
+        "release": [
+            "Vollständig"
+        ],
+        "primaryAbility": [
+            "Special"
+        ],
+        "image": "Giselle_Gewelle.webp"
+    },
+    {
+        "id": "a1f9e2b0-8c3d-4e5f-a6b7-8d9e0f1a2b3c",
+        "name": "Jerome Guizbatt",
+        "gender": "Male",
+        "race": [
+            "Quincy"
+        ],
+        "affiliation": "Sternritter",
+        "heightCm": 189,
+        "age": 200,
+        "eyeColor": "Gold",
+        "hairColor": "Silver",
+        "firstAppearanceChapter": "Thousand-Year Blood War",
+        "weapon": [
+            "Weaponized"
+        ],
+        "release": [
+            "Vollständig"
+        ],
+        "primaryAbility": [
+            "Physical"
+        ],
+        "image": "Jerome_Guizbatt.webp"
+    },
+    {
+        "id": "b2f0e3c1-9d4e-5f6a-b7c8-9d0e1f2a3b4c",
+        "name": "Jugram Haschwalth",
+        "gender": "Male",
+        "race": [
+            "Quincy"
+        ],
+        "affiliation": "Sternritter",
+        "heightCm": 189,
+        "age": 1000,
+        "eyeColor": "Blue",
+        "hairColor": "Blonde",
+        "firstAppearanceChapter": "Thousand-Year Blood War",
+        "weapon": [
+            "Weaponized"
+        ],
+        "release": [
+            "Vollständig"
+        ],
+        "primaryAbility": [
+            "Special"
+        ],
+        "image": "Jugram_Haschwalth.webp"
+    },
+    {
+        "id": "c3f1e4d2-0e5f-6a7b-c8d9-0e1f2a3b4c5d",
+        "name": "Izumi Ishida",
+        "gender": "Female",
+        "race": [
+            "Quincy"
+        ],
+        "affiliation": "Independent",
+        "heightCm": -1,
+        "age": -1,
+        "eyeColor": "Black",
+        "hairColor": "Black",
+        "firstAppearanceChapter": "Thousand-Year Blood War",
+        "weapon": [
+            "None"
+        ],
+        "release": [
+            "None"
+        ],
+        "primaryAbility": [
+            "None"
+        ],
+        "image": "Izumi_Ishida.webp"
+    },
+    {
+        "id": "d4f2e5e3-1f6a-7b8c-d9e0-1f2a3b4c5d6e",
+        "name": "Ryuken Ishida",
+        "gender": "Male",
+        "race": [
+            "Quincy"
+        ],
+        "affiliation": "Independent",
+        "heightCm": 178,
+        "age": 40,
+        "eyeColor": "Blue",
+        "hairColor": "Silver",
+        "firstAppearanceChapter": "Agent of the Shinigami",
+        "weapon": [
+            "Weaponized"
+        ],
+        "release": [
+            "None"
+        ],
+        "primaryAbility": [
+            "Physical"
+        ],
+        "image": "Ryuken_Ishida.webp"
+    },
+    {
+        "id": "e5f3e6f4-2a7b-8c9d-e0f1-2a3b4c5d6e7f",
+        "name": "Soken Ishida",
+        "gender": "Male",
+        "race": [
+            "Quincy"
+        ],
+        "affiliation": "Independent",
+        "heightCm": 160,
+        "age": 86,
+        "eyeColor": "Black",
+        "hairColor": "Silver",
+        "firstAppearanceChapter": "Agent of the Shinigami",
+        "weapon": [
+            "Weaponized"
+        ],
+        "release": [
+            "None"
+        ],
+        "primaryAbility": [
+            "Physical"
+        ],
+        "image": "Soken_Ishida.webp"
+    },
+    {
+        "id": "f6f4e7g5-3b8c-9d0e-f1a2-3b4c5d6e7f8g",
+        "name": "Uryu Ishida",
+        "gender": "Male",
+        "race": [
+            "Quincy"
+        ],
+        "affiliation": "Sternritter",
+        "heightCm": 177,
+        "age": 19,
+        "eyeColor": "Blue",
+        "hairColor": "Blue",
+        "firstAppearanceChapter": "Agent of the Shinigami",
+        "weapon": [
+            "Weaponized"
+        ],
+        "release": [
+            "Vollständig"
+        ],
+        "primaryAbility": [
+            "Special"
+        ],
+        "image": "Uryu_Ishida.webp"
+    },
+    {
+        "id": "a7f5e8h6-4c9d-0e1f-a2b3-4c5d6e7f8g9h",
+        "name": "James",
+        "gender": "Male",
+        "race": [
+            "Quincy"
+        ],
+        "affiliation": "Sternritter",
+        "heightCm": 92,
+        "age": 100,
+        "eyeColor": "Unknown",
+        "hairColor": "Bald",
+        "firstAppearanceChapter": "Thousand-Year Blood War",
+        "weapon": [
+            "None"
+        ],
+        "release": [
+            "None"
+        ],
+        "primaryAbility": [
+            "Support"
+        ],
+        "image": "James.webp"
+    },
+    {
+        "id": "b8f6e9i7-5d0e-1f2a-b3c4-5d6e7f8g9h0i",
+        "name": "Kanae Katagiri",
+        "gender": "Female",
+        "race": [
+            "Quincy"
+        ],
+        "affiliation": "Independent",
+        "heightCm": 162,
+        "age": 30,
+        "eyeColor": "Black",
+        "hairColor": "Black",
+        "firstAppearanceChapter": "Thousand-Year Blood War",
+        "weapon": [
+            "Weaponized"
+        ],
+        "release": [
+            "None"
+        ],
+        "primaryAbility": [
+            "Physical"
+        ],
+        "image": "Kanae_Katagiri.webp"
+    },
+    {
+        "id": "c9f7e0j8-6e1f-2a3b-c4d5-6e7f8g9h0i1j",
+        "name": "Masaki Kurosaki",
+        "gender": "Female",
+        "race": [
+            "Quincy"
+        ],
+        "affiliation": "Independent",
+        "heightCm": 161,
+        "age": 30,
+        "eyeColor": "Brown",
+        "hairColor": "Orange",
+        "firstAppearanceChapter": "Agent of the Shinigami",
+        "weapon": [
+            "Weaponized"
+        ],
+        "release": [
+            "None"
+        ],
+        "primaryAbility": [
+            "Physical"
+        ],
+        "image": "Masaki_Kurosaki.webp"
+    },
+    {
+        "id": "d0f8e1k9-7f2a-3b4c-d5e6-7f8g9h0i1j2k",
+        "name": "Liltotto Lamperd",
+        "gender": "Female",
+        "race": [
+            "Quincy"
+        ],
+        "affiliation": "Sternritter",
+        "heightCm": 149,
+        "age": 100,
+        "eyeColor": "Green",
+        "hairColor": "Blonde",
+        "firstAppearanceChapter": "Thousand-Year Blood War",
+        "weapon": [
+            "Weaponized"
+        ],
+        "release": [
+            "Vollständig"
+        ],
+        "primaryAbility": [
+            "Physical"
+        ],
+        "image": "Liltotto_Lamperd.webp"
+    },
+    {
+        "id": "550e8400-e29b-41d4-a716-446655440000",
+        "name": "Loyd Lloyd",
+        "gender": "Male",
+        "race": [
+            "Quincy"
+        ],
+        "affiliation": "Sternritter",
+        "heightCm": 170,
+        "age": 100,
+        "eyeColor": "Grey",
+        "hairColor": "Bald",
+        "firstAppearanceChapter": "Thousand-Year Blood War",
+        "weapon": [
+            "Weaponized"
+        ],
+        "release": [
+            "Vollständig"
+        ],
+        "primaryAbility": [
+            "Special"
+        ],
+        "image": "Loyd_Lloyd.webp"
+    },
+    {
+        "id": "6ba7b810-9dad-11d1-80b4-00c04fd430c8",
+        "name": "Royd Lloyd",
+        "gender": "Male",
+        "race": [
+            "Quincy"
+        ],
+        "affiliation": "Sternritter",
+        "heightCm": 170,
+        "age": 100,
+        "eyeColor": "Grey",
+        "hairColor": "Bald",
+        "firstAppearanceChapter": "Thousand-Year Blood War",
+        "weapon": [
+            "Weaponized"
+        ],
+        "release": [
+            "Vollständig"
+        ],
+        "primaryAbility": [
+            "Special"
+        ],
+        "image": "Royd_Lloyd.webp"
+    },
+    {
+        "id": "7c9e6679-7425-40de-944b-e07fc1f90ae7",
+        "name": "Mask De Masculine",
+        "gender": "Male",
+        "race": [
+            "Quincy"
+        ],
+        "affiliation": "Sternritter",
+        "heightCm": 200,
+        "age": 100,
+        "eyeColor": "Black",
+        "hairColor": "Unknown",
+        "firstAppearanceChapter": "Thousand-Year Blood War",
+        "weapon": [
+            "Unarmed"
+        ],
+        "release": [
+            "Vollständig"
+        ],
+        "primaryAbility": [
+            "Physical"
+        ],
+        "image": "Mask_De_Masculine.webp"
+    },
+    {
+        "id": "d1f2e3a4-b5c6-4d7e-8f9a-0b1c2d3e4f5a",
+        "name": "Meninas McAllon",
+        "gender": "Female",
+        "race": [
+            "Quincy"
+        ],
+        "affiliation": "Sternritter",
+        "heightCm": 191,
+        "age": 100,
+        "eyeColor": "Black",
+        "hairColor": "Pink",
+        "firstAppearanceChapter": "Thousand-Year Blood War",
+        "weapon": [
+            "Weaponized"
+        ],
+        "release": [
+            "Vollständig"
+        ],
+        "primaryAbility": [
+            "Physical"
+        ],
+        "image": "Meninas_McAllon.webp"
+    },
+    {
+        "id": "a2b3c4d5-e6f7-4g8h-9i0j-1k2l3m4n5o6p",
+        "name": "NaNaNa Najahkoop",
+        "gender": "Male",
+        "race": [
+            "Quincy"
+        ],
+        "affiliation": "Sternritter",
+        "heightCm": 192,
+        "age": 100,
+        "eyeColor": "Unknown",
+        "hairColor": "Black",
+        "firstAppearanceChapter": "Thousand-Year Blood War",
+        "weapon": [
+            "Weaponized"
+        ],
+        "release": [
+            "Vollständig"
+        ],
+        "primaryAbility": [
+            "Physical"
+        ],
+        "image": "NaNaNa_Najahkoop.webp"
+    },
+    {
+        "id": "b3c4d5e6-f7g8-4h9i-0j1k-2l3m4n5o6p7q",
+        "name": "Askin Nakk Le Vaar",
+        "gender": "Male",
+        "race": [
+            "Quincy"
+        ],
+        "affiliation": "Sternritter",
+        "heightCm": 187,
+        "age": 100,
+        "eyeColor": "Black",
+        "hairColor": "Black",
+        "firstAppearanceChapter": "Thousand-Year Blood War",
+        "weapon": [
+            "Weaponized"
+        ],
+        "release": [
+            "Vollständig"
+        ],
+        "primaryAbility": [
+            "Special"
+        ],
+        "image": "Askin_Nakk_Le_Vaar.webp"
+    },
+    {
+        "id": "c4d5e6f7-g8h9-4i0j-1k2l-3m4n5o6p7q8r",
+        "name": "Guenael Lee",
+        "gender": "Male",
+        "race": [
+            "Quincy"
+        ],
+        "affiliation": "Sternritter",
+        "heightCm": 155,
+        "age": 100,
+        "eyeColor": "Pink",
+        "hairColor": "Pink",
+        "firstAppearanceChapter": "Thousand-Year Blood War",
+        "weapon": [
+            "Weaponized"
+        ],
+        "release": [
+            "None"
+        ],
+        "primaryAbility": [
+            "Special"
+        ],
+        "image": "Guenael_Lee.webp"
+    },
+    {
+        "id": "d5e6f7g8-h9i0-4j1k-2l3m-4n5o6p7q8r9s",
+        "name": "As Nodt",
+        "gender": "Male",
+        "race": [
+            "Quincy"
+        ],
+        "affiliation": "Sternritter",
+        "heightCm": 179,
+        "age": 100,
+        "eyeColor": "Black",
+        "hairColor": "Black",
+        "firstAppearanceChapter": "Thousand-Year Blood War",
+        "weapon": [
+            "Weaponized"
+        ],
+        "release": [
+            "Vollständig"
+        ],
+        "primaryAbility": [
+            "Physical",
+            "Special"
+        ],
+        "image": "As_Nodt.webp"
+    },
+    {
+        "id": "e0a1b2c3-d4e5-4f6a-b7c8-9d0e1f2a3b4c",
+        "name": "Quilge Opie",
+        "gender": "Male",
+        "race": [
+            "Quincy"
+        ],
+        "affiliation": "Sternritter",
+        "heightCm": 178,
+        "age": 100,
+        "eyeColor": "Blue",
+        "hairColor": "Black",
+        "firstAppearanceChapter": "Thousand-Year Blood War",
+        "weapon": [
+            "Weaponized"
+        ],
+        "release": [
+            "Vollständig"
+        ],
+        "primaryAbility": [
+            "Physical",
+            "Special"
+        ],
+        "image": "Quilge_Opie.webp"
+    },
+    {
+        "id": "f1b2c3d4-e5f6-4a7b-8c9d-0e1f2a3b4c5d",
+        "name": "Pernida Parnkgjas",
+        "gender": "Genderless",
+        "race": [
+            "Quincy"
+        ],
+        "affiliation": "Sternritter",
+        "heightCm": 150,
+        "age": 500,
+        "eyeColor": "Gold",
+        "hairColor": "Unknown",
+        "firstAppearanceChapter": "Thousand-Year Blood War",
+        "weapon": [
+            "Unarmed"
+        ],
+        "release": [
+            "Vollständig"
+        ],
+        "primaryAbility": [
+            "Special",
+            "Scientific"
+        ],
+        "image": "Pernida_Parnkgjas.webp"
+    },
+    {
+        "id": "a2c3d4e5-f6g7-4b8c-9d0e-1f2a3b4c5d6e",
+        "name": "Gremmy Thoumeaux",
+        "gender": "Male",
+        "race": [
+            "Quincy"
+        ],
+        "affiliation": "Sternritter",
+        "heightCm": 155,
+        "age": 100,
+        "eyeColor": "Gold",
+        "hairColor": "Blonde",
+        "firstAppearanceChapter": "Thousand-Year Blood War",
+        "weapon": [
+            "None"
+        ],
+        "release": [
+            "None"
+        ],
+        "primaryAbility": [
+            "Special"
+        ],
+        "image": "Gremmy_Thoumeaux.webp"
+    },
+    {
+        "id": "b3d4e5f6-g7h8-4c9d-0e1f-2a3b4c5d6e7f",
+        "name": "Gerard Valkyrie",
+        "gender": "Male",
+        "race": [
+            "Quincy"
+        ],
+        "affiliation": "Sternritter",
+        "heightCm": 222,
+        "age": 500,
+        "eyeColor": "Gold",
+        "hairColor": "Blonde",
+        "firstAppearanceChapter": "Thousand-Year Blood War",
+        "weapon": [
+            "Weaponized"
+        ],
+        "release": [
+            "Vollständig"
+        ],
+        "primaryAbility": [
+            "Physical",
+            "Special"
+        ],
+        "image": "Gerard_Valkyrie.webp"
+    },
+    {
+        "id": "c4e5f6g7-h8i9-4d0e-1f2a-3b4c5d6e7f8g",
+        "name": "PePe Waccabrada",
+        "gender": "Male",
+        "race": [
+            "Quincy"
+        ],
+        "affiliation": "Sternritter",
+        "heightCm": 146,
+        "age": 200,
+        "eyeColor": "Unknown",
+        "hairColor": "Bald",
+        "firstAppearanceChapter": "Thousand-Year Blood War",
+        "weapon": [
+            "None"
+        ],
+        "release": [
+            "Vollständig"
+        ],
+        "primaryAbility": [
+            "Special"
+        ],
+        "image": "PePe_Waccabrada.webp"
+    },
+    {
+        "id": "d5f6g7h8-i9j0-4e1f-2a3b-4c5d6e7f8g9h",
+        "name": "Nianzol Weizol",
+        "gender": "Male",
+        "race": [
+            "Quincy"
+        ],
+        "affiliation": "Sternritter",
+        "heightCm": 156,
+        "age": 100,
+        "eyeColor": "Black",
+        "hairColor": "Black",
+        "firstAppearanceChapter": "Thousand-Year Blood War",
+        "weapon": [
+            "None"
+        ],
+        "release": [
+            "None"
+        ],
+        "primaryAbility": [
+            "Special"
+        ],
+        "image": "Nianzol_Weizol.webp"
+    },
+    {
+        "id": "e6g7h8i9-j0k1-4f2a-3b4c-5d6e7f8g9h0i",
+        "name": "Yhwach",
+        "gender": "Male",
+        "race": [
+            "Quincy"
+        ],
+        "affiliation": "Wandenreich",
+        "heightCm": 200,
+        "age": 1200,
+        "eyeColor": "Black",
+        "hairColor": "Black",
+        "firstAppearanceChapter": "Thousand-Year Blood War",
+        "weapon": [
+            "Weaponized"
+        ],
+        "release": [
+            "None"
+        ],
+        "primaryAbility": [
+            "Physical",
+            "Kido",
+            "Special"
+        ],
+        "image": "Yhwach.webp"
+    },
+    {
+        "id": "7d34fef9-db0b-4f97-8103-a625073ea377",
+        "name": "Soul King",
+        "gender": "Male",
+        "race": [
+            "Mod Soul"
+        ],
+        "affiliation": "Independent",
+        "heightCm": -1,
+        "age": 1000000,
+        "eyeColor": "Black",
+        "hairColor": "Black",
+        "firstAppearanceChapter": "Thousand-Year Blood War",
+        "weapon": [
+            "None"
+        ],
+        "release": [
+            "None"
+        ],
+        "primaryAbility": [
+            "Special"
+        ],
+        "image": "Soul_King.webp"
+    },
+    {
+        "id": "7fa5ae3d-5b91-4c85-b691-9dc917b17bf7",
+        "name": "Mimihagi",
+        "gender": "Unknown",
+        "race": [
+            "Mod Soul"
+        ],
+        "affiliation": "Independent",
+        "heightCm": -1,
+        "age": 1000000,
+        "eyeColor": "Blue",
+        "hairColor": "Unknown",
+        "firstAppearanceChapter": "Thousand-Year Blood War",
+        "weapon": [
+            "None"
+        ],
+        "release": [
+            "None"
+        ],
+        "primaryAbility": [
+            "Special"
+        ],
+        "image": "Mimihagi.webp"
+    },
+    {
+        "id": "ef5ac1b1-6858-4880-b62f-f4d878d1edf3",
+        "name": "Kon",
+        "gender": "Male",
+        "race": [
+            "Mod Soul"
+        ],
+        "affiliation": "Independent",
+        "heightCm": 28,
+        "age": -1,
+        "eyeColor": "Brown",
+        "hairColor": "Brown",
+        "firstAppearanceChapter": "Agent of the Shinigami",
+        "weapon": [
+            "Unarmed"
+        ],
+        "release": [
+            "None"
+        ],
+        "primaryAbility": [
+            "Physical"
+        ],
+        "image": "Kon.webp"
+    },
+    {
+        "id": "2a262c9b-42c0-4346-bced-ae1dd9184c90",
+        "name": "Jinta Hanakari",
+        "gender": "Male",
+        "race": [
+            "Human"
+        ],
+        "affiliation": "Independent",
+        "heightCm": 126,
+        "age": 12,
+        "eyeColor": "Black",
+        "hairColor": "Red",
+        "firstAppearanceChapter": "Agent of the Shinigami",
+        "weapon": [
+            "Weaponized"
+        ],
+        "release": [
+            "None"
+        ],
+        "primaryAbility": [
+            "Physical"
+        ],
+        "image": "Jinta_Hanakari.webp"
+    },
+    {
+        "id": "e1d6a4ec-bcb3-48af-873c-b028c2653b73",
+        "name": "Ururu Tsumugiya",
+        "gender": "Female",
+        "race": [
+            "Mod Soul"
+        ],
+        "affiliation": "Independent",
+        "heightCm": 141,
+        "age": 12,
+        "eyeColor": "Grey",
+        "hairColor": "Black",
+        "firstAppearanceChapter": "Agent of the Shinigami",
+        "weapon": [
+            "Weaponized"
+        ],
+        "release": [
+            "None"
+        ],
+        "primaryAbility": [
+            "Physical"
+        ],
+        "image": "Ururu_Tsumugiya.webp"
+    },
+    {
+        "id": "88341f58-727f-4578-b4b3-d0ee2d20a232",
+        "name": "Zangetsu",
+        "gender": "Male",
+        "race": [
+            "Zanpakuto"
+        ],
+        "affiliation": "Independent",
+        "heightCm": 185,
+        "age": -1,
+        "eyeColor": "Silver",
+        "hairColor": "Silver",
+        "firstAppearanceChapter": "Agent of the Shinigami",
+        "weapon": [
+            "Weaponized"
+        ],
+        "release": [
+            "Shikai",
+            "Bankai"
+        ],
+        "primaryAbility": [
+            "Physical",
+            "Energy"
+        ],
+        "image": "Zangetsu.webp"
+    }
+]

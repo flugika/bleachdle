@@ -1,0 +1,429 @@
+
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+body{background:#04040d;display:flex;align-items:center;justify-content:center;min-height:540px;font-family:sans-serif;}
+.wrap{display:flex;flex-direction:column;align-items:center;gap:26px;padding:28px 16px;}
+.stage{position:relative;width:360px;height:360px;display:flex;align-items:center;justify-content:center;}
+#pcanvas{position:absolute;inset:0;pointer-events:none;}
+
+.ring{position:absolute;border-radius:50%;border-style:solid;pointer-events:none;}
+.ring-1{width:220px;height:220px;border:1px solid rgba(120,160,255,0.12);animation:orbit 15s linear infinite;}
+.ring-2{width:280px;height:280px;border:0.5px solid rgba(180,100,255,0.09);animation:orbit 24s linear infinite reverse;}
+.ring-3{width:340px;height:340px;border:0.5px solid rgba(60,210,180,0.06);animation:orbit 35s linear infinite;}
+.mdot{position:absolute;border-radius:50%;top:-4px;left:50%;transform:translateX(-50%);}
+.md1{width:7px;height:7px;background:#a8c4ff;box-shadow:0 0 12px 4px rgba(140,180,255,0.85);}
+.md2{width:6px;height:6px;background:#d084fc;box-shadow:0 0 10px 3px rgba(200,100,255,0.75);}
+.md3{width:6px;height:6px;background:#5eecd4;box-shadow:0 0 10px 3px rgba(80,230,200,0.7);}
+
+.pulse{position:absolute;border-radius:50%;border-width:1.5px;border-style:solid;animation:pout 3s ease-out infinite;}
+.p1{width:100px;height:100px;border-color:rgba(100,140,255,0.55);animation-delay:0s;}
+.p2{width:100px;height:100px;border-color:rgba(170,70,255,0.4);animation-delay:1s;}
+.p3{width:100px;height:100px;border-color:rgba(60,210,180,0.35);animation-delay:2s;}
+
+.smoke{position:absolute;border-radius:50%;pointer-events:none;}
+.s1{width:110px;height:70px;background:rgba(60,80,210,0.1);filter:blur(18px);animation:smk 4.5s ease-out infinite 0s;}
+.s2{width:80px;height:55px;background:rgba(150,50,230,0.09);filter:blur(15px);animation:smk 4.5s ease-out infinite 1.4s;transform:translateX(22px);}
+.s3{width:90px;height:48px;background:rgba(40,190,160,0.07);filter:blur(17px);animation:smk 4.5s ease-out infinite 2.8s;transform:translateX(-18px);}
+
+.aura{position:absolute;border-radius:50%;pointer-events:none;}
+.a1{width:140px;height:140px;animation:abr 2.2s ease-in-out infinite;}
+.a2{width:175px;height:175px;animation:abr 2.2s ease-in-out infinite 0.7s;}
+
+.burst{position:absolute;border-radius:50%;pointer-events:none;animation:bfl 7s ease-in-out infinite;}
+.b1{width:190px;height:190px;background:radial-gradient(circle,rgba(100,140,255,0.13) 0%,transparent 70%);animation-delay:0s;}
+.b2{width:210px;height:210px;background:radial-gradient(circle,rgba(170,70,255,0.11) 0%,transparent 70%);animation-delay:2.3s;}
+.b3{width:170px;height:170px;background:radial-gradient(circle,rgba(50,210,180,0.1) 0%,transparent 70%);animation-delay:4.6s;}
+
+.chain{position:absolute;width:1.5px;pointer-events:none;animation:cflk 5.5s ease-in-out infinite;}
+.cv{height:90px;background:linear-gradient(to bottom,transparent,rgba(120,160,255,0.4),transparent);}
+.cv2{height:90px;background:linear-gradient(to top,transparent,rgba(190,90,255,0.35),transparent);animation-delay:2.7s;}
+
+.tsuba-wrap{position:relative;z-index:10;}
+.tsuba-spin{animation:spin 5s linear infinite;transform-origin:center;display:block;}
+
+.txt-main{font-size:11px;letter-spacing:0.36em;color:rgba(200,169,110,0.92);text-transform:uppercase;animation:tp 2.2s ease-in-out infinite;}
+.txt-sub{font-size:9px;letter-spacing:0.22em;color:rgba(140,160,255,0.52);text-transform:uppercase;margin-top:5px;}
+.ctrl{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;}
+.btn{padding:7px 18px;border:1px solid rgba(200,169,110,0.4);background:transparent;color:rgba(200,169,110,0.8);font-size:10px;letter-spacing:0.18em;text-transform:uppercase;cursor:pointer;border-radius:6px;transition:all 0.2s;}
+.btn:hover,.btn.on{background:rgba(200,169,110,0.12);border-color:rgba(200,169,110,0.85);}
+.lbl{font-size:9px;color:rgba(130,150,220,0.55);letter-spacing:0.12em;text-align:center;}
+
+@keyframes orbit{from{transform:rotate(0deg);}to{transform:rotate(360deg);}}
+@keyframes spin{from{transform:rotate(0deg);}to{transform:rotate(360deg);}}
+@keyframes pout{0%{transform:scale(0.55);opacity:0.85;}100%{transform:scale(4.2);opacity:0;}}
+@keyframes abr{0%,100%{opacity:0.4;transform:scale(1);}50%{opacity:1;transform:scale(1.12);}}
+@keyframes smk{0%{transform:translateY(0) scale(0.85);opacity:0.6;}100%{transform:translateY(-70px) scale(2.2);opacity:0;}}
+@keyframes cflk{0%,88%,100%{opacity:0;}44%,56%{opacity:0.55;}}
+@keyframes bfl{0%,100%{opacity:0;}33%{opacity:1;}}
+@keyframes tp{0%,100%{opacity:0.5;}50%{opacity:1;}}
+</style>
+
+<div class="wrap">
+<div class="stage">
+  <canvas id="pcanvas" width="360" height="360"></canvas>
+
+  <div class="burst b1"></div>
+  <div class="burst b2"></div>
+  <div class="burst b3"></div>
+  <div class="smoke s1"></div>
+  <div class="smoke s2"></div>
+  <div class="smoke s3"></div>
+  <div class="pulse p1"></div>
+  <div class="pulse p2"></div>
+  <div class="pulse p3"></div>
+  <div class="aura a2" style="background:radial-gradient(circle,transparent 28%,rgba(110,130,255,0.07) 62%,transparent 80%);"></div>
+  <div class="aura a1" id="aura1" style="background:radial-gradient(circle,rgba(100,140,255,0.2) 0%,rgba(150,70,255,0.08) 45%,transparent 70%);"></div>
+  <div class="ring ring-1"><span class="mdot md1"></span></div>
+  <div class="ring ring-2"><span class="mdot md2"></span></div>
+  <div class="ring ring-3"><span class="mdot md3"></span></div>
+  <div class="chain cv" style="top:38px;"></div>
+  <div class="chain cv2" style="bottom:38px;"></div>
+
+  <div class="tsuba-wrap">
+    <div class="tsuba-spin" id="tsuba">
+      <!--
+        TRUE TENSA ZANGETSU TSUBA — built from reference image 2
+        One arm = L-shape + crescent top hook + arrow bottom tip
+        Rotated 0°, 90°, 180°, 270° around center (55,55)
+        to form the full 卍 structure.
+        viewBox 110×110, center at 55,55
+      -->
+      <svg id="tsvg" width="112" height="112" viewBox="0 0 110 110" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <linearGradient id="g1" x1="0" y1="0" x2="110" y2="110" gradientUnits="userSpaceOnUse">
+            <stop offset="0%" stop-color="#22254a"/>
+            <stop offset="45%" stop-color="#2d3165"/>
+            <stop offset="100%" stop-color="#0f1025"/>
+          </linearGradient>
+          <linearGradient id="g2" x1="0" y1="0" x2="110" y2="110" gradientUnits="userSpaceOnUse">
+            <stop offset="0%" stop-color="#9098d8"/>
+            <stop offset="100%" stop-color="#5560b0"/>
+          </linearGradient>
+        </defs>
+
+        <!--
+          ARM STRUCTURE (from ref image 2, 1 arm = top-left quadrant shape):
+          - Vertical thick bar on left side
+          - Horizontal thick bar on top
+          - Large open negative space (L inner void)
+          - Crescent hook at top-left corner (curves inward)
+          - Arrow-tip at bottom of vertical bar
+
+          We draw this as a filled path, then rotate 4× for full 卍
+          Center of rotation: 55,55
+
+          ARM PATH description (for 0° arm, occupying upper-left region):
+          Outer boundary:
+            Start top of vertical bar left edge: (38, 8)
+            Go right along top bar top: → (72, 8)
+            Down right side of top bar: → (72, 38)  [top bar ends]
+            Left along bottom of top bar: → (55, 38)  [meets vertical bar top area]
+            Down right edge of vertical bar: → (55, 72)  [vertical bar continues]
+            Curve into arrow tip at bottom: goes to (47, 80) then point (43, 88) then (51, 80)
+            Up left edge of vertical bar: → (51, 38)  ... wait, left edge
+          
+          Let me build it more carefully as explicit path:
+        -->
+
+        <!-- ARM 0° (upper-left / top arm) -->
+        <g transform="rotate(0,55,55)">
+          <path d="
+            M 55,10
+            L 75,10
+            L 75,55
+            L 60,55
+            L 60,75
+            Q 60,82  55,86
+            Q 52,90  49,86
+            Q 46,82  47,75
+            L 47,55
+            L 40,55
+            L 40,32
+            Q 40,24  33,20
+            Q 27,16  25,22
+            Q 22,28  27,33
+            Q 30,36  35,35
+            L 35,42
+            Q 25,44  20,36
+            Q 14,26  20,18
+            Q 26,8   38,10
+            Z
+          " fill="url(#g1)" stroke="url(#g2)" stroke-width="1.3" stroke-linejoin="round"/>
+          <!-- Small blade slot rectangle inside arm -->
+          <rect x="51" y="28" width="6" height="18" rx="1.5" fill="#07071a" stroke="#6068b0" stroke-width="0.7"/>
+        </g>
+
+        <!-- ARM 90° (upper-right) -->
+        <g transform="rotate(90,55,55)">
+          <path d="
+            M 55,10
+            L 75,10
+            L 75,55
+            L 60,55
+            L 60,75
+            Q 60,82  55,86
+            Q 52,90  49,86
+            Q 46,82  47,75
+            L 47,55
+            L 40,55
+            L 40,32
+            Q 40,24  33,20
+            Q 27,16  25,22
+            Q 22,28  27,33
+            Q 30,36  35,35
+            L 35,42
+            Q 25,44  20,36
+            Q 14,26  20,18
+            Q 26,8   38,10
+            Z
+          " fill="url(#g1)" stroke="url(#g2)" stroke-width="1.3" stroke-linejoin="round"/>
+          <rect x="51" y="28" width="6" height="18" rx="1.5" fill="#07071a" stroke="#6068b0" stroke-width="0.7"/>
+        </g>
+
+        <!-- ARM 180° (lower-right) -->
+        <g transform="rotate(180,55,55)">
+          <path d="
+            M 55,10
+            L 75,10
+            L 75,55
+            L 60,55
+            L 60,75
+            Q 60,82  55,86
+            Q 52,90  49,86
+            Q 46,82  47,75
+            L 47,55
+            L 40,55
+            L 40,32
+            Q 40,24  33,20
+            Q 27,16  25,22
+            Q 22,28  27,33
+            Q 30,36  35,35
+            L 35,42
+            Q 25,44  20,36
+            Q 14,26  20,18
+            Q 26,8   38,10
+            Z
+          " fill="url(#g1)" stroke="url(#g2)" stroke-width="1.3" stroke-linejoin="round"/>
+          <rect x="51" y="28" width="6" height="18" rx="1.5" fill="#07071a" stroke="#6068b0" stroke-width="0.7"/>
+        </g>
+
+        <!-- ARM 270° (lower-left) -->
+        <g transform="rotate(270,55,55)">
+          <path d="
+            M 55,10
+            L 75,10
+            L 75,55
+            L 60,55
+            L 60,75
+            Q 60,82  55,86
+            Q 52,90  49,86
+            Q 46,82  47,75
+            L 47,55
+            L 40,55
+            L 40,32
+            Q 40,24  33,20
+            Q 27,16  25,22
+            Q 22,28  27,33
+            Q 30,36  35,35
+            L 35,42
+            Q 25,44  20,36
+            Q 14,26  20,18
+            Q 26,8   38,10
+            Z
+          " fill="url(#g1)" stroke="url(#g2)" stroke-width="1.3" stroke-linejoin="round"/>
+          <rect x="51" y="28" width="6" height="18" rx="1.5" fill="#07071a" stroke="#6068b0" stroke-width="0.7"/>
+        </g>
+
+        <!-- Center plate -->
+        <rect x="46" y="46" width="18" height="18" rx="2" fill="url(#g1)" stroke="url(#g2)" stroke-width="1.1"/>
+        <rect x="50" y="50" width="10" height="10" rx="1.5" fill="#08081e" stroke="#5862a8" stroke-width="0.7"/>
+
+        <!-- Gold accent tips -->
+        <circle cx="55" cy="8" r="1.8" fill="#c8a96e" opacity="0.85"/>
+        <circle cx="55" cy="102" r="1.8" fill="#c8a96e" opacity="0.85"/>
+        <circle cx="8" cy="55" r="1.8" fill="#c8a96e" opacity="0.85"/>
+        <circle cx="102" cy="55" r="1.8" fill="#c8a96e" opacity="0.85"/>
+      </svg>
+    </div>
+  </div>
+</div>
+
+<div style="text-align:center;">
+  <div class="txt-main">Analyzing Soul...</div>
+  <div class="txt-sub">Bankai · Tensa Zangetsu</div>
+</div>
+<div>
+  <div class="lbl" style="margin-bottom:8px;">Reiatsu Intensity</div>
+  <div class="ctrl">
+    <button class="btn" onclick="setLvl('low',this)">Low</button>
+    <button class="btn on" onclick="setLvl('medium',this)">Medium</button>
+    <button class="btn" onclick="setLvl('high',this)">High · Bankai</button>
+  </div>
+</div>
+</div>
+
+<script>
+const CV = document.getElementById('pcanvas');
+const ctx = CV.getContext('2d');
+const CX=180, CY=180;
+
+const PAL=[
+  [100,145,255],[175,70,255],[55,215,185],[255,155,75],[225,75,155],[90,210,120],[255,200,70]
+];
+
+const particles=[];
+function mkP(){
+  const a=Math.random()*Math.PI*2;
+  const r=48+Math.random()*35;
+  const c=PAL[Math.floor(Math.random()*PAL.length)];
+  return{
+    x:CX+Math.cos(a)*r, y:CY+Math.sin(a)*r,
+    dx:Math.cos(a)*(0.5+Math.random()*1.3),
+    dy:Math.sin(a)*(0.5+Math.random()*1.3),
+    life:Math.random(), decay:0.007+Math.random()*0.018,
+    size:1.2+Math.random()*2.2, c, trail:[]
+  };
+}
+for(let i=0;i<32;i++) particles.push(mkP());
+
+const bursts=[];
+function mkB(){
+  const a=Math.random()*Math.PI*2;
+  const c=PAL[Math.floor(Math.random()*PAL.length)];
+  return{
+    x:CX,y:CY,
+    dx:Math.cos(a)*(2.5+Math.random()*3.5),
+    dy:Math.sin(a)*(2.5+Math.random()*3.5),
+    life:1, decay:0.025+Math.random()*0.04,
+    size:1.5+Math.random()*3, c
+  };
+}
+
+// Floating orbs (slow drifting colored glows)
+const orbs=[];
+for(let i=0;i<5;i++){
+  const a=Math.random()*Math.PI*2;
+  const r=80+Math.random()*60;
+  const c=PAL[Math.floor(Math.random()*PAL.length)];
+  orbs.push({
+    x:CX+Math.cos(a)*r, y:CY+Math.sin(a)*r,
+    vx:(Math.random()-0.5)*0.3, vy:(Math.random()-0.5)*0.3,
+    size:14+Math.random()*18, c, alpha:0.3+Math.random()*0.4,
+    phase:Math.random()*Math.PI*2
+  });
+}
+
+let lastBurst=0, spd=1, t=0;
+
+function frame(ts){
+  ctx.clearRect(0,0,360,360);
+  t+=0.016;
+
+  // Orbs
+  for(const o of orbs){
+    o.x+=o.vx*spd; o.y+=o.vy*spd;
+    o.phase+=0.012*spd;
+    const a=o.alpha*(0.5+0.5*Math.sin(o.phase));
+    const dx=o.x-CX, dy=o.y-CY;
+    const dist=Math.sqrt(dx*dx+dy*dy);
+    if(dist>145){o.vx*=-1;o.vy*=-1;}
+    const g=ctx.createRadialGradient(o.x,o.y,0,o.x,o.y,o.size);
+    g.addColorStop(0,`rgba(${o.c[0]},${o.c[1]},${o.c[2]},${a})`);
+    g.addColorStop(1,'rgba(0,0,0,0)');
+    ctx.beginPath(); ctx.arc(o.x,o.y,o.size,0,Math.PI*2);
+    ctx.fillStyle=g; ctx.fill();
+  }
+
+  // Burst spawn
+  if(ts-lastBurst>600+Math.random()*1000){
+    for(let i=0;i<10;i++) bursts.push(mkB());
+    lastBurst=ts;
+  }
+
+  for(let i=bursts.length-1;i>=0;i--){
+    const b=bursts[i];
+    b.x+=b.dx*spd; b.y+=b.dy*spd;
+    b.life-=b.decay*spd;
+    if(b.life<=0){bursts.splice(i,1);continue;}
+    ctx.beginPath();
+    ctx.arc(b.x,b.y,b.size*b.life,0,Math.PI*2);
+    ctx.fillStyle=`rgba(${b.c[0]},${b.c[1]},${b.c[2]},${b.life*0.95})`;
+    ctx.fill();
+    const g=ctx.createRadialGradient(b.x,b.y,0,b.x,b.y,b.size*3);
+    g.addColorStop(0,`rgba(${b.c[0]},${b.c[1]},${b.c[2]},${b.life*0.25})`);
+    g.addColorStop(1,'rgba(0,0,0,0)');
+    ctx.beginPath(); ctx.arc(b.x,b.y,b.size*3,0,Math.PI*2);
+    ctx.fillStyle=g; ctx.fill();
+  }
+
+  // Main particles
+  for(let i=0;i<particles.length;i++){
+    const p=particles[i];
+    p.trail.push({x:p.x,y:p.y,l:p.life});
+    if(p.trail.length>10) p.trail.shift();
+    p.x+=p.dx*spd; p.y+=p.dy*spd;
+    p.life-=p.decay*spd;
+    for(let j=0;j<p.trail.length;j++){
+      const tr=p.trail[j];
+      const a=(j/p.trail.length)*tr.l*0.45;
+      ctx.beginPath(); ctx.arc(tr.x,tr.y,p.size*(j/p.trail.length)*0.8,0,Math.PI*2);
+      ctx.fillStyle=`rgba(${p.c[0]},${p.c[1]},${p.c[2]},${a})`; ctx.fill();
+    }
+    ctx.beginPath(); ctx.arc(p.x,p.y,p.size*p.life,0,Math.PI*2);
+    ctx.fillStyle=`rgba(${p.c[0]},${p.c[1]},${p.c[2]},${p.life})`; ctx.fill();
+    const g=ctx.createRadialGradient(p.x,p.y,0,p.x,p.y,p.size*4);
+    g.addColorStop(0,`rgba(${p.c[0]},${p.c[1]},${p.c[2]},${p.life*0.28})`);
+    g.addColorStop(1,'rgba(0,0,0,0)');
+    ctx.beginPath(); ctx.arc(p.x,p.y,p.size*4,0,Math.PI*2); ctx.fillStyle=g; ctx.fill();
+    if(p.life<=0) particles[i]=mkP();
+  }
+
+  // Energy arcs
+  if(Math.random()<0.06){
+    const a=particles[Math.floor(Math.random()*particles.length)];
+    const b=particles[Math.floor(Math.random()*particles.length)];
+    if(a&&b&&a!==b){
+      ctx.beginPath(); ctx.moveTo(a.x,a.y);
+      const mx=(a.x+b.x)/2+(Math.random()-0.5)*40;
+      const my=(a.y+b.y)/2+(Math.random()-0.5)*40;
+      ctx.quadraticCurveTo(mx,my,b.x,b.y);
+      ctx.strokeStyle=`rgba(${a.c[0]},${a.c[1]},${a.c[2]},0.3)`;
+      ctx.lineWidth=0.8; ctx.stroke();
+    }
+  }
+
+  requestAnimationFrame(frame);
+}
+requestAnimationFrame(frame);
+
+// Aura/glow color cycle
+const aura1=document.getElementById('aura1');
+const tsuba=document.getElementById('tsuba');
+const AURAS=[
+  ['rgba(100,145,255,0.22)','rgba(150,70,255,0.09)',
+   'drop-shadow(0 0 16px rgba(100,145,255,0.8)) drop-shadow(0 0 42px rgba(150,70,255,0.45))'],
+  ['rgba(55,215,185,0.2)','rgba(80,145,255,0.08)',
+   'drop-shadow(0 0 16px rgba(55,215,185,0.8)) drop-shadow(0 0 42px rgba(80,200,255,0.45))'],
+  ['rgba(225,75,155,0.2)','rgba(100,60,230,0.08)',
+   'drop-shadow(0 0 16px rgba(225,75,155,0.8)) drop-shadow(0 0 42px rgba(120,60,240,0.45))'],
+  ['rgba(255,155,75,0.18)','rgba(200,80,255,0.07)',
+   'drop-shadow(0 0 16px rgba(255,155,75,0.75)) drop-shadow(0 0 42px rgba(200,80,255,0.4))'],
+];
+let ci=0;
+setInterval(()=>{
+  ci=(ci+1)%AURAS.length;
+  const [c1,c2,glow]=AURAS[ci];
+  aura1.style.background=`radial-gradient(circle,${c1} 0%,${c2} 45%,transparent 70%)`;
+  tsuba.style.filter=glow;
+},2800);
+// Set initial glow
+tsuba.style.filter=AURAS[0][2];
+
+function setLvl(l,el){
+  document.querySelectorAll('.btn').forEach(b=>b.classList.remove('on'));
+  el.classList.add('on');
+  const c={low:{s:'9s',m:0.4},medium:{s:'5s',m:1},high:{s:'1.8s',m:2.5}}[l];
+  document.querySelector('.tsuba-spin').style.animationDuration=c.s;
+  spd=c.m;
+}
+</script>

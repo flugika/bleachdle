@@ -1,0 +1,185 @@
+@import "tailwindcss";
+
+:root {
+  --background: #ffffff;
+  --foreground: #171717;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background: #0a0a0a;
+    --foreground: #ededed;
+  }
+}
+
+body {
+  /* background: var(--background); */
+  color: var(--foreground);
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+/* app/globals.css */
+body {
+  background-image: url('/assets/bg_wallpaper.jpg');
+  background-size: cover;
+  background-position: center;
+  background-attachment: fixed;
+  /* ภาพจะนิ่งขณะเลื่อนหน้าจอ ดูหรูหรามาก */
+  background-repeat: no-repeat;
+}
+
+/* สร้าง Overlay เพื่อให้ตัวหนังสืออ่านง่ายขึ้น */
+.bg-overlay {
+  background: rgba(0, 0, 0, 0.90);
+  /* ปรับความเข้มได้ตามต้องการ */
+  min-height: 100vh;
+}
+
+/* Custom Scrollbar for the whole application */
+::-webkit-scrollbar {
+  width: 8px;
+  /* w-2 */
+}
+
+::-webkit-scrollbar-track {
+  background: #0a0a0f;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(200, 169, 110, 0.5);
+  /* c8a96e/50 */
+  border-radius: 9999px;
+  /* rounded-full */
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #c8a96e;
+}
+
+/* ==========================================================================
+   ⚔️ BLEACH ENGINE: BANKAI EDITION (CLEAN & SHARP VERSION)
+   ========================================================================== */
+
+/* --------------------------------------------------------------------------
+   🔮 LAYER 1: GLOBAL BASE & DEFAULT STATE
+   -------------------------------------------------------------------------- */
+*,
+*::before,
+*::after {
+  cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24'%3E%3Cpath d='M2 2 L22 10 L10 10 L10 22 Z' fill='%230a0a0f' stroke='%23c8a96e' stroke-width='1.5' stroke-linejoin='round'/%3E%3C/svg%3E") 0 0, default;
+}
+
+.cursor-default,
+[class*="cursor-default"] {
+  cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24'%3E%3Cpath d='M2 2 L22 10 L10 10 L10 22 Z' fill='%230a0a0f' stroke='%23c8a96e' stroke-width='1.5' stroke-linejoin='round'/%3E%3C/svg%3E") 0 0, default !important;
+}
+
+/* --------------------------------------------------------------------------
+   🌌 LAYER 2: LAYOUT, BACKDROP & LOADING
+   -------------------------------------------------------------------------- */
+.cursor-exit {
+  cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cline x1='5' y1='12' x2='19' y2='12'%3E%3C/line%3E%3Cpolyline points='12 5 19 12 12 19'%3E%3C/polyline%3E%3C/svg%3E") 12 12, auto !important;
+}
+
+.cursor-wait,
+.cursor-progress,
+[class*="cursor-wait"],
+.animate-pulse {
+  cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%23c8a96e' stroke-width='2' stroke-dasharray='4 2'%3E%3Ccircle cx='12' cy='12' r='8'/%3E%3C/svg%3E") 12 12, wait !important;
+}
+
+/* --------------------------------------------------------------------------
+   ⚡ LAYER 3: INTERACTIVE ELEMENTS (HOVER & FOCUS STATES)
+   -------------------------------------------------------------------------- */
+
+a,
+a *,
+button,
+button *,
+select,
+select *,
+[role="button"],
+[role="button"] *,
+.cursor-pointer,
+.cursor-pointer *,
+[class*="cursor-pointer"],
+[class*="cursor-pointer"] *,
+[class*="hover:cursor-pointer"]:hover,
+[class*="hover:cursor-pointer"]:hover *,
+button:focus,
+button:focus-visible,
+a:focus,
+a:focus-visible,
+.btn:focus,
+.btn:focus-visible {
+  cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24'%3E%3Cpath d='M2 2 L22 10 L10 10 L10 22 Z' fill='%23c8a96e' stroke='%23ffffff' stroke-width='1.5' stroke-linejoin='round'/%3E%3C/svg%3E") 0 0, pointer !important;
+}
+
+/* 🟢 พิมพ์ข้อความ */
+input,
+textarea,
+[contenteditable="true"],
+[contenteditable="true"] *,
+.cursor-text,
+[class*="cursor-text"] {
+  cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24'%3E%3Cpath d='M10 4 H14 M12 4 V20 M10 20 H14' fill='none' stroke='%23c8a96e' stroke-width='2' stroke-linecap='round'/%3E%3C/svg%3E") 12 12, text !important;
+}
+
+/* 🚫 บล็อก/ห้ามกด */
+:disabled,
+[disabled],
+.cursor-not-allowed,
+[class*="cursor-not-allowed"],
+[class*="disabled:"] {
+  cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%23e83030' stroke-width='2'%3E%3Ccircle cx='12' cy='12' r='8'/%3E%3Cline x1='8' y1='8' x2='16' y2='16'/%3E%3C/svg%3E") 12 12, not-allowed !important;
+}
+
+/* 🦇 ปุ่มกดปิดขนาดเล็ก */
+button.cursor-exit,
+button.cursor-exit *,
+.btn-close,
+.btn-close * {
+  cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cline x1='5' y1='12' x2='19' y2='12'%3E%3C/line%3E%3Cpolyline points='12 5 19 12 12 19'%3E%3C/polyline%3E%3C/svg%3E") 12 12, auto !important;
+}
+
+/* ✊ สเตทจับลาก (Grab / Grabbing) */
+.cursor-grab,
+[class*="cursor-grab"] {
+  cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%23c8a96e' stroke-width='2'/%3E%3Cpath d='M9 10L9 6M15 10L15 6M9 14L9 18M15 14L15 18'/%3E%3C/svg%3E") 12 12, grab !important;
+}
+
+.cursor-grabbing,
+[class*="cursor-grabbing"] {
+  cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%23ffaa00' stroke-width='2'/%3E%3Cpath d='M9 8L9 4M15 8L15 4M9 16L9 20M15 16L15 20'/%3E%3C/svg%3E") 12 12, grabbing !important;
+}
+
+/* --------------------------------------------------------------------------
+   🔥 LAYER 4: ACTIVE GLOBAL OVERRIDES
+   -------------------------------------------------------------------------- */
+
+/* 💥 สเตทคลิก (เปลี่ยนสีเป็น Cyan แบบ Sharp) */
+a:active,
+a *:active,
+button:active,
+button *:active,
+[role="button"]:active,
+[role="button"] *:active,
+.cursor-pointer:active,
+.cursor-pointer *:active,
+[class*="cursor-pointer"]:active,
+[class*="cursor-pointer"] *:active,
+.btn:active {
+  cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24'%3E%3Cpath d='M2 2 L22 10 L10 10 L10 22 Z' fill='%2300bfff' stroke='%23ffffff' stroke-width='1.5' stroke-linejoin='round'/%3E%3C/svg%3E") 0 0, pointer !important;
+}
+
+/* 💥 พื้นหลังทั่วไปเวลาคลิก */
+*:not(button):not(a):not(input):not(textarea):not([role="button"]):not(.cursor-pointer):not([class*="cursor-pointer"]):not(.btn):active {
+  cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24'%3E%3Cpath d='M2 2 L22 10 L10 10 L10 22 Z' fill='%23ff5500' stroke='%23ffffff' stroke-width='1.5' stroke-linejoin='round'/%3E%3C/svg%3E") 0 0, default !important;
+}
