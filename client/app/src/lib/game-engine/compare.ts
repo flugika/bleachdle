@@ -1,6 +1,16 @@
 // src/lib/game-engine/compare.ts
 import { Character } from '@/src/entities/character/schema';
-import { CharacterRace, ComparisonOutcome, MatchResult } from '@/src/features/character/types';
+import { CharacterAppearance, CharacterRace, ComparisonOutcome, MatchResult } from '@/src/features/character/types';
+
+const ARCS: CharacterAppearance[] = [
+    "Agent of the Shinigami",
+    "Soul Society",
+    "Arrancar",
+    "Turn Back The Pendulum",
+    "Karakura Town Invasion",
+    "Lost Substitute Shinigami",
+    "Thousand-Year Blood War"
+];
 
 // ฟังก์ชันแปลงเลขให้เป็น Range Key (เพื่อใช้ในการเปรียบเทียบ)
 const getRange = (value: number): number => {
@@ -17,12 +27,12 @@ const compareNumber = (guess: number, target: number): MatchResult => {
         return guess === target ? 'correct' : 'wrong';
     }
 
-    // กรณีเลขตรงกันเป๊ะ
-    if (guess === target) return 'correct';
-
     // กรณีเลขไม่เท่ากัน ให้เช็ค Range
     const guessRange = getRange(guess);
     const targetRange = getRange(target);
+
+    // กรณีเลขตรงกันเป๊ะ
+    if (guessRange === targetRange) return 'correct';
 
     // ถ้าอยู่ใน Range เดียวกัน แต่เลขไม่เท่ากัน (เช่น 19 กับ 20)
     // สำหรับ < 100 เราอยากให้มันบอก higher/lower ได้ปกติ
@@ -60,9 +70,23 @@ const compareRace = (guessRaces: CharacterRace[], targetRaces: CharacterRace[]):
     return isPartial ? 'partial' : 'wrong';
 };
 
+const compareAppearance = (guess: CharacterAppearance, target: CharacterAppearance): MatchResult => {
+    if (guess === target) return 'correct';
+
+    const guessIndex = ARCS.indexOf(guess);
+    const targetIndex = ARCS.indexOf(target);
+
+    if (guessIndex === -1 || targetIndex === -1) return 'wrong';
+
+    // ถ้าภาคที่ทายอยู่ก่อนภาคเป้าหมาย (Index น้อยกว่า) ให้ตอบ 'higher' เพื่อบอกให้ทายภาคที่ใหม่ขึ้น
+    return guessIndex < targetIndex ? 'higher' : 'lower';
+};
+
 export const compareCharacters = (guess: Character, target: Character): ComparisonOutcome => {
     const guessRace = guess.race as CharacterRace[];
     const targetRace = target.race as CharacterRace[];
+    const guessFirstAp = guess.firstAppearanceChapter as CharacterAppearance;
+    const targetFirstAp = target.firstAppearanceChapter as CharacterAppearance;
 
     return {
         gender: compareBasic(guess.gender, target.gender),
@@ -72,7 +96,7 @@ export const compareCharacters = (guess: Character, target: Character): Comparis
         age: compareNumber(guess.age, target.age),
         eyeColor: compareBasic(guess.eyeColor, target.eyeColor),
         hairColor: compareBasic(guess.hairColor, target.hairColor),
-        firstAppearanceChapter: compareBasic(guess.firstAppearanceChapter, target.firstAppearanceChapter),
+        firstAppearanceChapter: compareAppearance(guessFirstAp, targetFirstAp),
         weapon: compareArray(guess.weapon, target.weapon),
         release: compareArray(guess.release, target.release),
         primaryAbility: compareArray(guess.primaryAbility, target.primaryAbility),

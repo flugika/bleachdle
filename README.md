@@ -205,7 +205,7 @@ bleachdle
 │  │     ├─ features
 │  │     │  ├─ character
 │  │     │  │  ├─ components
-│  │     │  │  │  ├─ GameOverModal.tsx
+│  │     │  │  │  ├─ SummaryGuess.tsx
 │  │     │  │  │  ├─ GuessTable.tsx
 │  │     │  │  │  ├─ HowToPlayModal.tsx
 │  │     │  │  │  └─ SearchBar.tsx

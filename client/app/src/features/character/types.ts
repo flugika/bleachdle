@@ -28,7 +28,7 @@ export type CharacterAppearance =
     | "Soul Society"              // ภาคโซลโซไซตี้ (Ch. 71-182)
     | "Arrancar"                  // ภาคอาร์รันคาร์ (Ch. 183-315)
     | "Turn Back The Pendulum"
-    | "Hueco Mundo"               // ภาคฮูเอโกมุนโด้ (Ch. 316-423)
+    | "Karakura Town Invasion"    // ภาคบุกเมืองคาราคุระ (Ch. 316-423)
     | "Lost Substitute Shinigami"// ภาคฟูลบริงค์ (Ch. 424-479)
     | "Thousand-Year Blood War"   // ภาคสงครามเลือดพันปี (Ch. 480-686)
 // | "Hell Arc"                  // ภาคเฮล (ตอนพิเศษหลัง TYBW)

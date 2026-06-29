@@ -18,6 +18,7 @@ interface CharacterGameState {
     initializeGame: (force?: boolean) => void;
     finalizeGame: (isWin: boolean) => void;
     resetGame: () => void;
+    hardReset: () => void;
 }
 
 export const useCharacterGame = create<CharacterGameState>()(
@@ -76,6 +77,20 @@ export const useCharacterGame = create<CharacterGameState>()(
             },
             resetGame: () => {
                 set({ target: null, guesses: [] });
+            },
+            hardReset: () => {
+                // 1. เคลียร์ LocalStorage ให้เกลี้ยง
+                localStorage.removeItem('bleachdle-character-progress');
+                localStorage.removeItem('bleachdle-character-completed');
+
+                // 2. เคลียร์ State
+                set({ target: null, guesses: [] });
+
+                // 3. เริ่มเกมใหม่แบบบังคับ (Force)
+                // ใช้ setTimeout เพื่อให้แน่ใจว่า state โดน clear แล้วค่อยสุ่มใหม่
+                setTimeout(() => {
+                    get().initializeGame(true);
+                }, 0);
             },
         }),
         {
