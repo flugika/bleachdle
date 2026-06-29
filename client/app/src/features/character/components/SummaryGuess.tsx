@@ -35,10 +35,10 @@ export const SummaryGuess = ({ isOpen, onClose, guesses, target, isWin, stats = 
                 <div className="text-center mb-6 relative z-10">
                     <span className="text-3xl" style={{ color: activeTier.color }}>卍</span>
                     <h2 className="text-2xl font-bold mt-2 tracking-[0.2em] uppercase font-serif" style={{ color: isWin ? '#c8a96e' : '#e84d4d' }}>
-                        {isWin ? "MISSION ACCOMPLISHED" : "MISSION FAILED"}
+                        {isWin ? "REISHI KAKUNIN" : "KONPAKU DANZETSU"}
                     </h2>
                     <p className="text-[9px] tracking-[0.3em] uppercase text-[#eed9c4]/30 mt-1">
-                        {isWin ? "Reiatsu Identity Decrypted" : "Target Evaded Detection Signature"}
+                        {isWin ? "Reishi Signature Resonance Confirmed" : "Konpaku Link Severed"}
                     </p>
                 </div>
 
