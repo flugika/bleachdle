@@ -9,6 +9,7 @@ import { HowToPlayModal } from '@/src/features/character/components/HowToPlayMod
 import { Tooltip } from '@/src/shared/ui/tooltip';
 import { Header } from '@/src/shared/layout/Header';
 import { Divider } from '@/src/shared/layout/Divider';
+import { SubHeader } from '@/src/shared/layout/SubHeader';
 
 export default function UnlimitedGame() {
     const { target, guesses, initializeGame, finalizeGame, resetGame } = useCharacterGame();
@@ -118,30 +119,7 @@ export default function UnlimitedGame() {
             {/* ── Main content ────────────────────────────────────── */}
             <main className="max-w-[80%] mx-auto px-4 pb-16">
 
-                <div className="mt-8 mb-6 flex flex-col items-center animate-in fade-in duration-700">
-                    {/* Decorative Lines & Title */}
-                    <div className="flex items-center justify-center w-full gap-4 mb-2">
-                        {/* เส้นตกแต่งซ้าย */}
-                        <div className="h-px w-12 bg-gradient-to-r from-transparent via-[#c8a96e]/40 to-[#c8a96e]/60" />
-
-                        <p className="text-[12px] tracking-[0.4em] text-[#c8a96e] font-bold uppercase drop-shadow-[0_0_8px_rgba(200,169,110,0.4)]"
-                            style={{ fontFamily: "'Cinzel', serif" }}>
-                            REIRAKU PERCEPTION
-                        </p>
-
-                        {/* เส้นตกแต่งขวา */}
-                        <div className="h-px w-12 bg-gradient-to-l from-transparent via-[#c8a96e]/40 to-[#c8a96e]/60" />
-                    </div>
-
-                    {/* Subtitle ที่ดูเหมือน Status Code */}
-                    <div className="flex items-center gap-2">
-                        <span className="w-1 h-1 bg-[#c8a96e] rounded-full animate-pulse" />
-                        <p className="text-[9px] text-[#d1a9a9]/60 tracking-[0.3em] uppercase">
-                            System // Scanning for Reiatsu Signature
-                        </p>
-                        <span className="w-1 h-1 bg-[#c8a96e] rounded-full animate-pulse" />
-                    </div>
-                </div>
+                <SubHeader title='REIRAKU PERCEPTION' description='System // Scanning for Reiatsu Signature' />
 
                 <div className="flex justify-center">
                     <SearchBar characters={characters} disabled={guesses.length >= 10} />
