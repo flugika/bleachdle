@@ -1,6 +1,7 @@
 # BLEACHDLE
 
 > A Wordle-style character guessing game for Bleach fans — unlimited mode, attribute-based feedback, Soul Society aesthetic.
+Lastest Updated: 29 June 2026, 9:30 PM.
 
 [![Next.js](https://img.shields.io/badge/Next.js-15-black?logo=next.js)](https://nextjs.org/)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5-blue?logo=typescript)](https://www.typescriptlang.org/)
@@ -100,8 +101,20 @@ Character data is defined in `src/data/characters.json`. Each entry includes:
 - `affiliation` — primary organizational alignment
 - `weapon` — Zanpakuto, Vollständig, Quincy bow, etc.
 - `firstAppearanceChapter` — integer, used for directional hint
+
+- `name` — canonical English romanization
 - `gender`
-- `status` — alive / deceased / unknown
+- `race` — Shinigami / Hollow / Arrancar / Quincy / Human / etc.
+- `affiliation` — primary organizational alignment
+- `heightCm`
+- `age`
+- `eyeColor`
+- `hairColor`
+- `firstAppearanceChapter` — integer, used for directional hint
+- `weapon` — Weaponized / Unarmed / Energy / etc.
+- `release`  — State of release, Shikai / Bankai / Resurrection
+- `primaryAbility` — Combat utilities, Physical / Element / Kido / etc.
+- `image`
 
 To add a character: append an entry to `characters.json` and drop the corresponding `.webp` into `public/assets/characters/`. Run `src/lib/utils/scripts/check-assets.js` to validate name parity between the JSON and the asset directory.
 
