@@ -158,7 +158,7 @@ export default function UnlimitedGame() {
                         ] as const).map(([key, bg, border, fg, label]) => (
                             <div key={key} className="flex items-center gap-1.5">
                                 <span
-                                    className="inline-block w-2.5 h-2.5 rounded-[2px] shrink-0"
+                                    className="inline-block w-2.5 h-2.5 rounded-[4px] shrink-0"
                                     style={{ background: bg, border: `1px solid ${border}` }}
                                 />
                                 <span className="text-[10px] tracking-wide text-[#d1a9a9]">{label}</span>
@@ -169,7 +169,7 @@ export default function UnlimitedGame() {
 
                 {/* Table — ไม่ scroll page, scroll เฉพาะ container นี้ */}
                 {target ? (
-                    <div className="w-full overflow-x-auto rounded-[2px]
+                    <div className="w-full overflow-x-auto rounded-[4px]
                                     [&::-webkit-scrollbar]:h-1
                                     [&::-webkit-scrollbar-track]:bg-[#0e0e1a]
                                     [&::-webkit-scrollbar-thumb]:bg-[#2a2a40]

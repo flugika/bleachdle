@@ -48,6 +48,7 @@ export const GameOverModal = ({ isOpen, onClose, guesses, target, isWin, stats =
                                 src={`/assets/characters/${target.image}`}
                                 alt={target.name}
                                 fill
+                                sizes="64px"
                                 className="rounded border border-[#c8a96e]/20 object-cover"
                             />
                         </div>
@@ -126,7 +127,7 @@ export const GameOverModal = ({ isOpen, onClose, guesses, target, isWin, stats =
                             .map(({ entry, originalIndex }, index) => (
                                 <div
                                     key={index}
-                                    className="flex items-center gap-2 border border-white/5 bg-black/40 p-1.5 rounded-[2px] hover:border-[#c8a96e]/30 transition-colors"
+                                    className="flex items-center gap-2 border border-white/5 bg-black/40 p-1.5 rounded-[4px] hover:border-[#c8a96e]/30 transition-colors"
                                 >
                                     {/* ใช้ originalIndex ที่ล็อคไว้ จะไม่รวนแน่นอน */}
                                     <span className="font-mono text-[9px] text-white/30 shrink-0">
@@ -137,6 +138,7 @@ export const GameOverModal = ({ isOpen, onClose, guesses, target, isWin, stats =
                                             src={`/assets/characters/${entry.guess.image}`}
                                             alt={entry.guess.name}
                                             fill
+                                            sizes="28px"
                                             className="rounded-[1px] border border-white/10 object-cover bg-neutral-900"
                                         />
                                     </div>

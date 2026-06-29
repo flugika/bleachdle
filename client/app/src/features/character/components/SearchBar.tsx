@@ -137,7 +137,8 @@ export const SearchBar = ({ characters, disabled = false }: SearchBarProps) => {
                                     src={`/assets/characters/${item.image}`} // เปลี่ยนตาม path ที่เก็บไฟล์จริงของคุณ
                                     alt={item.name}
                                     fill
-                                    className="rounded-[2px] object-cover border border-[#2a2a42]"
+                                    sizes="32px"
+                                    className="rounded-[4px] object-cover border border-[#2a2a42]"
                                 />
                             </div>
                             <span className={idx === activeIdx ? 'text-[#c8a96e]' : 'text-[#a0988e]'}>

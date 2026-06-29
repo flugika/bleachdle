@@ -53,7 +53,7 @@ export const HowToPlayModal = ({ isOpen, onClose }: { isOpen: boolean; onClose: 
                             // หรือถ้าอยากง่ายสุด ให้ดึงจากโครงสร้างที่เหมือนกับ ResultCell
                             return (
                                 <div key={status} className="flex items-center gap-2">
-                                    <div className={`w-4 h-4 ${bg} ${border} border rounded-[2px]`} />
+                                    <div className={`w-4 h-4 ${bg} ${border} border rounded-[4px]`} />
                                     <span className={text}>{label}</span>
                                 </div>
                             );
@@ -102,7 +102,7 @@ export const HowToPlayModal = ({ isOpen, onClose }: { isOpen: boolean; onClose: 
                 <div className="space-y-4">
                     <div className="relative flex items-center gap-4">
                         <div className="relative w-16 h-16">
-                            <Image src={`/assets/characters/${target.image}`} alt={target.name} fill className="object-cover" />
+                            <Image src={`/assets/characters/${target.image}`} alt={target.name} fill sizes="64px" className="object-cover" />
                         </div>
                         <p className="text-xs text-[#a0988e]">Target Character: <span className="font-bold">{target.name}</span></p>
                     </div>
@@ -119,7 +119,7 @@ export const HowToPlayModal = ({ isOpen, onClose }: { isOpen: boolean; onClose: 
                     <div className="grid grid-cols-13 gap-1 text-[8px] font-bold text-center mb-2">
                         <div className={`${cellClass} bg-[#0e0e1a]`}>Target</div>
                         <div className={`${cellClass} bg-gray-900 relative`}>
-                            <Image src={`/assets/characters/${target.image}`} alt={target.name} fill className="w-10 h-10 object-cover" />
+                            <Image src={`/assets/characters/${target.image}`} alt={target.name} fill sizes="40px" className="object-cover" />
                         </div>
                         <div className={`${cellClass} bg-[#0e0e1a]`}>{target.gender}</div>
                         <div className={`${cellClass} bg-[#0e0e1a]`}>{target.race.length > 1 ? "Hybrid" : target.race[0]}</div>
@@ -140,7 +140,7 @@ export const HowToPlayModal = ({ isOpen, onClose }: { isOpen: boolean; onClose: 
 
                         {/* Image */}
                         <div className={`${cellClass} bg-gray-900 relative`}>
-                            <Image src={`/assets/characters/${guess.image}`} alt={guess.name} fill className="w-10 h-10 object-cover" />
+                            <Image src={`/assets/characters/${guess.image}`} alt={guess.name} fill sizes="40px" className="object-cover" />
                         </div>
 
                         {/* ใช้ ResultCell ที่คุณมีอยู่แล้ว เพื่อจัดการเรื่องสีและสถานะ */}
