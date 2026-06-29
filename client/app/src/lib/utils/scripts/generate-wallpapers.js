@@ -20,6 +20,13 @@ const files = fs.readdirSync(ASSETS_DIR).filter(file =>
     file.startsWith('bg_wallpaper_') && file.endsWith('.jpg')
 );
 
+files.sort((a, b) => {
+    // ดึงเฉพาะตัวเลขออกมาเปรียบเทียบ
+    const numA = parseInt(a.replace(/[^0-9]/g, ''));
+    const numB = parseInt(b.replace(/[^0-9]/g, ''));
+    return numA - numB;
+});
+
 // 5. สร้างข้อมูล
 const data = {
     count: files.length,
