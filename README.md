@@ -258,7 +258,7 @@ bleachdle
 │  ├─ postcss.config.mjs
 │  ├─ public
 │  │  ├─ assets
-│  │  │  ├─ bg_wallpaper.jpg
+│  │  │  ├─ bg_wallpaper_1.jpg
 │  │  │  ├─ bleachdle-avatar.psd
 │  │  │  ├─ characters
 │  │  │  │  ├─ Aaroniero_Arruruerie.webp

@@ -7,6 +7,8 @@ import { GameOverModal } from '@/src/features/character/components/GameOverModal
 import { findDuplicateIds } from '@/src/lib/utils/checking';
 import { HowToPlayModal } from '@/src/features/character/components/HowToPlayModal';
 import { Tooltip } from '@/src/shared/ui/tooltip';
+import { Header } from '@/src/shared/layout/Header';
+import { Divider } from '@/src/shared/layout/Divider';
 
 export default function UnlimitedGame() {
     const { target, guesses, initializeGame, finalizeGame, resetGame } = useCharacterGame();
@@ -90,43 +92,55 @@ export default function UnlimitedGame() {
         <div className="min-h-screen text-[#d8d0c8] overflow-x-hidden">
 
             {/* ── Header ──────────────────────────────────────────── */}
-            <header className="w-full border-b border-[#1e1e30]">
-                <Tooltip content="System // How To Play" className="absolute top-4 right-4">
-                    <button
-                        onClick={() => setIsHowToOpen(true)}
-                        className="text-[#c8a96e] opacity-70 hover:opacity-100 transition-opacity hover:cursor-pointer"
-                        aria-label="How to play"
-                    >
-                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                            <circle cx="12" cy="12" r="10"></circle>
-                            <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path>
-                            <line x1="12" y1="17" x2="12.01" y2="17"></line>
-                        </svg>
-                    </button>
-                </Tooltip>
-                <div className="max-w-[80%] mx-auto px-4 py-6 flex flex-col items-center gap-1 text-center">
-                    <p className="text-[10px] tracking-[0.35em] text-[#d1a9a9] font-medium uppercase"
-                        style={{ fontFamily: "'Cinzel', serif" }}>
-                        Soul Society Intelligence Division <br />
-                    </p>
-                    <h1 className="text-3xl font-bold tracking-[0.2em] text-[#c8a96e]"
-                        style={{ fontFamily: "'Cinzel', serif" }}>
-                        BLEACHDLE
-                    </h1>
-                    {/* thin gold rule */}
-                    <div className="mt-2 w-20 h-px bg-[#c8a96e] opacity-40" />
+            <Header onOpenHowTo={() => setIsHowToOpen(true)} />
+
+            {/* ── Imperial Seal Divider ──────────────────────────────────────────── */}
+            <div className="w-full flex items-center justify-center px-[5%] opacity-90">
+                {/* เส้นทางซ้าย */}
+                <div className="flex-1 h-px bg-gradient-to-r from-transparent via-[#c8a96e]/60 to-[#c8a96e]/20" />
+
+                {/* Premium Center - Geometric Seal */}
+                <div className="mx-8 relative flex items-center justify-center">
+                    {/* สัญลักษณ์ตราประทับตรงกลาง */}
+                    <div className="w-6 h-6 border border-[#c8a96e] rotate-45 flex items-center justify-center shadow-[0_0_15px_rgba(200,169,110,0.3)] bg-black/20">
+                        <div className="w-1.5 h-1.5 bg-[#c8a96e] rotate-0 shadow-[0_0_8px_#c8a96e]" />
+                    </div>
+
+                    {/* กราฟิกเสริมซ้าย-ขวา */}
+                    <div className="absolute -left-4 w-1.5 h-1.5 border border-[#c8a96e]/50 rotate-45" />
+                    <div className="absolute -right-4 w-1.5 h-1.5 border border-[#c8a96e]/50 rotate-45" />
                 </div>
-            </header>
+
+                {/* เส้นทางขวา */}
+                <div className="flex-1 h-px bg-gradient-to-l from-transparent via-[#c8a96e]/60 to-[#c8a96e]/20" />
+            </div>
 
             {/* ── Main content ────────────────────────────────────── */}
             <main className="max-w-[80%] mx-auto px-4 pb-16">
 
-                {/* Prompt + counter */}
-                <div className="mt-8 mb-6 text-center">
-                    <p className="text-sm text-[#d1a9a9] tracking-widest uppercase"
-                        style={{ fontFamily: "'Cinzel', serif" }}>
-                        Identify a soul
-                    </p>
+                <div className="mt-8 mb-6 flex flex-col items-center animate-in fade-in duration-700">
+                    {/* Decorative Lines & Title */}
+                    <div className="flex items-center justify-center w-full gap-4 mb-2">
+                        {/* เส้นตกแต่งซ้าย */}
+                        <div className="h-px w-12 bg-gradient-to-r from-transparent via-[#c8a96e]/40 to-[#c8a96e]/60" />
+
+                        <p className="text-[12px] tracking-[0.4em] text-[#c8a96e] font-bold uppercase drop-shadow-[0_0_8px_rgba(200,169,110,0.4)]"
+                            style={{ fontFamily: "'Cinzel', serif" }}>
+                            REIRAKU PERCEPTION
+                        </p>
+
+                        {/* เส้นตกแต่งขวา */}
+                        <div className="h-px w-12 bg-gradient-to-l from-transparent via-[#c8a96e]/40 to-[#c8a96e]/60" />
+                    </div>
+
+                    {/* Subtitle ที่ดูเหมือน Status Code */}
+                    <div className="flex items-center gap-2">
+                        <span className="w-1 h-1 bg-[#c8a96e] rounded-full animate-pulse" />
+                        <p className="text-[9px] text-[#d1a9a9]/60 tracking-[0.3em] uppercase">
+                            System // Scanning for Reiatsu Signature
+                        </p>
+                        <span className="w-1 h-1 bg-[#c8a96e] rounded-full animate-pulse" />
+                    </div>
                 </div>
 
                 <div className="flex justify-center">
@@ -152,14 +166,7 @@ export default function UnlimitedGame() {
 
                 {/* Section divider */}
                 {guesses.length > 0 && (
-                    <div className="my-6 flex items-center gap-3">
-                        <div className="flex-1 h-px bg-[#786060]" />
-                        <span className="text-[10px] text-[#786060] tracking-widest"
-                            style={{ fontFamily: "'Cinzel', serif" }}>
-                            卍
-                        </span>
-                        <div className="flex-1 h-px bg-[#786060]" />
-                    </div>
+                    <Divider />
                 )}
 
                 {/* Legend */}
