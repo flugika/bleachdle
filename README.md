@@ -98,12 +98,6 @@ The comparison engine lives in `src/lib/game-engine/compare.ts` and is stateless
 Character data is defined in `src/data/characters.json`. Each entry includes:
 
 - `name` — canonical English romanization
-- `race` — Shinigami / Hollow / Arrancar / Quincy / Human / etc.
-- `affiliation` — primary organizational alignment
-- `weapon` — Zanpakuto, Vollständig, Quincy bow, etc.
-- `firstAppearanceChapter` — integer, used for directional hint
-
-- `name` — canonical English romanization
 - `gender`
 - `race` — Shinigami / Hollow / Arrancar / Quincy / Human / etc.
 - `affiliation` — primary organizational alignment
