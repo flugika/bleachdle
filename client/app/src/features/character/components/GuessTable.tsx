@@ -6,6 +6,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Character } from '@/src/entities/character/schema';
 import { ComparisonOutcome, MatchResult } from '@/src/features/character/types';
 import { formatAge, formatHeight } from '@/src/lib/utils/format';
+import Image from 'next/image';
 
 // ─── Types ───────────────────────────────────────────────────────────────────
 
@@ -228,11 +229,12 @@ const GuessRow = ({ guess, result, isNew = false }: GuessEntry) => {
             className="grid grid-cols-[72px_repeat(11,minmax(60px,1fr))] gap-[6px] mb-[4px]"
         >
             {/* Name cell: ปรับขนาดเป็น 72x72 เท่ากันเป๊ะ */}
-            <div className="bg-[#111120] border border-[#1e1e30] rounded-[2px] overflow-hidden w-[72px] h-[72px] flex-shrink-0">
-                <img
+            <div className="relative bg-[#111120] border border-[#1e1e30] rounded-[2px] overflow-hidden w-[72px] h-[72px] flex-shrink-0">
+                <Image
                     src={`/assets/characters/${guess.image}`}
                     alt={guess.name}
-                    className="w-full h-full object-cover" // บังคับ 1:1 เต็มพื้นที่
+                    fill
+                    className="object-cover" // บังคับ 1:1 เต็มพื้นที่
                     title={guess.name}
                 />
             </div>

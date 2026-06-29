@@ -5,6 +5,7 @@ import { useMemo } from "react";
 import { CELL_STYLES, ResultCell } from "./GuessTable";
 import { Button } from "@/src/shared/ui/button";
 import { Modal } from "@/src/shared/ui/modal";
+import Image from 'next/image';
 
 const statusDefinitions = [
     { label: 'Correct Match', status: 'correct' as const },
@@ -99,8 +100,10 @@ export const HowToPlayModal = ({ isOpen, onClose }: { isOpen: boolean; onClose: 
                 <h3 className="text-[#c8a96e] font-bold uppercase tracking-wider mb-4">Example Gameplay</h3>
 
                 <div className="space-y-4">
-                    <div className="flex items-center gap-4">
-                        <img src={`/assets/characters/${target.image}`} className="w-16 h-16 object-cover" />
+                    <div className="relative flex items-center gap-4">
+                        <div className="relative w-16 h-16">
+                            <Image src={`/assets/characters/${target.image}`} alt={target.name} fill className="object-cover" />
+                        </div>
                         <p className="text-xs text-[#a0988e]">Target Character: <span className="font-bold">{target.name}</span></p>
                     </div>
 
@@ -115,8 +118,8 @@ export const HowToPlayModal = ({ isOpen, onClose }: { isOpen: boolean; onClose: 
                     {/* Target Row (Byakuya) */}
                     <div className="grid grid-cols-13 gap-1 text-[8px] font-bold text-center mb-2">
                         <div className={`${cellClass} bg-[#0e0e1a]`}>Target</div>
-                        <div className={`${cellClass} bg-gray-900`}>
-                            <img src={`/assets/characters/${target.image}`} className="w-10 h-10 object-cover" />
+                        <div className={`${cellClass} bg-gray-900 relative`}>
+                            <Image src={`/assets/characters/${target.image}`} alt={target.name} fill className="w-10 h-10 object-cover" />
                         </div>
                         <div className={`${cellClass} bg-[#0e0e1a]`}>{target.gender}</div>
                         <div className={`${cellClass} bg-[#0e0e1a]`}>{target.race.length > 1 ? "Hybrid" : target.race[0]}</div>
@@ -136,8 +139,8 @@ export const HowToPlayModal = ({ isOpen, onClose }: { isOpen: boolean; onClose: 
                         <div className={`${cellClass} bg-[#0e0e1a]`}>Guess</div>
 
                         {/* Image */}
-                        <div className={`${cellClass} bg-gray-900`}>
-                            <img src={`/assets/characters/${guess.image}`} className="w-10 h-10 object-cover" />
+                        <div className={`${cellClass} bg-gray-900 relative`}>
+                            <Image src={`/assets/characters/${guess.image}`} alt={guess.name} fill className="w-10 h-10 object-cover" />
                         </div>
 
                         {/* ใช้ ResultCell ที่คุณมีอยู่แล้ว เพื่อจัดการเรื่องสีและสถานะ */}

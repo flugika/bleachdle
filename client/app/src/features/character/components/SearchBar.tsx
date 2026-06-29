@@ -5,6 +5,7 @@ import { useState, useMemo, useRef, useEffect } from 'react';
 import { createSearchEngine } from '@/src/lib/search/fuzzy';
 import { Character } from '@/src/entities/character/schema';
 import { useCharacterGame } from '@/src/features/character/hooks/useCharacterGame';
+import Image from 'next/image';
 
 interface SearchBarProps {
     characters: Character[];
@@ -131,11 +132,14 @@ export const SearchBar = ({ characters, disabled = false }: SearchBarProps) => {
                                     : 'text-[#a0988e] hover:bg-[#13131e] hover:text-[#c8a96e]',
                             ].join(' ')}
                         >
-                            <img
-                                src={`/assets/characters/${item.image}`} // เปลี่ยนตาม path ที่เก็บไฟล์จริงของคุณ
-                                alt={item.name}
-                                className="w-8 h-8 rounded-[2px] object-cover border border-[#2a2a42]"
-                            />
+                            <div className="relative w-8 h-8 shrink-0">
+                                <Image
+                                    src={`/assets/characters/${item.image}`} // เปลี่ยนตาม path ที่เก็บไฟล์จริงของคุณ
+                                    alt={item.name}
+                                    fill
+                                    className="rounded-[2px] object-cover border border-[#2a2a42]"
+                                />
+                            </div>
                             <span className={idx === activeIdx ? 'text-[#c8a96e]' : 'text-[#a0988e]'}>
                                 {item.name}
                             </span>

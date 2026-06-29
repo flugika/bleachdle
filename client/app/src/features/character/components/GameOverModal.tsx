@@ -2,6 +2,7 @@ import { useState } from 'react'; // 🔮 เพิ่ม useState เพื่�
 import { Button } from "@/src/shared/ui/button";
 import { ComparisonOutcome, MatchResult } from "../types";
 import { Modal } from "@/src/shared/ui/modal";
+import Image from 'next/image';
 
 const STATUS_COLORS: Record<MatchResult, string> = {
     correct: '#4de880',
@@ -41,12 +42,16 @@ export const GameOverModal = ({ isOpen, onClose, guesses, target, isWin, stats =
                     </div>
 
                     {/* Character Info */}
-                    <div className="flex items-center gap-3 p-3">
-                        <img
-                            src={`/assets/characters/${target.image}`}
-                            alt={target.name}
-                            className="h-16 w-16 shrink-0 rounded border border-[#c8a96e]/20 object-cover"
-                        />
+                    <div className="relative flex items-center gap-3 p-3">
+                        <div className='relative h-16 w-16 shrink-0'>
+                            <Image
+                                src={`/assets/characters/${target.image}`}
+                                alt={target.name}
+                                fill
+                                className="rounded border border-[#c8a96e]/20 object-cover"
+                            />
+                        </div>
+
                         <div className="flex flex-col text-left overflow-hidden">
                             <h2 className="text-md font-bold text-[#c8a96e] truncate">{target.name}</h2>
                             <div className="flex flex-wrap gap-1 mt-1">
@@ -127,12 +132,14 @@ export const GameOverModal = ({ isOpen, onClose, guesses, target, isWin, stats =
                                     <span className="font-mono text-[9px] text-white/30 shrink-0">
                                         #{String(originalIndex).padStart(2, '0')}
                                     </span>
-
-                                    <img
-                                        src={`/assets/characters/${entry.guess.image}`}
-                                        alt={entry.guess.name}
-                                        className="w-7 h-7 rounded-[1px] border border-white/10 object-cover shrink-0 bg-neutral-900"
-                                    />
+                                    <div className='relative w-7 h-7 shrink-0'>
+                                        <Image
+                                            src={`/assets/characters/${entry.guess.image}`}
+                                            alt={entry.guess.name}
+                                            fill
+                                            className="rounded-[1px] border border-white/10 object-cover bg-neutral-900"
+                                        />
+                                    </div>
 
                                     <span className="text-[10px] font-medium text-white/80 tracking-wide truncate">
                                         {entry.guess.name}

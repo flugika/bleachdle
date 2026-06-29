@@ -499,7 +499,7 @@ const ZangetsuLoader: React.FC = () => {
 
         <div className="tsuba-wrap">
           <div className="tsuba-spin" ref={tsubaRef}>
-            <svg width="112" height="112" viewBox="0 0 110 110" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ display: 'block' }}>
+            <svg width="112" height="112" viewBox="0 0 110 110" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ display: 'block' }} className='relative'>
               <image href="/assets/tensazangetsu.png" x="0" y="0" width="110" height="110" />
             </svg>
           </div>
