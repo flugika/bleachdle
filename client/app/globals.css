@@ -27,12 +27,13 @@ body {
 
 /* app/globals.css */
 body {
-  background-image: url('/assets/bg_wallpaper_1.jpg');
+  background-image: var(--bg-image);
   background-size: cover;
   background-position: center;
   background-attachment: fixed;
-  /* ภาพจะนิ่งขณะเลื่อนหน้าจอ ดูหรูหรามาก */
   background-repeat: no-repeat;
+  transition: background-image 1s ease-in-out;
+  /* เพิ่มลูกเล่นให้เปลี่ยนภาพนุ่มนวลขึ้น */
 }
 
 /* สร้าง Overlay เพื่อให้ตัวหนังสืออ่านง่ายขึ้น */

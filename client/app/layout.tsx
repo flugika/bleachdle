@@ -3,6 +3,8 @@ import "./globals.css";
 import { Cinzel } from "next/font/google";
 import Footer from "@/src/shared/layout/Footer";
 import { BleachReiatsuCursor } from "./src/shared/ui/BleachReiatsuCursor";
+import { useDailyWallpaper } from '@/src/shared/hooks/useDailyWallpaper';
+import { WallpaperInitializer } from "./src/shared/hooks/WallpaperInitializer";
 
 const cinzel = Cinzel({
   subsets: ["latin"],
@@ -25,6 +27,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <html lang="en" className="h-full">
       <body className={`${cinzel.className} text-white antialiased`}>
         <BleachReiatsuCursor />
+        <WallpaperInitializer />
         {/* Overlay คุมความมืดเพื่อให้ Contrast ของตัวหนังสือชัดเจน */}
         <div className="bg-overlay flex flex-col min-h-screen">
           <main className="flex-grow w-full">
