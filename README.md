@@ -93,6 +93,33 @@ The comparison engine lives in `src/lib/game-engine/compare.ts` and is stateless
 
 ---
 
+## 🧠 Character Comparison Engine: Architectural & Technical Notes
+
+This document details the architectural decisions and design patterns governing the Character Comparison Engine. These patterns ensure strict adherence to core game business rules while mitigating regressions and cross-domain side effects.
+
+---
+
+### 1. Separation of Concerns: Height vs. Age
+In the legacy implementation, both **Height** and **Age** attributes routed through a generic `compareNumber` utility. This tight coupling introduced structural regressions because their underlying domain logics are fundamentally distinct. To enforce the **Single Responsibility Principle (SRP)**, we decoupled the logic into two domain-isolated functions:
+
+* **Height Comparison (`compareHeight`):**
+    * Dictated strictly by an **Exact Match (1:1)** evaluation matrix.
+    * Independent of any range-bucketing or grouping logic.
+    * If an exact match fails, it computes directional outcomes based on absolute values, returning Higher (`higher` / ▲) or Lower (`lower` / ▼) indicators.
+* **Age Comparison (`compareAge`):**
+    * Tailored to accommodate specialized game mechanics based on spiritual entities (Humans vs. Centenarian Shinigami/Hollows).
+    * **Ages < 100 (Humans / Young Quincies):** Evaluated linearly to provide precise directional hints (`higher` or `lower`) for granular guessing.
+    * **Ages 100+ (Captains / Espadas):** Categorized into discrete brackets via `getAgeRangeBlock` (e.g., `100-999` and `1000+`). If both the guessed character and target character fall within the identical bracket, the match is evaluated as **`correct` (Green)** per game design specifications.
+
+---
+
+### 2. Edge Case Handling: Unknown Data (`-1`)
+Certain character metrics are canonically unverified or unspecified in the source material (e.g., Unohana's exact age or specific character heights). The system standardizes these missing metrics using `-1`.
+
+To prevent `-1` from bleeding into downstream numerical computations—which would distort directional indicators (e.g., prompting a user to guess a higher value when the target is unknown)—we implement early-exit **Guard Clauses** at the absolute entry point of each comparison subroutine:
+
+---
+
 ## Data
 
 Character data is defined in `src/data/characters.json`. Each entry includes:
@@ -184,17 +211,16 @@ bleachdle
 │  │  │  └─ page.tsx
 │  │  └─ src
 │  │     ├─ config
-│  │     │  ├─ daily.config.ts
-│  │     │  ├─ env.ts
-│  │     │  ├─ feature.flags.ts
-│  │     │  └─ game.config.ts
+│  │     ├─ const
+│  │     │  └─ summary.ts
 │  │     ├─ data
 │  │     │  ├─ characters.json
 │  │     │  ├─ emojis.json
 │  │     │  ├─ images.json
 │  │     │  ├─ powers.json
 │  │     │  ├─ quotes.json
-│  │     │  └─ songs.json
+│  │     │  ├─ songs.json
+│  │     │  └─ wallpapers.json
 │  │     ├─ entities
 │  │     │  ├─ character
 │  │     │  │  └─ schema.ts
@@ -205,12 +231,18 @@ bleachdle
 │  │     ├─ features
 │  │     │  ├─ character
 │  │     │  │  ├─ components
-│  │     │  │  │  ├─ SummaryGuess.tsx
-│  │     │  │  │  ├─ GuessTable.tsx
-│  │     │  │  │  ├─ HowToPlayModal.tsx
-│  │     │  │  │  └─ SearchBar.tsx
+│  │     │  │  │  ├─ daily
+│  │     │  │  │  ├─ shared
+│  │     │  │  │  │  ├─ GuessTable.tsx
+│  │     │  │  │  │  ├─ HowToPlayModal.tsx
+│  │     │  │  │  │  └─ SearchBar.tsx
+│  │     │  │  │  └─ unlimited
+│  │     │  │  │     ├─ Central46ConfidentialArchive.tsx
+│  │     │  │  │     └─ SummaryGuess.tsx
 │  │     │  │  ├─ hooks
-│  │     │  │  │  └─ useCharacterGame.ts
+│  │     │  │  │  ├─ daily
+│  │     │  │  │  └─ unlimited
+│  │     │  │  │     └─ useCharacterGame.ts
 │  │     │  │  ├─ index.ts
 │  │     │  │  └─ types.ts
 │  │     │  ├─ daily
@@ -229,16 +261,24 @@ bleachdle
 │  │     │  │  ├─ character.ts
 │  │     │  │  ├─ checking.ts
 │  │     │  │  ├─ format.ts
-│  │     │  │  └─ scripts
-│  │     │  │     ├─ check-assets.js
-│  │     │  │     ├─ extract-character-meta.js
-│  │     │  │     └─ extract-character.js
+│  │     │  │  ├─ scripts
+│  │     │  │  │  ├─ check-assets.js
+│  │     │  │  │  ├─ extract-character-meta.js
+│  │     │  │  │  ├─ extract-character.js
+│  │     │  │  │  └─ generate-wallpapers.js
+│  │     │  │  └─ ui.ts
 │  │     │  └─ uuid.ts
 │  │     └─ shared
 │  │        ├─ constants
 │  │        ├─ hooks
+│  │        │  ├─ useDailyWallpaper.ts
+│  │        │  ├─ useTestWallpaper.ts
+│  │        │  └─ WallpaperInitializer.tsx
 │  │        ├─ layout
-│  │        │  └─ Footer.tsx
+│  │        │  ├─ Divider.tsx
+│  │        │  ├─ Footer.tsx
+│  │        │  ├─ Header.tsx
+│  │        │  └─ SubHeader.tsx
 │  │        ├─ styles
 │  │        └─ ui
 │  │           ├─ BleachReiatsuCursor.tsx
@@ -259,13 +299,16 @@ bleachdle
 │  ├─ public
 │  │  ├─ assets
 │  │  │  ├─ bg_wallpaper_1.jpg
+│  │  │  ├─ bg_wallpaper_2.jpg
+│  │  │  ├─ bg_wallpaper_3.jpg
+│  │  │  └─ ...
 │  │  │  ├─ bleachdle-avatar.psd
 │  │  │  ├─ characters
 │  │  │  │  ├─ Aaroniero_Arruruerie.webp
 │  │  │  │  ├─ Abirama_Redder.webp
 │  │  │  │  ├─ Aisslinger_Wernarr.webp
 │  │  │  │  ├─ Akon.webp
-|  |  |  |  └─ ...
+│  │  │  |  └─ ...
 │  │  │  └─ tensazangetsu.png
 │  │  ├─ file.svg
 │  │  ├─ globe.svg

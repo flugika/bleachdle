@@ -1,4 +1,4 @@
-// src/features/character/components/GuessTable.tsx
+// src/features/character/components/shared/GuessTable.tsx
 'use client';
 
 import { useRef, useEffect } from 'react';
@@ -33,36 +33,45 @@ const HEADERS = [
 
 // ─── Cell colour tokens (Bleach dark palette) ────────────────────────────────
 
-export const CELL_STYLES: Record<MatchResult, { bg: string; border: string; text: string; glow: string }> = {
+export const CELL_STYLES: Record<MatchResult, { bg: string; border: string; text: string; glow: string; textGlow: string }> = {
     correct: {
-        bg: 'bg-[#19522f]',
-        border: 'border-[#2c9151]',
+        bg: 'bg-gradient-to-b from-[#113821] via-[#0a2515] to-[#05130b]',
+        border: 'border-[#2da157]/40 border-t-[#4de880]/60 border-b-[#144726]',
         text: 'text-[#4de880]',
-        glow: '0 0 18px 4px rgba(77,232,128,0.55), 0 0 40px 8px rgba(77,232,128,0.25)',
+        // ── 🌟 Premium Aura Layers: มิติยุบใน (Inset) + ออร่าแรงดันวิญญาณแผ่ออกนอก (Outer Neon Glow)
+        glow: 'inset 0 0 14px rgba(77, 232, 128, 0.22), 0 0 22px 3px rgba(77, 232, 128, 0.4), 0 6px 24px rgba(13, 41, 24, 0.7)',
+        textGlow: 'drop-shadow-[0_0_5px_rgba(77,232,128,0.5)]',
     },
     partial: {
-        bg: 'bg-[#995325]',
-        border: 'border-[#e0874c]',
+        bg: 'bg-gradient-to-b from-[#5c3316] via-[#3d200d] to-[#1f0f05]',
+        border: 'border-[#cc7b3d]/40 border-t-[#e8b830]/70 border-b-[#2e1809]',
         text: 'text-[#e8b830]',
-        glow: '0 0 18px 4px rgba(232,184,48,0.55), 0 0 40px 8px rgba(232,184,48,0.25)',
+        // ── 🌟 Copper Fire Shimmer
+        glow: 'inset 0 0 14px rgba(232, 184, 48, 0.18), 0 0 22px 3px rgba(232, 184, 48, 0.35), 0 6px 24px rgba(42, 31, 0, 0.7)',
+        textGlow: 'drop-shadow-[0_0_5px_rgba(232,184,48,0.4)]',
     },
     wrong: {
-        bg: 'bg-[#590e0e]',
-        border: 'border-[#a64747]',
-        text: 'text-[#d1a9a9]',
-        glow: 'none',
+        bg: 'bg-gradient-to-b from-[#3b0b0b] via-[#240606] to-[#120202]',
+        border: 'border-[#822d2d]/30 border-t-[#a64747]/40 border-b-[#1c0404]',
+        text: 'text-[#a68b8b]',
+        // ── 🌟 Hollow Abyss: ดึงมิติจมลึกแบบหลุมดำ ไม่ฟุ้งกระจายเพื่อให้ตัดกับตัวที่ถูก
+        glow: 'inset 0 0 16px rgba(0, 0, 0, 0.85), 0 4px 12px rgba(0, 0, 0, 0.5)',
+        textGlow: 'none',
     },
     higher: {
-        bg: 'bg-[#0f0f38]',
-        border: 'border-[#3a3a7a]',
+        bg: 'bg-gradient-to-b from-[#0c0d24] via-[#060714] to-[#020208]',
+        border: 'border-[#2d3a73]/40 border-t-[#7090f0]/60 border-b-[#0b0f24]',
         text: 'text-[#7090f0]',
-        glow: '0 0 14px 3px rgba(112,144,240,0.45)',
+        // ── 🌟 Reishi Flux Blue
+        glow: 'inset 0 0 12px rgba(112, 144, 240, 0.15), 0 0 18px 2px rgba(112, 144, 240, 0.3), 0 4px 18px rgba(10, 10, 34, 0.7)',
+        textGlow: 'drop-shadow-[0_0_4px_rgba(112,144,240,0.4)]',
     },
     lower: {
-        bg: 'bg-[#0f0f38]',
-        border: 'border-[#3a3a7a]',
+        bg: 'bg-gradient-to-b from-[#0c0d24] via-[#060714] to-[#020208]',
+        border: 'border-[#2d3a73]/40 border-t-[#7090f0]/60 border-b-[#0b0f24]',
         text: 'text-[#7090f0]',
-        glow: '0 0 14px 3px rgba(112,144,240,0.45)',
+        glow: 'inset 0 0 12px rgba(112, 144, 240, 0.15), 0 0 18px 2px rgba(112, 144, 240, 0.3), 0 4px 18px rgba(10, 10, 34, 0.7)',
+        textGlow: 'drop-shadow-[0_0_4px_rgba(112,144,240,0.4)]',
     },
 };
 
@@ -164,7 +173,7 @@ export const ResultCell = ({ value, status, colIndex, animate, size = "" }: Cell
     const textClass = isSm ? "text-[8px]" : "text-[12px]";
     const arrowClass = isSm ? "text-[8px]" : "text-[11px]";
 
-    const isHighlight = status === 'correct' || status === 'partial';
+    const isHighlight = status !== 'wrong';
 
     const variants = {
         hidden: { rotateY: 90, opacity: 0, scale: 0.92 },
@@ -194,7 +203,7 @@ export const ResultCell = ({ value, status, colIndex, animate, size = "" }: Cell
                     'px-2 gap-1',
                     textClass,   // ใช้ตัวแปร text
                     'font-bold tracking-wide text-center leading-tight',
-                    'border rounded-[4px] overflow-hidden',
+                    'border overflow-hidden',
                     bg, border, text,
                 ].join(' ')}
             >

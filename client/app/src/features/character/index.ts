@@ -1,6 +1,8 @@
 // src/features/character/index.ts
-export * from './components/GuessTable';
-export * from './components/SearchBar';
-export * from './hooks/useCharacterGame';
+export * from './components/shared/GuessTable';
+export * from './components/shared/SearchBar';
+export * from './components/unlimited/Central46ConfidentialArchive';
+export * from './components/unlimited/SummaryGuess';
+export * from './hooks/unlimited/useCharacterGame';
 // ถ้ามี types ก็ export ออกมาด้วย
 export * from './types';

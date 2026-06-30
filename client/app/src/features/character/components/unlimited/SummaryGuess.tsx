@@ -1,8 +1,9 @@
 import { useState, useMemo } from 'react';
 import { Button } from "@/src/shared/ui/button";
-import { MatchResult } from "../types";
+import { MatchResult } from "../../types";
 import Image from 'next/image';
 import { TIERS, STATUS_COLORS, RESULT_KEYS } from '@/src/const/summary';
+import { formatAge, formatHeight } from '@/src/lib/utils/format';
 
 export const SummaryGuess = ({ isOpen, onClose, guesses, target, isWin, stats = { currentStreak: 0, maxStreak: 0 } }: any) => {
     const [isHistoryExpanded, setIsHistoryExpanded] = useState(false);
@@ -88,6 +89,7 @@ export const SummaryGuess = ({ isOpen, onClose, guesses, target, isWin, stats = 
                             <div className="flex flex-col text-left overflow-hidden">
                                 <h2 className="text-md font-bold text-[#c8a96e] truncate">{target.name}</h2>
                                 <div className="flex flex-wrap gap-1 mt-1">
+                                    <span className="bg-[#c8a96e]/5 px-1.5 py-0.5 text-[9px] text-[#eed9c4]/70 border border-white/[0.03] rounded-[1px]">{target.gender}</span>
                                     <span className="bg-[#c8a96e]/5 px-1.5 py-0.5 text-[9px] text-[#eed9c4]/70 border border-white/[0.03] rounded-[1px]">{target.race.join(', ')}</span>
                                     <span className="bg-[#c8a96e]/5 px-1.5 py-0.5 text-[9px] text-[#eed9c4]/70 border border-white/[0.03] rounded-[1px]">{target.affiliation}</span>
                                 </div>
@@ -96,6 +98,10 @@ export const SummaryGuess = ({ isOpen, onClose, guesses, target, isWin, stats = 
 
                         {!isWin && (
                             <div className="grid grid-cols-2 gap-[1px] bg-[#c8a96e]/10 border-t border-[#c8a96e]/10">
+                                <div className="bg-[#0a0a0f] p-2 text-[9px] text-[#eed9c4]/40 uppercase">HEIGHT: <span className="text-[#eed9c4]/80 normal-case ml-1">{formatHeight(target.heightCm)}</span></div>
+                                <div className="bg-[#0a0a0f] p-2 text-[9px] text-[#eed9c4]/40 uppercase">AGE: <span className="text-[#eed9c4]/80 normal-case ml-1">{formatAge(target.age)}</span></div>
+                                <div className="bg-[#0a0a0f] p-2 text-[9px] text-[#eed9c4]/40 uppercase">EYE: <span className="text-[#eed9c4]/80 normal-case ml-1">{target.eyeColor}</span></div>
+                                <div className="bg-[#0a0a0f] p-2 text-[9px] text-[#eed9c4]/40 uppercase">HAIR: <span className="text-[#eed9c4]/80 normal-case ml-1">{target.hairColor}</span></div>
                                 <div className="bg-[#0a0a0f] p-2 text-[9px] text-[#eed9c4]/40 uppercase">ARC: <span className="text-[#eed9c4]/80 normal-case ml-1">{target.firstAppearanceChapter}</span></div>
                                 <div className="bg-[#0a0a0f] p-2 text-[9px] text-[#eed9c4]/40 uppercase">WEAPON: <span className="text-[#eed9c4]/80 normal-case ml-1">{target.weapon.join(', ')}</span></div>
                                 <div className="bg-[#0a0a0f] p-2 text-[9px] text-[#eed9c4]/40 uppercase">ABILITY: <span className="text-[#eed9c4]/80 normal-case ml-1">{target.primaryAbility.join(', ')}</span></div>

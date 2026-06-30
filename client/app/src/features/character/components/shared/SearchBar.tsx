@@ -4,7 +4,7 @@
 import { useState, useMemo, useRef, useEffect } from 'react';
 import { createSearchEngine } from '@/src/lib/search/fuzzy';
 import { Character } from '@/src/entities/character/schema';
-import { useCharacterGame } from '@/src/features/character/hooks/useCharacterGame';
+import { useCharacterGame } from '@/src/features/character/hooks/unlimited/useCharacterGame';
 import Image from 'next/image';
 
 interface SearchBarProps {

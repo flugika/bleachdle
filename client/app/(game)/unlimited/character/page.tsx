@@ -3,13 +3,13 @@
 import { useEffect, useState } from 'react';
 import { SearchBar, GuessTable, useCharacterGame } from '@/src/features/character';
 import { getCharacters } from '@/src/lib/utils/character';
-import { SummaryGuess } from '@/src/features/character/components/SummaryGuess';
+import { SummaryGuess } from '@/src/features/character/components/unlimited/SummaryGuess';
 import { findDuplicateIds } from '@/src/lib/utils/checking';
-import { HowToPlayModal } from '@/src/features/character/components/HowToPlayModal';
+import { HowToPlayModal } from '@/src/features/character/components/shared/HowToPlayModal';
 import { Header } from '@/src/shared/layout/Header';
 import { Divider } from '@/src/shared/layout/Divider';
 import { SubHeader } from '@/src/shared/layout/SubHeader';
-import Central46ConfidentialArchive from '@/src/features/character/components/Central46ConfidentialArchive';
+import Central46ConfidentialArchive from '@/src/features/character/components/unlimited/Central46ConfidentialArchive';
 
 export default function UnlimitedGame() {
     const { target, guesses, initializeGame, finalizeGame, resetGame, hardReset } = useCharacterGame();
@@ -27,7 +27,6 @@ export default function UnlimitedGame() {
     const MAX_GUESSES = 10;
     const remainingGuesses = Math.max(0, MAX_GUESSES - guesses.length);
 
-    // ── 🌟 New State สำหรับระบบบันทึกจิตวิญญาณและวัฏสงสาร (Bleach Soul Registry) ──
     const [soulName, setSoulName] = useState('');
     const [inputName, setInputName] = useState('');
     const [reincarnationCount, setReincarnationCount] = useState(0);
@@ -41,26 +40,32 @@ export default function UnlimitedGame() {
     const isLoss = guesses.length >= 10 && !isWin;
     const isGameOver = isWin || isLoss;
 
+    // ── 🛡️ จัดการโครงสร้างสถิติแบบ Object Nesting
     const updateStats = (won: boolean) => {
-        const saved = JSON.parse(localStorage.getItem('bleachdle-character-stats') || '{"currentStreak":0, "maxStreak":0}');
+        const statsData = JSON.parse(localStorage.getItem('bleachdle-character-stats') || '{}');
+        const saved = statsData.unlimited || { currentStreak: 0, maxStreak: 0 };
+        
         const newStats = {
             currentStreak: won ? saved.currentStreak + 1 : 0,
             maxStreak: won ? Math.max(saved.maxStreak, saved.currentStreak + 1) : saved.maxStreak
         };
-        localStorage.setItem('bleachdle-character-stats', JSON.stringify(newStats));
+        
+        statsData.unlimited = newStats;
+        localStorage.setItem('bleachdle-character-stats', JSON.stringify(statsData));
         setStats(newStats);
     };
 
-    // โหลดสถิติและซิงค์ข้อมูลฝั่ง Client (ป้องกัน Hydration Error)
+    // โหลดและซิงค์ข้อมูลฝั่ง Client จากคีย์หลักแบบไม่มีจุดทศนิยมต่อท้าย
     useEffect(() => {
-        const savedStats = JSON.parse(localStorage.getItem('bleachdle-character-stats') || '{"currentStreak":0, "maxStreak":0}');
-        setStats(savedStats);
+        const statsData = JSON.parse(localStorage.getItem('bleachdle-character-stats') || '{}');
+        setStats(statsData.unlimited || { currentStreak: 0, maxStreak: 0 });
 
-        const completed = JSON.parse(localStorage.getItem('bleachdle-character-completed') || '[]');
+        const completedData = JSON.parse(localStorage.getItem('bleachdle-character-completed') || '{}');
+        const completed = completedData.unlimited || [];
         setIsGameCompleted(characters.length > 0 && completed.length >= characters.length);
 
-        // โหลดข้อมูลทะเบียนวิญญาณ (Soul Registry)
-        const registry = JSON.parse(localStorage.getItem('bleachdle-soul-registry') || '{"name":"","count":0}');
+        const registryData = JSON.parse(localStorage.getItem('bleachdle-soul-registry') || '{}');
+        const registry = registryData.unlimited || { name: "", count: 0 };
         if (registry.name) {
             setSoulName(registry.name);
         }
@@ -72,7 +77,8 @@ export default function UnlimitedGame() {
 
     useEffect(() => {
         if (isReady) {
-            const completed = JSON.parse(localStorage.getItem('bleachdle-character-completed') || '[]');
+            const completedData = JSON.parse(localStorage.getItem('bleachdle-character-completed') || '{}');
+            const completed = completedData.unlimited || [];
             setIsGameCompleted(characters.length > 0 && completed.length >= characters.length);
         }
     }, [target, characters.length, isReady]);
@@ -101,36 +107,36 @@ export default function UnlimitedGame() {
         window.scrollTo({ top: 0, behavior: 'smooth' });
     };
 
-    // ── 🌟 จัดการระบบกรอกชื่อและจารึกลงบนแผ่นหินวิญญาณ ──
+    // ── 🛡️ ทะเบียนวิญญาณแบบจารึกรวมศูนย์
     const handleRegisterSoul = (e: React.FormEvent) => {
         e.preventDefault();
         if (!inputName.trim()) return;
 
-        const currentRegistry = JSON.parse(localStorage.getItem('bleachdle-soul-registry') || '{"name":"","count":0}');
+        const registryData = JSON.parse(localStorage.getItem('bleachdle-soul-registry') || '{}');
+        const currentRegistry = registryData.unlimited || { name: "", count: 0 };
         const updated = { ...currentRegistry, name: inputName.trim() };
 
-        localStorage.setItem('bleachdle-soul-registry', JSON.stringify(updated));
+        registryData.unlimited = updated;
+        localStorage.setItem('bleachdle-soul-registry', JSON.stringify(registryData));
         setSoulName(inputName.trim());
     };
 
-    // ── 🌟 คอมโบ Reset Memory + เพิ่มรอบการตายเกิด (Reincarnation Cycle) ──
+    // ── 🛡️ คอมโบ Reset ข้อมูลโดยการเจาะทำลายเฉพาะกิ่งก้านของโหมดตัวเอง
     const handleHardReset = () => {
-        const saved = JSON.parse(localStorage.getItem('bleachdle-character-stats') || '{"currentStreak":0, "maxStreak":0}');
-        const updatedStats = {
-            currentStreak: 0,
-            maxStreak: saved.maxStreak
-        };
-        localStorage.setItem('bleachdle-character-stats', JSON.stringify(updatedStats));
-        setStats(updatedStats);
+        const statsData = JSON.parse(localStorage.getItem('bleachdle-character-stats') || '{}');
+        const saved = statsData.unlimited || { currentStreak: 0, maxStreak: 0 };
+        statsData.unlimited = { currentStreak: 0, maxStreak: saved.maxStreak };
+        localStorage.setItem('bleachdle-character-stats', JSON.stringify(statsData));
+        setStats(statsData.unlimited);
 
-        // อัปเดตจำนวนรอบการจุติใหม่ในทะเบียนวิญญาณ
-        const currentRegistry = JSON.parse(localStorage.getItem('bleachdle-soul-registry') || '{"name":"","count":0}');
-        const updatedRegistry = {
+        const registryData = JSON.parse(localStorage.getItem('bleachdle-soul-registry') || '{}');
+        const currentRegistry = registryData.unlimited || { name: "", count: 0 };
+        registryData.unlimited = {
             ...currentRegistry,
             count: (currentRegistry.count || 0) + 1
         };
-        localStorage.setItem('bleachdle-soul-registry', JSON.stringify(updatedRegistry));
-        setReincarnationCount(updatedRegistry.count);
+        localStorage.setItem('bleachdle-soul-registry', JSON.stringify(registryData));
+        setReincarnationCount(registryData.unlimited.count);
 
         hardReset();
     };
@@ -139,7 +145,6 @@ export default function UnlimitedGame() {
         <div className="min-h-screen text-[#d8d0c8] overflow-x-hidden">
             <Header onOpenHowTo={() => setIsHowToOpen(true)} />
 
-            {/* ── Imperial Seal Divider ── */}
             <div className="w-full flex items-center justify-center px-[5%] opacity-90">
                 <div className="flex-1 h-px bg-gradient-to-r from-transparent via-[#c8a96e]/60 to-[#c8a96e]/20" />
                 <div className="mx-8 relative flex items-center justify-center">
@@ -199,7 +204,6 @@ export default function UnlimitedGame() {
                     </>
                 )}
 
-                {/* ── 🛡️ MAIN CONDITIONAL RENDERING SWITCHBOARD ── */}
                 {isModalOpen ? (
                     <SummaryGuess isOpen={isModalOpen} onClose={handleCloseModal} guesses={guesses} target={target} isWin={isWin} stats={stats} />
                 ) : !isReady ? (
@@ -214,8 +218,6 @@ export default function UnlimitedGame() {
                         <GuessTable guesses={guesses} />
                     </div>
                 ) : isGameCompleted ? (
-
-                    /* ── 🏆 หน้าจอเคลียร์คลังตัวละครสำเร็จระดับตำนาน (THE SEIREITEI MONITOR - EXPERT UI) ── */
                     <Central46ConfidentialArchive
                         guesses={guesses}
                         soulName={soulName}
