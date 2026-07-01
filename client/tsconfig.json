@@ -8,7 +8,10 @@
     ],
     "paths": {
       "@/*": [
-        "./app/*"
+        "./*"
+      ],
+      "@src/*": [
+        "./src/*"
       ]
     },
     "allowJs": true,
@@ -32,9 +35,10 @@
     "next-env.d.ts",
     "app/**/*.ts",
     "app/**/*.tsx",
+    "src/**/*.ts",
+    "src/**/*.tsx",
     ".next/types/**/*.ts",
-    ".next/dev/types/**/*.ts",
-    "app/src/lib/utils/scripts/check-assets.js"
+    ".next/dev/types/**/*.ts"
   ],
   "exclude": [
     "node_modules"

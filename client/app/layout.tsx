@@ -1,10 +1,10 @@
 import type { Metadata } from "next";
-import "./globals.css";
+import '../src/styles/globals.css';
 import { Cinzel } from "next/font/google";
 import Footer from "@/src/shared/layout/Footer";
-import { BleachReiatsuCursor } from "./src/shared/ui/BleachReiatsuCursor";
+import { BleachReiatsuCursor } from "@/src/shared/ui/BleachReiatsuCursor";
 import { useDailyWallpaper } from '@/src/shared/hooks/useDailyWallpaper';
-import { WallpaperInitializer } from "./src/shared/hooks/WallpaperInitializer";
+import { WallpaperInitializer } from "@/src/shared/hooks/WallpaperInitializer";
 
 const cinzel = Cinzel({
   subsets: ["latin"],

@@ -10,6 +10,7 @@
     "extract-meta": "node extract-meta.mjs"
   },
   "dependencies": {
+    "@supabase/supabase-js": "^2.110.0",
     "framer-motion": "^12.42.0",
     "fs": "0.0.1-security",
     "fuse.js": "^7.4.2",
@@ -20,13 +21,15 @@
     "zustand": "^5.0.14"
   },
   "devDependencies": {
-    "@tailwindcss/postcss": "^4",
+    "@tailwindcss/postcss": "^4.3.2",
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
+    "autoprefixer": "^10.5.2",
     "eslint": "^9",
     "eslint-config-next": "16.2.9",
-    "tailwindcss": "^4",
+    "postcss": "^8.5.16",
+    "tailwindcss": "^4.3.2",
     "typescript": "^5"
   }
 }

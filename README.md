@@ -128,14 +128,14 @@ Character data is defined in `src/data/characters.json`. Each entry includes:
 - `gender`
 - `race` — Shinigami / Hollow / Arrancar / Quincy / Human / etc.
 - `affiliation` — primary organizational alignment
-- `heightCm`
+- `height_cm`
 - `age`
-- `eyeColor`
-- `hairColor`
-- `firstAppearanceChapter` — integer, used for directional hint
+- `eye_color`
+- `hair_color`
+- `first_appearance_chapter` — integer, used for directional hint
 - `weapon` — Weaponized / Unarmed / Energy / etc.
 - `release`  — State of release, Shikai / Bankai / Resurrection
-- `primaryAbility` — Combat utilities, Physical / Element / Kido / etc.
+- `primary_ability` — Combat utilities, Physical / Element / Kido / etc.
 - `image`
 
 To add a character: append an entry to `characters.json` and drop the corresponding `.webp` into `public/assets/characters/`. Run `src/lib/utils/scripts/check-assets.js` to validate name parity between the JSON and the asset directory.
@@ -198,100 +198,28 @@ bleachdle
 │  ├─ app
 │  │  ├─ (game)
 │  │  │  ├─ daily
+│  │  │  │  ├─ character
+│  │  │  │  │  └─ page.tsx
+│  │  │  │  └─ page.tsx
 │  │  │  └─ unlimited
 │  │  │     ├─ character
 │  │  │     │  └─ page.tsx
 │  │  │     └─ page.tsx
 │  │  ├─ (home)
 │  │  │  └─ page.tsx
+│  │  ├─ api
+│  │  │  └─ stats
+│  │  │     └─ finalize
+│  │  │        └─ route.ts
 │  │  ├─ favicon.ico
-│  │  ├─ globals.css
 │  │  ├─ layout.tsx
 │  │  ├─ loading
 │  │  │  └─ page.tsx
-│  │  └─ src
-│  │     ├─ config
-│  │     ├─ const
-│  │     │  └─ summary.ts
-│  │     ├─ data
-│  │     │  ├─ characters.json
-│  │     │  ├─ emojis.json
-│  │     │  ├─ images.json
-│  │     │  ├─ powers.json
-│  │     │  ├─ quotes.json
-│  │     │  ├─ songs.json
-│  │     │  └─ wallpapers.json
-│  │     ├─ entities
-│  │     │  ├─ character
-│  │     │  │  └─ schema.ts
-│  │     │  ├─ emoji
-│  │     │  ├─ image
-│  │     │  ├─ quote
-│  │     │  └─ song
-│  │     ├─ features
-│  │     │  ├─ character
-│  │     │  │  ├─ components
-│  │     │  │  │  ├─ daily
-│  │     │  │  │  ├─ shared
-│  │     │  │  │  │  ├─ GuessTable.tsx
-│  │     │  │  │  │  ├─ HowToPlayModal.tsx
-│  │     │  │  │  │  └─ SearchBar.tsx
-│  │     │  │  │  └─ unlimited
-│  │     │  │  │     ├─ Central46ConfidentialArchive.tsx
-│  │     │  │  │     └─ SummaryGuess.tsx
-│  │     │  │  ├─ hooks
-│  │     │  │  │  ├─ daily
-│  │     │  │  │  └─ unlimited
-│  │     │  │  │     └─ useCharacterGame.ts
-│  │     │  │  ├─ index.ts
-│  │     │  │  └─ types.ts
-│  │     │  ├─ daily
-│  │     │  ├─ emoji
-│  │     │  ├─ image
-│  │     │  ├─ quote
-│  │     │  ├─ song
-│  │     │  └─ unlimited
-│  │     ├─ lib
-│  │     │  ├─ game-engine
-│  │     │  │  └─ compare.ts
-│  │     │  ├─ search
-│  │     │  │  └─ fuzzy.ts
-│  │     │  ├─ supabase
-│  │     │  ├─ utils
-│  │     │  │  ├─ character.ts
-│  │     │  │  ├─ checking.ts
-│  │     │  │  ├─ format.ts
-│  │     │  │  ├─ scripts
-│  │     │  │  │  ├─ check-assets.js
-│  │     │  │  │  ├─ extract-character-meta.js
-│  │     │  │  │  ├─ extract-character.js
-│  │     │  │  │  └─ generate-wallpapers.js
-│  │     │  │  └─ ui.ts
-│  │     │  └─ uuid.ts
-│  │     └─ shared
-│  │        ├─ constants
-│  │        ├─ hooks
-│  │        │  ├─ useDailyWallpaper.ts
-│  │        │  ├─ useTestWallpaper.ts
-│  │        │  └─ WallpaperInitializer.tsx
-│  │        ├─ layout
-│  │        │  ├─ Divider.tsx
-│  │        │  ├─ Footer.tsx
-│  │        │  ├─ Header.tsx
-│  │        │  └─ SubHeader.tsx
-│  │        ├─ styles
-│  │        └─ ui
-│  │           ├─ BleachReiatsuCursor.tsx
-│  │           ├─ button.tsx
-│  │           ├─ input.tsx
-│  │           ├─ loader
-│  │           │  ├─ TensaZangetsu.css
-│  │           │  └─ ZangetsuLoader.tsx
-│  │           ├─ modal.tsx
-│  │           └─ tooltip.tsx
+│  │  └─ not-found.tsx
 │  ├─ CLAUDE.md
 │  ├─ eslint.config.mjs
 │  ├─ next.config.ts
+│  ├─ package-lock.json
 │  ├─ package.json
 │  ├─ pnpm-lock.yaml
 │  ├─ pnpm-workspace.yaml
@@ -301,14 +229,23 @@ bleachdle
 │  │  │  ├─ bg_wallpaper_1.jpg
 │  │  │  ├─ bg_wallpaper_2.jpg
 │  │  │  ├─ bg_wallpaper_3.jpg
-│  │  │  └─ ...
+│  │  │  ├─ ...
 │  │  │  ├─ bleachdle-avatar.psd
 │  │  │  ├─ characters
 │  │  │  │  ├─ Aaroniero_Arruruerie.webp
 │  │  │  │  ├─ Abirama_Redder.webp
 │  │  │  │  ├─ Aisslinger_Wernarr.webp
 │  │  │  │  ├─ Akon.webp
-│  │  │  |  └─ ...
+│  │  │  │  └─ ...
+│  │  │  ├─ emblems
+│  │  │  │  ├─ arrancar.webp
+│  │  │  │  ├─ daiko_shinigami.webp
+│  │  │  │  ├─ mod_soul.webp
+│  │  │  │  ├─ quincy.webp
+│  │  │  │  ├─ shinigami.webp
+│  │  │  │  ├─ soul.webp
+│  │  │  │  ├─ visored.webp
+│  │  │  │  └─ Xcution.webp
 │  │  │  └─ tensazangetsu.png
 │  │  ├─ file.svg
 │  │  ├─ globe.svg
@@ -317,6 +254,107 @@ bleachdle
 │  │  ├─ vercel.svg
 │  │  └─ window.svg
 │  ├─ README.md
+│  ├─ src
+│  │  ├─ config
+│  │  │  └─ feature.flags.ts
+│  │  ├─ const
+│  │  │  └─ summary.ts
+│  │  ├─ data
+│  │  │  ├─ characters.json
+│  │  │  ├─ emojis.json
+│  │  │  ├─ images.json
+│  │  │  ├─ powers.json
+│  │  │  ├─ quotes.json
+│  │  │  ├─ songs.json
+│  │  │  └─ wallpapers.json
+│  │  ├─ entities
+│  │  │  ├─ character
+│  │  │  │  └─ schema.ts
+│  │  │  ├─ emoji
+│  │  │  ├─ image
+│  │  │  ├─ quote
+│  │  │  └─ song
+│  │  ├─ features
+│  │  │  ├─ character
+│  │  │  │  ├─ components
+│  │  │  │  │  ├─ daily
+│  │  │  │  │  │  └─ DailyCharacterWrapper.tsx
+│  │  │  │  │  ├─ shared
+│  │  │  │  │  │  ├─ GuessTable.tsx
+│  │  │  │  │  │  └─ HowToPlayModal.tsx
+│  │  │  │  │  └─ unlimited
+│  │  │  │  │     ├─ Central46ConfidentialArchive.tsx
+│  │  │  │  │     └─ SummaryGuess.tsx
+│  │  │  │  ├─ hooks
+│  │  │  │  │  ├─ daily
+│  │  │  │  │  │  └─ useCharacterGame.ts
+│  │  │  │  │  └─ unlimited
+│  │  │  │  │     └─ useCharacterGame.ts
+│  │  │  │  ├─ index.ts
+│  │  │  │  └─ types.ts
+│  │  │  ├─ daily
+│  │  │  ├─ emoji
+│  │  │  ├─ image
+│  │  │  ├─ quote
+│  │  │  ├─ song
+│  │  │  └─ unlimited
+│  │  ├─ lib
+│  │  │  ├─ game-engine
+│  │  │  │  └─ compare.ts
+│  │  │  ├─ search
+│  │  │  │  └─ fuzzy.ts
+│  │  │  ├─ supabase
+│  │  │  │  ├─ migrations
+│  │  │  │  │  ├─ 01_table.sql
+│  │  │  │  │  ├─ 02_function.sql
+│  │  │  │  │  └─ 03_cronjob.sql
+│  │  │  │  ├─ seeds
+│  │  │  │  │  └─ daily
+│  │  │  │  │     └─ seed-characters.js
+│  │  │  │  └─ supabase.ts
+│  │  │  ├─ utils
+│  │  │  │  ├─ character.ts
+│  │  │  │  ├─ checking.ts
+│  │  │  │  ├─ daily.ts
+│  │  │  │  ├─ format.ts
+│  │  │  │  ├─ scripts
+│  │  │  │  │  ├─ check-assets.js
+│  │  │  │  │  ├─ extract-character-meta.js
+│  │  │  │  │  ├─ extract-character.js
+│  │  │  │  │  └─ generate-wallpapers.js
+│  │  │  │  └─ ui.ts
+│  │  │  └─ uuid.ts
+│  │  ├─ services
+│  │  │  ├─ character.ts
+│  │  │  ├─ statsClient.ts
+│  │  │  └─ trigger-schedule.js
+│  │  ├─ shared
+│  │  │  ├─ hooks
+│  │  │  │  ├─ useCountdown.ts
+│  │  │  │  ├─ useDailyWallpaper.ts
+│  │  │  │  ├─ useTestWallpaper.ts
+│  │  │  │  └─ WallpaperInitializer.tsx
+│  │  │  ├─ layout
+│  │  │  │  ├─ Divider.tsx
+│  │  │  │  ├─ Footer.tsx
+│  │  │  │  ├─ Header.tsx
+│  │  │  │  └─ SubHeader.tsx
+│  │  │  └─ ui
+│  │  │     ├─ BleachReiatsuCursor.tsx
+│  │  │     ├─ button.tsx
+│  │  │     ├─ DailyResetTimer.tsx
+│  │  │     ├─ GameControlPanel.tsx
+│  │  │     ├─ input.tsx
+│  │  │     ├─ loader
+│  │  │     │  └─ ZangetsuLoader.tsx
+│  │  │     ├─ modal.tsx
+│  │  │     ├─ ModeBadge.tsx
+│  │  │     ├─ Sealed.tsx
+│  │  │     ├─ SearchBar.tsx
+│  │  │     ├─ test.tsx
+│  │  │     └─ tooltip.tsx
+│  │  └─ styles
+│  │     └─ globals.css
 │  └─ tsconfig.json
 └─ README.md
 

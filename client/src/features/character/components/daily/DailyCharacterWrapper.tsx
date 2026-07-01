@@ -2,22 +2,21 @@
 
 import { useEffect, useState } from 'react';
 import { GuessTable } from '@/src/features/character';
-import { SearchBar } from '@/src/shared/ui/SearchBar';
-import { useCharacterGame } from '@/src/features/character/hooks/unlimited/useCharacterGame';
+import { useCharacterGame } from '@/src/features/character/hooks/daily/useCharacterGame';
 import { getCharacters } from '@/src/lib/utils/character';
 import { SummaryGuess } from '@/src/features/character/components/unlimited/SummaryGuess';
-import { findDuplicateIds } from '@/src/lib/utils/checking';
 import { HowToPlayModal } from '@/src/features/character/components/shared/HowToPlayModal';
 import { Header } from '@/src/shared/layout/Header';
 import { Divider } from '@/src/shared/layout/Divider';
 import { SubHeader } from '@/src/shared/layout/SubHeader';
-import Central46ConfidentialArchive from '@/src/features/character/components/unlimited/Central46ConfidentialArchive';
 import Sealed from '@/src/shared/ui/Sealed';
 import { FEATURE_FLAGS } from '@/src/config/feature.flags';
+import { Character } from '@/src/entities/character/schema';
+import { GameControlPanel } from '@/src/shared/ui/GameControlPanel';
 import { ModeBadge } from '@/src/shared/ui/ModeBadge';
 
-export default function UnlimitedCharacterGame() {
-    if (!FEATURE_FLAGS.unlimited.character) {
+export default function DailyCharacterWrapper({ initialTarget }: { initialTarget: Character | null }) {
+    if (!FEATURE_FLAGS.daily.character) {
         return (
             <Sealed />
         )
@@ -25,21 +24,21 @@ export default function UnlimitedCharacterGame() {
 
     const game = useCharacterGame();
 
-    const { target, guesses, initializeGame, finalizeGame, resetGame, hardReset, hasFinalized } = useCharacterGame();
+    const { target, guesses, initializeGame, finalizeGame, resetGame, hasFinalized, _hasHydrated } = useCharacterGame();
     const characters = getCharacters();
+
+    useEffect(() => {
+        if (!_hasHydrated) return;          // 👈 กันตรงนี้
+        if (initialTarget !== null) {
+            initializeGame(initialTarget);
+        }
+    }, [initialTarget, _hasHydrated]);
 
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [stats, setStats] = useState({ currentStreak: 0, maxStreak: 0 });
     const [isHowToOpen, setIsHowToOpen] = useState(false);
     const [isReady, setIsReady] = useState(false);
-    const [isGameCompleted, setIsGameCompleted] = useState(false);
-    const MAX_GUESSES = 10;
-    const remainingGuesses = Math.max(0, MAX_GUESSES - guesses.length);
-
-    const [soulName, setSoulName] = useState('');
-    const [inputName, setInputName] = useState('');
-    const [reincarnationCount, setReincarnationCount] = useState(0);
-    const canReset = soulName.trim().length > 0;
+    const [timeLeft, setTimeLeft] = useState('');
 
     const isWin = guesses.length > 0 &&
         (Object.entries(guesses[0].result)
@@ -52,45 +51,28 @@ export default function UnlimitedCharacterGame() {
     // ── 🛡️ จัดการโครงสร้างสถิติแบบ Object Nesting
     const updateStats = (won: boolean) => {
         const statsData = JSON.parse(localStorage.getItem('bleachdle-character-stats') || '{}');
-        const saved = statsData.unlimited || { currentStreak: 0, maxStreak: 0 };
+        const saved = statsData.daily || { currentStreak: 0, maxStreak: 0 };
 
         const newStats = {
             currentStreak: won ? saved.currentStreak + 1 : 0,
             maxStreak: won ? Math.max(saved.maxStreak, saved.currentStreak + 1) : saved.maxStreak
         };
 
-        statsData.unlimited = newStats;
+        statsData.daily = newStats;
         localStorage.setItem('bleachdle-character-stats', JSON.stringify(statsData));
         setStats(newStats);
     };
 
     // โหลดและซิงค์ข้อมูลฝั่ง Client จากคีย์หลักแบบไม่มีจุดทศนิยมต่อท้าย
     useEffect(() => {
+        if (!_hasHydrated) return;
         const statsData = JSON.parse(localStorage.getItem('bleachdle-character-stats') || '{}');
-        setStats(statsData.unlimited || { currentStreak: 0, maxStreak: 0 });
-
-        const completedData = JSON.parse(localStorage.getItem('bleachdle-character-completed') || '{}');
-        const completed = completedData.unlimited || [];
-        setIsGameCompleted(characters.length > 0 && completed.length >= characters.length);
-
-        const registryData = JSON.parse(localStorage.getItem('bleachdle-soul-registry') || '{}');
-        const registry = registryData.unlimited || { name: "", count: 0 };
-        if (registry.name) {
-            setSoulName(registry.name);
-        }
-        setReincarnationCount(registry.count || 0);
+        setStats(statsData.daily || { currentStreak: 0, maxStreak: 0 });
 
         initializeGame();
         setIsReady(true);
-    }, [initializeGame, characters.length]);
+    }, [initializeGame, characters.length, _hasHydrated]);
 
-    useEffect(() => {
-        if (isReady) {
-            const completedData = JSON.parse(localStorage.getItem('bleachdle-character-completed') || '{}');
-            const completed = completedData.unlimited || [];
-            setIsGameCompleted(characters.length > 0 && completed.length >= characters.length);
-        }
-    }, [target, characters.length, isReady]);
 
     useEffect(() => {
         if (target) {
@@ -99,6 +81,7 @@ export default function UnlimitedCharacterGame() {
     }, [target]);
 
     useEffect(() => {
+        if (!_hasHydrated) return;
         if (isGameOver) {
             const timer = setTimeout(() => {
                 // 1. ทำ Logic: บันทึกข้อมูลเฉพาะถ้ายังไม่เคยบันทึกมาก่อน (ป้องกัน Streak พุ่ง)
@@ -114,48 +97,36 @@ export default function UnlimitedCharacterGame() {
             return () => clearTimeout(timer);
         }
         // เราไม่ต้องกังวลเรื่อง hasFinalized ใน dependency เท่าไหร่ เพราะเงื่อนไขด้านในเช็คให้แล้ว
-    }, [isGameOver, isWin, finalizeGame, hasFinalized]);
+    }, [isGameOver, isWin, finalizeGame, hasFinalized, _hasHydrated]);
 
     const handleCloseModal = () => {
         setIsModalOpen(false);
         resetGame();
-        initializeGame(true);
         window.scrollTo({ top: 0, behavior: 'smooth' });
     };
 
-    // ── 🛡️ ทะเบียนวิญญาณแบบจารึกรวมศูนย์
-    const handleRegisterSoul = (e: React.FormEvent) => {
-        e.preventDefault();
-        if (!inputName.trim()) return;
+    useEffect(() => {
+        const calculateTimeLeft = () => {
+            const now = new Date();
+            const midnight = new Date();
+            midnight.setHours(24, 0, 0, 0); // ตั้งเวลาเป็นเที่ยงคืนถัดไป
 
-        const registryData = JSON.parse(localStorage.getItem('bleachdle-soul-registry') || '{}');
-        const currentRegistry = registryData.unlimited || { name: "", count: 0 };
-        const updated = { ...currentRegistry, name: inputName.trim() };
+            const diff = midnight.getTime() - now.getTime();
 
-        registryData.unlimited = updated;
-        localStorage.setItem('bleachdle-soul-registry', JSON.stringify(registryData));
-        setSoulName(inputName.trim());
-    };
+            const hours = Math.floor(diff / (1000 * 60 * 60));
+            const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+            const seconds = Math.floor((diff % (1000 * 60)) / 1000);
 
-    // ── 🛡️ คอมโบ Reset ข้อมูลโดยการเจาะทำลายเฉพาะกิ่งก้านของโหมดตัวเอง
-    const handleHardReset = () => {
-        const statsData = JSON.parse(localStorage.getItem('bleachdle-character-stats') || '{}');
-        const saved = statsData.unlimited || { currentStreak: 0, maxStreak: 0 };
-        statsData.unlimited = { currentStreak: 0, maxStreak: saved.maxStreak };
-        localStorage.setItem('bleachdle-character-stats', JSON.stringify(statsData));
-        setStats(statsData.unlimited);
-
-        const registryData = JSON.parse(localStorage.getItem('bleachdle-soul-registry') || '{}');
-        const currentRegistry = registryData.unlimited || { name: "", count: 0 };
-        registryData.unlimited = {
-            ...currentRegistry,
-            count: (currentRegistry.count || 0) + 1
+            return `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
         };
-        localStorage.setItem('bleachdle-soul-registry', JSON.stringify(registryData));
-        setReincarnationCount(registryData.unlimited.count);
 
-        hardReset();
-    };
+        // อัปเดตทุกวินาที
+        const timer = setInterval(() => {
+            setTimeLeft(calculateTimeLeft());
+        }, 1000);
+
+        return () => clearInterval(timer);
+    }, []);
 
     return (
         <div className="min-h-screen text-[#d8d0c8] overflow-x-hidden">
@@ -174,32 +145,18 @@ export default function UnlimitedCharacterGame() {
             </div>
 
             <main className="max-w-[80%] mx-auto px-4 pb-16">
-                <ModeBadge mode="unlimited" />
+                <ModeBadge mode="daily" />
                 <SubHeader title='REIRAKU PERCEPTION' description='System // Scanning for Reiatsu Signature' />
 
-                {(!isModalOpen && target) && (
-                    <div className="flex justify-center">
-                        <SearchBar characters={characters} disabled={guesses.length >= 10 || !target} game={game}/>
-                    </div>
-                )}
-
                 {!isModalOpen && (
-                    <div className="flex justify-center gap-8 my-6 text-[11px] uppercase tracking-[0.2em] text-[#5a5a78]">
-                        <div className="flex flex-col items-center">
-                            <span className="text-[#d1a9a9]">Attempts Left</span>
-                            <span className={`${remainingGuesses === 0 ? 'text-[#e83030]' : 'text-[#4de880]'} text-lg font-bold`}>
-                                {remainingGuesses}
-                            </span>
-                        </div>
-                        <div className="flex flex-col items-center">
-                            <span className="text-[#d1a9a9]">Current Streaks</span>
-                            <span className="text-[#c8a96e] text-lg font-bold">{stats.currentStreak}</span>
-                        </div>
-                        <div className="flex flex-col items-center">
-                            <span className="text-[#d1a9a9]">Max Streaks</span>
-                            <span className="text-[#c8a96e] text-lg font-bold">{stats.maxStreak}</span>
-                        </div>
-                    </div>
+                    <GameControlPanel
+                        mode="daily"
+                        target={target}
+                        characters={characters}
+                        stats={stats}
+                        timeLeft={timeLeft}
+                        game={game}
+                    />
                 )}
 
                 {guesses.length > 0 && (
@@ -222,7 +179,7 @@ export default function UnlimitedCharacterGame() {
                 )}
 
                 {isModalOpen ? (
-                    <SummaryGuess isOpen={isModalOpen} onClose={handleCloseModal} guesses={guesses} target={target} isWin={isWin} mode="unlimited" stats={stats} />
+                    <SummaryGuess isOpen={isModalOpen} onClose={handleCloseModal} guesses={guesses} target={target} isWin={isWin} mode="daily" stats={stats} />
                 ) : !isReady ? (
                     <div className="mt-40 flex flex-col items-center justify-center animate-pulse">
                         <span className="text-4xl text-[#c8a96e] animate-spin mb-4">卍</span>
@@ -234,18 +191,6 @@ export default function UnlimitedCharacterGame() {
                     <div className="w-full overflow-x-auto">
                         <GuessTable guesses={guesses} />
                     </div>
-                ) : isGameCompleted ? (
-                    <Central46ConfidentialArchive
-                        guesses={guesses}
-                        soulName={soulName}
-                        inputName={inputName}
-                        setInputName={setInputName}
-                        handleRegisterSoul={handleRegisterSoul}
-                        reincarnationCount={reincarnationCount}
-                        canReset={canReset}
-                        handleHardReset={handleHardReset}
-                        stats={stats}
-                    />
                 ) : (
                     <div className="mt-40 flex flex-col items-center justify-center">
                         <p className="text-xs uppercase tracking-[0.2em] text-[#5a5a78] animate-bounce">
@@ -254,7 +199,7 @@ export default function UnlimitedCharacterGame() {
                     </div>
                 )}
             </main>
-            <HowToPlayModal isOpen={isHowToOpen} onClose={() => setIsHowToOpen(false)} mode="unlimited" />
+            <HowToPlayModal isOpen={isHowToOpen} onClose={() => setIsHowToOpen(false)} mode="daily" />
         </div>
     );
 }

@@ -1,0 +1,646 @@
+@import "tailwindcss";
+
+:root {
+  --background: #ffffff;
+  --foreground: #171717;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background: #0a0a0a;
+    --foreground: #ededed;
+  }
+}
+
+body {
+  /* background: var(--background); */
+  color: var(--foreground);
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+/* app/globals.css */
+body {
+  background-image: var(--bg-image);
+  background-size: cover;
+  background-position: center;
+  background-attachment: fixed;
+  background-repeat: no-repeat;
+  transition: background-image 1s ease-in-out;
+  /* เพิ่มลูกเล่นให้เปลี่ยนภาพนุ่มนวลขึ้น */
+}
+
+/* สร้าง Overlay เพื่อให้ตัวหนังสืออ่านง่ายขึ้น */
+.bg-overlay {
+  background: rgba(0, 0, 0, 0.90);
+  /* ปรับความเข้มได้ตามต้องการ */
+  min-height: 100vh;
+}
+
+/* Custom Scrollbar for the whole application */
+::-webkit-scrollbar {
+  width: 8px;
+  /* w-2 */
+}
+
+::-webkit-scrollbar-track {
+  background: #0a0a0f;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(200, 169, 110, 0.5);
+  /* c8a96e/50 */
+  /* border-radius: 9999px; */
+  /* rounded-full */
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #c8a96e;
+}
+
+/* ==========================================================================
+   ⚔️ BLEACH ENGINE: BANKAI EDITION (CLEAN & SHARP VERSION)
+   ========================================================================== */
+
+/* --------------------------------------------------------------------------
+   🔮 LAYER 1: GLOBAL BASE & DEFAULT STATE
+   -------------------------------------------------------------------------- */
+*,
+*::before,
+*::after {
+  cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24'%3E%3Cpath d='M2 2 L22 10 L10 10 L10 22 Z' fill='%230a0a0f' stroke='%23c8a96e' stroke-width='1.5' stroke-linejoin='round'/%3E%3C/svg%3E") 0 0, default;
+}
+
+.cursor-default,
+[class*="cursor-default"] {
+  cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24'%3E%3Cpath d='M2 2 L22 10 L10 10 L10 22 Z' fill='%230a0a0f' stroke='%23c8a96e' stroke-width='1.5' stroke-linejoin='round'/%3E%3C/svg%3E") 0 0, default !important;
+}
+
+/* --------------------------------------------------------------------------
+   🌌 LAYER 2: LAYOUT, BACKDROP & LOADING
+   -------------------------------------------------------------------------- */
+.cursor-exit {
+  cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cline x1='5' y1='12' x2='19' y2='12'%3E%3C/line%3E%3Cpolyline points='12 5 19 12 12 19'%3E%3C/polyline%3E%3C/svg%3E") 12 12, auto !important;
+}
+
+.cursor-wait,
+.cursor-progress,
+[class*="cursor-wait"],
+.animate-pulse {
+  cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%23c8a96e' stroke-width='2' stroke-dasharray='4 2'%3E%3Ccircle cx='12' cy='12' r='8'/%3E%3C/svg%3E") 12 12, wait !important;
+}
+
+/* --------------------------------------------------------------------------
+   ⚡ LAYER 3: INTERACTIVE ELEMENTS (HOVER & FOCUS STATES)
+   -------------------------------------------------------------------------- */
+
+a,
+a *,
+button,
+button *,
+select,
+select *,
+[role="button"],
+[role="button"] *,
+.cursor-pointer,
+.cursor-pointer *,
+[class*="cursor-pointer"],
+[class*="cursor-pointer"] *,
+[class*="hover:cursor-pointer"]:hover,
+[class*="hover:cursor-pointer"]:hover *,
+button:focus,
+button:focus-visible,
+a:focus,
+a:focus-visible,
+.btn:focus,
+.btn:focus-visible {
+  cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24'%3E%3Cpath d='M2 2 L22 10 L10 10 L10 22 Z' fill='%23c8a96e' stroke='%23ffffff' stroke-width='1.5' stroke-linejoin='round'/%3E%3C/svg%3E") 0 0, pointer !important;
+}
+
+/* 🟢 พิมพ์ข้อความ */
+input,
+textarea,
+[contenteditable="true"],
+[contenteditable="true"] *,
+.cursor-text,
+[class*="cursor-text"] {
+  cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24'%3E%3Cpath d='M10 4 H14 M12 4 V20 M10 20 H14' fill='none' stroke='%23c8a96e' stroke-width='2' stroke-linecap='round'/%3E%3C/svg%3E") 12 12, text !important;
+}
+
+/* 🚫 บล็อก/ห้ามกด */
+:disabled,
+[disabled],
+.cursor-not-allowed,
+[class*="cursor-not-allowed"],
+[class*="disabled:"] {
+  cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%23e83030' stroke-width='2'%3E%3Ccircle cx='12' cy='12' r='8'/%3E%3Cline x1='8' y1='8' x2='16' y2='16'/%3E%3C/svg%3E") 12 12, not-allowed !important;
+}
+
+/* 🦇 ปุ่มกดปิดขนาดเล็ก */
+button.cursor-exit,
+button.cursor-exit *,
+.btn-close,
+.btn-close * {
+  cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cline x1='5' y1='12' x2='19' y2='12'%3E%3C/line%3E%3Cpolyline points='12 5 19 12 12 19'%3E%3C/polyline%3E%3C/svg%3E") 12 12, auto !important;
+}
+
+/* ✊ สเตทจับลาก (Grab / Grabbing) */
+.cursor-grab,
+[class*="cursor-grab"] {
+  cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%23c8a96e' stroke-width='2'/%3E%3Cpath d='M9 10L9 6M15 10L15 6M9 14L9 18M15 14L15 18'/%3E%3C/svg%3E") 12 12, grab !important;
+}
+
+.cursor-grabbing,
+[class*="cursor-grabbing"] {
+  cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%23ffaa00' stroke-width='2'/%3E%3Cpath d='M9 8L9 4M15 8L15 4M9 16L9 20M15 16L15 20'/%3E%3C/svg%3E") 12 12, grabbing !important;
+}
+
+/* --------------------------------------------------------------------------
+   🔥 LAYER 4: ACTIVE GLOBAL OVERRIDES
+   -------------------------------------------------------------------------- */
+
+/* 💥 สเตทคลิก (เปลี่ยนสีเป็น Cyan แบบ Sharp) */
+a:active,
+a *:active,
+button:active,
+button *:active,
+[role="button"]:active,
+[role="button"] *:active,
+.cursor-pointer:active,
+.cursor-pointer *:active,
+[class*="cursor-pointer"]:active,
+[class*="cursor-pointer"] *:active,
+.btn:active {
+  cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24'%3E%3Cpath d='M2 2 L22 10 L10 10 L10 22 Z' fill='%2300bfff' stroke='%23ffffff' stroke-width='1.5' stroke-linejoin='round'/%3E%3C/svg%3E") 0 0, pointer !important;
+}
+
+/* 💥 พื้นหลังทั่วไปเวลาคลิก */
+*:not(button):not(a):not(input):not(textarea):not([role="button"]):not(.cursor-pointer):not([class*="cursor-pointer"]):not(.btn):active {
+  cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24'%3E%3Cpath d='M2 2 L22 10 L10 10 L10 22 Z' fill='%23ff5500' stroke='%23ffffff' stroke-width='1.5' stroke-linejoin='round'/%3E%3C/svg%3E") 0 0, default !important;
+}
+
+@layer utilities {
+  @keyframes shimmer {
+    100% {
+      transform: translateX(200%);
+    }
+  }
+
+  .animate-shimmer {
+    animation: shimmer 1.2s ease-in-out infinite;
+  }
+}
+
+.wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 26px;
+  padding: 16px;
+}
+
+.stage {
+  position: relative;
+  width: 360px;
+  height: 360px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+#pcanvas {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 20;
+  /* ดันแคนวาสให้อยู่เหนือกราฟิกรูปภาพ เพื่อโชว์ความยึกยืองอของเม็ดพลังพาดผ่านหน้าดาบ */
+}
+
+.pulse {
+  position: absolute;
+  border-radius: 50%;
+  border-width: 1.5px;
+  border-style: solid;
+  /* เปลี่ยนจาก 3s มาใช้ตัวแปรควบคุมความเร็วแอนิเมชัน */
+  animation: pout var(--pulse-duration, 3s) ease-out infinite;
+  pointer-events: none;
+}
+
+.p1 {
+  width: 100px;
+  height: 100px;
+  border-color: rgba(100, 140, 255, 0.4);
+  animation-delay: 0s;
+  /* ชั้นแรกเริ่มทันทีเสมอ */
+}
+
+.p2 {
+  width: 100px;
+  height: 100px;
+  border-color: rgba(170, 70, 255, 0.3);
+  /* เปลี่ยนมาใช้ตัวแปรเวลาหน่วงชั้นที่ 2 */
+  animation-delay: var(--pulse-delay-2, 1s);
+}
+
+.p3 {
+  width: 100px;
+  height: 100px;
+  border-color: rgba(60, 210, 180, 0.25);
+  /* เปลี่ยนมาใช้ตัวแปรเวลาหน่วงชั้นที่ 3 */
+  animation-delay: var(--pulse-delay-3, 2s);
+}
+
+.smoke {
+  position: absolute;
+  border-radius: 50%;
+  pointer-events: none;
+}
+
+.s1 {
+  width: 110px;
+  height: 70px;
+  background: rgba(60, 80, 210, 0.08);
+  filter: blur(18px);
+  animation: smk 4.5s ease-out infinite 0s;
+}
+
+.s2 {
+  width: 80px;
+  height: 55px;
+  background: rgba(150, 50, 230, 0.07);
+  filter: blur(15px);
+  animation: smk 4.5s ease-out infinite 1.4s;
+  transform: translateX(22px);
+}
+
+.s3 {
+  width: 90px;
+  height: 48px;
+  background: rgba(40, 190, 160, 0.05);
+  filter: blur(17px);
+  animation: smk 4.5s ease-out infinite 2.8s;
+  transform: translateX(-18px);
+}
+
+.chain {
+  position: absolute;
+  width: 1.5px;
+  pointer-events: none;
+  animation: cflk 5.5s ease-in-out infinite;
+}
+
+.cv {
+  background: linear-gradient(to bottom, transparent, rgba(120, 160, 255, 0.35), transparent);
+}
+
+.cv2 {
+  background: linear-gradient(to top, transparent, rgba(190, 90, 255, 0.35), transparent);
+  animation-delay: 2.7s;
+}
+
+.tsuba-wrap {
+  position: relative;
+  z-index: 10;
+}
+
+/* รื้อฟื้นกลไกไร้แรงต้าน: ขจัดปัญหาแข็งกระด้างด้วยการยกเลิก CSS animation spin ไปผูกกับพิกัด Canvas */
+.tsuba-spin {
+  transform-origin: center;
+  display: block;
+  will-change: transform;
+  /* Hint เบราว์เซอร์ให้เรียกใช้ GPU Hardware Acceleration เพื่อเฟรมเรตระดับสูงสุด */
+  transition: filter 0.08s linear;
+}
+
+.txt-main {
+  font-size: 11px;
+  letter-spacing: 0.36em;
+  color: rgba(200, 169, 110, 0.92);
+  text-transform: uppercase;
+  animation: tp 2.2s ease-in-out infinite;
+}
+
+.txt-sub {
+  font-size: 9px;
+  letter-spacing: 0.22em;
+  color: rgba(140, 160, 255, 0.52);
+  text-transform: uppercase;
+  margin-top: 5px;
+}
+
+.ctrl {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.btn {
+  padding: 7px 18px;
+  border: 1px solid rgba(200, 169, 110, 0.3);
+  background: transparent;
+  color: rgba(200, 169, 110, 0.7);
+  font-size: 10px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn:hover,
+.btn.on {
+  background: rgba(200, 169, 110, 0.12);
+  border-color: rgba(200, 169, 110, 0.85);
+  color: #c8a96e;
+  box-shadow: 0 0 12px rgba(200, 169, 110, 0.18);
+}
+
+.lbl {
+  font-size: 9px;
+  color: rgba(130, 150, 220, 0.55);
+  letter-spacing: 0.12em;
+  text-align: center;
+}
+
+@keyframes pout {
+  0% {
+    transform: scale(0.55);
+    opacity: 0.85;
+  }
+
+  100% {
+    transform: scale(4.2);
+    opacity: 0;
+  }
+}
+
+@keyframes smk {
+  0% {
+    transform: translateY(0) scale(0.85);
+    opacity: 0.6;
+  }
+
+  100% {
+    transform: translateY(-70px) scale(2.2);
+    opacity: 0;
+  }
+}
+
+@keyframes cflk {
+
+  0%,
+  88%,
+  100% {
+    opacity: 0;
+  }
+
+  44%,
+  56% {
+    opacity: 0.55;
+  }
+}
+
+@keyframes tp {
+
+  0%,
+  100% {
+    opacity: 0.5;
+  }
+
+  50% {
+    opacity: 1;
+  }
+}
+
+/* ===================================================
+   🔮 CINEMATIC TEXT ANIMATIONS (Analyzing Soul Section)
+   =================================================== */
+
+/* 1. ข้อความหลัก: ค่อยๆ หายใจเรืองแสงสไตล์แรงดันวิญญาณ */
+.soul-txt {
+  font-size: 16px;
+  color: #ffffff;
+  font-weight: 500;
+  letter-spacing: 0.06em;
+  text-shadow: 0 0 8px rgba(255, 255, 255, 0.25);
+  /* แอนิเมชันหายใจช้าๆ ล้อไปกับความเร็วของออร่าดาบ */
+  animation: soulBreathe 4s ease-in-out infinite;
+}
+
+/* 2. ระบบจุดวิญญาณวิ่งวนลูป (. .. ...) โดยไม่รบกวนประสิทธิภาพของ Canvas */
+.loading-dots::after {
+  content: '';
+  display: inline-block;
+  width: 18px;
+  /* ล็อคความกว้างไว้ไม่ให้ข้อความขยับเยื้องขวาตอนจุดเพิ่มขึ้น */
+  text-align: left;
+  animation: cycleDots 2s steps(4, end) infinite;
+}
+
+@keyframes cycleDots {
+  0% {
+    content: '';
+  }
+
+  25% {
+    content: '.';
+  }
+
+  50% {
+    content: '..';
+  }
+
+  75% {
+    content: '...';
+  }
+}
+
+@keyframes soulBreathe {
+
+  0%,
+  100% {
+    text-shadow: 0 0 6px rgba(100, 145, 255, 0.2);
+    letter-spacing: 0.06em;
+    opacity: 0.85;
+  }
+
+  50% {
+    /* ตอนหายใจเข้า จะสว่างขึ้นและเปลี่ยนไปใช้โทนสีออร่าสีม่วง/ฟ้าบางๆ */
+    text-shadow: 0 0 14px rgba(150, 70, 255, 0.6), 0 0 22px rgba(100, 145, 255, 0.3);
+    letter-spacing: 0.09em;
+    /* ตัวอักษรจะค่อยๆ ขยายห่างกันอย่างนุ่มนวล */
+    opacity: 1;
+  }
+}
+
+/* 3. ข้อความซับด้านล่าง: เอฟเฟกต์เปิดตัวแบบภาพยนตร์ (Cinematic Reveal) */
+.bankai-txt {
+  font-size: 10px;
+  /* แอบหยอดสีทองหม่น (Gold Accent) เพื่อให้ล้อไปกับหมุดปลายดาบดูพรีเมียม */
+  color: rgba(200, 169, 110, 0.7);
+  text-transform: uppercase;
+  margin-top: 6px;
+  display: block;
+  animation: bankaiReveal 2.8s cubic-bezier(0.25, 1, 0.5, 1) forwards;
+}
+
+@keyframes bankaiReveal {
+  0% {
+    opacity: 0;
+    letter-spacing: 0.05em;
+    filter: blur(6px);
+    /* ค่อยๆ สลายตัวมาจากความเบลอ */
+    transform: translateY(3px);
+  }
+
+  100% {
+    opacity: 1;
+    letter-spacing: 0.22em;
+    /* คลี่กระจายตัวอักษรออกกว้าง สง่างาม */
+    filter: blur(0);
+    transform: translateY(0);
+  }
+}
+
+/* ===================================================
+   🔮 EXPERT BLEACH THEME UX/UI DYNAMIC STYLES (UPDATED)
+   =================================================== */
+
+/* [NEW] เปลี่ยนจาก SVG Noise เป็นเส้นสแกนไลน์ภาพยนตร์สไตล์ยมทูต เพื่อให้เห็นมิติตัวเนื้อฟิล์มบนพื้นดำชัดเจน */
+.bleach-scanlines {
+  background: linear-gradient(rgba(18, 16, 46, 0) 50%,
+      rgba(0, 0, 0, 0.35) 50%);
+  background-size: 100% 4px;
+}
+
+/* พื้นหลังหมอกแรงดันวิญญาณแบบ High Contrast */
+.bg-ambient-void {
+  background:
+    /* 1. 🔷 แสงสีน้ำเงินควินซี่/จิตวิญญาณ (บนขวา) */
+    radial-gradient(circle at 85% 20%, rgba(16, 52, 133, 0.75) 0%, transparent 60%),
+
+    /* 2. 🔴 แสงสีแดงเลือด/แรงดันวิญญาณของอิจิโกะ (ล่างซ้าย) */
+    radial-gradient(circle at 15% 85%, rgba(145, 12, 32, 0.75) 0%, transparent 55%),
+
+    /* 3. 🍊 แสงสีส้มเพลิงหมอกบังไค (กลางเยื้องบน) */
+    radial-gradient(circle at 45% 35%, rgba(217, 83, 7, 0.75) 0%, transparent 50%),
+
+    /* 4. ⬛ พื้นหลังสีดำข้น ดำสนิทแบบอนิเมะ TYBW */
+    #020206;
+
+  /* ขยายขนาดพื้นหลังให้ใหญ่กว่าจอเล็กน้อย เพื่อให้แอนิเมชันตอนเคลื่อนที่ดูสมูท */
+  background-size: 150% 150%;
+
+  /* ปรับเวลาให้เคลื่อนไหวช้าๆ เน้นความกดดันของแรงดันวิญญาณ */
+  animation: soulVoidPulse 18s ease-in-out infinite alternate;
+}
+
+/* แอนิเมชันขยับพิกัดแสงสี และสลับความเปรียบต่าง (Contrast) ให้มวลพลังดูมีชีวิต */
+@keyframes soulVoidPulse {
+  0% {
+    /* เริ่มต้นที่มุมบนซ้าย: ให้ความรู้สึกนิ่ง สงบ แต่แฝงความอึดอัด */
+    background-position: 10% 15%;
+    filter: contrast(1.1) brightness(0.8) saturate(0.95);
+  }
+
+  33% {
+    /* ม้วนตัวไปทางขวา: จังหวะนี้สีส้มเก็ตซึกะและน้ำเงินควินซี่จะปะทะกันอย่างรุนแรง */
+    background-position: 90% 30%;
+    filter: contrast(1.4) brightness(1.15) saturate(1.45);
+  }
+
+  66% {
+    /* ดิ่งลงมุมล่าง: ดึงเอาแรงดันวิญญาณสีแดงเลือด (Reiatsu Red) ขยับขึ้นมาถมหน้าจอ */
+    background-position: 95% 85%;
+    filter: contrast(1.2) brightness(0.85) saturate(1.1);
+  }
+
+  100% {
+    /* ม้วนกลับมาทางซ้ายล่าง: ปล่อยให้ออร่าทุกสีผสมกันอย่างกลมกลืนก่อนจะวนลูปกลับ */
+    background-position: 15% 70%;
+    filter: contrast(1.35) brightness(1.05) saturate(1.3);
+  }
+}
+
+/* [FIXED] อัปเกรดความเข้มของฟอนต์ยักษ์ เพิ่มกรอบและเงาเรืองแสงสีม่วงวิญญาณจางๆ (Reiatsu Aura) */
+.bleach-watermark {
+  font-family: 'Impact', 'Arial Black', -apple-system, sans-serif;
+  color: transparent;
+  /* เพิ่มความทึบของเส้นขอบตัวอักษรเป็น 0.08 และหยอดเงา Glow ด้านหลังให้ลอยขึ้นมาจากความมืด */
+  -webkit-text-stroke: 1px rgba(255, 255, 255, 0.08);
+  text-shadow: 0 0 25px rgba(140, 90, 255, 0.06);
+  letter-spacing: -0.02em;
+  animation: trackingGlance 24s ease-in-out infinite alternate;
+}
+
+@keyframes trackingGlance {
+  0% {
+    letter-spacing: -0.04em;
+    transform: scale(0.97) translateY(0);
+    opacity: 0.3;
+  }
+
+  100% {
+    letter-spacing: 0.04em;
+    transform: scale(1.03) translateY(8px);
+    opacity: 0.15;
+  }
+}
+
+/* บังคับคุมสไตล์เส้นวงแหวนของตัวดาบให้ดู คม ดิบ ไม่ฟุ้งเละ */
+.ring {
+  border-color: rgba(255, 255, 255, 0.07) !important;
+  box-shadow: inset 0 0 15px rgba(110, 140, 255, 0.04), 0 0 15px rgba(110, 140, 255, 0.04);
+}
+
+/* ===================================================
+   🔮 EXPERT BLEACH THEME - BACKGROUND EXPANSION
+   =================================================== */
+
+/* [NEW] สร้างตารางกริดวิเคราะห์วิญญาณแบบคมกริบระดับพิกเซล */
+.bleach-grid {
+  background-image:
+    linear-gradient(rgba(255, 255, 255, 0.015) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.015) 1px, transparent 1px);
+  background-size: 50px 50px;
+  /* ขนาดช่องตาราง */
+  background-position: center;
+}
+
+/* [NEW] คันจิลายน้ำ "卍解" (Bankai) ตัวแทนพลังยมทูตชั้นสูง */
+.text-kanji-watermark {
+  font-family: 'MS Mincho', 'Yu Mincho', 'Georgia', serif;
+  /* ใช้ฟอนต์สไตล์พู่กันญี่ปุ่น */
+  color: transparent;
+  -webkit-text-stroke: 1px rgba(139, 92, 246, 0.05);
+  /* เส้นขอบม่วงวิญญาณจางสุดๆ */
+  text-shadow: 0 0 40px rgba(139, 92, 246, 0.02);
+  transform: rotate(-5deg);
+  opacity: 0.4;
+  animation: kanjiFloat 18s ease-in-out infinite alternate;
+}
+
+@keyframes kanjiFloat {
+  0% {
+    transform: rotate(-5deg) translateY(0px);
+    filter: blur(1px);
+  }
+
+  100% {
+    transform: rotate(-3deg) translateY(-15px);
+    filter: blur(3px);
+    /* ค่อยๆ เบลอกลืนหายไปตามแรงดันวิญญาณ */
+  }
+}
+
+@keyframes gateShimmer {
+  100% {
+    transform: translateX(100%);
+  }
+}
