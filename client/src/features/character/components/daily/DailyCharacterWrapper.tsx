@@ -39,13 +39,14 @@ export default function DailyCharacterWrapper({ initialTarget }: { initialTarget
     const [isHowToOpen, setIsHowToOpen] = useState(false);
     const [isReady, setIsReady] = useState(false);
     const [timeLeft, setTimeLeft] = useState('');
+    const [isSurrendered, setIsSurrendered] = useState(false);
 
     const isWin = guesses.length > 0 &&
         (Object.entries(guesses[0].result)
             .filter(([key]) => key !== 'image')
             .every(([_, status]) => status === 'correct')
         );
-    const isLoss = guesses.length >= 10 && !isWin;
+    const isLoss = isSurrendered || (hasFinalized && !isWin);
     const isGameOver = isWin || isLoss;
 
     // ── 🛡️ จัดการโครงสร้างสถิติแบบ Object Nesting
@@ -82,25 +83,32 @@ export default function DailyCharacterWrapper({ initialTarget }: { initialTarget
 
     useEffect(() => {
         if (!_hasHydrated) return;
+
         if (isGameOver) {
+            // 🛡️ คีย์เวิร์ดสำคัญ: หากสเตตัสถูกบันทึกถาวรลง Store เรียบร้อยแล้ว (เกิดจากการ F5)
+            // ให้สั่งเปิดเบิกมอดอลสรุปผลทันที 0ms ไร้อาการหน่วงดีเลย์ให้ผู้เล่นเห็นตารางแวบแรก
+            if (hasFinalized) {
+                setIsModalOpen(true);
+                return;
+            }
+
+            // จังหวะปกติที่เพิ่งกดปุ่มยอมแพ้สดๆ ร้อนๆ ในหน้านั้น
+            const targetDelay = isSurrendered ? 0 : 2500;
             const timer = setTimeout(() => {
-                // 1. ทำ Logic: บันทึกข้อมูลเฉพาะถ้ายังไม่เคยบันทึกมาก่อน (ป้องกัน Streak พุ่ง)
                 if (!hasFinalized) {
                     finalizeGame(isWin);
                     updateStats(isWin);
                 }
-
-                // 2. ทำ UI: เปิด Modal ทุกครั้งที่โหลดหน้าเว็บหากเกมจบแล้ว
                 setIsModalOpen(true);
-            }, 2500); // ลดเวลาลงนิดหน่อยให้ UX ดูฉับไวขึ้นตอน Refresh
+            }, targetDelay);
 
             return () => clearTimeout(timer);
         }
-        // เราไม่ต้องกังวลเรื่อง hasFinalized ใน dependency เท่าไหร่ เพราะเงื่อนไขด้านในเช็คให้แล้ว
-    }, [isGameOver, isWin, finalizeGame, hasFinalized, _hasHydrated]);
+    }, [isGameOver, isWin, finalizeGame, hasFinalized, _hasHydrated, isSurrendered]);
 
     const handleCloseModal = () => {
         setIsModalOpen(false);
+        setIsSurrendered(false);
         resetGame();
         window.scrollTo({ top: 0, behavior: 'smooth' });
     };
@@ -156,6 +164,8 @@ export default function DailyCharacterWrapper({ initialTarget }: { initialTarget
                         stats={stats}
                         timeLeft={timeLeft}
                         game={game}
+                        isGameOver={isGameOver}                // 👈 ส่งสถานะการจบเกมไปเช็คซ่อนปุ่ม
+                        onSurrender={() => setIsSurrendered(true)}  // 👈 ส่ง Callback ไปสั่งยอมแพ้
                     />
                 )}
 

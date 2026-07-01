@@ -6,7 +6,6 @@ import { SearchBar } from '@/src/shared/ui/SearchBar';
 import { useCharacterGame } from '@/src/features/character/hooks/unlimited/useCharacterGame';
 import { getCharacters } from '@/src/lib/utils/character';
 import { SummaryGuess } from '@/src/features/character/components/unlimited/SummaryGuess';
-import { findDuplicateIds } from '@/src/lib/utils/checking';
 import { HowToPlayModal } from '@/src/features/character/components/shared/HowToPlayModal';
 import { Header } from '@/src/shared/layout/Header';
 import { Divider } from '@/src/shared/layout/Divider';

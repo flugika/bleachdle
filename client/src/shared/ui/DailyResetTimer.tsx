@@ -34,7 +34,7 @@ export const DailyResetTimer = () => {
             <div className="flex justify-center items-center gap-2 mb-4">
                 <div className="w-1.5 h-1.5 rounded-full bg-[#c8a96e] shadow-[0_0_8px_#c8a96e]" />
                 <span className="text-[10px] tracking-[0.25em] text-[#c8a96e] uppercase font-semibold">
-                    Next Soul Society Reset
+                    NEXT REIRAKU PERCEPTION RESET
                 </span>
             </div>
 
