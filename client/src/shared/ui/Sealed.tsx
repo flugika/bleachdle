@@ -1,7 +1,7 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import ZangetsuLoader from "./loader/ZangetsuLoader";
+import ZangetsuLoader from "./ZangetsuLoader";
 import { Button } from "@/src/shared/ui/button"; // 👈 นำเข้าคอมโพเนนต์ปุ่มเดิมของคุณ
 
 export default function Sealed() {
@@ -16,8 +16,8 @@ export default function Sealed() {
 
             {/* LAYER 6: เส้นตัดมิติรอยดาบเฉียงพาดหน้าจอ */}
             <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-10">
-                <div className="w-[150%] h-[1px] bg-gradient-to-r from-transparent via-red-950/40 to-transparent rotate-[-35deg] blur-[1px]"></div>
-                <div className="absolute w-[150%] h-[1px] bg-gradient-to-r from-transparent via-purple-900/30 to-transparent rotate-[-35deg] animate-pulse"></div>
+                <div className="w-[150%] h-[1px] bg-gradient-to-r from-transparent via-purple-500/30 to-transparent rotate-[-35deg] blur-[1px]"></div>
+                <div className="absolute w-[150%] h-[1px] bg-gradient-to-r from-transparent via-cyan-400/50 to-transparent rotate-[-35deg] animate-pulse"></div>
             </div>
 
             {/* 🎬 [FOREGROUND ZONE: z-20] เอฟเฟกต์หน้าจอและกรอบล็อคเป้ามุมจอ */}
@@ -25,17 +25,13 @@ export default function Sealed() {
 
             {/* LAYER 7: กรอบล็อกเป้าสภา 46 ขอบจอสุดคลาสสิก */}
             <div className="absolute inset-8 pointer-events-none z-20">
-                <div className="absolute top-0 left-0 w-6 h-6 border-t-2 border-l-2 border-solid border-[#e83030]/20"></div>
-                <div className="absolute top-0 right-0 w-6 h-6 border-t-2 border-r-2 border-solid border-[#e83030]/20"></div>
-                <div className="absolute bottom-0 left-0 w-6 h-6 border-b-2 border-l-2 border-solid border-[#e83030]/20"></div>
-                <div className="absolute bottom-0 right-0 w-6 h-6 border-b-2 border-r-2 border-solid border-[#e83030]/20"></div>
+                <div className="absolute top-0 left-0 w-6 h-6 border-t-2 border-l-2 border-solid border-white/30"></div>
+                <div className="absolute top-0 right-0 w-6 h-6 border-t-2 border-r-2 border-solid border-white/30"></div>
+                <div className="absolute bottom-0 left-0 w-6 h-6 border-b-2 border-l-2 border-solid border-white/30"></div>
+                <div className="absolute bottom-0 right-0 w-6 h-6 border-b-2 border-r-2 border-solid border-white/30"></div>
 
-                <span className="absolute bottom-2 left-8 font-mono text-[9px] tracking-[0.4em] text-red-500/30 uppercase">
-                    System // Absolute_Seal_Active
-                </span>
-                <span className="absolute top-2 right-8 font-mono text-[9px] tracking-[0.4em] text-[#c8a96e]/50 uppercase font-bold">
-                    Decree // Central_46_Law
-                </span>
+                <span className="absolute bottom-2 left-8 font-mono text-[9px] tracking-[0.4em] text-white/40 uppercase">System // Absolute_Seal_Active</span>
+                <span className="absolute top-2 right-8 font-mono text-[9px] tracking-[0.4em] text-cyan-400/70 uppercase font-bold">Decree // Central_46_Law</span>
             </div>
 
             {/* 💎 [CORE ZONE: z-30] */}
@@ -47,7 +43,7 @@ export default function Sealed() {
                 </div>
 
                 {/* 📜 PREMIUM CENTRAL 46 CINEMATIC PLATE */}
-                <div className="relative w-full max-w-2xl bg-gradient-to-b from-[#0a0404]/50 to-[#020205]/70 border border-[#e83030]/20 py-5 px-6 md:py-6 md:px-8 backdrop-blur-xl shadow-[0_30px_70px_rgba(0,0,0,0.8),_0_0_50px_rgba(232,48,48,0.03)] transition-all duration-500">
+                <div className="relative w-full max-w-2xl bg-gradient-to-b from-[#0a0404]/20 to-[#020205]/30 border border-[#e83030]/20 py-5 px-6 md:py-6 md:px-8 backdrop-blur-xl shadow-[0_30px_70px_rgba(0,0,0,0.8),_0_0_50px_rgba(232,48,48,0.03)] transition-all duration-500">
 
                     {/* ⛩️ Kido Corner Brackets */}
                     <div className="absolute -top-[1px] -left-[1px] w-4 h-4 border-t-2 border-l-2 border-[#e83030] drop-shadow-[0_0_5px_rgba(232,48,48,0.6)]"></div>

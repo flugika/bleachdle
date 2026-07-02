@@ -681,7 +681,7 @@
     },
     {
         "id": "6adb1439-598a-47aa-afde-002c4bc0cbb0",
-        "name": "Sousuke Aizen",
+        "name": "Sosuke Aizen",
         "gender": "Male",
         "race": [
             "Shinigami"
@@ -703,7 +703,7 @@
             "Special",
             "Kido"
         ],
-        "image": "Sousuke_Aizen.webp"
+        "image": "Sosuke_Aizen.webp"
     },
     {
         "id": "05177074-0809-47a8-9bad-00f04bca9fac",
@@ -2745,7 +2745,6 @@
         "name": "Asguiaro Ebern",
         "gender": "Male",
         "race": [
-            "Quincy",
             "Arrancar"
         ],
         "affiliation": "Wandenreich",

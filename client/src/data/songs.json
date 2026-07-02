@@ -1,0 +1,1868 @@
+[
+    {
+        "id": "4f4e7456-9be9-4b1e-b816-563607212176",
+        "title": "Asterisk",
+        "artist": "Orange Range",
+        "album": "OP-1",
+        "audio_url": "/assets/audio/songs/asterisk.mp3",
+        "youtube_url": "https://www.youtube.com/watch?v=iqCu1cnJTjU",
+        "spotify_url": "https://open.spotify.com/track/6MKOd8KDFzwpu8Vz6ccZU5?si=76600cb2a2e34ab4",
+        "character_id": null,
+        "segments": [
+            {
+                "id": "49f50a39-fabb-459a-baf7-f41906190f4a",
+                "segment_name": "INTRO VINYL DJ SCRATCH",
+                "start_time_ms": 200,
+                "difficulty_level": "easy"
+            },
+            {
+                "id": "973ae456-b8ef-410a-86ff-fa8cfa120948",
+                "segment_name": "VOCAL 1",
+                "start_time_ms": 32100,
+                "difficulty_level": "normal"
+            },
+            {
+                "id": "f65a16cb-9e2c-4238-8255-59566fd7eb49",
+                "segment_name": "SOLO PRE-VOCAL",
+                "start_time_ms": 55950,
+                "difficulty_level": "normal"
+            }
+        ]
+    },
+    {
+        "id": "8c3b708d-f571-419b-bd52-0c9f8ef41097",
+        "title": "D-tecnoLife",
+        "artist": "UVERworld",
+        "album": "OP-2",
+        "audio_url": "/assets/audio/songs/d_tecnolife.mp3",
+        "youtube_url": "https://www.youtube.com/watch?v=8XkiWX48nds",
+        "spotify_url": "https://open.spotify.com/track/5Gd0Ge0KuIDF34HF0X2CYX?si=fddbaac7b9344d96",
+        "character_id": null,
+        "segments": [
+            {
+                "id": "d39d1369-0d87-4e80-9662-c1ee66660f23",
+                "segment_name": "FIRST VOCAL",
+                "start_time_ms": 900,
+                "difficulty_level": "normal"
+            },
+            {
+                "id": "a4e0ecdb-cb29-4dd6-8ab8-abb3e25a7688",
+                "segment_name": "AH",
+                "start_time_ms": 10100,
+                "difficulty_level": "hard"
+            },
+            {
+                "id": "ed1ce078-27d0-45f4-a988-5cb09b72dd39",
+                "segment_name": "PRE-HOOK",
+                "start_time_ms": 40600,
+                "difficulty_level": "hard"
+            }
+        ]
+    },
+    {
+        "id": "2ea7e137-bcf9-4bf9-86f1-a185b1ea6e92",
+        "title": "Ichirin no Hana",
+        "artist": "High and Mighty Color",
+        "album": "OP-3",
+        "audio_url": "/assets/audio/songs/ichirin_no_hana.mp3",
+        "youtube_url": "https://www.youtube.com/watch?v=km1CEwOaXsg",
+        "spotify_url": "https://open.spotify.com/track/5hKyDPH2R0dxXQ0wuC1Dxh?si=3fdac9f127fd44e9",
+        "character_id": null,
+        "segments": [
+            {
+                "id": "4cadbe7a-9d1f-4154-9a71-588450a0fa68",
+                "segment_name": "INTRO",
+                "start_time_ms": 900,
+                "difficulty_level": "normal"
+            },
+            {
+                "id": "0a7918fe-ab0e-49b2-ac57-a05a153f3009",
+                "segment_name": "FIRST VERSE",
+                "start_time_ms": 16200,
+                "difficulty_level": "hard"
+            },
+            {
+                "id": "09e16a66-d063-4f47-87f4-35b3188c9238",
+                "segment_name": "PRE-HOOK",
+                "start_time_ms": 40100,
+                "difficulty_level": "hard"
+            }
+        ]
+    },
+    {
+        "id": "7a25ff03-8d26-44b2-ad3b-185ff109841c",
+        "title": "Tonight, Tonight, Tonight",
+        "artist": "Beat Crusaders",
+        "album": "OP-4",
+        "audio_url": "/assets/audio/songs/tonight_tonight_tonight.mp3",
+        "youtube_url": "https://www.youtube.com/watch?v=l_6pmz70Emw",
+        "spotify_url": "https://open.spotify.com/track/3Nq8bUC45N7u3NQ2EkFVZp?si=9fc03e9d92834e0a",
+        "character_id": null,
+        "segments": [
+            {
+                "id": "de7a3813-285a-4252-b0d9-b73387a06b43",
+                "segment_name": "INTRO",
+                "start_time_ms": 550,
+                "difficulty_level": "hard"
+            },
+            {
+                "id": "be98884a-933e-480a-b0b9-30ef4833337c",
+                "segment_name": "PRE FIRST VOCAL",
+                "start_time_ms": 5950,
+                "difficulty_level": "hard"
+            },
+            {
+                "id": "98f97af4-fa57-4057-b33a-512c57174844",
+                "segment_name": "GUITAR",
+                "start_time_ms": 15950,
+                "difficulty_level": "normal"
+            },
+            {
+                "id": "87a83f6a-1c21-41d3-af19-093dc941b8f9",
+                "segment_name": "TONIGHT",
+                "start_time_ms": 73650,
+                "difficulty_level": "easy"
+            }
+        ]
+    },
+    {
+        "id": "ef1034bc-0b2a-43d9-95e2-22df659aa0d9",
+        "title": "Rolling Star",
+        "artist": "YUI",
+        "album": "OP-5",
+        "audio_url": "/assets/audio/songs/rolling_star.mp3",
+        "youtube_url": "https://www.youtube.com/watch?v=n2dD_rPwlQg",
+        "spotify_url": "https://open.spotify.com/track/0rVH35mmwtelHycrJxFexC?si=6dca15e056874f53",
+        "character_id": null,
+        "segments": [
+            {
+                "id": "f3f13074-e936-4c8e-9945-f4ae5948bb2f",
+                "segment_name": "INTRO",
+                "start_time_ms": 800,
+                "difficulty_level": "easy"
+            },
+            {
+                "id": "a94fce10-f0d9-4c2e-8387-0741e585281a",
+                "segment_name": "FIRST SOLO",
+                "start_time_ms": 6900,
+                "difficulty_level": "easy"
+            },
+            {
+                "id": "ccd17a06-1771-4f24-af09-9d5d857a9875",
+                "segment_name": "FIRST VOCAL",
+                "start_time_ms": 14150,
+                "difficulty_level": "easy"
+            },
+            {
+                "id": "3b042ace-19e7-4a51-8e43-27a4e356ff27",
+                "segment_name": "KUAY",
+                "start_time_ms": 26600,
+                "difficulty_level": "easy"
+            },
+            {
+                "id": "bdedcfc3-e963-4537-9890-8bd3ed91000c",
+                "segment_name": "HO YEAH",
+                "start_time_ms": 75950,
+                "difficulty_level": "normal"
+            },
+            {
+                "id": "97b042c5-1116-489a-ac40-ea3c6832f615",
+                "segment_name": "HOOK",
+                "start_time_ms": 64250,
+                "difficulty_level": "normal"
+            }
+        ]
+    },
+    {
+        "id": "c3d9a11a-123f-4bb2-bd24-9dfc8230aa71",
+        "title": "Alones",
+        "artist": "Aqua Timez",
+        "album": "OP-6",
+        "audio_url": "/assets/audio/songs/alones.mp3",
+        "youtube_url": "https://www.youtube.com/watch?v=-qOIwxWYdX4",
+        "spotify_url": "https://open.spotify.com/track/59COuEJRBxGGGCo6BIQ2lL?si=507bcf826bdf4538",
+        "character_id": "a1b2c3d4-e5f6-4a5b-8c9d-0e1f2a3b4c5d",
+        "segments": [
+            {
+                "id": "caed1dfb-9317-477f-bdcd-89e200ca745e",
+                "segment_name": "INTRO",
+                "start_time_ms": 700,
+                "difficulty_level": "normal"
+            },
+            {
+                "id": "b36df85d-199f-452a-86a5-db0b58f74286",
+                "segment_name": "PRE-HOOK",
+                "start_time_ms": 46750,
+                "difficulty_level": "normal"
+            },
+            {
+                "id": "46780e1b-9267-4dc1-a6e9-f7c3f378c1e2",
+                "segment_name": "PRE-HOOK 2",
+                "start_time_ms": 65900,
+                "difficulty_level": "normal"
+            },
+            {
+                "id": "1f910f2a-4645-4850-96e4-bc71b1742c19",
+                "segment_name": "HOOK",
+                "start_time_ms": 77950,
+                "difficulty_level": "hard"
+            }
+        ]
+    },
+    {
+        "id": "3a9212cd-8b9a-4fdf-9734-71283ffecda2",
+        "title": "After Dark",
+        "artist": "Asian Kung-Fu Generation",
+        "album": "OP-7",
+        "audio_url": "/assets/audio/songs/after_dark.mp3",
+        "youtube_url": "https://www.youtube.com/watch?v=jyPKus_6i1Q",
+        "spotify_url": "https://open.spotify.com/track/6XsJTpZwPKMcG8QK8k14Z6?si=a307ab364ae642af",
+        "character_id": "c7a8b9d0-1e2f-4a3b-8c5d-6e7f8a9b0c1d",
+        "segments": [
+            {
+                "id": "9654af22-1413-4c18-871d-3bb98ba74889",
+                "segment_name": "INTRO",
+                "start_time_ms": 600,
+                "difficulty_level": "normal"
+            },
+            {
+                "id": "a943af41-ec81-4c94-b03c-4379b23cf19c",
+                "segment_name": "SOLO INTRO",
+                "start_time_ms": 13000,
+                "difficulty_level": "hard"
+            },
+            {
+                "id": "7a2d5765-1d13-4545-b9e3-6954784735bf",
+                "segment_name": "HOOK",
+                "start_time_ms": 48100,
+                "difficulty_level": "easy"
+            },
+            {
+                "id": "8bfa7331-5ce4-4aa1-9e68-be61c1987f79",
+                "segment_name": "END",
+                "start_time_ms": 75900,
+                "difficulty_level": "normal"
+            }
+        ]
+    },
+    {
+        "id": "1b9f7128-cfde-4a3b-9e23-2cbde8e192a8",
+        "title": "Chu-Bura",
+        "artist": "Kelun",
+        "album": "OP-8",
+        "audio_url": "/assets/audio/songs/chu_bura.mp3",
+        "youtube_url": "https://www.youtube.com/watch?v=lskHdGUEWfQ",
+        "spotify_url": "https://open.spotify.com/track/49SFNmFeMiVm2biOs0CKcI?si=3b44755863f74d69",
+        "character_id": null,
+        "segments": [
+            {
+                "id": "5da9792a-ca1e-4c21-b918-45a632c44af2",
+                "segment_name": "SOLO INTRO",
+                "start_time_ms": 4650,
+                "difficulty_level": "normal"
+            },
+            {
+                "id": "a397895f-aa50-444f-9feb-f4558145193f",
+                "segment_name": "HOOK",
+                "start_time_ms": 46300,
+                "difficulty_level": "hard"
+            },
+            {
+                "id": "9859bd34-3fdb-4157-aa18-d490fe7b7f69",
+                "segment_name": "END HOOK",
+                "start_time_ms": 76550,
+                "difficulty_level": "hard"
+            }
+        ]
+    },
+    {
+        "id": "a2b0e891-cd7b-4df2-ac12-892fe8e90bc1",
+        "title": "Velonica",
+        "artist": "Aqua Timez",
+        "album": "OP-9",
+        "audio_url": "/assets/audio/songs/velonica.mp3",
+        "youtube_url": "https://www.youtube.com/watch?v=vUxUXwL4IKY",
+        "spotify_url": "https://open.spotify.com/track/2k7lStJS8TJvMNxbdClLMD?si=d6a04e56d31b436c",
+        "character_id": "d1c2b3a4-e5f6-4789-8a9b-0c1d2e3f4a5b",
+        "segments": [
+            {
+                "id": "16408d74-0ee8-495f-b035-84d23d753a2d",
+                "segment_name": "INTRO",
+                "start_time_ms": 600,
+                "difficulty_level": "easy"
+            },
+            {
+                "id": "50095f11-b679-4065-8537-0534e7a53060",
+                "segment_name": "PRE-HOOK",
+                "start_time_ms": 28300,
+                "difficulty_level": "normal"
+            },
+            {
+                "id": "54227ebe-b363-4d49-9978-2742f8b5cd06",
+                "segment_name": "PRE-HOOK 2",
+                "start_time_ms": 43300,
+                "difficulty_level": "hard"
+            },
+            {
+                "id": "5f4f78d6-a1d5-4956-889c-978d83c23a97",
+                "segment_name": "HOOK",
+                "start_time_ms": 56750,
+                "difficulty_level": "easy"
+            },
+            {
+                "id": "7915d45d-a402-4819-9456-373597e3cb2c",
+                "segment_name": "DRUM END",
+                "start_time_ms": 85700,
+                "difficulty_level": "normal"
+            }
+        ]
+    },
+    {
+        "id": "df8329a1-cb92-49af-b111-9a2cf1e88ef2",
+        "title": "Shojo S",
+        "artist": "SCANDAL",
+        "album": "OP-10",
+        "audio_url": "/assets/audio/songs/shojo_s.mp3",
+        "youtube_url": "https://www.youtube.com/watch?v=1J3faBzQhi0",
+        "spotify_url": "https://open.spotify.com/track/31A3fFQivbhGo9aJQQCdtP?si=c206a3b2687349b3",
+        "character_id": null,
+        "segments": [
+            {
+                "id": "b0d8af90-2195-4bdf-9a42-82710a821449",
+                "segment_name": "SOLO INTRO",
+                "start_time_ms": 1000,
+                "difficulty_level": "normal"
+            },
+            {
+                "id": "71e365c5-0abe-4192-a793-d90c31fbc6ce",
+                "segment_name": "HOO",
+                "start_time_ms": 19150,
+                "difficulty_level": "easy"
+            },
+            {
+                "id": "4cfc5775-cb6f-41fb-985a-1e38b83ae8b9",
+                "segment_name": "HOOK",
+                "start_time_ms": 35550,
+                "difficulty_level": "easy"
+            }
+        ]
+    },
+    {
+        "id": "5e2b8c91-23ba-4efd-bc11-a8dfc81daef9",
+        "title": "Anima Rossa",
+        "artist": "Porno Graffitti",
+        "album": "OP-11",
+        "audio_url": "/assets/audio/songs/anima_rossa.mp3",
+        "youtube_url": "https://www.youtube.com/watch?v=gG1tVYhQG8s",
+        "spotify_url": "https://open.spotify.com/track/6vQzkDi0hEzosW7DNcjPB1?si=65337e6968bc45c4",
+        "character_id": null,
+        "segments": [
+            {
+                "id": "72f9efb5-00a9-4c5c-82ee-283fb5771bb7",
+                "segment_name": "INTRO",
+                "start_time_ms": 250,
+                "difficulty_level": "easy"
+            },
+            {
+                "id": "f411c976-26dc-468e-850e-72194de459a1",
+                "segment_name": "FIRST VOCAL",
+                "start_time_ms": 14900,
+                "difficulty_level": "normal"
+            },
+            {
+                "id": "02d8fad7-c1ff-47dc-bda5-f7ac67b9cf59",
+                "segment_name": "WA",
+                "start_time_ms": 27300,
+                "difficulty_level": "hard"
+            },
+            {
+                "id": "4cd104cb-6b33-4e97-83f4-420c01239e6b",
+                "segment_name": "HOOK",
+                "start_time_ms": 39250,
+                "difficulty_level": "easy"
+            },
+            {
+                "id": "d1520647-a1d4-4d34-aebf-a7de6bee9a1c",
+                "segment_name": "HOO",
+                "start_time_ms": 72250,
+                "difficulty_level": "easy"
+            }
+        ]
+    },
+    {
+        "id": "92cae8a1-dbef-457c-8822-ef9c1da8ff21",
+        "title": "chAngE",
+        "artist": "miwa",
+        "album": "OP-12",
+        "audio_url": "/assets/audio/songs/change.mp3",
+        "youtube_url": "https://www.youtube.com/watch?v=-TVU-yNFc9E",
+        "spotify_url": "https://open.spotify.com/track/7McCOOQG8GQtngK2Obh0Ts?si=1677068b4a3242e9",
+        "character_id": null,
+        "segments": [
+            {
+                "id": "33a98b92-95c7-47c0-bfe1-bf8b79f9db5a",
+                "segment_name": "CHANGE",
+                "start_time_ms": 700,
+                "difficulty_level": "easy"
+            },
+            {
+                "id": "025ef094-2395-4214-a819-7b9e2dc87689",
+                "segment_name": "SOLO",
+                "start_time_ms": 13500,
+                "difficulty_level": "normal"
+            },
+            {
+                "id": "62b4d659-282f-4530-9066-9f7d93269dd3",
+                "segment_name": "FIRST VOCAL",
+                "start_time_ms": 19650,
+                "difficulty_level": "normal"
+            },
+            {
+                "id": "7acc1cca-852a-47ba-9b11-fc21ba63e82d",
+                "segment_name": "CHA-ANGE",
+                "start_time_ms": 79100,
+                "difficulty_level": "normal"
+            }
+        ]
+    },
+    {
+        "id": "29bca1d2-7fb2-47ef-ad88-12cd89feaa11",
+        "title": "Ranbu no Melody",
+        "artist": "SID",
+        "album": "OP-13",
+        "audio_url": "/assets/audio/songs/ranbu_no_melody.mp3",
+        "youtube_url": "https://www.youtube.com/watch?v=taVyTMTA7Vo",
+        "spotify_url": "https://open.spotify.com/track/3tlwwAlfCnL7f2Qt2LtDzX?si=cd0b66b7e63f40c0",
+        "character_id": "e4f8b9d1-c2a3-4a6b-8d7e-9f0a1b2c3d4e",
+        "segments": [
+            {
+                "id": "df310049-5453-4025-98a9-849aedf5aa34",
+                "segment_name": "INTRO",
+                "start_time_ms": 450,
+                "difficulty_level": "easy"
+            },
+            {
+                "id": "f9d5ebaf-b666-4312-9f15-5726d66ba7c3",
+                "segment_name": "SOLO INTRO",
+                "start_time_ms": 11950,
+                "difficulty_level": "normal"
+            },
+            {
+                "id": "d51cdfb7-32dd-4799-a32d-c21a96de48f0",
+                "segment_name": "PRE-HOOK",
+                "start_time_ms": 31750,
+                "difficulty_level": "hard"
+            },
+            {
+                "id": "97e2701f-de57-4f6e-a67f-5bce99d8cf77",
+                "segment_name": "HOOK",
+                "start_time_ms": 43700,
+                "difficulty_level": "easy"
+            }
+        ]
+    },
+    {
+        "id": "c8f2ba12-db99-4d7a-8211-fec8912e8fab",
+        "title": "BLUE",
+        "artist": "ViViD",
+        "album": "OP-14",
+        "audio_url": "/assets/audio/songs/blue.mp3",
+        "youtube_url": "https://www.youtube.com/watch?v=Ngy3tyOc0Rs",
+        "spotify_url": "https://open.spotify.com/track/6h5waK5mu3zX9jjDY7Dvmz?si=a23263bf75084c11",
+        "character_id": null,
+        "segments": [
+            {
+                "id": "30311886-42a9-4005-a50b-d97797ff81eb",
+                "segment_name": "INTRO",
+                "start_time_ms": 1000,
+                "difficulty_level": "hard"
+            },
+            {
+                "id": "3aa1727c-d756-4e70-acfc-e49a9aed45d7",
+                "segment_name": "PRE-VOCAL",
+                "start_time_ms": 15800,
+                "difficulty_level": "hard"
+            },
+            {
+                "id": "aa5e1eb9-92d8-4cf9-b013-5809578775b7",
+                "segment_name": "HOOK",
+                "start_time_ms": 63150,
+                "difficulty_level": "easy"
+            }
+        ]
+    },
+    {
+        "id": "b2cf8d91-fa23-41bb-b211-cc81da8ffed2",
+        "title": "Harukaze",
+        "artist": "SCANDAL",
+        "album": "OP-15",
+        "audio_url": "/assets/audio/songs/harukaze.mp3",
+        "youtube_url": "https://www.youtube.com/watch?v=X0Zu20nbeVI",
+        "spotify_url": "https://open.spotify.com/track/1GSPV6AYG8NrtpgqhWx893?si=cfca4b32e00548af",
+        "character_id": "d4e5f6a7-b8c9-0d1e-2f3a-4b5c6d7e8f9a",
+        "segments": [
+            {
+                "id": "1049d2b3-5c68-44e0-a0c4-777dbb9a7fa6",
+                "segment_name": "INTRO",
+                "start_time_ms": 850,
+                "difficulty_level": "hard"
+            },
+            {
+                "id": "b1536282-538b-4a93-8f4a-589a658e0d3c",
+                "segment_name": "INTRO",
+                "start_time_ms": 13700,
+                "difficulty_level": "normal"
+            },
+            {
+                "id": "f4f2f5d4-f835-4acd-9568-6f1614a59995",
+                "segment_name": "HA",
+                "start_time_ms": 36500,
+                "difficulty_level": "normal"
+            },
+            {
+                "id": "fb9d6e77-c301-40f8-b296-8b77311cdb9f",
+                "segment_name": "HOOK",
+                "start_time_ms": 59150,
+                "difficulty_level": "normal"
+            }
+        ]
+    },
+    {
+        "id": "123e4567-e89b-12d3-a456-426614174000",
+        "title": "Scar",
+        "artist": "Tatsuya Kitani",
+        "album": "OP-16",
+        "audio_url": "/assets/audio/songs/scar.mp3",
+        "youtube_url": "https://www.youtube.com/watch?v=FsKuu-0RUcM",
+        "spotify_url": "https://open.spotify.com/track/5WQAussByRFjUWYQDowtHE?si=7dfe816c39144b53",
+        "character_id": null,
+        "segments": [
+            {
+                "id": "a5a767ce-f884-4860-9c3e-feac6e080a47",
+                "segment_name": "INTRO",
+                "start_time_ms": 650,
+                "difficulty_level": "normal"
+            },
+            {
+                "id": "33b19ffb-bba1-4514-a376-f731e2f227b1",
+                "segment_name": "INTRO",
+                "start_time_ms": 10150,
+                "difficulty_level": "hard"
+            },
+            {
+                "id": "888dc185-2ee0-4e40-86ed-1bdaf6d5e1ab",
+                "segment_name": "FIRST VOCAL",
+                "start_time_ms": 20250,
+                "difficulty_level": "normal"
+            },
+            {
+                "id": "9fe369e7-4424-4c0a-9145-a75c14ff6880",
+                "segment_name": "NA",
+                "start_time_ms": 39300,
+                "difficulty_level": "easy"
+            },
+            {
+                "id": "e35a5bc8-9436-48e9-8dd8-245c1e54a9a6",
+                "segment_name": "HOOK",
+                "start_time_ms": 54900,
+                "difficulty_level": "easy"
+            },
+            {
+                "id": "568f6112-ab8f-4d2d-bd67-76ba7c1d9b8c",
+                "segment_name": "END HOOK",
+                "start_time_ms": 78450,
+                "difficulty_level": "normal"
+            }
+        ]
+    },
+    {
+        "id": "234e5678-f89b-12d3-a456-426614174111",
+        "title": "STARS",
+        "artist": "w.o.d.",
+        "album": "OP-17",
+        "audio_url": "/assets/audio/songs/stars.mp3",
+        "youtube_url": "https://www.youtube.com/watch?v=TGTYrh-kFbA",
+        "spotify_url": "https://open.spotify.com/track/0mMikRupn84z6woeMHccz1?si=8ec3a330c0f845f3",
+        "character_id": "f6f4e7g5-3b8c-9d0e-f1a2-3b4c5d6e7f8g",
+        "segments": [
+            {
+                "id": "0d9459bd-3db4-4223-8293-a378961c544d",
+                "segment_name": "INTRO",
+                "start_time_ms": 600,
+                "difficulty_level": "normal"
+            },
+            {
+                "id": "c72821d3-cb6f-4701-8aa1-5591d442e0aa",
+                "segment_name": "FIRST VOCAL",
+                "start_time_ms": 11700,
+                "difficulty_level": "normal"
+            },
+            {
+                "id": "ddc08776-321f-433f-b8d6-1c7bac5af25d",
+                "segment_name": "PRE-HOOK",
+                "start_time_ms": 41850,
+                "difficulty_level": "hard"
+            },
+            {
+                "id": "7f377c78-02f9-415f-95bf-f3c357a777ea",
+                "segment_name": "HOOK",
+                "start_time_ms": 58100,
+                "difficulty_level": "hard"
+            }
+        ]
+    },
+    {
+        "id": "345e6789-089b-12d3-a456-426614174222",
+        "title": "Without any words",
+        "artist": "Six Lounge",
+        "album": "OP-18",
+        "audio_url": "/assets/audio/songs/without_any_words.mp3",
+        "youtube_url": "https://www.youtube.com/watch?v=gFQZgwMC1As",
+        "spotify_url": "https://open.spotify.com/track/4NqQsjG9k9tCChdp51jX8V?si=963a12a598f842e0",
+        "character_id": null,
+        "segments": [
+            {
+                "id": "4188d9c0-d71f-4e64-86cb-d832f39606d3",
+                "segment_name": "INTRO",
+                "start_time_ms": 550,
+                "difficulty_level": "easy"
+            },
+            {
+                "id": "6df3b87a-2a24-4e98-96eb-8a116a8a5768",
+                "segment_name": "FIRST-VOCAL",
+                "start_time_ms": 10800,
+                "difficulty_level": "hard"
+            },
+            {
+                "id": "1fb2857b-0471-42c5-9a3b-c3adeef54480",
+                "segment_name": "PRE-HOOK",
+                "start_time_ms": 32350,
+                "difficulty_level": "normal"
+            },
+            {
+                "id": "a9d6df90-7d08-4a8d-b803-ec69f1f18e8b",
+                "segment_name": "PRE-HOOK 2",
+                "start_time_ms": 46900,
+                "difficulty_level": "easy"
+            },
+            {
+                "id": "fbccfea7-9712-4c8b-895a-f8eadd66eb9d",
+                "segment_name": "END HOOK 2",
+                "start_time_ms": 78250,
+                "difficulty_level": "normal"
+            }
+        ]
+    },
+    {
+        "id": "a1b2c3d4-e5f6-4a5b-8c9d-0e1f2a3b4c5d",
+        "title": "Life is Like a Boat",
+        "artist": "Rie Fu",
+        "album": "ED-1",
+        "audio_url": "/assets/audio/songs/life_is_like_a_boat.mp3",
+        "youtube_url": "https://www.youtube.com/watch?v=LIZOJwuG12U",
+        "spotify_url": "https://open.spotify.com/track/02cIqYTYys4M1RBFiBKIEt?si=7b843425e7f64169",
+        "character_id": null,
+        "segments": [
+            {
+                "id": "7b1bd05d-23c4-4439-a37a-04984233e6c1",
+                "segment_name": "INTRO",
+                "start_time_ms": 150,
+                "difficulty_level": "hard"
+            },
+            {
+                "id": "3e4f766c-af9b-48aa-9005-39d1b1c3c167",
+                "segment_name": "HOOK",
+                "start_time_ms": 19250,
+                "difficulty_level": "easy"
+            }
+        ]
+    },
+    {
+        "id": "b2c3d4e5-f6a7-4b6c-9d0e-1f2a3b4c5d6e",
+        "title": "Thank You!!",
+        "artist": "Home Made Kazoku",
+        "album": "ED-2",
+        "audio_url": "/assets/audio/songs/thank_you.mp3",
+        "youtube_url": "https://www.youtube.com/watch?v=lQmWnU-pXWk",
+        "spotify_url": "https://open.spotify.com/track/3Zt96GJIqDOu0SucdGNGTX?si=3064caa94b7e4eaf",
+        "character_id": null,
+        "segments": [
+            {
+                "id": "598c497b-05c9-41c2-aaa2-9151d4510cb8",
+                "segment_name": "INTRO 1",
+                "start_time_ms": 200,
+                "difficulty_level": "easy"
+            },
+            {
+                "id": "56264809-0f70-471c-8e0a-36314c0ae8f8",
+                "segment_name": "INTRO 2",
+                "start_time_ms": 8850,
+                "difficulty_level": "easy"
+            },
+            {
+                "id": "8467417e-dd20-4e96-afcf-f286b0358fca",
+                "segment_name": "HOOK",
+                "start_time_ms": 16500,
+                "difficulty_level": "hard"
+            }
+        ]
+    },
+    {
+        "id": "c3d4e5f6-a7b8-4c7d-0e1f-2a3b4c5d6e7f",
+        "title": "Composite",
+        "artist": "Younha",
+        "album": "ED-3",
+        "audio_url": "/assets/audio/songs/composite.mp3",
+        "youtube_url": "https://www.youtube.com/watch?v=4HzRoARUJKs",
+        "spotify_url": "https://open.spotify.com/track/5nDurRPt24Rtl2sMnhMoyD?si=6e2181f13d024353",
+        "character_id": null,
+        "segments": [
+            {
+                "id": "3dd50a41-d206-4568-8ba6-f509c1859733",
+                "segment_name": "INTRO",
+                "start_time_ms": 1600,
+                "difficulty_level": "hard"
+            },
+            {
+                "id": "898c3cd7-d531-4091-b873-2dce99693469",
+                "segment_name": "FIRST VOCAL",
+                "start_time_ms": 7600,
+                "difficulty_level": "normal"
+            },
+            {
+                "id": "a30e9f0b-ffa0-4110-9455-e44d0587b445",
+                "segment_name": "HOOK",
+                "start_time_ms": 21400,
+                "difficulty_level": "easy"
+            }
+        ]
+    },
+    {
+        "id": "d4e5f6a7-b8c9-4d8e-1f2a-3b4c5d6e7f8a",
+        "title": "Happypeople",
+        "artist": "Skoop On Somebody",
+        "album": "ED-4",
+        "audio_url": "/assets/audio/songs/happypeople.mp3",
+        "youtube_url": "https://www.youtube.com/watch?v=ca11p-P3P-A",
+        "spotify_url": "https://open.spotify.com/track/4K8eSyKrx3KyS4GltSZkyT?si=a203728b31d1413d",
+        "character_id": null,
+        "segments": [
+            {
+                "id": "209c5354-2747-4c9c-af96-012ed87870b1",
+                "segment_name": "INTRO",
+                "start_time_ms": 2500,
+                "difficulty_level": "easy"
+            },
+            {
+                "id": "aa02c3cb-f7c3-4801-8c68-662474cf6522",
+                "segment_name": "PRE-HOOK",
+                "start_time_ms": 41300,
+                "difficulty_level": "hard"
+            }
+        ]
+    },
+    {
+        "id": "e5f6a7b8-c9d0-4e9f-2a3b-4c5d6e7f8a9b",
+        "title": "Life",
+        "artist": "YUI",
+        "album": "ED-5",
+        "audio_url": "/assets/audio/songs/life.mp3",
+        "youtube_url": "https://www.youtube.com/watch?v=eDh5Pyn1_fw",
+        "spotify_url": "https://open.spotify.com/track/3wqeJmXxIjJ16eGjKBqQwp?si=851a24725751428a",
+        "character_id": null,
+        "segments": [
+            {
+                "id": "b802c86b-50fa-40de-928d-cb90b890303b",
+                "segment_name": "INTRO",
+                "start_time_ms": 550,
+                "difficulty_level": "easy"
+            },
+            {
+                "id": "e7018787-aabd-4db2-96a0-dbf153e74387",
+                "segment_name": "SOLO GUITAR",
+                "start_time_ms": 15700,
+                "difficulty_level": "hard"
+            },
+            {
+                "id": "afe2307b-e24a-40c0-8a82-bf7f2f1fdddc",
+                "segment_name": "PRE-HOOK",
+                "start_time_ms": 40550,
+                "difficulty_level": "easy"
+            }
+        ]
+    },
+    {
+        "id": "f6a7b8c9-d0e1-4f0a-3b4c-5d6e7f8a9b0c",
+        "title": "My Pace",
+        "artist": "SunSet Swish",
+        "album": "ED-6",
+        "audio_url": "/assets/audio/songs/my_pace.mp3",
+        "youtube_url": "https://www.youtube.com/watch?v=nUhQW57VE0Y",
+        "spotify_url": "https://open.spotify.com/track/3IpLQHUPy68Z3NSXVUzg7k?si=ae51d089b914472f",
+        "character_id": null,
+        "segments": [
+            {
+                "id": "fdca826c-151c-44cf-a75a-09b20deaca66",
+                "segment_name": "INTRO",
+                "start_time_ms": 300,
+                "difficulty_level": "normal"
+            },
+            {
+                "id": "cd154a7c-4e18-4ee4-8ec7-3b0e1c61dd07",
+                "segment_name": "FIRST VOCAL",
+                "start_time_ms": 10800,
+                "difficulty_level": "hard"
+            }
+        ]
+    },
+    {
+        "id": "a7b8c9d0-e1f2-4a1b-4c5d-6e7f8a9b0c1d",
+        "title": "Hanabi",
+        "artist": "Ikimono-Gakari",
+        "album": "ED-7",
+        "audio_url": "/assets/audio/songs/hanabi.mp3",
+        "youtube_url": "https://www.youtube.com/watch?v=XbhBT0u0Cmo",
+        "spotify_url": "https://open.spotify.com/track/4rAzjtHqpKYZ9bVKMmaQLU?si=750f953c05fb4a58",
+        "character_id": null,
+        "segments": [
+            {
+                "id": "c48cf42f-bc48-4373-98ca-27eb5395f1ae",
+                "segment_name": "INTRO",
+                "start_time_ms": 450,
+                "difficulty_level": "easy"
+            },
+            {
+                "id": "6773efcb-b8bb-4f57-a567-85132c9359bb",
+                "segment_name": "END",
+                "start_time_ms": 76200,
+                "difficulty_level": "hard"
+            }
+        ]
+    },
+    {
+        "id": "b8c9d0e1-f2a3-4b2c-5d6e-7f8a9b0c1d2e",
+        "title": "Movin!!",
+        "artist": "Takacha",
+        "album": "ED-8",
+        "audio_url": "/assets/audio/songs/movin.mp3",
+        "youtube_url": "https://www.youtube.com/watch?v=rWn46KNzfZA",
+        "spotify_url": "https://open.spotify.com/track/4XmYMvgdTPogGwk9IpW2Xq?si=97ca383445a14e3d",
+        "character_id": null,
+        "segments": [
+            {
+                "id": "da893e63-bf98-4e06-bdeb-942ab2250c24",
+                "segment_name": "INTRO",
+                "start_time_ms": 100,
+                "difficulty_level": "normal"
+            },
+            {
+                "id": "cf52bdbb-aa6f-4dab-aab2-29424545b811",
+                "segment_name": "FIRST VOCAL",
+                "start_time_ms": 6100,
+                "difficulty_level": "easy"
+            }
+        ]
+    },
+    {
+        "id": "c9d0e1f2-a3b4-4c3d-6e7f-8a9b0c1d2e3f",
+        "title": "Baby It's You",
+        "artist": "JUNE",
+        "album": "ED-9",
+        "audio_url": "/assets/audio/songs/baby_its_you.mp3",
+        "youtube_url": "https://www.youtube.com/watch?v=CVBLbJEwyYg",
+        "spotify_url": "https://open.spotify.com/track/71H8RtAu41Ziss3DqtnU4A?si=314caca7d50d4b15",
+        "character_id": null,
+        "segments": [
+            {
+                "id": "b43cbaca-a76a-490e-b340-1b0fe91676d2",
+                "segment_name": "INTRO",
+                "start_time_ms": 100,
+                "difficulty_level": "hard"
+            },
+            {
+                "id": "fb8284fd-9545-480c-8a0d-6e863e1a9347",
+                "segment_name": "HOOK",
+                "start_time_ms": 46200,
+                "difficulty_level": "easy"
+            }
+        ]
+    },
+    {
+        "id": "d0e1f2a3-b4c5-4d4e-7f8a-9b0c1d2e3f4a",
+        "title": "Sakura Biyori",
+        "artist": "Mai Hoshimura",
+        "album": "ED-10",
+        "audio_url": "/assets/audio/songs/sakura_biyori.mp3",
+        "youtube_url": "https://www.youtube.com/watch?v=ExY7qO3L4DQ",
+        "spotify_url": "https://open.spotify.com/track/4q1EGSiON8KudLlrSgiDlv?si=99ad6535f1714a8c",
+        "character_id": null,
+        "segments": [
+            {
+                "id": "aa8f9381-c646-4cea-b2fa-66920a7f59af",
+                "segment_name": "INTRO",
+                "start_time_ms": 750,
+                "difficulty_level": "normal"
+            },
+            {
+                "id": "360e6195-024a-4e5f-b445-f620e1b72052",
+                "segment_name": "HOOK",
+                "start_time_ms": 55700,
+                "difficulty_level": "hard"
+            }
+        ]
+    },
+    {
+        "id": "7a9e6789-089b-12d3-a456-426614174211",
+        "title": "Tsumasaki",
+        "artist": "OreSkaBand",
+        "album": "ED-11",
+        "audio_url": "/assets/audio/songs/tsumasaki.mp3",
+        "youtube_url": "https://www.youtube.com/watch?v=gXTbTBeH_Ng",
+        "spotify_url": "https://open.spotify.com/track/3UYMGyBW0HUK6Hsik5Ytci?si=3b64ac224dc64ba3",
+        "character_id": null,
+        "segments": [
+            {
+                "id": "42c125a3-a6a9-44df-86df-37b9006dfc24",
+                "segment_name": "INTRO",
+                "start_time_ms": 600,
+                "difficulty_level": "normal"
+            },
+            {
+                "id": "c7ce28ef-41e8-4b43-897a-cee652b423bc",
+                "segment_name": "HOOK",
+                "start_time_ms": 64050,
+                "difficulty_level": "normal"
+            }
+        ]
+    },
+    {
+        "id": "7a9e6789-089b-12d3-a456-426614174212",
+        "title": "Daidai",
+        "artist": "Chatmonchy",
+        "album": "ED-12",
+        "audio_url": "/assets/audio/songs/daidai.mp3",
+        "youtube_url": "https://www.youtube.com/watch?v=TLm1YJqBgZg",
+        "spotify_url": "https://open.spotify.com/track/7Go2VdLnBLS9Vssn0Xi6xF?si=6433391f65394351",
+        "character_id": null,
+        "segments": [
+            {
+                "id": "d104e61c-15fd-4aa9-bf0e-59525aac756c",
+                "segment_name": "INTRO",
+                "start_time_ms": 1000,
+                "difficulty_level": "normal"
+            },
+            {
+                "id": "0d117484-6318-400e-942e-0f4a5cb99fc5",
+                "segment_name": "HOOK",
+                "start_time_ms": 38000,
+                "difficulty_level": "normal"
+            }
+        ]
+    },
+    {
+        "id": "7a9e6789-089b-12d3-a456-426614174213",
+        "title": "Tane wo Maku Hibi",
+        "artist": "Kōsuke Atari",
+        "album": "ED-13",
+        "audio_url": "/assets/audio/songs/tane_wo_maku_hibi.mp3",
+        "youtube_url": "https://www.youtube.com/watch?v=5mkw7EUSiNk",
+        "spotify_url": "https://open.spotify.com/track/2lTztlbxlzuNXVLnshspF5?si=a8a92490be7b4f7b",
+        "character_id": null,
+        "segments": [
+            {
+                "id": "9cdc47d2-8b1d-4010-921d-59e7ab837580",
+                "segment_name": "INTRO",
+                "start_time_ms": 500,
+                "difficulty_level": "hard"
+            },
+            {
+                "id": "104366b7-9bf5-4184-abb6-2e562fb021ca",
+                "segment_name": "HOOK",
+                "start_time_ms": 41050,
+                "difficulty_level": "normal"
+            }
+        ]
+    },
+    {
+        "id": "7a9e6789-089b-12d3-a456-426614174214",
+        "title": "Kansha",
+        "artist": "RSP",
+        "album": "ED-14",
+        "audio_url": "/assets/audio/songs/kansha.mp3",
+        "youtube_url": "https://www.youtube.com/watch?v=H_WOed84zpo",
+        "spotify_url": "https://open.spotify.com/track/0vXHpY4tbjnixuPugp2gw7?si=f62dbc79cb0e4d61",
+        "character_id": null,
+        "segments": [
+            {
+                "id": "f057c070-1137-432d-9bc0-284dcfe52fd9",
+                "segment_name": "INTRO",
+                "start_time_ms": 550,
+                "difficulty_level": "easy"
+            },
+            {
+                "id": "36c2f935-ca24-4109-a5a9-d11620f77af2",
+                "segment_name": "HOOK",
+                "start_time_ms": 46350,
+                "difficulty_level": "easy"
+            }
+        ]
+    },
+    {
+        "id": "7a9e6789-089b-12d3-a456-426614174215",
+        "title": "Orange",
+        "artist": "Lil'B",
+        "album": "ED-15",
+        "audio_url": "/assets/audio/songs/orange.mp3",
+        "youtube_url": "https://www.youtube.com/watch?v=QdiYMLKL11Q",
+        "spotify_url": "https://open.spotify.com/track/3DwuVMXAsA4iVyE42f752B?si=8520c7c8e1884726",
+        "character_id": null,
+        "segments": [
+            {
+                "id": "768d8735-0fa4-4dde-a5bd-23810032511f",
+                "segment_name": "INTRO",
+                "start_time_ms": 400,
+                "difficulty_level": "normal"
+            },
+            {
+                "id": "66b7d829-a0c4-4606-9db8-f3ee59f4b7cc",
+                "segment_name": "HOOK",
+                "start_time_ms": 45000,
+                "difficulty_level": "normal"
+            }
+        ]
+    },
+    {
+        "id": "7a9e6789-089b-12d3-a456-426614174216",
+        "title": "Gallop",
+        "artist": "Pe'zmoku",
+        "album": "ED-16",
+        "audio_url": "/assets/audio/songs/gallop.mp3",
+        "youtube_url": "https://www.youtube.com/watch?v=_LO1pkk91d0",
+        "spotify_url": "https://open.spotify.com/track/2KIS2GxQkpBNz2AQw9DIc5?si=f4c41193f78d4ed7",
+        "character_id": null,
+        "segments": [
+            {
+                "id": "8ddec45d-4dae-476d-9f85-7bbc7e9049ad",
+                "segment_name": "INTRO",
+                "start_time_ms": 150,
+                "difficulty_level": "normal"
+            },
+            {
+                "id": "8e44adb0-02e1-49e5-9363-6b28b724d8d5",
+                "segment_name": "HOOK",
+                "start_time_ms": 54750,
+                "difficulty_level": "hard"
+            }
+        ]
+    },
+    {
+        "id": "7a9e6789-089b-12d3-a456-426614174217",
+        "title": "Hitohira no Hanabira",
+        "artist": "Stereopony",
+        "album": "ED-17",
+        "audio_url": "/assets/audio/songs/hitohira_no_hanabira.mp3",
+        "youtube_url": "https://www.youtube.com/watch?v=lLEqAvVRMi4",
+        "spotify_url": "https://open.spotify.com/track/48unUqNPkVVLtYHQLArPN6?si=e457e0ec0b0c4157",
+        "character_id": null,
+        "segments": [
+            {
+                "id": "245593b3-e2c6-4b2a-a16b-3c7f55f48607",
+                "segment_name": "INTRO",
+                "start_time_ms": 550,
+                "difficulty_level": "normal"
+            },
+            {
+                "id": "69614971-2037-43f7-8e4c-43881862af53",
+                "segment_name": "HOOK",
+                "start_time_ms": 35000,
+                "difficulty_level": "normal"
+            }
+        ]
+    },
+    {
+        "id": "7a9e6789-089b-12d3-a456-426614174218",
+        "title": "Sky Chord Otona ni Naru Kimi e",
+        "artist": "Shion Tsuji",
+        "album": "ED-18",
+        "audio_url": "/assets/audio/songs/sky_chord.mp3",
+        "youtube_url": "https://www.youtube.com/watch?v=VV5Jbun1K50",
+        "spotify_url": "https://open.spotify.com/track/3yyzLkPAH8Go8yiCHDUOUZ?si=965fe0444bd74e0c",
+        "character_id": null,
+        "segments": [
+            {
+                "id": "4e7e2051-e075-4c60-8848-4048535b5660",
+                "segment_name": "INTRO",
+                "start_time_ms": 600,
+                "difficulty_level": "hard"
+            },
+            {
+                "id": "14eb3002-84b4-44a5-bacb-929914bfe50a",
+                "segment_name": "HOOK",
+                "start_time_ms": 56150,
+                "difficulty_level": "hard"
+            }
+        ]
+    },
+    {
+        "id": "7a9e6789-089b-12d3-a456-426614174219",
+        "title": "Kimi wo Mamotte, Kimi wo Aishite",
+        "artist": "Sambomaster",
+        "album": "ED-19",
+        "audio_url": "/assets/audio/songs/kimi_wo_mamotte.mp3",
+        "youtube_url": "https://www.youtube.com/watch?v=v1fiGwbXUWU",
+        "spotify_url": "https://open.spotify.com/track/1c68Gm0o6tcVkK7JrxJeL7?si=a8d4a69d900d4eb7",
+        "character_id": null,
+        "segments": [
+            {
+                "id": "4a9b7f92-563e-4593-b7ae-f2a50ce1b6c3",
+                "segment_name": "INTRO",
+                "start_time_ms": 700,
+                "difficulty_level": "normal"
+            },
+            {
+                "id": "926818f5-6296-4f33-9767-1b86950017ef",
+                "segment_name": "INTRO 2",
+                "start_time_ms": 6950,
+                "difficulty_level": "normal"
+            },
+            {
+                "id": "c97a08ea-f042-44e8-ba57-5a4189ecd28d",
+                "segment_name": "PRE-HOOK",
+                "start_time_ms": 49600,
+                "difficulty_level": "normal"
+            }
+        ]
+    },
+    {
+        "id": "7a9e6789-089b-12d3-a456-426614174220",
+        "title": "Mad Surfer",
+        "artist": "Kenichi Asai",
+        "album": "ED-20",
+        "audio_url": "/assets/audio/songs/mad_surfer.mp3",
+        "youtube_url": "https://www.youtube.com/watch?v=XRfQccd10as",
+        "spotify_url": "https://open.spotify.com/track/0xQmJa6dYtSI6ZRix0U5d8?si=d13de06fa45946f3",
+        "character_id": null,
+        "segments": [
+            {
+                "id": "a3e36f0a-0187-4a1b-a7a3-4b630febb1b8",
+                "segment_name": "INTRO",
+                "start_time_ms": 100,
+                "difficulty_level": "normal"
+            },
+            {
+                "id": "d76cfc3c-b2d0-430f-b709-4fb6002ab073",
+                "segment_name": "HOOK",
+                "start_time_ms": 64250,
+                "difficulty_level": "hard"
+            }
+        ]
+    },
+    {
+        "id": "2100e6789-089b-12d3-a456-426614174221",
+        "title": "Sakurabito",
+        "artist": "SunSet Swish",
+        "album": "ED-21",
+        "audio_url": "/assets/audio/songs/sakurabito.mp3",
+        "youtube_url": "https://www.youtube.com/watch?v=GisDChgSi94",
+        "spotify_url": "https://open.spotify.com/track/7f4avHSvNbhsiAjg59vIFk?si=3ddcec17eff64db8",
+        "character_id": null,
+        "segments": [
+            {
+                "id": "98f44684-0343-4cea-9b1d-ddd8c4f95e24",
+                "segment_name": "INTRO",
+                "start_time_ms": 3150,
+                "difficulty_level": "hard"
+            },
+            {
+                "id": "de8284fe-c1da-4a25-ba4d-fda8016e8569",
+                "segment_name": "HOOK",
+                "start_time_ms": 51050,
+                "difficulty_level": "hard"
+            }
+        ]
+    },
+    {
+        "id": "2200e6789-089b-12d3-a456-426614174222",
+        "title": "Tabidatsu Kimi e",
+        "artist": "RSP",
+        "album": "ED-22",
+        "audio_url": "/assets/audio/songs/tabidatsu_kimi_e.mp3",
+        "youtube_url": "https://www.youtube.com/watch?v=_jO29BFiyEs",
+        "spotify_url": "https://open.spotify.com/track/59IfCjtMnbQwdlqlJWRp84?si=1ea6b87583924393",
+        "character_id": null,
+        "segments": [
+            {
+                "id": "57d8fea4-2b4e-44c8-98ee-f7cf450a971e",
+                "segment_name": "INTRO",
+                "start_time_ms": 200,
+                "difficulty_level": "hard"
+            },
+            {
+                "id": "17b38013-947b-4586-93d8-140ebcbc3aa6",
+                "segment_name": "HOOK",
+                "start_time_ms": 58200,
+                "difficulty_level": "hard"
+            }
+        ]
+    },
+    {
+        "id": "2300e6789-089b-12d3-a456-426614174223",
+        "title": "Stay Beautiful",
+        "artist": "DIGGY-MO'",
+        "album": "ED-23",
+        "audio_url": "/assets/audio/songs/stay_beautiful.mp3",
+        "youtube_url": "https://www.youtube.com/watch?v=bUNjqB0zc9Q",
+        "spotify_url": "https://open.spotify.com/track/72BqILSGbPwy2ZvUewolGL?si=50bfc270c2374092",
+        "character_id": null,
+        "segments": [
+            {
+                "id": "7188f875-8f73-4636-b0d4-e7203c2a359b",
+                "segment_name": "INTRO",
+                "start_time_ms": 150,
+                "difficulty_level": "hard"
+            },
+            {
+                "id": "296ac0e4-17eb-4319-942d-2884e4b9c7d0",
+                "segment_name": "INTRO 2",
+                "start_time_ms": 6600,
+                "difficulty_level": "hard"
+            }
+        ]
+    },
+    {
+        "id": "2400e6789-089b-12d3-a456-426614174224",
+        "title": "echoes",
+        "artist": "universe",
+        "album": "ED-24",
+        "audio_url": "/assets/audio/songs/echoes.mp3",
+        "youtube_url": "https://www.youtube.com/watch?v=-eYpa31N86I",
+        "spotify_url": "https://open.spotify.com/track/2eRzjgRa9dGkFyYmqTyTgl?si=710e86926d934475",
+        "character_id": null,
+        "segments": [
+            {
+                "id": "8d0c88f5-f694-4a0c-9af2-d43d1c2b7ab6",
+                "segment_name": "INTRO",
+                "start_time_ms": 600,
+                "difficulty_level": "normal"
+            },
+            {
+                "id": "c216a7eb-7f40-4a33-a4ad-8c83eb7b5358",
+                "segment_name": "HOOK",
+                "start_time_ms": 60300,
+                "difficulty_level": "normal"
+            }
+        ]
+    },
+    {
+        "id": "2500e6789-089b-12d3-a456-426614174225",
+        "title": "Last Moment",
+        "artist": "SPYAIR",
+        "album": "ED-25",
+        "audio_url": "/assets/audio/songs/last_moment.mp3",
+        "youtube_url": "https://www.youtube.com/watch?v=cRdYidq7d8g",
+        "spotify_url": "https://open.spotify.com/track/3D8n3PE8BAEfji0q1lw75q?si=c9e7c21826e242c7",
+        "character_id": null,
+        "segments": [
+            {
+                "id": "d91fb1fb-1a28-42b6-b70a-c08d5e1492e0",
+                "segment_name": "INTRO",
+                "start_time_ms": 1150,
+                "difficulty_level": "normal"
+            },
+            {
+                "id": "6cc67aa3-9c40-487f-bb71-65aed3b762d4",
+                "segment_name": "HOOK",
+                "start_time_ms": 45500,
+                "difficulty_level": "normal"
+            }
+        ]
+    },
+    {
+        "id": "2600e6789-089b-12d3-a456-426614174226",
+        "title": "Song For...",
+        "artist": "ROOKiEZ is PUNK'D",
+        "album": "ED-26",
+        "audio_url": "/assets/audio/songs/song_for.mp3",
+        "youtube_url": "https://www.youtube.com/watch?v=68vVfmt_9pM7",
+        "spotify_url": "https://open.spotify.com/track/1ZdjRumIPWUHrCFvloHh7o?si=8ff984173f03418b",
+        "character_id": null,
+        "segments": [
+            {
+                "id": "5f727b11-c35c-42cf-a9b1-83ff60126ef8",
+                "segment_name": "INTRO",
+                "start_time_ms": 550,
+                "difficulty_level": "normal"
+            },
+            {
+                "id": "51c07591-8fae-465c-9066-747527d9d42d",
+                "segment_name": "HOOK",
+                "start_time_ms": 40950,
+                "difficulty_level": "normal"
+            }
+        ]
+    },
+    {
+        "id": "2700e6789-089b-12d3-a456-426614174227",
+        "title": "Blue Bird",
+        "artist": "fumika",
+        "album": "ED-27",
+        "audio_url": "/assets/audio/songs/blue_bird.mp3",
+        "youtube_url": "https://www.youtube.com/watch?v=x0WgKFWMYZU",
+        "spotify_url": "https://open.spotify.com/track/4sXDzAsMw3JgT2g3TDLJDu?si=36d3c7c2775a460c",
+        "character_id": null,
+        "segments": [
+            {
+                "id": "9d066ec4-29ce-4cac-a4c3-91800e37f361",
+                "segment_name": "INTRO",
+                "start_time_ms": 400,
+                "difficulty_level": "normal"
+            },
+            {
+                "id": "d93c9d6f-facf-4a6d-b704-ee0111de98f3",
+                "segment_name": "HOOK",
+                "start_time_ms": 46700,
+                "difficulty_level": "hard"
+            }
+        ]
+    },
+    {
+        "id": "2800e6789-089b-12d3-a456-426614174228",
+        "title": "Haruka Kanata",
+        "artist": "UNLIMITS",
+        "album": "ED-28",
+        "audio_url": "/assets/audio/songs/haruka_kanata.mp3",
+        "youtube_url": "https://www.youtube.com/watch?v=4HzRoARUJKs",
+        "spotify_url": "https://open.spotify.com/track/6o7PwG10h3Nx7zy4RsP9Kh?si=4eb3f5ad56914129",
+        "character_id": null,
+        "segments": [
+            {
+                "id": "ad933d71-6513-4a06-b147-1deea932e5a5",
+                "segment_name": "INTRO",
+                "start_time_ms": 9900,
+                "difficulty_level": "normal"
+            },
+            {
+                "id": "f6ea573a-4ba8-48c5-ab81-8f1b4d4980fe",
+                "segment_name": "HOOK",
+                "start_time_ms": 47800,
+                "difficulty_level": "hard"
+            }
+        ]
+    },
+    {
+        "id": "2900e6789-089b-12d3-a456-426614174229",
+        "title": "Re:pray",
+        "artist": "Aimer",
+        "album": "ED-29",
+        "audio_url": "/assets/audio/songs/re_pray.mp3",
+        "youtube_url": "https://www.youtube.com/watch?v=O63cbh6EyQ8",
+        "spotify_url": "https://open.spotify.com/track/2Q6sHQtoMtNHR2GjSaAeQG?si=d7a9e98f6ecf4e93",
+        "character_id": null,
+        "segments": [
+            {
+                "id": "eec3e294-999e-4c07-ac42-7646c3a74b94",
+                "segment_name": "INTRO",
+                "start_time_ms": 14900,
+                "difficulty_level": "hard"
+            },
+            {
+                "id": "13435671-49f0-4187-a111-ba4a862eeff9",
+                "segment_name": "HOOK",
+                "start_time_ms": 51950,
+                "difficulty_level": "hard"
+            }
+        ]
+    },
+    {
+        "id": "3000e6789-089b-12d3-a456-426614174230",
+        "title": "MASK",
+        "artist": "Aqua Timez",
+        "album": "ED-30",
+        "audio_url": "/assets/audio/songs/mask.mp3",
+        "youtube_url": "https://www.youtube.com/watch?v=m3OA8ypd3ZY",
+        "spotify_url": "https://open.spotify.com/track/4KP2YI2mtY3VKwROuZeokT?si=f21e5e92743c424a",
+        "character_id": null,
+        "segments": [
+            {
+                "id": "6f15b4f1-79f2-4f6d-8f0f-0abb7fcbb6b6",
+                "segment_name": "INTRO",
+                "start_time_ms": 4300,
+                "difficulty_level": "hard"
+            },
+            {
+                "id": "65cc1e36-2ea5-454d-8e0a-6a7575c7fa3e",
+                "segment_name": "HOOK",
+                "start_time_ms": 30350,
+                "difficulty_level": "hard"
+            }
+        ]
+    },
+    {
+        "id": "345e6789-089b-12d3-a456-426614174367",
+        "title": "Rapport",
+        "artist": "Tatsuya Kitani",
+        "album": "Special-ED",
+        "audio_url": "/assets/audio/songs/rapport.mp3",
+        "youtube_url": "https://www.youtube.com/watch?v=uNjmP-4Dpjs",
+        "spotify_url": "https://open.spotify.com/track/0e4HssKedndIhLoDpkwBNH?si=af211b188e704717",
+        "character_id": null,
+        "segments": [
+            {
+                "id": "bce8b4fe-c164-4f06-9b47-c080bf2de778",
+                "segment_name": "SOLO GUITAR",
+                "start_time_ms": 16050,
+                "difficulty_level": "easy"
+            },
+            {
+                "id": "3f3d19f1-44fb-487a-a2e2-61c31aefeb76",
+                "segment_name": "FIRST VOCAL",
+                "start_time_ms": 33000,
+                "difficulty_level": "normal"
+            },
+            {
+                "id": "0a9187a7-9c0a-4d07-9649-67430e939aba",
+                "segment_name": "HOOK",
+                "start_time_ms": 64350,
+                "difficulty_level": "easy"
+            },
+            {
+                "id": "8c6d2c47-e70f-4c3f-96f6-d24119851228",
+                "segment_name": "END",
+                "start_time_ms": 179750,
+                "difficulty_level": "normal"
+            }
+        ]
+    },
+    {
+        "id": "345e6789-089b-12d3-a456-426614174368",
+        "title": "Saihate",
+        "artist": "SennaRin",
+        "album": "ED-31",
+        "audio_url": "/assets/audio/songs/saihate.mp3",
+        "youtube_url": "https://www.youtube.com/watch?v=1YSLo3D7hyw",
+        "spotify_url": "https://open.spotify.com/track/0GiepUHAIfTH1WzpHqtVXT?si=a3cbdc9bf8564070",
+        "character_id": null,
+        "segments": [
+            {
+                "id": "7011287d-7fec-4964-80cc-d937534a3133",
+                "segment_name": "INTRO",
+                "start_time_ms": 700,
+                "difficulty_level": "normal"
+            },
+            {
+                "id": "4fe85ab8-bc1b-48f2-89d0-ad84acb3a8e5",
+                "segment_name": "HOOK",
+                "start_time_ms": 37000,
+                "difficulty_level": "normal"
+            }
+        ]
+    },
+    {
+        "id": "345e6789-089b-12d3-a456-426614174380",
+        "title": "Endroll",
+        "artist": "Yoh Kamiyama",
+        "album": "ED-32",
+        "audio_url": "/assets/audio/songs/endroll.mp3",
+        "youtube_url": "https://www.youtube.com/watch?v=ieLivI1-4vc",
+        "spotify_url": "https://open.spotify.com/track/4tIjuLDto2gLGFrQOvU8kS?si=e908bdfe7a484a64",
+        "character_id": null,
+        "segments": [
+            {
+                "id": "692083ba-3e96-4357-83da-7d3e0664ffb9",
+                "segment_name": "INTRO",
+                "start_time_ms": 1000,
+                "difficulty_level": "easy"
+            },
+            {
+                "id": "1efb0dfa-fdbe-403e-8ac3-f88e469f9e5a",
+                "segment_name": "HOOK",
+                "start_time_ms": 47500,
+                "difficulty_level": "easy"
+            },
+            {
+                "id": "49630a9c-2912-406c-9c2e-2983b61b38d5",
+                "segment_name": "PRE-HOOK",
+                "start_time_ms": 37150,
+                "difficulty_level": "normal"
+            }
+        ]
+    },
+    {
+        "id": "345e6789-089b-12d3-a456-426614174393",
+        "title": "Monochrome",
+        "artist": "suisoh",
+        "album": "ED-33",
+        "audio_url": "/assets/audio/songs/monochrome.mp3",
+        "youtube_url": "https://www.youtube.com/watch?v=yujUC1U43mo",
+        "spotify_url": "https://open.spotify.com/track/5gwzzDhUO1H4tIRRJDjnny?si=1764c84198ba41e0",
+        "character_id": null,
+        "segments": [
+            {
+                "id": "8ffa510b-142f-4c59-8a58-e05cd71142bb",
+                "segment_name": "INTRO",
+                "start_time_ms": 2450,
+                "difficulty_level": "easy"
+            },
+            {
+                "id": "ae1201be-c46a-460b-b3d5-fb42036030f8",
+                "segment_name": "VERSE",
+                "start_time_ms": 21950,
+                "difficulty_level": "normal"
+            },
+            {
+                "id": "c6dfa0c6-ac11-430b-ae05-7f6bc9d6d090",
+                "segment_name": "HOOK",
+                "start_time_ms": 44250,
+                "difficulty_level": "easy"
+            }
+        ]
+    },
+    {
+        "id": "345e6789-089b-12d3-a456-426614174001",
+        "title": "Eien",
+        "artist": "Tatsuya Kitani",
+        "album": "Special-TYBW-MV",
+        "audio_url": "/assets/audio/songs/eien.mp3",
+        "youtube_url": "https://www.youtube.com/watch?v=8KrxPWQxE4I",
+        "spotify_url": "https://open.spotify.com/track/1E7jw2IZ60VyVDrIkiJ7Dv?si=1ae32c3292c3434d",
+        "character_id": null,
+        "segments": [
+            {
+                "id": "2a98572a-fa96-458f-a8a6-b2920c292932",
+                "segment_name": "INTRO",
+                "start_time_ms": 1100,
+                "difficulty_level": "normal"
+            },
+            {
+                "id": "ccfcea7e-e537-404f-922d-a742aea76a6f",
+                "segment_name": "HOOK",
+                "start_time_ms": 53000,
+                "difficulty_level": "normal"
+            },
+            {
+                "id": "c0c0d36c-6104-4f2a-b6c4-1ce2320a8ca8",
+                "segment_name": "FIRST VOCAL",
+                "start_time_ms": 19750,
+                "difficulty_level": "normal"
+            }
+        ]
+    },
+    {
+        "id": "39938d4d-45f2-4c85-b79e-76d3565c6272",
+        "title": "Reaper",
+        "artist": "SennaRin",
+        "album": "Special-TYBW-MV",
+        "audio_url": "/assets/audio/songs/reaper.mp3",
+        "youtube_url": "https://www.youtube.com/watch?v=7MWGxsLYuN0",
+        "spotify_url": "https://open.spotify.com/track/2KKa0QOBvPUlLxYh2xSTBZ?si=205edfad7473492a",
+        "character_id": null,
+        "segments": [
+            {
+                "id": "27301d66-67d4-4cd1-a485-7c8029999e14",
+                "segment_name": "INTRO",
+                "start_time_ms": 7300,
+                "difficulty_level": "hard"
+            },
+            {
+                "id": "63533a06-3e3f-4823-9d83-13afd6cabc27",
+                "segment_name": "HOOK",
+                "start_time_ms": 71200,
+                "difficulty_level": "normal"
+            },
+            {
+                "id": "a410ddeb-2063-4886-b8ca-c4be5f18e620",
+                "segment_name": "HOOK 2",
+                "start_time_ms": 91750,
+                "difficulty_level": "normal"
+            }
+        ]
+    },
+    {
+        "id": "345e6789-089b-12d3-a456-426614174003",
+        "title": "OLDROSE",
+        "artist": "Aqua Timez",
+        "album": "Special-TYBW-MV",
+        "audio_url": "/assets/audio/songs/oldrose.mp3",
+        "youtube_url": "https://www.youtube.com/watch?v=ui6Sop-Edo8",
+        "spotify_url": "https://open.spotify.com/track/0093F6xxlANJgH5X9CAzHX?si=7d3f498dca5d413b",
+        "character_id": null,
+        "segments": [
+            {
+                "id": "8c40ae0d-488f-4369-b5de-ea17e769502d",
+                "segment_name": "INTRO",
+                "start_time_ms": 19700,
+                "difficulty_level": "hard"
+            },
+            {
+                "id": "2f31e54c-b8b7-4f6f-8193-1aab3ed57021",
+                "segment_name": "HOOK",
+                "start_time_ms": 161950,
+                "difficulty_level": "normal"
+            },
+            {
+                "id": "474b0b78-a708-4a54-b82d-8c746a8898f7",
+                "segment_name": "SOLO HOOK",
+                "start_time_ms": 190600,
+                "difficulty_level": "hard"
+            }
+        ]
+    },
+    {
+        "id": "980ba6fc-473b-4e92-8907-a02b93bcf7aa",
+        "title": "Number One",
+        "artist": "Shiro Sagisu",
+        "album": "OST",
+        "audio_url": "/assets/audio/songs/number_one.mp3",
+        "youtube_url": "https://www.youtube.com/watch?v=7JEjQG4-tpU",
+        "spotify_url": "https://open.spotify.com/track/1nThz7yEG2vbyI4UmInj5z?si=f44579ed51084b2f",
+        "character_id": null,
+        "segments": [
+            {
+                "id": "a883cc14-2c2a-45db-be18-7d95c5dbb8de",
+                "segment_name": "INTRO",
+                "start_time_ms": 7100,
+                "difficulty_level": "easy"
+            },
+            {
+                "id": "a2eddecf-e0a4-4495-8e9c-e38b640696d9",
+                "segment_name": "First Vocal",
+                "start_time_ms": 11750,
+                "difficulty_level": "easy"
+            },
+            {
+                "id": "3e3afec2-4e5a-4483-8a48-bed53a102539",
+                "segment_name": "VERse 1",
+                "start_time_ms": 35050,
+                "difficulty_level": "easy"
+            },
+            {
+                "id": "196e11a5-04f5-4462-8259-c55e1ac1cf76",
+                "segment_name": "HOOK",
+                "start_time_ms": 147150,
+                "difficulty_level": "easy"
+            }
+        ]
+    },
+    {
+        "id": "345e6789-089b-12d3-a456-426614174002",
+        "title": "Never Meant to Belong",
+        "artist": "Shiro Sagisu",
+        "album": "OST",
+        "audio_url": "/assets/audio/songs/never_meant_to_belong.mp3",
+        "youtube_url": "https://www.youtube.com/watch?v=zO_532nbu0c",
+        "spotify_url": "https://open.spotify.com/track/0CCt7uzp4MBYR85wugmkGa?si=adc2a0732d684628",
+        "character_id": null,
+        "segments": [
+            {
+                "id": "50aa1bb4-5d83-4444-9641-315f3b29e69c",
+                "segment_name": "INTRO",
+                "start_time_ms": 600,
+                "difficulty_level": "easy"
+            },
+            {
+                "id": "c1859930-c878-4379-940b-39e9e4dec7cf",
+                "segment_name": "HOOK",
+                "start_time_ms": 42600,
+                "difficulty_level": "normal"
+            }
+        ]
+    },
+    {
+        "id": "f4cb4060-351d-469e-9956-1abdcddaaee1",
+        "title": "Clavar La Espada",
+        "artist": "Shiro Sagisu",
+        "album": "OST",
+        "audio_url": "/assets/audio/songs/clavar_la_espada.mp3",
+        "youtube_url": "https://www.youtube.com/watch?v=Z9Onb_z0XPI",
+        "spotify_url": "https://open.spotify.com/track/4QRCdMTZegDH27rOUbOEFY?si=3bb3d186229446e9",
+        "character_id": null,
+        "segments": [
+            {
+                "id": "226379fe-9d94-41b8-ba5d-67eacb77112c",
+                "segment_name": "INTRO",
+                "start_time_ms": 550,
+                "difficulty_level": "easy"
+            },
+            {
+                "id": "85042582-80b6-4a9a-a222-6f717b960452",
+                "segment_name": "HOOK",
+                "start_time_ms": 14800,
+                "difficulty_level": "easy"
+            },
+            {
+                "id": "c66c1421-cf3f-4ecb-8b8b-a5dc102c1936",
+                "segment_name": "VIOLIN",
+                "start_time_ms": 32000,
+                "difficulty_level": "easy"
+            }
+        ]
+    },
+    {
+        "id": "345e6789-089b-12d3-a456-426614174005",
+        "title": "On the Precipice",
+        "artist": "Shiro Sagisu",
+        "album": "OST",
+        "audio_url": "/assets/audio/songs/on_the_precipice.mp3",
+        "youtube_url": "https://www.youtube.com/watch?v=ovpYKG2qioE",
+        "spotify_url": "https://open.spotify.com/track/32SYEk2ksN8iQtz50AtHYj?si=8d154ddc6dc64119",
+        "character_id": null,
+        "segments": [
+            {
+                "id": "3d26f152-e1b6-403d-be7f-74cabc043cc3",
+                "segment_name": "INTRO",
+                "start_time_ms": 400,
+                "difficulty_level": "easy"
+            },
+            {
+                "id": "eac0aa7d-fa3d-42bf-800c-7196bfc7d486",
+                "segment_name": "PRE-HOOK",
+                "start_time_ms": 23650,
+                "difficulty_level": "normal"
+            },
+            {
+                "id": "36b21fb1-58e2-4bb4-8d38-5f89a575329e",
+                "segment_name": "HOOK",
+                "start_time_ms": 63500,
+                "difficulty_level": "easy"
+            }
+        ]
+    },
+    {
+        "id": "345e6789-089b-12d3-a456-426614174007",
+        "title": "Creeping Shadows",
+        "artist": "Shiro Sagisu",
+        "album": "OST",
+        "audio_url": "/assets/audio/songs/creeping_shadows.mp3",
+        "youtube_url": "https://www.youtube.com/watch?v=jTIJMq_Fo_Q",
+        "spotify_url": "https://open.spotify.com/track/5r7DkkPIs7qXFbtoUEfjcn?si=b983b8572b1a40e4",
+        "character_id": null,
+        "segments": [
+            {
+                "id": "d0a4b17c-5cd3-4699-b7a5-8fc74df8774f",
+                "segment_name": "HOOK",
+                "start_time_ms": 12850,
+                "difficulty_level": "easy"
+            }
+        ]
+    },
+    {
+        "id": "345e6789-089b-12d3-a456-426614174008",
+        "title": "Treachery",
+        "artist": "Shiro Sagisu",
+        "album": "OST",
+        "audio_url": "/assets/audio/songs/treachery.mp3",
+        "youtube_url": "https://www.youtube.com/watch?v=y7jLK65J458",
+        "spotify_url": "https://open.spotify.com/track/6a7su3dkJJXidSuFiowJC2?si=0b402da7dc3a4bcf",
+        "character_id": null,
+        "segments": [
+            {
+                "id": "96f16e13-3f64-415d-86c0-e211cc160a9a",
+                "segment_name": "INTRO",
+                "start_time_ms": 4700,
+                "difficulty_level": "hard"
+            },
+            {
+                "id": "20377356-b494-48b8-882b-fd7f5f3c5af1",
+                "segment_name": "HOOK",
+                "start_time_ms": 75200,
+                "difficulty_level": "easy"
+            }
+        ]
+    },
+    {
+        "id": "345e6789-089b-12d3-a456-426614174009",
+        "title": "Escalon",
+        "artist": "Shiro Sagisu",
+        "album": "OST",
+        "audio_url": "/assets/audio/songs/escalon.mp3",
+        "youtube_url": "https://www.youtube.com/watch?v=uqy3NHwuFVk",
+        "spotify_url": "https://open.spotify.com/track/6QPfde4se5bL2IgCeKHTym?si=b843c43bd5984f8c",
+        "character_id": null,
+        "segments": [
+            {
+                "id": "e92a1b5f-724e-4276-aaa0-385e09c28997",
+                "segment_name": "INTRO",
+                "start_time_ms": 500,
+                "difficulty_level": "normal"
+            },
+            {
+                "id": "4ba02a2d-f845-40f1-a0ba-cb79190e1c48",
+                "segment_name": "PRE-HOOK",
+                "start_time_ms": 17400,
+                "difficulty_level": "normal"
+            }
+        ]
+    },
+    {
+        "id": "345e6789-089b-12d3-a456-426614174010",
+        "title": "1106 TYBW CH United",
+        "artist": "Shiro Sagisu",
+        "album": "OST",
+        "audio_url": "/assets/audio/songs/1106_tybw.mp3",
+        "youtube_url": "https://www.youtube.com/watch?v=zfxa9ahq63g",
+        "spotify_url": "https://open.spotify.com/track/3duulixDjQhzgXeSvkLYqA?si=f48c5ec12e8e4ecc",
+        "character_id": null,
+        "segments": [
+            {
+                "id": "0f1f50ab-4003-406e-8a9b-76df7d313df2",
+                "segment_name": "INTRO",
+                "start_time_ms": 400,
+                "difficulty_level": "normal"
+            },
+            {
+                "id": "80262dbd-a000-439e-a1ab-052ba375e0b3",
+                "segment_name": "HOOK",
+                "start_time_ms": 136800,
+                "difficulty_level": "normal"
+            }
+        ]
+    },
+    {
+        "id": "345e6789-089b-12d3-a456-426614174011",
+        "title": "Invasion",
+        "artist": "Shiro Sagisu",
+        "album": "OST",
+        "audio_url": "/assets/audio/songs/invasion.mp3",
+        "youtube_url": "https://www.youtube.com/watch?v=JOHNtL9HhTE",
+        "spotify_url": "https://open.spotify.com/track/2tnd8PSXUGwoVX5WY2SU1B?si=6c0be69037114a90",
+        "character_id": null,
+        "segments": [
+            {
+                "id": "da84f2ad-e65d-479c-bb49-49bea4c1cd66",
+                "segment_name": "INTRO",
+                "start_time_ms": 300,
+                "difficulty_level": "normal"
+            },
+            {
+                "id": "03bc9475-a137-450d-8dd4-65c594393cb0",
+                "segment_name": "HOOK",
+                "start_time_ms": 32250,
+                "difficulty_level": "normal"
+            }
+        ]
+    },
+    {
+        "id": "345e6789-089b-12d3-a456-426614174012",
+        "title": "Senna",
+        "artist": "Shiro Sagisu",
+        "album": "OST",
+        "audio_url": "/assets/audio/songs/senna.mp3",
+        "youtube_url": "https://www.youtube.com/watch?v=lGKs0ut8z7k",
+        "spotify_url": "https://open.spotify.com/track/25kiMMAXt7stItJ5omzoaA?si=381ead12ff5444ba",
+        "character_id": null,
+        "segments": [
+            {
+                "id": "1b0f10ca-a9a2-4636-8870-0dff9f27fc62",
+                "segment_name": "INTRO",
+                "start_time_ms": 400,
+                "difficulty_level": "normal"
+            },
+            {
+                "id": "a18a4a8d-f0d2-4b99-a169-bba078940bb9",
+                "segment_name": "HOOK",
+                "start_time_ms": 17850,
+                "difficulty_level": "normal"
+            }
+        ]
+    }
+]

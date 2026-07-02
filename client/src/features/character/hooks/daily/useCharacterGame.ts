@@ -1,3 +1,4 @@
+// src/features/character/hooks/daily/useCharacterGame.ts
 import { create } from 'zustand';
 import { Character } from '@/src/entities/character/schema';
 import { compareCharacters } from '@/src/lib/game-engine/compare';
@@ -20,8 +21,8 @@ interface CharacterGameState {
     finalizeGame: (isWin: boolean) => void;
     resetGame: () => void;
     hasFinalized: boolean;
-    _hasHydrated: boolean;              // 👈 เพิ่ม
-    setHasHydrated: (state: boolean) => void; // 👈 เพิ่ม
+    _hasHydrated: boolean;
+    setHasHydrated: (state: boolean) => void;
 }
 
 export const useCharacterGame = create<CharacterGameState>()(
@@ -30,8 +31,8 @@ export const useCharacterGame = create<CharacterGameState>()(
             target: null,
             guesses: [],
             hasFinalized: false,
-            _hasHydrated: false,               // 👈 เริ่มต้นเป็น false เสมอ
-            setHasHydrated: (state) => set({ _hasHydrated: state }), // 👈
+            _hasHydrated: false,
+            setHasHydrated: (state) => set({ _hasHydrated: state }),
 
             setTarget: (target) => set({ target }),
 
@@ -55,7 +56,13 @@ export const useCharacterGame = create<CharacterGameState>()(
                 const currentTarget = get().target;
 
                 if (currentTarget && currentTarget.id === target.id) {
-                    set({ target });
+                    // 🛡️ FIX: เดิม set({ target }) แบบไม่มีเงื่อนไข ทำให้ zustand สร้าง state
+                    // object ใหม่ (top-level) ทุกครั้ง แม้ reference ของ target จะเหมือนเดิมเป๊ะ
+                    // ผลคือ component re-render เปล่าๆ ทุกครั้งที่ effect ถูกยิงซ้ำ (เช่น React 18
+                    // StrictMode double-invoke ตอน dev) — ตอนนี้ set() เฉพาะตอน reference เปลี่ยนจริง
+                    if (currentTarget !== target) {
+                        set({ target });
+                    }
                     return;
                 }
 
@@ -114,7 +121,6 @@ export const useCharacterGame = create<CharacterGameState>()(
                 target: state.target,
                 hasFinalized: state.hasFinalized,
             }),
-            // 👇 หัวใจของ fix: บอก store ว่า rehydrate เสร็จแล้วจริงๆ
             onRehydrateStorage: () => (state) => {
                 state?.setHasHydrated(true);
             },

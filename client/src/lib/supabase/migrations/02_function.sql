@@ -1,7 +1,7 @@
 CREATE OR REPLACE FUNCTION generate_daily_schedule()
 RETURNS TEXT
 LANGUAGE plpgsql
-SECURITY DEFINER -- Runs with admin bypass rules for safety
+SECURITY DEFINER
 AS $$
 DECLARE
     char_ids TEXT[];
@@ -9,39 +9,38 @@ DECLARE
     image_ids TEXT[];
     release_ids TEXT[];
     emoji_ids TEXT[];
+    quote_ids TEXT[]; -- เพิ่มตัวแปร quote_ids
     
     total_chars INT;
     song_count INT := 0;
     image_count INT := 0;
     release_count INT := 0;
     emoji_count INT := 0;
+    quote_count INT := 0; -- เพิ่มตัวแปร quote_count
     
     start_date DATE;
     v_song_id TEXT;
     v_image_id TEXT;
     v_release_id TEXT;
     v_emoji_id TEXT;
+    v_quote_id TEXT; -- เพิ่มตัวแปร v_quote_id
 BEGIN
-    -- 1. Check if today's schedule already exists. If yes, skip generation.
     IF EXISTS (SELECT 1 FROM daily_schedule WHERE date = CURRENT_DATE) THEN
         RETURN 'Notification: Schedule for today already exists. No action taken.';
     END IF;
 
-    -- 2. Determine the starting date (Get MAX(date) + 1, or default to CURRENT_DATE if table is empty)
     SELECT COALESCE(MAX(date) + 1, CURRENT_DATE) INTO start_date FROM daily_schedule;
 
-    -- 3. Fetch and Shuffle IDs using PostgreSql 'ORDER BY random()'
-    -- COALESCE ensures we get an empty array instead of SQL NULL if the table has no data
+    -- Fetch IDs
     SELECT COALESCE(array_agg(id), ARRAY[]::TEXT[]) INTO char_ids FROM (SELECT id FROM characters ORDER BY random()) t;
     SELECT COALESCE(array_agg(id), ARRAY[]::TEXT[]) INTO song_ids FROM (SELECT id FROM songs ORDER BY random()) t;
     SELECT COALESCE(array_agg(id), ARRAY[]::TEXT[]) INTO image_ids FROM (SELECT id FROM images ORDER BY random()) t;
     SELECT COALESCE(array_agg(id), ARRAY[]::TEXT[]) INTO release_ids FROM (SELECT id FROM releases ORDER BY random()) t;
     SELECT COALESCE(array_agg(id), ARRAY[]::TEXT[]) INTO emoji_ids FROM (SELECT id FROM emojis ORDER BY random()) t;
+    SELECT COALESCE(array_agg(id), ARRAY[]::TEXT[]) INTO quote_ids FROM (SELECT id FROM quotes ORDER BY random()) t; -- ดึง Quote
 
-    -- 4. Count elements
     total_chars := cardinality(char_ids);
     
-    -- Safety break: If no characters exist in database, stop execution
     IF total_chars = 0 THEN
         RETURN 'Error: No characters found in the database.';
     END IF;
@@ -50,26 +49,26 @@ BEGIN
     image_count := cardinality(image_ids);
     release_count := cardinality(release_ids);
     emoji_count := cardinality(emoji_ids);
+    quote_count := cardinality(quote_ids); -- นับจำนวน Quote
 
-    -- 5. Loop through characters and assign modes (Handles 0 length safely by setting to NULL)
     FOR i IN 1..total_chars LOOP
-        -- Modulo calculations for 1-based index arrays in PostgreSQL
         v_song_id    := CASE WHEN song_count > 0 THEN song_ids[((i - 1) % song_count) + 1] ELSE NULL END;
         v_image_id   := CASE WHEN image_count > 0 THEN image_ids[((i - 1) % image_count) + 1] ELSE NULL END;
         v_release_id := CASE WHEN release_count > 0 THEN release_ids[((i - 1) % release_count) + 1] ELSE NULL END;
         v_emoji_id   := CASE WHEN emoji_count > 0 THEN emoji_ids[((i - 1) % emoji_count) + 1] ELSE NULL END;
+        v_quote_id   := CASE WHEN quote_count > 0 THEN quote_ids[((i - 1) % quote_count) + 1] ELSE NULL END; -- Assign Quote
 
-        -- Bulk Insert / Row generation
-        INSERT INTO daily_schedule (date, character_id, song_id, image_id, release_id, emoji_id)
+        INSERT INTO daily_schedule (date, character_id, song_id, image_id, release_id, emoji_id, quote_id)
         VALUES (
-            start_date + (i - 1), -- Increments date by 1 day per iteration
+            start_date + (i - 1),
             char_ids[i],
             v_song_id,
             v_image_id,
             v_release_id,
-            v_emoji_id
+            v_emoji_id,
+            v_quote_id -- เพิ่มเข้าไปในการ INSERT
         )
-        ON CONFLICT (date) DO NOTHING; -- Prevents crash if date overlaps
+        ON CONFLICT (date) DO NOTHING;
     END LOOP;
 
     RETURN 'Success: Generated ' || total_chars || ' days of schedule starting from ' || start_date;

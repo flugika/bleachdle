@@ -2,6 +2,7 @@
 
 interface ModeBadgeProps {
     mode: 'daily' | 'unlimited';
+    onClick?: () => void;
 }
 
 const MODE_CONFIG = {
@@ -12,6 +13,7 @@ const MODE_CONFIG = {
         color: '#c8a96e',
         glow: 'rgba(200,169,110,0.35)',
         borderColor: 'border-[#c8a96e]/30',
+        hoverBg: 'hover:bg-[#c8a96e]/5',
     },
     unlimited: {
         kanji: '無限',
@@ -20,39 +22,54 @@ const MODE_CONFIG = {
         color: '#a855f7',
         glow: 'rgba(168,85,247,0.35)',
         borderColor: 'border-[#a855f7]/30',
+        hoverBg: 'hover:bg-[#a855f7]/5',
     },
 } as const;
 
-export function ModeBadge({ mode }: ModeBadgeProps) {
+export function ModeBadge({ mode, onClick }: ModeBadgeProps) {
     const config = MODE_CONFIG[mode];
+
+    const handleKeyDown = (e: React.KeyboardEvent) => {
+        if ((e.key === 'Enter' || e.key === ' ') && onClick) {
+            e.preventDefault();
+            onClick();
+        }
+    };
 
     return (
         <div className="w-full flex justify-center my-4 animate-in fade-in slide-in-from-top-2 duration-500">
             <div
-                className={`relative inline-flex items-center gap-3 px-5 py-2.5 bg-gradient-to-b from-[#0a0a0f]/90 to-[#020205]/90 border ${config.borderColor} backdrop-blur-md shadow-lg`}
-                style={{ boxShadow: `0 0 24px ${config.glow}` }}
+                role={onClick ? "button" : undefined}
+                tabIndex={onClick ? 0 : undefined}
+                onClick={onClick}
+                onKeyDown={handleKeyDown}
+                className={`relative inline-flex items-center gap-3 px-5 py-2.5 bg-gradient-to-b from-[#0a0a0f]/90 to-[#020205]/90 border ${config.borderColor} backdrop-blur-md shadow-lg select-none outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-offset-black transition-all duration-300 group ${onClick ? `cursor-pointer ${config.hoverBg}` : ''}`}
+                style={{ 
+                    boxShadow: `0 0 24px ${config.glow}`
+                }}
+                aria-label={`Current mode is ${config.label}. Click to change mode.`}
             >
-                {/* Kido Corner Brackets — เอกลักษณ์เดิมของเว็บ */}
+                {/* Kido Corner Brackets — เปล่งประกายขึ้นเมื่อ Hover */}
                 <div
-                    className="absolute -top-[1px] -left-[1px] w-2.5 h-2.5 border-t border-l"
+                    className="absolute -top-[1px] -left-[1px] w-2.5 h-2.5 border-t border-l transition-all duration-300 group-hover:w-4 group-hover:h-4"
                     style={{ borderColor: config.color }}
                 />
                 <div
-                    className="absolute -top-[1px] -right-[1px] w-2.5 h-2.5 border-t border-r"
+                    className="absolute -top-[1px] -right-[1px] w-2.5 h-2.5 border-t border-r transition-all duration-300 group-hover:w-4 group-hover:h-4"
                     style={{ borderColor: config.color }}
                 />
                 <div
-                    className="absolute -bottom-[1px] -left-[1px] w-2.5 h-2.5 border-b border-l"
+                    className="absolute -bottom-[1px] -left-[1px] w-2.5 h-2.5 border-b border-l transition-all duration-300 group-hover:w-4 group-hover:h-4"
                     style={{ borderColor: config.color }}
                 />
                 <div
-                    className="absolute -bottom-[1px] -right-[1px] w-2.5 h-2.5 border-b border-r"
+                    className="absolute -bottom-[1px] -right-[1px] w-2.5 h-2.5 border-b border-r transition-all duration-300 group-hover:w-4 group-hover:h-4"
                     style={{ borderColor: config.color }}
                 />
 
                 {/* Kanji Seal */}
                 <span
-                    className="text-lg font-bold leading-none shrink-0"
+                    className="text-lg font-bold leading-none shrink-0 transition-transform duration-300 group-hover:scale-110"
                     style={{ color: config.color, textShadow: `0 0 10px ${config.glow}` }}
                 >
                     {config.kanji}
@@ -65,9 +82,9 @@ export function ModeBadge({ mode }: ModeBadgeProps) {
                 />
 
                 {/* Text Block */}
-                <div className="flex flex-col items-start">
+                <div className="flex flex-col items-start pr-1">
                     <span
-                        className="text-[11px] md:text-xs font-bold uppercase tracking-[0.25em]"
+                        className="text-[11px] md:text-xs font-bold uppercase tracking-[0.25em] transition-colors duration-300"
                         style={{ color: config.color }}
                     >
                         {config.label}
@@ -79,7 +96,7 @@ export function ModeBadge({ mode }: ModeBadgeProps) {
 
                 {/* Pulse dot บอกสถานะ active */}
                 <span
-                    className="w-1.5 h-1.5 rounded-full animate-pulse shrink-0 ml-1"
+                    className="w-1.5 h-1.5 rounded-full animate-pulse shrink-0 ml-1 transition-transform duration-300 group-hover:scale-125"
                     style={{ background: config.color, boxShadow: `0 0 8px ${config.color}` }}
                 />
             </div>

@@ -14,6 +14,10 @@ import Central46ConfidentialArchive from '@/src/features/character/components/un
 import Sealed from '@/src/shared/ui/Sealed';
 import { FEATURE_FLAGS } from '@/src/config/feature.flags';
 import { ModeBadge } from '@/src/shared/ui/ModeBadge';
+import { usePathname, useRouter } from 'next/navigation';
+import { Modal } from '@/src/shared/ui/modal';
+import { ModeSelectorModal } from '@/src/shared/ui/ModeSelectorModal';
+import { useSenkaimon } from '@/src/shared/ui/context/NavigationContext';
 
 export default function UnlimitedCharacterGame() {
     if (!FEATURE_FLAGS.unlimited.character) {
@@ -22,9 +26,14 @@ export default function UnlimitedCharacterGame() {
         )
     }
 
-    const game = useCharacterGame();
+    const router = useRouter();
+    const pathname = usePathname();
+    const { navigate, state, reportReady } = useSenkaimon(); // 👈 ดึง state + reportReady มาด้วย ใช้คุม modal ตอน transition และแจ้งความพร้อมกลับไปที่ Senkaimon
 
-    const { target, guesses, initializeGame, finalizeGame, resetGame, hardReset, hasFinalized } = useCharacterGame();
+    // 🛡️ เดิมเรียก useCharacterGame() 2 ครั้งแยกกัน (ตัวแปร game + destructure ซ้ำ)
+    // ตอนนี้ subscribe ครั้งเดียว แล้วส่ง store object เดิมต่อให้ SearchBar ผ่าน prop `game`
+    const gameStore = useCharacterGame();
+    const { target, guesses, initializeGame, finalizeGame, resetGame, hardReset, hasFinalized, _hasHydrated } = gameStore;
     const characters = getCharacters();
 
     const [isModalOpen, setIsModalOpen] = useState(false);
@@ -32,6 +41,16 @@ export default function UnlimitedCharacterGame() {
     const [isHowToOpen, setIsHowToOpen] = useState(false);
     const [isReady, setIsReady] = useState(false);
     const [isGameCompleted, setIsGameCompleted] = useState(false);
+    const [isModeSelectorOpen, setIsModeSelectorOpen] = useState(false);
+
+    // 🛡️ FIX (ปัญหา modal ค้าง): ปิด modal ทันทีที่ประตูเซนไกมงเริ่ม "closing"
+    // ผูกกับ state ตรงๆ ไม่พึ่งลำดับการเรียกจาก handleSwitchDimension เพียงจุดเดียว
+    useEffect(() => {
+        if (state === "closing") {
+            setIsModeSelectorOpen(false);
+        }
+    }, [state]);
+
     const MAX_GUESSES = 10;
     const remainingGuesses = Math.max(0, MAX_GUESSES - guesses.length);
 
@@ -63,8 +82,13 @@ export default function UnlimitedCharacterGame() {
         setStats(newStats);
     };
 
-    // โหลดและซิงค์ข้อมูลฝั่ง Client จากคีย์หลักแบบไม่มีจุดทศนิยมต่อท้าย
+    // 🛡️ FIX: เพิ่ม _hasHydrated เข้า dependency + เงื่อนไข guard
+    // effect นี้จะรอจน zustand persist rehydrate จาก localStorage เสร็จจริงก่อน ค่อยยิง initializeGame()
+    // ต่อให้ effect ถูกยิงซ้ำ (StrictMode dev double-invoke / remount ตอนสลับหน้าผ่าน Senkaimon)
+    // initializeGame() ที่ store ก็ idempotent อยู่แล้ว (เช็ค target ก่อนสุ่มใหม่) เลยไม่มีทางเบิ้ล target อีก
     useEffect(() => {
+        if (!_hasHydrated) return;
+
         const statsData = JSON.parse(localStorage.getItem('bleachdle-character-stats') || '{}');
         setStats(statsData.unlimited || { currentStreak: 0, maxStreak: 0 });
 
@@ -81,7 +105,16 @@ export default function UnlimitedCharacterGame() {
 
         initializeGame();
         setIsReady(true);
-    }, [initializeGame, characters.length]);
+    }, [initializeGame, characters.length, _hasHydrated]);
+
+    // 🚪 FIX (ประตูเปิดก่อนหน้าพร้อม): แจ้ง NavigationContext กลับไปตอน "isReady" เป็น true จริงๆ
+    // (คือหลัง zustand rehydrate + initializeGame() เสร็จสมบูรณ์) แทนที่จะปล่อยให้ระบบ
+    // เปิดประตูเองผ่าน READY_FALLBACK_MS (1200ms) เท่านั้น — sync กับ pattern เดียวกับ DailyCharacterWrapper
+    useEffect(() => {
+        if (isReady) {
+            reportReady();
+        }
+    }, [isReady, reportReady]);
 
     useEffect(() => {
         if (isReady) {
@@ -156,29 +189,25 @@ export default function UnlimitedCharacterGame() {
         hardReset();
     };
 
+    const handleSwitchDimension = (targetMode: 'daily' | 'unlimited') => {
+        // 1. ปิด Modal เลือกโหมด
+        setIsModeSelectorOpen(false);
+
+        // 2. โยนเป้าหมายให้ระบบเซนไกมงจัดการคำนวณตำแหน่งและสลับมิติให้เองแบบไร้รอยต่อ
+        navigate(targetMode);
+    };
+
     return (
         <div className="min-h-screen text-[#d8d0c8] overflow-x-hidden">
             <Header onOpenHowTo={() => setIsHowToOpen(true)} />
 
-            <div className="w-full flex items-center justify-center px-[5%] opacity-90">
-                <div className="flex-1 h-px bg-gradient-to-r from-transparent via-[#c8a96e]/60 to-[#c8a96e]/20" />
-                <div className="mx-8 relative flex items-center justify-center">
-                    <div className="w-6 h-6 border border-[#c8a96e] rotate-45 flex items-center justify-center shadow-[0_0_15px_rgba(200,169,110,0.3)] bg-black/20">
-                        <div className="w-1.5 h-1.5 bg-[#c8a96e] rotate-0 shadow-[0_0_8px_#c8a96e]" />
-                    </div>
-                    <div className="absolute -left-4 w-1.5 h-1.5 border border-[#c8a96e]/50 rotate-45" />
-                    <div className="absolute -right-4 w-1.5 h-1.5 border border-[#c8a96e]/50 rotate-45" />
-                </div>
-                <div className="flex-1 h-px bg-gradient-to-l from-transparent via-[#c8a96e]/60 to-[#c8a96e]/20" />
-            </div>
-
             <main className="max-w-[80%] mx-auto px-4 pb-16">
-                <ModeBadge mode="unlimited" />
+                <ModeBadge mode="unlimited" onClick={() => setIsModeSelectorOpen(true)} />
                 <SubHeader title='REIRAKU PERCEPTION' description='System // Scanning for Reiatsu Signature' />
 
                 {(!isModalOpen && target) && (
                     <div className="flex justify-center">
-                        <SearchBar characters={characters} disabled={guesses.length >= 10 || !target} game={game}/>
+                        <SearchBar characters={characters} disabled={guesses.length >= 10 || !target} game={gameStore} />
                     </div>
                 )}
 
@@ -254,6 +283,11 @@ export default function UnlimitedCharacterGame() {
                 )}
             </main>
             <HowToPlayModal isOpen={isHowToOpen} onClose={() => setIsHowToOpen(false)} mode="unlimited" />
+            <ModeSelectorModal
+                isOpen={isModeSelectorOpen}
+                onClose={() => setIsModeSelectorOpen(false)}
+                onSelectMode={handleSwitchDimension}
+            />
         </div>
     );
 }

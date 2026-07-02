@@ -14,6 +14,10 @@ import { FEATURE_FLAGS } from '@/src/config/feature.flags';
 import { Character } from '@/src/entities/character/schema';
 import { GameControlPanel } from '@/src/shared/ui/GameControlPanel';
 import { ModeBadge } from '@/src/shared/ui/ModeBadge';
+import { usePathname, useRouter } from 'next/navigation';
+import { Modal } from '@/src/shared/ui/modal';
+import { ModeSelectorModal } from '@/src/shared/ui/ModeSelectorModal';
+import { useSenkaimon } from '@/src/shared/ui/context/NavigationContext';
 
 export default function DailyCharacterWrapper({ initialTarget }: { initialTarget: Character | null }) {
     if (!FEATURE_FLAGS.daily.character) {
@@ -22,15 +26,26 @@ export default function DailyCharacterWrapper({ initialTarget }: { initialTarget
         )
     }
 
-    const game = useCharacterGame();
+    const router = useRouter();
+    const pathname = usePathname();
+    const { navigate, state, reportReady } = useSenkaimon(); // 👈 ดึง state + reportReady มาด้วย ใช้คุม modal ตอน transition และแจ้งความพร้อมกลับไปที่ Senkaimon
 
-    const { target, guesses, initializeGame, finalizeGame, resetGame, hasFinalized, _hasHydrated } = useCharacterGame();
+    // 🛡️ เดิมเรียก useCharacterGame() 2 ครั้งแยกกัน (ตัวแปร game + destructure ซ้ำ) รวมเป็นจุดเดียว
+    const gameStore = useCharacterGame();
+    const { target, guesses, initializeGame, finalizeGame, resetGame, hasFinalized, _hasHydrated } = gameStore;
     const characters = getCharacters();
 
     useEffect(() => {
-        if (!_hasHydrated) return;          // 👈 กันตรงนี้
+        if (!_hasHydrated) return;
         if (initialTarget !== null) {
             initializeGame(initialTarget);
+
+            // 🛡️ debug log แบบ deterministic — log ค่า "settled" ที่ set ไปจริงๆ ครั้งเดียว
+            // แทนที่จะ subscribe แบบ reactive กับทุก mutation ของ store (ของเดิม log ค่า target
+            // ที่ persist ค้างจากเมื่อวานแวบหนึ่งก่อนจะถูกแก้เป็นของวันนี้ เลยเห็น log ผิดสลับถูก)
+            if (process.env.NODE_ENV !== 'production') {
+                console.log('target:', useCharacterGame.getState().target);
+            }
         }
     }, [initialTarget, _hasHydrated]);
 
@@ -40,6 +55,16 @@ export default function DailyCharacterWrapper({ initialTarget }: { initialTarget
     const [isReady, setIsReady] = useState(false);
     const [timeLeft, setTimeLeft] = useState('');
     const [isSurrendered, setIsSurrendered] = useState(false);
+    const [isModeSelectorOpen, setIsModeSelectorOpen] = useState(false);
+
+    // 🛡️ FIX (ปัญหา modal ค้าง): ปิด modal ทันทีที่ประตูเซนไกมงเริ่ม "closing"
+    // ผูกกับ state ตรงๆ ไม่พึ่งลำดับการเรียกจาก handleSwitchDimension เพียงจุดเดียว
+    // ครอบคลุมทุกทางที่ modal อาจถูกเปิดค้างไว้ระหว่าง transition
+    useEffect(() => {
+        if (state === "closing") {
+            setIsModeSelectorOpen(false);
+        }
+    }, [state]);
 
     const isWin = guesses.length > 0 &&
         (Object.entries(guesses[0].result)
@@ -64,6 +89,15 @@ export default function DailyCharacterWrapper({ initialTarget }: { initialTarget
         setStats(newStats);
     };
 
+    const handleSwitchDimension = (targetMode: 'daily' | 'unlimited') => {
+        // 1. ปิด Modal เลือกโหมด (redundant กับ effect ด้านบนโดยตั้งใจ — ปิดให้ไวที่สุดเท่าที่ทำได้
+        //    effect ที่ผูกกับ state คือ safety-net ปิดซ้ำอีกชั้นให้แน่ใจ)
+        setIsModeSelectorOpen(false);
+
+        // 2. โยนเป้าหมายให้ระบบเซนไกมงจัดการคำนวณตำแหน่งและสลับมิติให้เองแบบไร้รอยต่อ
+        navigate(targetMode);
+    };
+
     // โหลดและซิงค์ข้อมูลฝั่ง Client จากคีย์หลักแบบไม่มีจุดทศนิยมต่อท้าย
     useEffect(() => {
         if (!_hasHydrated) return;
@@ -74,12 +108,16 @@ export default function DailyCharacterWrapper({ initialTarget }: { initialTarget
         setIsReady(true);
     }, [initializeGame, characters.length, _hasHydrated]);
 
-
+    // 🚪 FIX (ประตูเปิดก่อนหน้าพร้อม): แจ้ง NavigationContext กลับไปตอน "isReady" เป็น true จริงๆ
+    // (คือหลัง zustand rehydrate + initializeGame() เสร็จสมบูรณ์) แทนที่จะปล่อยให้ระบบ
+    // เปิดประตูเองผ่าน READY_FALLBACK_MS (1200ms) ซึ่ง race กับความเร็วเครื่อง/เน็ตของผู้เล่นได้
+    // เดิม component นี้ไม่เคยเรียก reportReady() เลย ทำให้ประตูเปิดตามเวลา fallback เสมอ
+    // ไม่ว่าหน้าจอจะพร้อมแสดงผลจริงหรือยัง
     useEffect(() => {
-        if (target) {
-            console.log("target:", target);
+        if (isReady) {
+            reportReady();
         }
-    }, [target]);
+    }, [isReady, reportReady]);
 
     useEffect(() => {
         if (!_hasHydrated) return;
@@ -128,6 +166,11 @@ export default function DailyCharacterWrapper({ initialTarget }: { initialTarget
             return `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
         };
 
+        // 🛡️ FIX: คำนวณทันทีตอน mount ก่อน 1 ครั้ง — เดิม setInterval ไม่ยิง callback แรกทันที
+        // ต้องรอครบ 1000ms ก่อนเสมอ ทำให้ timeLeft ว่างเปล่าค้าง ~1 วินาทีทุกครั้งที่หน้านี้ mount
+        // (เห็นชัดตอนสลับมิติเข้ามาใหม่ เพราะ mount ใหม่ทุกครั้ง ไม่ใช่แค่ครั้งแรกที่เข้าเว็บ)
+        setTimeLeft(calculateTimeLeft());
+
         // อัปเดตทุกวินาที
         const timer = setInterval(() => {
             setTimeLeft(calculateTimeLeft());
@@ -140,20 +183,8 @@ export default function DailyCharacterWrapper({ initialTarget }: { initialTarget
         <div className="min-h-screen text-[#d8d0c8] overflow-x-hidden">
             <Header onOpenHowTo={() => setIsHowToOpen(true)} />
 
-            <div className="w-full flex items-center justify-center px-[5%] opacity-90">
-                <div className="flex-1 h-px bg-gradient-to-r from-transparent via-[#c8a96e]/60 to-[#c8a96e]/20" />
-                <div className="mx-8 relative flex items-center justify-center">
-                    <div className="w-6 h-6 border border-[#c8a96e] rotate-45 flex items-center justify-center shadow-[0_0_15px_rgba(200,169,110,0.3)] bg-black/20">
-                        <div className="w-1.5 h-1.5 bg-[#c8a96e] rotate-0 shadow-[0_0_8px_#c8a96e]" />
-                    </div>
-                    <div className="absolute -left-4 w-1.5 h-1.5 border border-[#c8a96e]/50 rotate-45" />
-                    <div className="absolute -right-4 w-1.5 h-1.5 border border-[#c8a96e]/50 rotate-45" />
-                </div>
-                <div className="flex-1 h-px bg-gradient-to-l from-transparent via-[#c8a96e]/60 to-[#c8a96e]/20" />
-            </div>
-
             <main className="max-w-[80%] mx-auto px-4 pb-16">
-                <ModeBadge mode="daily" />
+                <ModeBadge mode="daily" onClick={() => setIsModeSelectorOpen(true)} />
                 <SubHeader title='REIRAKU PERCEPTION' description='System // Scanning for Reiatsu Signature' />
 
                 {!isModalOpen && (
@@ -163,7 +194,7 @@ export default function DailyCharacterWrapper({ initialTarget }: { initialTarget
                         characters={characters}
                         stats={stats}
                         timeLeft={timeLeft}
-                        game={game}
+                        game={gameStore}
                         isGameOver={isGameOver}                // 👈 ส่งสถานะการจบเกมไปเช็คซ่อนปุ่ม
                         onSurrender={() => setIsSurrendered(true)}  // 👈 ส่ง Callback ไปสั่งยอมแพ้
                     />
@@ -210,6 +241,11 @@ export default function DailyCharacterWrapper({ initialTarget }: { initialTarget
                 )}
             </main>
             <HowToPlayModal isOpen={isHowToOpen} onClose={() => setIsHowToOpen(false)} mode="daily" />
+            <ModeSelectorModal
+                isOpen={isModeSelectorOpen}
+                onClose={() => setIsModeSelectorOpen(false)}
+                onSelectMode={handleSwitchDimension}
+            />
         </div>
     );
 }

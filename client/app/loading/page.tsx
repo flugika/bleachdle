@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import ZangetsuLoader from '@/src/shared/ui/loader/ZangetsuLoader';
+import ZangetsuLoader from '@/src/shared/ui/ZangetsuLoader';
 
 export default function LoadingPreview() {
     const [isLoading, setIsLoading] = useState(true);

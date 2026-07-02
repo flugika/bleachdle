@@ -1,3 +1,4 @@
+// src/features/character/hooks/unlimited/useCharacterGame.ts
 import { create } from 'zustand';
 import { Character } from '@/src/entities/character/schema';
 import { compareCharacters } from '@/src/lib/game-engine/compare';
@@ -20,6 +21,8 @@ interface CharacterGameState {
     resetGame: () => void;
     hardReset: () => void;
     hasFinalized: boolean;
+    _hasHydrated: boolean;                    // 👈 เพิ่ม (เดิม unlimited ไม่มี ต่างจาก daily)
+    setHasHydrated: (state: boolean) => void; // 👈 เพิ่ม
 }
 
 export const useCharacterGame = create<CharacterGameState>()(
@@ -27,8 +30,12 @@ export const useCharacterGame = create<CharacterGameState>()(
         (set, get) => ({
             target: null,
             guesses: [],
-            setTarget: (target) => set({ target }),
             hasFinalized: false,
+            _hasHydrated: false,
+            setHasHydrated: (state) => set({ _hasHydrated: state }),
+
+            setTarget: (target) => set({ target }),
+
             addGuess: (guessId: string) => set((state) => {
                 const isGameOver = state.guesses.length >= 10;
                 if (!state.target || isGameOver) return state;
@@ -42,20 +49,32 @@ export const useCharacterGame = create<CharacterGameState>()(
 
                 return { guesses: [newEntry, ...prevGuesses] };
             }),
+
+            // 🛡️ ROOT-CAUSE FIX:
+            // เดิมเช็ค `target && guesses.length > 0` — target ที่เพิ่งสุ่มสดๆ guesses ยังเป็น []
+            // เสมอ ทำให้ทุกครั้งที่ initializeGame() โดนเรียกซ้ำ (StrictMode double-invoke ตอน dev,
+            // component remount ตอนสลับหน้าผ่าน Senkaimon transition, ฯลฯ) guard นี้ผ่านไม่ทัน
+            // แล้วสุ่ม target ใหม่ทับของเดิมทันที ตอนนี้เช็คแค่ "มี target แล้วหรือยัง" ก็พอ
+            // ไม่สนใจจำนวน guesses เพราะ target ที่ตั้งแล้วคือ "init เสร็จแล้ว" ไม่ว่าจะทายไปกี่ครั้ง
+            //
+            // 🛡️ HYDRATION GUARD:
+            // กัน race condition ระหว่าง persist rehydrate (async จาก localStorage) กับ effect
+            // ฝั่ง component ที่อาจยิงก่อน/หลัง hydrate เสร็จคนละรอบ ทำให้สุ่มซ้อนกัน 2 ครั้ง
             initializeGame: (force = false) => {
-                const { target, guesses } = get();
-                if (!force && target && guesses.length > 0) return;
+                const { target, _hasHydrated } = get();
+
+                if (!_hasHydrated) return;
+                if (!force && target) return;
 
                 const allCharacters = getCharacters();
 
-                // ── 🛡️ ดึงจากคีย์หลักก้อนเดียว แล้วแกะเฉพาะฟิลด์ unlimited
                 const completedData = JSON.parse(localStorage.getItem('bleachdle-character-completed') || '{}');
                 const completedIds = completedData.unlimited || [];
 
                 const remainingCharacters = allCharacters.filter(c => !completedIds.includes(c.id));
 
                 if (remainingCharacters.length === 0) {
-                    set({ target: null, guesses: [], hasFinalized: false, });
+                    set({ target: null, guesses: [], hasFinalized: false });
                 } else {
                     set({
                         target: remainingCharacters[Math.floor(Math.random() * remainingCharacters.length)],
@@ -97,12 +116,10 @@ export const useCharacterGame = create<CharacterGameState>()(
                 set({ target: null, guesses: [], hasFinalized: false });
             },
             hardReset: () => {
-                // ── 🛡️ เคลียร์ความคืบหน้า Zustand กระดานนี้ในออบเจกต์รวม (ไม่ให้กระทบ daily)
                 const progressData = JSON.parse(localStorage.getItem('bleachdle-character-progress') || '{}');
                 delete progressData.unlimited;
                 localStorage.setItem('bleachdle-character-progress', JSON.stringify(progressData));
 
-                // ── 🛡️ ล้างรายชื่อตัวละครที่เคลียร์เฉพาะฝั่ง unlimited
                 const completedData = JSON.parse(localStorage.getItem('bleachdle-character-completed') || '{}');
                 completedData.unlimited = [];
                 localStorage.setItem('bleachdle-character-completed', JSON.stringify(completedData));
@@ -115,9 +132,7 @@ export const useCharacterGame = create<CharacterGameState>()(
             },
         }),
         {
-            // ใช้ชื่อ Property ย่อยเป็นชื่อ Name
             name: 'unlimited',
-            // ── 🌟 INTERCEPTOR: บังคับให้ Zustand ยัด State เข้าไปอยู่ใน Object ย่อยของคีย์หลักก้อนเดียว ──
             storage: createJSONStorage(() => ({
                 getItem: (name) => {
                     const data = JSON.parse(localStorage.getItem('bleachdle-character-progress') || '{}');
@@ -139,6 +154,10 @@ export const useCharacterGame = create<CharacterGameState>()(
                 target: state.target,
                 hasFinalized: state.hasFinalized,
             }),
+            // 👇 หัวใจของ fix: บอก store ว่า rehydrate เสร็จแล้วจริงๆ (เหมือน daily store)
+            onRehydrateStorage: () => (state) => {
+                state?.setHasHydrated(true);
+            },
         }
     )
 );

@@ -31,8 +31,20 @@ CREATE TABLE songs (
     artist TEXT DEFAULT 'Unknown',           
     album TEXT,                              
     audio_url TEXT NOT NULL,                 
-    start_time_seconds INT4 DEFAULT 0,       
+    youtube_url text,
+    spotify_url text,       
+    start_time_ms INT4 DEFAULT 0,
     character_id TEXT REFERENCES characters(id) ON DELETE SET NULL -- เชื่อมโยงด้วย TEXT
+);
+
+CREATE TABLE public.song_segments (
+    id text NOT NULL,
+    song_id text NOT NULL,                  -- ผูกกับ songs.id
+    segment_name text NOT NULL,             -- เช่น 'Intro Breath', 'Main Hook'
+    start_time_ms integer NOT NULL,         -- ⏱️ จุดเริ่มต้น (หน่วย ms) เช่น 200, 42500
+    difficulty_level text DEFAULT 'normal',  -- 'easy' | 'normal' | 'hard'
+    CONSTRAINT song_segments_pkey PRIMARY KEY (id),
+    CONSTRAINT song_segments_song_id_fkey FOREIGN KEY (song_id) REFERENCES public.songs(id) ON DELETE CASCADE
 );
 
 -- 3. ตารางโหมดรูปภาพซูม (images)
@@ -59,6 +71,12 @@ CREATE TABLE emojis (
     emoji_list TEXT[] NOT NULL                
 );
 
+CREATE TABLE quotes (
+    id TEXT PRIMARY KEY,
+    character_id TEXT REFERENCES characters(id) ON DELETE CASCADE,
+    text TEXT NOT NULL
+);
+
 -- 6. ตารางจัดคิวรายวัน (daily_schedule)
 CREATE TABLE daily_schedule (
     date DATE PRIMARY KEY,
@@ -66,7 +84,8 @@ CREATE TABLE daily_schedule (
     song_id TEXT REFERENCES songs(id) ON DELETE SET NULL,
     image_id TEXT REFERENCES images(id) ON DELETE SET NULL,
     release_id TEXT REFERENCES releases(id) ON DELETE SET NULL,
-    emoji_id TEXT REFERENCES emojis(id) ON DELETE SET NULL
+    emoji_id TEXT REFERENCES emojis(id) ON DELETE SET NULL,
+    quote_id TEXT REFERENCES quotes(id) ON DELETE SET NULL
 );
 
 CREATE TABLE public.daily_stats (
@@ -86,9 +105,14 @@ CREATE TABLE public.daily_stats (
 
     emoji_played_count integer NOT NULL DEFAULT 0,
     emoji_passed_count integer NOT NULL DEFAULT 0,
+
+    qoute_played_count integer NOT NULL DEFAULT 0,
+    qoute_passed_count integer NOT NULL DEFAULT 0,
+
     character_guess_distribution jsonb NOT NULL DEFAULT '{}'::jsonb,
     song_guess_distribution jsonb NOT NULL DEFAULT '{}'::jsonb,
     image_guess_distribution jsonb NOT NULL DEFAULT '{}'::jsonb,
     release_guess_distribution jsonb NOT NULL DEFAULT '{}'::jsonb,
-    emoji_guess_distribution jsonb NOT NULL DEFAULT '{}'::jsonb
+    emoji_guess_distribution jsonb NOT NULL DEFAULT '{}'::jsonb,
+    quote_guess_distribution jsonb NOT NULL DEFAULT '{}'::jsonb
 );
