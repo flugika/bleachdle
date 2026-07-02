@@ -3,7 +3,7 @@ import { supabase } from '@/src/lib/supabase/supabase';
 import { Character } from '@/src/entities/character/schema';
 
 export async function getDailyCharacter() {
-    const todayStr = new Date().toLocaleDateString('en-CA');
+    const todayStr = new Date().toLocaleDateString('en-CA', { timeZone: 'Asia/Bangkok' });
 
     // ระบุ Type ของผลลัพธ์จาก Supabase ให้ชัดเจน
     const { data, error } = await supabase
