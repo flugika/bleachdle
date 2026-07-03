@@ -110,7 +110,7 @@ export function SongAudioPlayer({ target, attemptIndex, disabled = false }: Song
             )}
 
             {/* 🎧 CONTROL ROW LAYER — รวมปุ่มเล่นและแถบเสียงไว้ในแถวเดียวกันแบบโมเดิร์น */}
-            <div className="flex items-center justify-between gap-5 w-full bg-[#0d0d12]/50 border border-[#c8a96e]/15 p-4 rounded-2xl shadow-[0_8px_32px_rgba(0,0,0,0.5)] backdrop-blur-sm">
+            <div className="flex items-center gap-5 bg-[#0d0d12]/50 border border-[#c8a96e]/15 p-4 shadow-[0_8px_32px_rgba(0,0,0,0.5)] backdrop-blur-sm">
 
                 {/* ปุ่ม Play (คง Logic การสแปมรัวๆ และ EQ Animation ไว้ทั้งหมด) */}
                 <button
@@ -138,60 +138,59 @@ export function SongAudioPlayer({ target, attemptIndex, disabled = false }: Song
                     )}
                 </button>
 
-                {/* แถบปรับเสียง (Volume Controller) ขยับมาประกบด้านขวาอย่างลงตัว */}
-                <div className="flex items-center gap-2.5 flex-1 min-w-0">
-                    <button
-                        onClick={handleToggleMute}
-                        className="shrink-0 text-[#c8a96e]/60 hover:text-[#c8a96e] transition-colors duration-200 cursor-pointer"
-                        aria-label={isMuted ? 'Unmute' : 'Mute'}
-                    >
-                        {isMuted ? (
-                            <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}>
-                                <path d="M11 5 6 9H3v6h3l5 4V5Z" strokeLinecap="round" strokeLinejoin="round" />
-                                <path d="m23 9-6 6M17 9l6 6" strokeLinecap="round" strokeLinejoin="round" />
-                            </svg>
-                        ) : volume < 0.5 ? (
-                            <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}>
-                                <path d="M11 5 6 9H3v6h3l5 4V5Z" strokeLinecap="round" strokeLinejoin="round" />
-                                <path d="M15.5 8.5a5 5 0 0 1 0 7" strokeLinecap="round" strokeLinejoin="round" />
-                            </svg>
-                        ) : (
-                            <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}>
-                                <path d="M11 5 6 9H3v6h3l5 4V5Z" strokeLinecap="round" strokeLinejoin="round" />
-                                <path d="M15.5 8.5a5 5 0 0 1 0 7M18.5 6a9 9 0 0 1 0 12" strokeLinecap="round" strokeLinejoin="round" />
-                            </svg>
+                <div className='flex flex-col'>
+                    {/* แถบปรับเสียง (Volume Controller) ขยับมาประกบด้านขวาอย่างลงตัว */}
+                    <div className="flex items-center gap-2.5 flex-1 min-w-0">
+                        <button
+                            onClick={handleToggleMute}
+                            className="shrink-0 text-[#c8a96e]/60 hover:text-[#c8a96e] transition-colors duration-200 cursor-pointer"
+                            aria-label={isMuted ? 'Unmute' : 'Mute'}
+                        >
+                            {isMuted ? (
+                                <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}>
+                                    <path d="M11 5 6 9H3v6h3l5 4V5Z" strokeLinecap="round" strokeLinejoin="round" />
+                                    <path d="m23 9-6 6M17 9l6 6" strokeLinecap="round" strokeLinejoin="round" />
+                                </svg>
+                            ) : volume < 0.5 ? (
+                                <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}>
+                                    <path d="M11 5 6 9H3v6h3l5 4V5Z" strokeLinecap="round" strokeLinejoin="round" />
+                                    <path d="M15.5 8.5a5 5 0 0 1 0 7" strokeLinecap="round" strokeLinejoin="round" />
+                                </svg>
+                            ) : (
+                                <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}>
+                                    <path d="M11 5 6 9H3v6h3l5 4V5Z" strokeLinecap="round" strokeLinejoin="round" />
+                                    <path d="M15.5 8.5a5 5 0 0 1 0 7M18.5 6a9 9 0 0 1 0 12" strokeLinecap="round" strokeLinejoin="round" />
+                                </svg>
+                            )}
+                        </button>
+
+                        <input
+                            type="range"
+                            min={0}
+                            max={100}
+                            value={Math.round(volume * 100)}
+                            onChange={handleVolumeChange}
+                            className="w-full h-1 accent-[#c8a96e] bg-[#5a5a78]/20 rounded-lg appearance-none cursor-pointer"
+                            aria-label="Volume"
+                        />
+
+                        <span className="shrink-0 w-6 text-right text-[10px] font-mono text-[#5a5a78] tabular-nums">
+                            {Math.round(volume * 100)}%
+                        </span>
+                    </div>
+
+                    {/* 📊 INFO LAYER — แสดงจำนวนครั้งในการเดา ความยาวคลิป และ Error ดึงลงมาตรงกลางด้านล่างเพื่อให้แถวบนดูคลีน */}
+                    <div className="flex flex-col items-center gap-0.5 mt-1">
+                        <span className="text-sm font-bold text-[#c8a96e] font-mono">
+                            {formatRevealMs(revealMs)}
+                        </span>
+                        {hasError && (
+                            <span className="text-[9px] uppercase tracking-[0.2em] text-[#e83030] font-mono mt-1.5 animate-pulse">
+                                Reiatsu signal lost — tap again to retry
+                            </span>
                         )}
-                    </button>
-
-                    <input
-                        type="range"
-                        min={0}
-                        max={100}
-                        value={Math.round(volume * 100)}
-                        onChange={handleVolumeChange}
-                        className="w-full h-1 accent-[#c8a96e] bg-[#5a5a78]/20 rounded-lg appearance-none cursor-pointer"
-                        aria-label="Volume"
-                    />
-
-                    <span className="shrink-0 w-8 text-right text-[10px] font-mono text-[#5a5a78] tabular-nums">
-                        {Math.round(volume * 100)}%
-                    </span>
+                    </div>
                 </div>
-            </div>
-
-            {/* 📊 INFO LAYER — แสดงจำนวนครั้งในการเดา ความยาวคลิป และ Error ดึงลงมาตรงกลางด้านล่างเพื่อให้แถวบนดูคลีน */}
-            <div className="flex flex-col items-center gap-0.5 mt-1">
-                <span className="text-[9px] uppercase tracking-[0.25em] text-[#5a5a78] font-mono">
-                    Clip Length // Attempt {Math.min(attemptIndex + 1, 10)}
-                </span>
-                <span className="text-sm font-bold text-[#c8a96e] font-mono">
-                    {formatRevealMs(revealMs)}
-                </span>
-                {hasError && (
-                    <span className="text-[9px] uppercase tracking-[0.2em] text-[#e83030] font-mono mt-1.5 animate-pulse">
-                        Reiatsu signal lost — tap again to retry
-                    </span>
-                )}
             </div>
         </div>
     );

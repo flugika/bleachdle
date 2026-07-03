@@ -125,7 +125,7 @@ export const SongSearchBar = ({ songs, disabled = false, game }: SongSearchBarPr
                     onChange={e => { setQuery(e.target.value); setIsOpen(true); }}
                     onFocus={() => results.length && setIsOpen(true)}
                     onKeyDown={handleKeyDown}
-                    placeholder="CHORD RESONANCE: ENTER TRACK, ARTIST, OR OP/ED..."
+                    placeholder="ENTER TRACK, ARTIST, OR OP/ED..."
                     autoComplete="off"
                     className="relative w-full py-3.5 pl-5 pr-12 bg-[#050507] text-[#e2e2e5] text-xs font-medium tracking-[0.15em] uppercase border border-[#1a1a24] focus:outline-none focus:border-red-600/80 focus:text-white transition-all duration-300 placeholder-[#444452]"
                 />
