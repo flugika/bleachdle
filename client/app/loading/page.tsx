@@ -1,7 +1,8 @@
 'use client';
 
 import { useState } from 'react';
-import ZangetsuLoader from '@/src/shared/ui/ZangetsuLoader';
+import ZangetsuLoader from '@/src/shared/ui/loader/ZangetsuLoader';
+// import SoulSyncLoader from '@/src/shared/ui/loader/SoulSyncLoader';
 
 export default function LoadingPreview() {
     const [isLoading, setIsLoading] = useState(true);
@@ -45,5 +46,8 @@ export default function LoadingPreview() {
                 <ZangetsuLoader />
             </div>
         </div>
+        // <div className="fixed inset-0 z-50 flex flex-col items-center justify-center w-screen h-screen bg-[#020205] text-white overflow-hidden select-none">
+        //     <SoulSyncLoader />
+        // </div>
     );
 }

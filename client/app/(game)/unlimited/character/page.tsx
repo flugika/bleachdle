@@ -2,10 +2,10 @@
 
 import { useEffect, useState } from 'react';
 import { GuessTable } from '@/src/features/character';
-import { SearchBar } from '@/src/shared/ui/SearchBar';
+import { GameControlPanel } from '@/src/shared/ui/controlPanel/GameControlPanel';
 import { useCharacterGame } from '@/src/features/character/hooks/unlimited/useCharacterGame';
 import { getCharacters } from '@/src/lib/utils/character';
-import { SummaryGuess } from '@/src/features/character/components/unlimited/SummaryGuess';
+import { SummaryGuess } from '@/src/features/character/components/shared/SummaryGuess';
 import { HowToPlayModal } from '@/src/features/character/components/shared/HowToPlayModal';
 import { Header } from '@/src/shared/layout/Header';
 import { Divider } from '@/src/shared/layout/Divider';
@@ -15,9 +15,10 @@ import Sealed from '@/src/shared/ui/Sealed';
 import { FEATURE_FLAGS } from '@/src/config/feature.flags';
 import { ModeBadge } from '@/src/shared/ui/ModeBadge';
 import { usePathname, useRouter } from 'next/navigation';
-import { Modal } from '@/src/shared/ui/modal';
 import { ModeSelectorModal } from '@/src/shared/ui/ModeSelectorModal';
 import { useSenkaimon } from '@/src/shared/ui/context/NavigationContext';
+import { MAX_CHARACTER_GUESSES } from '@/src/const/guess';
+import SoulSyncLoader from '@/src/shared/ui/loader/SoulSyncLoader';
 
 export default function UnlimitedCharacterGame() {
     if (!FEATURE_FLAGS.unlimited.character) {
@@ -42,6 +43,7 @@ export default function UnlimitedCharacterGame() {
     const [isReady, setIsReady] = useState(false);
     const [isGameCompleted, setIsGameCompleted] = useState(false);
     const [isModeSelectorOpen, setIsModeSelectorOpen] = useState(false);
+    const [finalRoundGuesses, setFinalRoundGuesses] = useState<typeof guesses>([]);
 
     // 🛡️ FIX (ปัญหา modal ค้าง): ปิด modal ทันทีที่ประตูเซนไกมงเริ่ม "closing"
     // ผูกกับ state ตรงๆ ไม่พึ่งลำดับการเรียกจาก handleSwitchDimension เพียงจุดเดียว
@@ -51,8 +53,7 @@ export default function UnlimitedCharacterGame() {
         }
     }, [state]);
 
-    const MAX_GUESSES = 10;
-    const remainingGuesses = Math.max(0, MAX_GUESSES - guesses.length);
+    const remainingGuesses = Math.max(0, MAX_CHARACTER_GUESSES - guesses.length);
 
     const [soulName, setSoulName] = useState('');
     const [inputName, setInputName] = useState('');
@@ -135,6 +136,7 @@ export default function UnlimitedCharacterGame() {
             const timer = setTimeout(() => {
                 // 1. ทำ Logic: บันทึกข้อมูลเฉพาะถ้ายังไม่เคยบันทึกมาก่อน (ป้องกัน Streak พุ่ง)
                 if (!hasFinalized) {
+                    setFinalRoundGuesses(guesses);
                     finalizeGame(isWin);
                     updateStats(isWin);
                 }
@@ -205,29 +207,20 @@ export default function UnlimitedCharacterGame() {
                 <ModeBadge mode="unlimited" onClick={() => setIsModeSelectorOpen(true)} />
                 <SubHeader title='REIRAKU PERCEPTION' description='System // Scanning for Reiatsu Signature' />
 
-                {(!isModalOpen && target) && (
-                    <div className="flex justify-center">
-                        <SearchBar characters={characters} disabled={guesses.length >= 10 || !target} game={gameStore} />
-                    </div>
-                )}
-
+                {/* 🛡️ เปลี่ยนจาก SearchBar + stats block แบบ manual (ซ้ำโค้ดกับ daily) มาใช้
+                    GameControlPanel ตัวเดียวกับ daily — sync กับ isLimitReached fix ที่แก้ไปด้วย
+                    (เดิม unlimited mode ไม่เคยผ่าน component นี้เลยบั๊กเลยไม่เคยโผล่) */}
                 {!isModalOpen && (
-                    <div className="flex justify-center gap-8 my-6 text-[11px] uppercase tracking-[0.2em] text-[#5a5a78]">
-                        <div className="flex flex-col items-center">
-                            <span className="text-[#d1a9a9]">Attempts Left</span>
-                            <span className={`${remainingGuesses === 0 ? 'text-[#e83030]' : 'text-[#4de880]'} text-lg font-bold`}>
-                                {remainingGuesses}
-                            </span>
-                        </div>
-                        <div className="flex flex-col items-center">
-                            <span className="text-[#d1a9a9]">Current Streaks</span>
-                            <span className="text-[#c8a96e] text-lg font-bold">{stats.currentStreak}</span>
-                        </div>
-                        <div className="flex flex-col items-center">
-                            <span className="text-[#d1a9a9]">Max Streaks</span>
-                            <span className="text-[#c8a96e] text-lg font-bold">{stats.maxStreak}</span>
-                        </div>
-                    </div>
+                    <GameControlPanel
+                        mode="unlimited"
+                        target={target}
+                        characters={characters}
+                        remainingGuesses={remainingGuesses}
+                        stats={stats}
+                        game={gameStore}
+                        maxGuesses={MAX_CHARACTER_GUESSES}
+                        isGameOver={isGameOver}
+                    />
                 )}
 
                 {guesses.length > 0 && (
@@ -252,19 +245,14 @@ export default function UnlimitedCharacterGame() {
                 {isModalOpen ? (
                     <SummaryGuess isOpen={isModalOpen} onClose={handleCloseModal} guesses={guesses} target={target} isWin={isWin} mode="unlimited" stats={stats} />
                 ) : !isReady ? (
-                    <div className="mt-40 flex flex-col items-center justify-center animate-pulse">
-                        <span className="text-4xl text-[#c8a96e] animate-spin mb-4">卍</span>
-                        <p className="text-xs uppercase tracking-[0.2em] text-[#5a5a78]">
-                            Synchronizing Soul Spiritual Energy...
-                        </p>
-                    </div>
+                    <SoulSyncLoader />
                 ) : target ? (
                     <div className="w-full overflow-x-auto">
                         <GuessTable guesses={guesses} />
                     </div>
                 ) : isGameCompleted ? (
                     <Central46ConfidentialArchive
-                        guesses={guesses}
+                        guesses={finalRoundGuesses}
                         soulName={soulName}
                         inputName={inputName}
                         setInputName={setInputName}

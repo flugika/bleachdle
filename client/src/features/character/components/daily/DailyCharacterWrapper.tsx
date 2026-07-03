@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import { GuessTable } from '@/src/features/character';
 import { useCharacterGame } from '@/src/features/character/hooks/daily/useCharacterGame';
 import { getCharacters } from '@/src/lib/utils/character';
-import { SummaryGuess } from '@/src/features/character/components/unlimited/SummaryGuess';
+import { SummaryGuess } from '@/src/features/character/components/shared/SummaryGuess';
 import { HowToPlayModal } from '@/src/features/character/components/shared/HowToPlayModal';
 import { Header } from '@/src/shared/layout/Header';
 import { Divider } from '@/src/shared/layout/Divider';
@@ -12,12 +12,12 @@ import { SubHeader } from '@/src/shared/layout/SubHeader';
 import Sealed from '@/src/shared/ui/Sealed';
 import { FEATURE_FLAGS } from '@/src/config/feature.flags';
 import { Character } from '@/src/entities/character/schema';
-import { GameControlPanel } from '@/src/shared/ui/GameControlPanel';
+import { GameControlPanel } from '@/src/shared/ui/controlPanel/GameControlPanel';
 import { ModeBadge } from '@/src/shared/ui/ModeBadge';
 import { usePathname, useRouter } from 'next/navigation';
-import { Modal } from '@/src/shared/ui/modal';
 import { ModeSelectorModal } from '@/src/shared/ui/ModeSelectorModal';
 import { useSenkaimon } from '@/src/shared/ui/context/NavigationContext';
+import SoulSyncLoader from '@/src/shared/ui/loader/SoulSyncLoader'
 
 export default function DailyCharacterWrapper({ initialTarget }: { initialTarget: Character | null }) {
     if (!FEATURE_FLAGS.daily.character) {
@@ -222,12 +222,7 @@ export default function DailyCharacterWrapper({ initialTarget }: { initialTarget
                 {isModalOpen ? (
                     <SummaryGuess isOpen={isModalOpen} onClose={handleCloseModal} guesses={guesses} target={target} isWin={isWin} mode="daily" stats={stats} />
                 ) : !isReady ? (
-                    <div className="mt-40 flex flex-col items-center justify-center animate-pulse">
-                        <span className="text-4xl text-[#c8a96e] animate-spin mb-4">卍</span>
-                        <p className="text-xs uppercase tracking-[0.2em] text-[#5a5a78]">
-                            Synchronizing Soul Spiritual Energy...
-                        </p>
-                    </div>
+                    <SoulSyncLoader />
                 ) : target ? (
                     <div className="w-full overflow-x-auto">
                         <GuessTable guesses={guesses} />

@@ -1054,3 +1054,61 @@ button *:active,
     filter: brightness(1);
   }
 }
+
+@keyframes song-eq {
+
+  0%,
+  100% {
+    transform: scaleY(0.4);
+  }
+
+  50% {
+    transform: scaleY(1);
+  }
+}
+
+@keyframes reiatsuShake {
+
+  0%,
+  100% {
+    transform: translateX(0) !important;
+  }
+
+  15%,
+  45%,
+  75% {
+    transform: translateX(-5px) !important;
+  }
+
+  30%,
+  60%,
+  90% {
+    transform: translateX(5px) !important;
+  }
+}
+
+.animate-reiatsu-shake {
+  animation: reiatsuShake 0.5s cubic-bezier(.36, .07, .19, .97) both !important;
+}
+
+@keyframes tybwShake {
+
+  0%,
+  100% {
+    transform: translateX(0);
+  }
+
+  20%,
+  60% {
+    transform: translateX(-4px);
+  }
+
+  40%,
+  80% {
+    transform: translateX(4px);
+  }
+}
+
+.animate-reiatsu-shake {
+  animation: tybwShake 0.4s cubic-bezier(.36, .07, .19, .97) both;
+}

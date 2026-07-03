@@ -5,6 +5,7 @@ import { compareCharacters } from '@/src/lib/game-engine/compare';
 import { ComparisonOutcome } from '@/src/features/character/types';
 import { getCharacterById, getCharacters } from '@/src/lib/utils/character';
 import { persist, createJSONStorage } from 'zustand/middleware';
+import { MAX_CHARACTER_GUESSES } from '@/src/const/guess';
 
 interface GuessEntry {
     guess: Character;
@@ -37,7 +38,7 @@ export const useCharacterGame = create<CharacterGameState>()(
             setTarget: (target) => set({ target }),
 
             addGuess: (guessId: string) => set((state) => {
-                const isGameOver = state.guesses.length >= 10;
+                const isGameOver = state.guesses.length >= MAX_CHARACTER_GUESSES;
                 if (!state.target || isGameOver) return state;
 
                 const guessedCharacter = getCharacterById(guessId);

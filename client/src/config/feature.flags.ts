@@ -16,8 +16,10 @@ export const FEATURE_FLAGS = {
         quote: false,
         image: false,
         emoji: false,
-        song: false,
+        song: true,
     },
+
+    mockupSong: false,
 } as const;
 
 // ── 🛡️ Type Helpers สำหรับทำนายขอบเขตพลังวิญญาณ (Optional)

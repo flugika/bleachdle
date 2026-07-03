@@ -28,9 +28,9 @@ export const SongSearchBar = ({ songs, disabled = false, game }: SongSearchBarPr
         [guesses]
     );
 
-    // 🔥 ENTERPRISE SEARCH: ค้นหาแบบ 2 มิติผ่าน Title และ Artist พร้อมกัน
+    // 🔥 ENTERPRISE SEARCH: ค้นหาแบบ 3 มิติผ่าน Title, Artist, และ Album (เช่นพิมพ์ "op-3" หรือ "special-ed" ก็เจอ)
     const searchEngine = useMemo(
-        () => createSearchEngine(songs, { keys: ['title', 'artist'] }),
+        () => createSearchEngine(songs, { keys: ['title', 'artist', 'album'] }),
         [songs]
     );
 
@@ -113,19 +113,6 @@ export const SongSearchBar = ({ songs, disabled = false, game }: SongSearchBarPr
 
     return (
         <div ref={wrapRef} className="relative w-full max-w-md mx-auto">
-
-            {/* TYBW Reiatsu Shake Keyframes */}
-            <style jsx global>{`
-                @keyframes tybwShake {
-                    0%, 100% { transform: translateX(0); }
-                    20%, 60% { transform: translateX(-4px); }
-                    40%, 80% { transform: translateX(4px); }
-                }
-                .animate-reiatsu-shake {
-                    animation: tybwShake 0.4s cubic-bezier(.36,.07,.19,.97) both;
-                }
-            `}</style>
-
             {/* INPUT BOX - TYBW STYLING */}
             <div className="relative group/input">
                 {/* ขอบเงาสีแดงเลือดแบบบางซ่อนอยู่เบื้องหลัง */}
@@ -138,7 +125,7 @@ export const SongSearchBar = ({ songs, disabled = false, game }: SongSearchBarPr
                     onChange={e => { setQuery(e.target.value); setIsOpen(true); }}
                     onFocus={() => results.length && setIsOpen(true)}
                     onKeyDown={handleKeyDown}
-                    placeholder="CHORD RESONANCE: ENTER TRACK OR ARTIST..."
+                    placeholder="CHORD RESONANCE: ENTER TRACK, ARTIST, OR OP/ED..."
                     autoComplete="off"
                     className="relative w-full py-3.5 pl-5 pr-12 bg-[#050507] text-[#e2e2e5] text-xs font-medium tracking-[0.15em] uppercase border border-[#1a1a24] focus:outline-none focus:border-red-600/80 focus:text-white transition-all duration-300 placeholder-[#444452]"
                 />
@@ -146,7 +133,7 @@ export const SongSearchBar = ({ songs, disabled = false, game }: SongSearchBarPr
                 {/* ไอคอนประดับสไตล์ดาบฟันวิญญาณ */}
                 <div className="absolute right-4 top-1/2 -translate-y-1/2 flex items-center justify-center pointer-events-none">
                     <span className="text-[10px] text-[#444452] group-focus-within/input:text-red-500 tracking-widest transition-colors duration-300 font-mono">
-                        //
+                        卍
                     </span>
                 </div>
             </div>
@@ -189,12 +176,17 @@ export const SongSearchBar = ({ songs, disabled = false, game }: SongSearchBarPr
                                         {item.title}
                                     </span>
 
-                                    {/* ชื่อศิลปิน (Subtitle Muted) */}
+                                    {/* ชื่อศิลปิน + อัลบั้ม (Subtitle Muted) */}
                                     <span className={[
                                         'text-[10px] mt-0.5 tracking-wide font-medium truncate transition-colors duration-200',
                                         isActive ? 'text-white/60' : 'text-[#555566]'
                                     ].join(' ')}>
                                         BY {item.artist}
+                                        {item.album && (
+                                            <span className={isActive ? 'text-red-500/70' : 'text-[#444452]'}>
+                                                {' '}// {item.album.toUpperCase()}
+                                            </span>
+                                        )}
                                     </span>
                                 </div>
 
@@ -206,7 +198,7 @@ export const SongSearchBar = ({ songs, disabled = false, game }: SongSearchBarPr
                                 ) : (
                                     /* ดอทสีแดงสไตล์เป้าเล็งสำหรับการเลือก */
                                     <span className={[
-                                        'ml-3 shrink-0 w-1 h-1 bg-red-500 transition-all duration-200 opacity-0 scale-50',
+                                        'ml-3 shrink-0 w-1 h-1 bg-red-500 transition-all duration-200 opacity-0 scale-50 rounded',
                                         isActive ? 'opacity-100 scale-100 shadow-[0_0_6px_#dc2626]' : ''
                                     ].join(' ')} />
                                 )}

@@ -1,7 +1,7 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import ZangetsuLoader from "./ZangetsuLoader";
+import ZangetsuLoader from "./loader/ZangetsuLoader";
 import { Button } from "@/src/shared/ui/button"; // 👈 นำเข้าคอมโพเนนต์ปุ่มเดิมของคุณ
 
 export default function Sealed() {

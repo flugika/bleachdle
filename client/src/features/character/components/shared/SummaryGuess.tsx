@@ -2,7 +2,7 @@ import { useState, useMemo } from 'react';
 import { Button } from "@/src/shared/ui/button";
 import { MatchResult } from "../../types";
 import Image from 'next/image';
-import { TIERS, STATUS_COLORS, RESULT_KEYS } from '@/src/const/summary';
+import { CHARACTER_TIERS, STATUS_COLORS, RESULT_KEYS } from '@/src/const/summary';
 import { formatAge, formatHeight } from '@/src/lib/utils/format';
 import { useCountdown } from '@/src/shared/hooks/useCountdown';
 import { DailyResetTimer } from '@/src/shared/ui/DailyResetTimer';
@@ -52,7 +52,7 @@ export const SummaryGuess = ({ isOpen, onClose, guesses, target, isWin, mode, st
     if (!isOpen) return null;
 
     const activeTier = useMemo(() => {
-        return TIERS.find(t => stats.maxStreak >= t.min) || TIERS[TIERS.length - 1];
+        return CHARACTER_TIERS.find(t => stats.maxStreak >= t.min) || CHARACTER_TIERS[CHARACTER_TIERS.length - 1];
     }, [stats.maxStreak]);
 
     // 🗺️ เพิ่ม whitelist ตัวละครที่เป็น Substitute Shinigami โดยตำแหน่งจริงตาม Lore

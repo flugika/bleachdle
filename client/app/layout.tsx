@@ -5,7 +5,7 @@ import { Cinzel } from "next/font/google";
 import Footer from "@/src/shared/layout/Footer";
 import { BleachReiatsuCursor } from "@/src/shared/ui/BleachReiatsuCursor";
 import { WallpaperInitializer } from "@/src/shared/hooks/WallpaperInitializer";
-import { SenkaimonTransition } from "@/src/shared/ui/SenkaimonTransition";
+import { SenkaimonTransition } from "@/src/shared/ui/loader/SenkaimonTransition";
 import { NavigationProvider } from "@/src/shared/ui/context/NavigationContext"; // นำเข้าตัวคุมทรานซิชัน
 
 const cinzel = Cinzel({

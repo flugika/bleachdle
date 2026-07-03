@@ -1,0 +1,198 @@
+// src/shared/ui/SongAudioPlayer.tsx
+"use client";
+
+import { useEffect, useRef, useState } from 'react';
+import { BleachSong } from '@/src/entities/song/schema';
+import { getRevealMsForAttempt, formatRevealMs } from '@/src/features/song/constants';
+
+const VOLUME_STORAGE_KEY = 'bleachdle-song-volume';
+const DEFAULT_VOLUME = 0.5;
+
+function readStoredVolume(): number {
+    if (typeof window === 'undefined') return DEFAULT_VOLUME;
+    const raw = window.localStorage.getItem(VOLUME_STORAGE_KEY);
+    const parsed = raw !== null ? Number(raw) : NaN;
+    if (Number.isNaN(parsed)) return DEFAULT_VOLUME;
+    return Math.min(1, Math.max(0, parsed));
+}
+
+interface SongAudioPlayerProps {
+    target: BleachSong | null;
+    attemptIndex: number;
+    disabled?: boolean;
+}
+
+export function SongAudioPlayer({ target, attemptIndex, disabled = false }: SongAudioPlayerProps) {
+    const audioRef = useRef<HTMLAudioElement | null>(null);
+    const stopTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+    const [isPlaying, setIsPlaying] = useState(false);
+    const [hasError, setHasError] = useState(false);
+
+    const [volume, setVolume] = useState<number>(() => readStoredVolume());
+    const previousVolumeRef = useRef<number>(volume > 0 ? volume : DEFAULT_VOLUME);
+    const isMuted = volume === 0;
+
+    const revealMs = getRevealMsForAttempt(attemptIndex);
+    const startSec = (target?.segments?.[0]?.start_time_ms ?? 0) / 1000;
+
+    useEffect(() => {
+        setIsPlaying(false);
+        setHasError(false);
+        audioRef.current?.pause();
+        if (stopTimerRef.current) clearTimeout(stopTimerRef.current);
+    }, [target?.id]);
+
+    useEffect(() => () => {
+        if (stopTimerRef.current) clearTimeout(stopTimerRef.current);
+    }, []);
+
+    useEffect(() => {
+        if (audioRef.current) {
+            audioRef.current.volume = volume;
+        }
+    }, [volume, target?.audio_url]);
+
+    const handleVolumeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const next = Number(e.target.value) / 100;
+        setVolume(next);
+        if (next > 0) previousVolumeRef.current = next;
+        window.localStorage.setItem(VOLUME_STORAGE_KEY, String(next));
+    };
+
+    const handleToggleMute = () => {
+        if (isMuted) {
+            const restored = previousVolumeRef.current || DEFAULT_VOLUME;
+            setVolume(restored);
+            window.localStorage.setItem(VOLUME_STORAGE_KEY, String(restored));
+        } else {
+            previousVolumeRef.current = volume;
+            setVolume(0);
+            window.localStorage.setItem(VOLUME_STORAGE_KEY, '0');
+        }
+    };
+
+    const handlePlay = () => {
+        if (!target || disabled) return;
+        const audio = audioRef.current;
+        if (!audio) return;
+
+        if (stopTimerRef.current) {
+            clearTimeout(stopTimerRef.current);
+        }
+
+        audio.currentTime = startSec;
+
+        const playPromise = audio.play();
+        if (playPromise) {
+            playPromise
+                .then(() => setIsPlaying(true))
+                .catch(() => {
+                    setHasError(true);
+                    setIsPlaying(false);
+                });
+        }
+
+        stopTimerRef.current = setTimeout(() => {
+            audio.pause();
+            setIsPlaying(false);
+        }, revealMs);
+    };
+
+    return (
+        <div className="flex flex-col items-center gap-3.5 w-full max-w-sm mx-auto">
+            {target?.audio_url && (
+                <audio
+                    ref={audioRef}
+                    src={target.audio_url}
+                    preload="none"
+                    onError={() => setHasError(true)}
+                />
+            )}
+
+            {/* 🎧 CONTROL ROW LAYER — รวมปุ่มเล่นและแถบเสียงไว้ในแถวเดียวกันแบบโมเดิร์น */}
+            <div className="flex items-center justify-between gap-5 w-full bg-[#0d0d12]/50 border border-[#c8a96e]/15 p-4 rounded-2xl shadow-[0_8px_32px_rgba(0,0,0,0.5)] backdrop-blur-sm">
+
+                {/* ปุ่ม Play (คง Logic การสแปมรัวๆ และ EQ Animation ไว้ทั้งหมด) */}
+                <button
+                    onClick={handlePlay}
+                    disabled={disabled || !target}
+                    className={[
+                        'relative w-16 h-16 shrink-0 rounded-full border-2 flex items-center justify-center transition-all duration-300 select-none',
+                        isPlaying
+                            ? 'border-[#c8a96e] bg-[#c8a96e]/10 shadow-[0_0_25px_rgba(200,169,110,0.35)]'
+                            : 'border-[#c8a96e]/40 bg-[#0a0a0f]/80 hover:border-[#c8a96e] hover:shadow-[0_0_20px_rgba(200,169,110,0.25)]',
+                        (disabled || !target) ? 'opacity-30 cursor-not-allowed' : 'cursor-pointer',
+                    ].join(' ')}
+                    aria-label={isPlaying ? 'Playing melodic reiatsu clip' : 'Play melodic reiatsu clip'}
+                >
+                    {isPlaying ? (
+                        <span className="flex gap-1 items-end h-5">
+                            <span className="w-0.5 bg-[#c8a96e]" style={{ height: '60%', animation: 'song-eq 0.6s ease-in-out infinite' }} />
+                            <span className="w-0.5 bg-[#c8a96e]" style={{ height: '100%', animation: 'song-eq 0.6s ease-in-out infinite 0.15s' }} />
+                            <span className="w-0.5 bg-[#c8a96e]" style={{ height: '45%', animation: 'song-eq 0.6s ease-in-out infinite 0.3s' }} />
+                        </span>
+                    ) : (
+                        <svg className="w-6 h-6 text-[#c8a96e] ml-0.5" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M8 5v14l11-7z" />
+                        </svg>
+                    )}
+                </button>
+
+                {/* แถบปรับเสียง (Volume Controller) ขยับมาประกบด้านขวาอย่างลงตัว */}
+                <div className="flex items-center gap-2.5 flex-1 min-w-0">
+                    <button
+                        onClick={handleToggleMute}
+                        className="shrink-0 text-[#c8a96e]/60 hover:text-[#c8a96e] transition-colors duration-200 cursor-pointer"
+                        aria-label={isMuted ? 'Unmute' : 'Mute'}
+                    >
+                        {isMuted ? (
+                            <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}>
+                                <path d="M11 5 6 9H3v6h3l5 4V5Z" strokeLinecap="round" strokeLinejoin="round" />
+                                <path d="m23 9-6 6M17 9l6 6" strokeLinecap="round" strokeLinejoin="round" />
+                            </svg>
+                        ) : volume < 0.5 ? (
+                            <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}>
+                                <path d="M11 5 6 9H3v6h3l5 4V5Z" strokeLinecap="round" strokeLinejoin="round" />
+                                <path d="M15.5 8.5a5 5 0 0 1 0 7" strokeLinecap="round" strokeLinejoin="round" />
+                            </svg>
+                        ) : (
+                            <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}>
+                                <path d="M11 5 6 9H3v6h3l5 4V5Z" strokeLinecap="round" strokeLinejoin="round" />
+                                <path d="M15.5 8.5a5 5 0 0 1 0 7M18.5 6a9 9 0 0 1 0 12" strokeLinecap="round" strokeLinejoin="round" />
+                            </svg>
+                        )}
+                    </button>
+
+                    <input
+                        type="range"
+                        min={0}
+                        max={100}
+                        value={Math.round(volume * 100)}
+                        onChange={handleVolumeChange}
+                        className="w-full h-1 accent-[#c8a96e] bg-[#5a5a78]/20 rounded-lg appearance-none cursor-pointer"
+                        aria-label="Volume"
+                    />
+
+                    <span className="shrink-0 w-8 text-right text-[10px] font-mono text-[#5a5a78] tabular-nums">
+                        {Math.round(volume * 100)}%
+                    </span>
+                </div>
+            </div>
+
+            {/* 📊 INFO LAYER — แสดงจำนวนครั้งในการเดา ความยาวคลิป และ Error ดึงลงมาตรงกลางด้านล่างเพื่อให้แถวบนดูคลีน */}
+            <div className="flex flex-col items-center gap-0.5 mt-1">
+                <span className="text-[9px] uppercase tracking-[0.25em] text-[#5a5a78] font-mono">
+                    Clip Length // Attempt {Math.min(attemptIndex + 1, 10)}
+                </span>
+                <span className="text-sm font-bold text-[#c8a96e] font-mono">
+                    {formatRevealMs(revealMs)}
+                </span>
+                {hasError && (
+                    <span className="text-[9px] uppercase tracking-[0.2em] text-[#e83030] font-mono mt-1.5 animate-pulse">
+                        Reiatsu signal lost — tap again to retry
+                    </span>
+                )}
+            </div>
+        </div>
+    );
+}

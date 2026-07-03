@@ -541,7 +541,7 @@ function LiveTuningWorkbench({
 // ============================================================================
 
 export default function MockupSongGame() {
-    if (!FEATURE_FLAGS.unlimited?.song && false) {
+    if (!FEATURE_FLAGS.mockupSong) {
         return <Sealed />;
     }
 

@@ -1,5 +1,6 @@
 // src/entities/song/schema.ts
 import { z } from 'zod';
+import { localOrRemoteUrlSchema } from '@/src/lib/utils/absolutePathEntities'
 
 // 1. กำหนดเซกเมนต์ย่อยที่เก็บเวลา start_time_ms ตัวจริง
 export const SongSegmentSchema = z.object({
@@ -15,7 +16,7 @@ export const SongSchema = z.object({
     title: z.string(),
     artist: z.string().default('Unknown'),
     album: z.string().nullable().optional(),
-    audio_url: z.string().url(),
+    audio_url: localOrRemoteUrlSchema,
     youtube_url: z.string().url().nullable().optional(),
     spotify_url: z.string().url().nullable().optional(),
     character_id: z.string().nullable().optional(),

@@ -1,6 +1,6 @@
 'use client';
 
-import ZangetsuLoader from '@/src/shared/ui/ZangetsuLoader';
+import ZangetsuLoader from '@/src/shared/ui/loader/ZangetsuLoader';
 
 export default function LoadingPreview() {
     return (
