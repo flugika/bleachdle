@@ -25,8 +25,6 @@ export async function getDailySong(): Promise<{ song: BleachSong; segmentId: str
     const allSegments = getAllSongSegments();
     const isValidSegment = allSegments.some(s => s.id === data.song_segment_id);
 
-    console.log(data.song_id, data.song_segment_id)
-
     if (!parentSong || !isValidSegment) {
         console.error('[getDailySong] Integrity mismatch: Song or Segment not found in local data');
         return null;

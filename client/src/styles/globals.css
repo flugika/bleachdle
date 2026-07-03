@@ -1112,3 +1112,75 @@ button *:active,
 .animate-reiatsu-shake {
   animation: tybwShake 0.4s cubic-bezier(.36, .07, .19, .97) both;
 }
+
+/* src/features/support/support-effects.css
+   Scoped to the /support page only, so it won't collide with class names or
+   keyframes already defined in globals.css. Imported directly into
+   SupportPageClient.tsx (Next.js supports plain CSS imports in client
+   components). */
+
+@keyframes kido-seal-spin {
+  from {
+    transform: rotate(0deg);
+  }
+
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes kido-seal-spin-rev {
+  from {
+    transform: rotate(360deg);
+  }
+
+  to {
+    transform: rotate(0deg);
+  }
+}
+
+@keyframes kido-seal-pulse {
+
+  0%,
+  100% {
+    opacity: 0.35;
+    transform: scale(1);
+  }
+
+  50% {
+    opacity: 0.75;
+    transform: scale(1.04);
+  }
+}
+
+@keyframes kido-drift-up {
+  0% {
+    transform: translateY(6px);
+    opacity: 0;
+  }
+
+  15% {
+    opacity: 0.6;
+  }
+
+  100% {
+    transform: translateY(-90px);
+    opacity: 0;
+  }
+}
+
+.kido-ring-outer {
+  animation: kido-seal-spin 22s linear infinite;
+}
+
+.kido-ring-inner {
+  animation: kido-seal-spin-rev 16s linear infinite;
+}
+
+.kido-ring-glow {
+  animation: kido-seal-pulse 3.4s ease-in-out infinite;
+}
+
+.kido-mote {
+  animation: kido-drift-up 4.5s ease-in infinite;
+}

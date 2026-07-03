@@ -2,7 +2,7 @@
 
 > A Wordle-style character guessing game for Bleach fans — unlimited mode, attribute-based feedback, Soul Society aesthetic.
 
-Lastest Updated: 29 June 2026, 9:30 PM.
+Lastest Updated: 4 July 2026, 2:28 AM.
 
 [![Next.js](https://img.shields.io/badge/Next.js-15-black?logo=next.js)](https://nextjs.org/)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5-blue?logo=typescript)](https://www.typescriptlang.org/)
@@ -200,22 +200,33 @@ bleachdle
 │  │  │  ├─ daily
 │  │  │  │  ├─ character
 │  │  │  │  │  └─ page.tsx
-│  │  │  │  └─ page.tsx
+│  │  │  │  ├─ page.tsx
+│  │  │  │  └─ song
+│  │  │  │     └─ page.tsx
 │  │  │  └─ unlimited
 │  │  │     ├─ character
 │  │  │     │  └─ page.tsx
-│  │  │     └─ page.tsx
+│  │  │     ├─ page.tsx
+│  │  │     └─ song
+│  │  │        ├─ mockup
+│  │  │        │  └─ page.tsx
+│  │  │        └─ page.tsx
 │  │  ├─ (home)
 │  │  │  └─ page.tsx
 │  │  ├─ api
-│  │  │  └─ stats
-│  │  │     └─ finalize
-│  │  │        └─ route.ts
+│  │  │  ├─ stats
+│  │  │  │  └─ finalize
+│  │  │  │     └─ route.ts
+│  │  │  └─ support
+│  │  │     └─ route.ts
 │  │  ├─ favicon.ico
 │  │  ├─ layout.tsx
 │  │  ├─ loading
 │  │  │  └─ page.tsx
-│  │  └─ not-found.tsx
+│  │  ├─ loading.tsx
+│  │  ├─ not-found.tsx
+│  │  └─ support
+│  │     └─ page.tsx
 │  ├─ CLAUDE.md
 │  ├─ eslint.config.mjs
 │  ├─ next.config.ts
@@ -226,9 +237,15 @@ bleachdle
 │  ├─ postcss.config.mjs
 │  ├─ public
 │  │  ├─ assets
+│  │  │  ├─ audio
+│  │  │  │  └─ songs
+│  │  │  │     ├─ 1106_tybw.mp3
+│  │  │  │     ├─ after_dark.mp3
+│  │  │  │     ├─ alones.mp3
+│  │  │  │     └─ ...
 │  │  │  ├─ bg_wallpaper_1.jpg
-│  │  │  ├─ bg_wallpaper_2.jpg
-│  │  │  ├─ bg_wallpaper_3.jpg
+│  │  │  ├─ bg_wallpaper_10.jpg
+│  │  │  ├─ bg_wallpaper_11.jpg
 │  │  │  ├─ ...
 │  │  │  ├─ bleachdle-avatar.psd
 │  │  │  ├─ characters
@@ -246,11 +263,11 @@ bleachdle
 │  │  │  │  ├─ soul.webp
 │  │  │  │  ├─ visored.webp
 │  │  │  │  └─ Xcution.webp
+│  │  │  ├─ promptpay-qr.webp
 │  │  │  └─ tensazangetsu.png
 │  │  ├─ file.svg
 │  │  ├─ globe.svg
 │  │  ├─ next.svg
-│  │  ├─ tensa_zangetsu_manji_v3.html
 │  │  ├─ vercel.svg
 │  │  └─ window.svg
 │  ├─ README.md
@@ -258,6 +275,8 @@ bleachdle
 │  │  ├─ config
 │  │  │  └─ feature.flags.ts
 │  │  ├─ const
+│  │  │  ├─ guess.ts
+│  │  │  ├─ localStorage.ts
 │  │  │  └─ summary.ts
 │  │  ├─ data
 │  │  │  ├─ characters.json
@@ -274,6 +293,7 @@ bleachdle
 │  │  │  ├─ image
 │  │  │  ├─ quote
 │  │  │  └─ song
+│  │  │     └─ schema.ts
 │  │  ├─ features
 │  │  │  ├─ character
 │  │  │  │  ├─ components
@@ -281,10 +301,10 @@ bleachdle
 │  │  │  │  │  │  └─ DailyCharacterWrapper.tsx
 │  │  │  │  │  ├─ shared
 │  │  │  │  │  │  ├─ GuessTable.tsx
-│  │  │  │  │  │  └─ HowToPlayModal.tsx
+│  │  │  │  │  │  ├─ HowToPlayModal.tsx
+│  │  │  │  │  │  └─ SummaryGuess.tsx
 │  │  │  │  │  └─ unlimited
-│  │  │  │  │     ├─ Central46ConfidentialArchive.tsx
-│  │  │  │  │     └─ SummaryGuess.tsx
+│  │  │  │  │     └─ Central46ConfidentialArchive.tsx
 │  │  │  │  ├─ hooks
 │  │  │  │  │  ├─ daily
 │  │  │  │  │  │  └─ useCharacterGame.ts
@@ -297,22 +317,51 @@ bleachdle
 │  │  │  ├─ image
 │  │  │  ├─ quote
 │  │  │  ├─ song
+│  │  │  │  ├─ components
+│  │  │  │  │  ├─ daily
+│  │  │  │  │  │  └─ DailySongWrapper.tsx
+│  │  │  │  │  └─ shared
+│  │  │  │  │     ├─ SongAudioPlayer.tsx
+│  │  │  │  │     ├─ SongGuessTable.tsx
+│  │  │  │  │     ├─ SongHowToPlayModal.tsx
+│  │  │  │  │     ├─ SongSearchBar.tsx
+│  │  │  │  │     └─ SongSummaryGuess.tsx
+│  │  │  │  ├─ constants.ts
+│  │  │  │  ├─ hooks
+│  │  │  │  │  ├─ daily
+│  │  │  │  │  │  └─ useSongGame.ts
+│  │  │  │  │  └─ unlimited
+│  │  │  │  │     └─ useSongGame.ts
+│  │  │  │  └─ types.ts
+│  │  │  ├─ support
+│  │  │  │  ├─ KidoSeal.tsx
+│  │  │  │  ├─ PromptPayCard.tsx
+│  │  │  │  ├─ SupportForm.tsx
+│  │  │  │  └─ SupportPageClient.tsx
 │  │  │  └─ unlimited
 │  │  ├─ lib
 │  │  │  ├─ game-engine
-│  │  │  │  └─ compare.ts
+│  │  │  │  ├─ compare.ts
+│  │  │  │  └─ compareSong.ts
 │  │  │  ├─ search
 │  │  │  │  └─ fuzzy.ts
 │  │  │  ├─ supabase
 │  │  │  │  ├─ migrations
+│  │  │  │  │  ├─ 0001_support_tickets.sql
 │  │  │  │  │  ├─ 01_table.sql
-│  │  │  │  │  ├─ 02_function.sql
-│  │  │  │  │  └─ 03_cronjob.sql
+│  │  │  │  │  ├─ 02_type.sql
+│  │  │  │  │  ├─ 03_function.sql
+│  │  │  │  │  └─ 04_cronjob.sql
 │  │  │  │  ├─ seeds
-│  │  │  │  │  └─ daily
-│  │  │  │  │     └─ seed-characters.js
+│  │  │  │  │  ├─ daily
+│  │  │  │  │  │  ├─ seed-characters.js
+│  │  │  │  │  │  └─ seed-songs.js
+│  │  │  │  │  └─ trigger-schedule.js
 │  │  │  │  └─ supabase.ts
+│  │  │  ├─ support
+│  │  │  │  └─ rateLimitCookie.ts
 │  │  │  ├─ utils
+│  │  │  │  ├─ absolutePathEntities.ts
 │  │  │  │  ├─ character.ts
 │  │  │  │  ├─ checking.ts
 │  │  │  │  ├─ daily.ts
@@ -322,14 +371,17 @@ bleachdle
 │  │  │  │  │  ├─ extract-character-meta.js
 │  │  │  │  │  ├─ extract-character.js
 │  │  │  │  │  └─ generate-wallpapers.js
+│  │  │  │  ├─ song.ts
+│  │  │  │  ├─ songSegment.ts
 │  │  │  │  └─ ui.ts
 │  │  │  └─ uuid.ts
 │  │  ├─ services
 │  │  │  ├─ character.ts
-│  │  │  ├─ statsClient.ts
-│  │  │  └─ trigger-schedule.js
+│  │  │  ├─ song.ts
+│  │  │  └─ statsClient.ts
 │  │  ├─ shared
 │  │  │  ├─ hooks
+│  │  │  │  ├─ useCooldown.ts
 │  │  │  │  ├─ useCountdown.ts
 │  │  │  │  ├─ useDailyWallpaper.ts
 │  │  │  │  ├─ useTestWallpaper.ts
@@ -342,13 +394,20 @@ bleachdle
 │  │  │  └─ ui
 │  │  │     ├─ BleachReiatsuCursor.tsx
 │  │  │     ├─ button.tsx
+│  │  │     ├─ context
+│  │  │     │  └─ NavigationContext.tsx
+│  │  │     ├─ controlPanel
+│  │  │     │  ├─ GameControlPanel.tsx
+│  │  │     │  └─ SongControlPanel.tsx
 │  │  │     ├─ DailyResetTimer.tsx
-│  │  │     ├─ GameControlPanel.tsx
 │  │  │     ├─ input.tsx
 │  │  │     ├─ loader
+│  │  │     │  ├─ SenkaimonTransition.tsx
+│  │  │     │  ├─ SoulSyncLoader.tsx
 │  │  │     │  └─ ZangetsuLoader.tsx
 │  │  │     ├─ modal.tsx
 │  │  │     ├─ ModeBadge.tsx
+│  │  │     ├─ ModeSelectorModal.tsx
 │  │  │     ├─ Sealed.tsx
 │  │  │     ├─ SearchBar.tsx
 │  │  │     ├─ test.tsx
