@@ -19,6 +19,7 @@ import { ModeSelectorModal } from '@/src/shared/ui/ModeSelectorModal';
 import { useSenkaimon } from '@/src/shared/ui/context/NavigationContext';
 import { MAX_SONG_GUESSES } from '@/src/const/guess';
 import SoulSyncLoader from '@/src/shared/ui/loader/SoulSyncLoader'
+import { STORAGE_KEYS } from '@/src/const/localStorage';
 
 export default function UnlimitedSongGame() {
     // 🛡️ TODO: เพิ่ม key `song: { daily: boolean; unlimited: boolean }` ใน feature.flags.ts
@@ -99,7 +100,7 @@ export default function UnlimitedSongGame() {
 
     // ── 🛡️ จัดการโครงสร้างสถิติแบบ Object Nesting (เหมือน character เป๊ะ)
     const updateStats = (won: boolean) => {
-        const statsData = JSON.parse(localStorage.getItem('bleachdle-song-stats') || '{}');
+        const statsData = JSON.parse(localStorage.getItem(STORAGE_KEYS.SONG_STATS) || '{}');
         const saved = statsData.unlimited || { currentStreak: 0, maxStreak: 0 };
 
         const newStats = {
@@ -108,7 +109,7 @@ export default function UnlimitedSongGame() {
         };
 
         statsData.unlimited = newStats;
-        localStorage.setItem('bleachdle-song-stats', JSON.stringify(statsData));
+        localStorage.setItem(STORAGE_KEYS.SONG_STATS, JSON.stringify(statsData));
         setStats(newStats);
     };
 
@@ -116,14 +117,14 @@ export default function UnlimitedSongGame() {
     useEffect(() => {
         if (!_hasHydrated) return;
 
-        const statsData = JSON.parse(localStorage.getItem('bleachdle-song-stats') || '{}');
+        const statsData = JSON.parse(localStorage.getItem(STORAGE_KEYS.SONG_STATS) || '{}');
         setStats(statsData.unlimited || { currentStreak: 0, maxStreak: 0 });
 
-        const completedData = JSON.parse(localStorage.getItem('bleachdle-song-completed') || '{}');
+        const completedData = JSON.parse(localStorage.getItem(STORAGE_KEYS.SONG_COMPLETED) || '{}');
         const completed = completedData.unlimited || [];
         setIsGameCompleted(songs.length > 0 && completed.length >= songs.length);
 
-        const registryData = JSON.parse(localStorage.getItem('bleachdle-song-registry') || '{}');
+        const registryData = JSON.parse(localStorage.getItem(STORAGE_KEYS.SONG_REGISTRY) || '{}');
         const registry = registryData.unlimited || { name: "", count: 0 };
         if (registry.name) {
             setSoulName(registry.name);
@@ -143,7 +144,7 @@ export default function UnlimitedSongGame() {
 
     useEffect(() => {
         if (isReady) {
-            const completedData = JSON.parse(localStorage.getItem('bleachdle-song-completed') || '{}');
+            const completedData = JSON.parse(localStorage.getItem(STORAGE_KEYS.SONG_COMPLETED) || '{}');
             const completed = completedData.unlimited || [];
             setIsGameCompleted(songs.length > 0 && completed.length >= songs.length);
         }
@@ -161,30 +162,30 @@ export default function UnlimitedSongGame() {
         e.preventDefault();
         if (!inputName.trim()) return;
 
-        const registryData = JSON.parse(localStorage.getItem('bleachdle-song-registry') || '{}');
+        const registryData = JSON.parse(localStorage.getItem(STORAGE_KEYS.SONG_REGISTRY) || '{}');
         const currentRegistry = registryData.unlimited || { name: "", count: 0 };
         const updated = { ...currentRegistry, name: inputName.trim() };
 
         registryData.unlimited = updated;
-        localStorage.setItem('bleachdle-song-registry', JSON.stringify(registryData));
+        localStorage.setItem(STORAGE_KEYS.SONG_REGISTRY, JSON.stringify(registryData));
         setSoulName(inputName.trim());
     };
 
     // ── 🛡️ คอมโบ Reset ข้อมูลโดยการเจาะทำลายเฉพาะกิ่งก้านของโหมด song/unlimited เท่านั้น
     const handleHardReset = () => {
-        const statsData = JSON.parse(localStorage.getItem('bleachdle-song-stats') || '{}');
+        const statsData = JSON.parse(localStorage.getItem(STORAGE_KEYS.SONG_STATS) || '{}');
         const saved = statsData.unlimited || { currentStreak: 0, maxStreak: 0 };
         statsData.unlimited = { currentStreak: 0, maxStreak: saved.maxStreak };
-        localStorage.setItem('bleachdle-song-stats', JSON.stringify(statsData));
+        localStorage.setItem(STORAGE_KEYS.SONG_STATS, JSON.stringify(statsData));
         setStats(statsData.unlimited);
 
-        const registryData = JSON.parse(localStorage.getItem('bleachdle-song-registry') || '{}');
+        const registryData = JSON.parse(localStorage.getItem(STORAGE_KEYS.SONG_REGISTRY) || '{}');
         const currentRegistry = registryData.unlimited || { name: "", count: 0 };
         registryData.unlimited = {
             ...currentRegistry,
             count: (currentRegistry.count || 0) + 1
         };
-        localStorage.setItem('bleachdle-song-registry', JSON.stringify(registryData));
+        localStorage.setItem(STORAGE_KEYS.SONG_REGISTRY, JSON.stringify(registryData));
         setReincarnationCount(registryData.unlimited.count);
 
         hardReset();

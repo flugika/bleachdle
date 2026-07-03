@@ -4,12 +4,12 @@
 import { useState, useMemo, useRef, useEffect } from 'react';
 import { createSearchEngine } from '@/src/lib/search/fuzzy';
 import { BleachSong } from '@/src/entities/song/schema';
-import { SongGameController } from '@/src/features/song/types';
+import { SongGuessable } from '@/src/features/song/types';
 
 interface SongSearchBarProps {
     songs: BleachSong[];
     disabled?: boolean;
-    game: SongGameController;
+    game: SongGuessable;
 }
 
 export const SongSearchBar = ({ songs, disabled = false, game }: SongSearchBarProps) => {

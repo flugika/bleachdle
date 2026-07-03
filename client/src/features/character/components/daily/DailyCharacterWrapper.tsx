@@ -18,6 +18,7 @@ import { usePathname, useRouter } from 'next/navigation';
 import { ModeSelectorModal } from '@/src/shared/ui/ModeSelectorModal';
 import { useSenkaimon } from '@/src/shared/ui/context/NavigationContext';
 import SoulSyncLoader from '@/src/shared/ui/loader/SoulSyncLoader'
+import { STORAGE_KEYS } from '@/src/const/localStorage';
 
 export default function DailyCharacterWrapper({ initialTarget }: { initialTarget: Character | null }) {
     if (!FEATURE_FLAGS.daily.character) {
@@ -76,7 +77,7 @@ export default function DailyCharacterWrapper({ initialTarget }: { initialTarget
 
     // ── 🛡️ จัดการโครงสร้างสถิติแบบ Object Nesting
     const updateStats = (won: boolean) => {
-        const statsData = JSON.parse(localStorage.getItem('bleachdle-character-stats') || '{}');
+        const statsData = JSON.parse(localStorage.getItem(STORAGE_KEYS.CHARACTER_STATS) || '{}');
         const saved = statsData.daily || { currentStreak: 0, maxStreak: 0 };
 
         const newStats = {
@@ -85,7 +86,7 @@ export default function DailyCharacterWrapper({ initialTarget }: { initialTarget
         };
 
         statsData.daily = newStats;
-        localStorage.setItem('bleachdle-character-stats', JSON.stringify(statsData));
+        localStorage.setItem(STORAGE_KEYS.CHARACTER_STATS, JSON.stringify(statsData));
         setStats(newStats);
     };
 
@@ -101,7 +102,7 @@ export default function DailyCharacterWrapper({ initialTarget }: { initialTarget
     // โหลดและซิงค์ข้อมูลฝั่ง Client จากคีย์หลักแบบไม่มีจุดทศนิยมต่อท้าย
     useEffect(() => {
         if (!_hasHydrated) return;
-        const statsData = JSON.parse(localStorage.getItem('bleachdle-character-stats') || '{}');
+        const statsData = JSON.parse(localStorage.getItem(STORAGE_KEYS.CHARACTER_STATS) || '{}');
         setStats(statsData.daily || { currentStreak: 0, maxStreak: 0 });
 
         initializeGame();

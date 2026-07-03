@@ -1,0 +1,150 @@
+// src/features/song/hooks/daily/useSongGame.ts
+import { create } from 'zustand';
+import { persist, createJSONStorage } from 'zustand/middleware';
+import { BleachSong } from '@/src/entities/song/schema';
+import { getSongGuessStatus } from '@/src/lib/game-engine/compareSong';
+import { getSongById } from '@/src/lib/utils/song';
+import { recordDailyStat } from '@/src/services/statsClient';
+// 👇 ใช้ type กลางจาก types.ts แทนการประกาศ interface ซ้ำในไฟล์นี้ — กัน definition
+// สองที่ drift ออกจากกันในอนาคต (เช่นถ้ามีคนแก้ shape ใน types.ts แต่ลืมแก้ที่นี่)
+import { SongGuessEntry, DailySongGameState } from '@/src/features/song/types';
+import { STORAGE_KEYS } from '@/src/const/localStorage';
+
+// 🛡️ Type guard ตรวจสอบว่า guess entry ตรง schema ปัจจุบันจริง กัน corrupted/legacy data
+// (ก็อปมาจาก useSongGame.ts ฝั่ง unlimited เป๊ะ — daily เจอ path เดียวกันได้เหมือนกัน)
+function isValidGuessEntry(entry: unknown): entry is SongGuessEntry {
+    return (
+        typeof entry === 'object' &&
+        entry !== null &&
+        'status' in entry &&
+        (entry as SongGuessEntry).status !== undefined &&
+        ((entry as SongGuessEntry).status === 'correct' || (entry as SongGuessEntry).status === 'wrong') &&
+        'guess' in entry &&
+        typeof (entry as SongGuessEntry).guess === 'object'
+    );
+}
+
+export const useSongGame = create<DailySongGameState>()(
+    persist(
+        (set, get) => ({
+            target: null,
+            targetSegmentId: null,
+            guesses: [],
+            hasFinalized: false,
+            _hasHydrated: false,
+            setHasHydrated: (state) => set({ _hasHydrated: state }),
+
+            setTarget: (target) => set({ target }),
+
+            // 🎵 ไม่มี max guess ในโหมด daily (ต่างจาก unlimited ที่ cap ด้วย MAX_SONG_GUESSES)
+            // ทายได้ไม่จำกัดจนกว่าจะถูก หรือกดยอมแพ้ — ปุ่มยอมแพ้คุมจาก UI (isSurrendered ใน
+            // wrapper component) ไม่ใช่จาก store ตรงนี้ ยังคงกันเดาเพลงซ้ำไว้เหมือนเดิม
+            addGuess: (songId: string) => set((state) => {
+                if (!state.target) return state;
+
+                const guessedSong = getSongById(songId);
+                if (!guessedSong) return state;
+
+                const alreadyGuessed = state.guesses.some(g => g.guess.id === guessedSong.id);
+                if (alreadyGuessed) return state;
+
+                const status = getSongGuessStatus(guessedSong, state.target);
+                const newEntry: SongGuessEntry = { guess: guessedSong, status, isNew: true };
+                const prevGuesses = state.guesses.map(g => ({ ...g, isNew: false }));
+
+                return { guesses: [newEntry, ...prevGuesses] };
+            }),
+
+            // 🛡️ pattern เดียวกับ useCharacterGame.ts (daily) เป๊ะ: set เฉพาะตอน target
+            // เปลี่ยนจริง (id ไม่ตรงของเดิม) กัน re-render เปล่าตอน effect ยิงซ้ำ (เช่น
+            // StrictMode double-invoke ตอน dev) และกัน progress ของวันนี้โดนรีเซ็ตทับ
+            // ถ้า initialTarget จาก server เป็น object คนละ reference แต่ id เดียวกัน
+            initializeGame: (target, segmentId) => { 
+                if (!target || !segmentId) return;
+
+                const currentSegmentId = get().targetSegmentId;
+
+                // เช็คว่าถ้าเป็นควิซเดิมของวันนี้ จะได้ไม่โดนรีเซ็ต
+                if (currentSegmentId === segmentId) {
+                    return; 
+                }
+
+                set({ target, targetSegmentId: segmentId, guesses: [], hasFinalized: false });
+            },
+
+            finalizeGame: (isWin) => {
+                const { target, hasFinalized, guesses } = get();
+                if (!target || hasFinalized) return;
+
+                const completedData = JSON.parse(
+                    localStorage.getItem(STORAGE_KEYS.SONG_COMPLETED) || '{}'
+                );
+
+                if (isWin) {
+                    const currentDaily = completedData.daily || [];
+                    completedData.daily = [...new Set([...currentDaily, target.id])];
+                } else {
+                    completedData.daily = [];
+                }
+
+                localStorage.setItem(
+                    STORAGE_KEYS.SONG_COMPLETED,
+                    JSON.stringify(completedData)
+                );
+
+                set({ hasFinalized: true });
+
+                recordDailyStat('song', isWin, guesses.length).catch(() => { });
+            },
+
+            resetGame: () => {
+                set({ target: null, guesses: [], hasFinalized: false });
+            },
+        }),
+        {
+            name: 'daily',
+            // 🗄️ เก็บใน key ของตัวเอง STORAGE_KEYS.SONG_PROGRESS นamespace 'daily' แยกจาก
+            // 'unlimited' ที่อยู่ในไฟล์เดียวกัน (โครงสร้างเดียวกับ character-progress เป๊ะ)
+            storage: createJSONStorage(() => ({
+                getItem: (name) => {
+                    const data = JSON.parse(localStorage.getItem(STORAGE_KEYS.SONG_PROGRESS) || '{}');
+                    return data[name] ? JSON.stringify(data[name]) : null;
+                },
+                setItem: (name, value) => {
+                    const data = JSON.parse(localStorage.getItem(STORAGE_KEYS.SONG_PROGRESS) || '{}');
+                    data[name] = JSON.parse(value);
+                    localStorage.setItem(STORAGE_KEYS.SONG_PROGRESS, JSON.stringify(data));
+                },
+                removeItem: (name) => {
+                    const data = JSON.parse(localStorage.getItem(STORAGE_KEYS.SONG_PROGRESS) || '{}');
+                    delete data[name];
+                    localStorage.setItem(STORAGE_KEYS.SONG_PROGRESS, JSON.stringify(data));
+                }
+            })),
+            // isNew เป็น ephemeral UI flag เท่านั้น ไม่ควรมีค่าจริงข้าม session — force false เสมอ
+            // ตอน persist กัน "ทายสดๆ" false-positive หลัง F5 (เหมือน unlimited เป๊ะ)
+            partialize: (state) => ({
+                guesses: state.guesses.map(({ guess, status }) => ({ guess, status, isNew: false })),
+                target: state.target,
+                targetSegmentId: state.targetSegmentId,
+                hasFinalized: state.hasFinalized,
+            }),
+            onRehydrateStorage: () => (state) => {
+                if (state) {
+                    // 🛡️ ตรวจ guesses ทุกตัว ถ้าเจอ shape ไม่ตรง schema ปัจจุบัน (legacy/corrupted)
+                    // ให้ล้างทิ้งทั้งรอบแทนที่จะปล่อยให้ isWin คำนวณผิดแบบเงียบๆ
+                    const hasCorruptedData = !Array.isArray(state.guesses) ||
+                        state.guesses.some(g => !isValidGuessEntry(g));
+
+                    if (hasCorruptedData) {
+                        state.guesses = [];
+                        state.target = null;
+                        state.hasFinalized = false;
+                    }
+
+                    state.setHasHydrated(true);
+                }
+            },
+        }
+    )
+);

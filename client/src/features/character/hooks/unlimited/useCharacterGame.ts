@@ -6,6 +6,7 @@ import { ComparisonOutcome } from '@/src/features/character/types';
 import { getCharacterById, getCharacters } from '@/src/lib/utils/character';
 import { persist, createJSONStorage } from 'zustand/middleware';
 import { MAX_CHARACTER_GUESSES } from '@/src/const/guess';
+import { STORAGE_KEYS } from '@/src/const/localStorage'
 
 interface GuessEntry {
     guess: Character;
@@ -69,7 +70,7 @@ export const useCharacterGame = create<CharacterGameState>()(
 
                 const allCharacters = getCharacters();
 
-                const completedData = JSON.parse(localStorage.getItem('bleachdle-character-completed') || '{}');
+                const completedData = JSON.parse(localStorage.getItem(STORAGE_KEYS.CHARACTER_COMPLETED) || '{}');
                 const completedIds = completedData.unlimited || [];
 
                 const remainingCharacters = allCharacters.filter(c => !completedIds.includes(c.id));
@@ -92,7 +93,7 @@ export const useCharacterGame = create<CharacterGameState>()(
                 }
 
                 const completedData = JSON.parse(
-                    localStorage.getItem("bleachdle-character-completed") || "{}"
+                    localStorage.getItem(STORAGE_KEYS.CHARACTER_COMPLETED) || "{}"
                 );
 
                 if (isWin) {
@@ -105,7 +106,7 @@ export const useCharacterGame = create<CharacterGameState>()(
                 }
 
                 localStorage.setItem(
-                    "bleachdle-character-completed",
+                    STORAGE_KEYS.CHARACTER_COMPLETED,
                     JSON.stringify(completedData)
                 );
 
@@ -117,13 +118,13 @@ export const useCharacterGame = create<CharacterGameState>()(
                 set({ target: null, guesses: [], hasFinalized: false });
             },
             hardReset: () => {
-                const progressData = JSON.parse(localStorage.getItem('bleachdle-character-progress') || '{}');
+                const progressData = JSON.parse(localStorage.getItem(STORAGE_KEYS.CHARACTER_PROGRESS) || '{}');
                 delete progressData.unlimited;
-                localStorage.setItem('bleachdle-character-progress', JSON.stringify(progressData));
+                localStorage.setItem(STORAGE_KEYS.CHARACTER_PROGRESS, JSON.stringify(progressData));
 
-                const completedData = JSON.parse(localStorage.getItem('bleachdle-character-completed') || '{}');
+                const completedData = JSON.parse(localStorage.getItem(STORAGE_KEYS.CHARACTER_COMPLETED) || '{}');
                 completedData.unlimited = [];
-                localStorage.setItem('bleachdle-character-completed', JSON.stringify(completedData));
+                localStorage.setItem(STORAGE_KEYS.CHARACTER_COMPLETED, JSON.stringify(completedData));
 
                 set({ target: null, guesses: [], hasFinalized: false });
 
@@ -136,18 +137,18 @@ export const useCharacterGame = create<CharacterGameState>()(
             name: 'unlimited',
             storage: createJSONStorage(() => ({
                 getItem: (name) => {
-                    const data = JSON.parse(localStorage.getItem('bleachdle-character-progress') || '{}');
+                    const data = JSON.parse(localStorage.getItem(STORAGE_KEYS.CHARACTER_PROGRESS) || '{}');
                     return data[name] ? JSON.stringify(data[name]) : null;
                 },
                 setItem: (name, value) => {
-                    const data = JSON.parse(localStorage.getItem('bleachdle-character-progress') || '{}');
+                    const data = JSON.parse(localStorage.getItem(STORAGE_KEYS.CHARACTER_PROGRESS) || '{}');
                     data[name] = JSON.parse(value);
-                    localStorage.setItem('bleachdle-character-progress', JSON.stringify(data));
+                    localStorage.setItem(STORAGE_KEYS.CHARACTER_PROGRESS, JSON.stringify(data));
                 },
                 removeItem: (name) => {
-                    const data = JSON.parse(localStorage.getItem('bleachdle-character-progress') || '{}');
+                    const data = JSON.parse(localStorage.getItem(STORAGE_KEYS.CHARACTER_PROGRESS) || '{}');
                     delete data[name];
-                    localStorage.setItem('bleachdle-character-progress', JSON.stringify(data));
+                    localStorage.setItem(STORAGE_KEYS.CHARACTER_PROGRESS, JSON.stringify(data));
                 }
             })),
             partialize: (state) => ({

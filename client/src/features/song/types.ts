@@ -20,6 +20,7 @@ export interface SongGuessEntry {
  */
 export interface SongGameController {
     target: BleachSong | null;
+    targetSegmentId: string | null;
     guesses: SongGuessEntry[];
     addGuess: (songId: string) => void;
     setTarget: (target: BleachSong) => void;
@@ -31,3 +32,19 @@ export interface SongGameController {
     _hasHydrated: boolean;
     setHasHydrated: (state: boolean) => void;
 }
+
+export interface DailySongGameState {
+    target: BleachSong | null;
+    targetSegmentId: string | null;
+    guesses: SongGuessEntry[];
+    addGuess: (songId: string) => void;
+    setTarget: (target: BleachSong) => void;
+    initializeGame: (target?: BleachSong, segmentId?: string) => void;
+    finalizeGame: (isWin: boolean) => void;
+    resetGame: () => void;
+    hasFinalized: boolean;
+    _hasHydrated: boolean;
+    setHasHydrated: (state: boolean) => void;
+}
+
+export type SongGuessable = Pick<SongGameController, 'addGuess' | 'guesses'>;

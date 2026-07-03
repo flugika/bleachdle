@@ -32,3 +32,15 @@ export const getSongById = (id: string): BleachSong | undefined => {
     if (!song) return undefined;
     return SongSchema.parse(song);
 };
+
+export const getAllSongSegments = () => {
+    const allSongs = getSongs();
+    
+    // ใช้ flatMap แผ่ array ของ segments ออกมา และยัด song_id กลับเข้าไป
+    return allSongs.flatMap(song => 
+        song.segments.map(segment => ({
+            ...segment,
+            song_id: song.id
+        }))
+    );
+};

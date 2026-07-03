@@ -1,9 +1,9 @@
 // src/shared/ui/SongControlPanel.tsx
 import { useState } from 'react';
 import { SongSearchBar } from '@/src/features/song/components/shared/SongSearchBar';
-import { SongAudioPlayer } from '@/src/shared/ui/SongAudioPlayer';
+import { SongAudioPlayer } from '@/src/features/song/components/shared/SongAudioPlayer';
 import { BleachSong } from '@/src/entities/song/schema';
-import { SongGameController } from '@/src/features/song/types';
+import { SongGuessable } from '@/src/features/song/types';
 import { Modal } from '../modal';
 
 interface SongControlPanelProps {
@@ -13,7 +13,7 @@ interface SongControlPanelProps {
     remainingGuesses?: number;
     stats: { currentStreak: number; maxStreak: number };
     timeLeft?: string; // ใส่เฉพาะโหมด daily
-    game: SongGameController;
+    game: SongGuessable;
     disabled?: boolean;
     maxGuesses?: number;
     isGameOver?: boolean;

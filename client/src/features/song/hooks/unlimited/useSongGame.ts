@@ -2,9 +2,10 @@
 import { create } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware';
 import { getSongGuessStatus } from '@/src/lib/game-engine/compareSong';
-import { getSongById, getSongs } from '@/src/lib/utils/song';
+import { getAllSongSegments, getSongById, getSongs } from '@/src/lib/utils/song';
 import { SongGameController, SongGuessEntry } from '@/src/features/song/types';
 import { MAX_SONG_GUESSES } from '@/src/const/guess';
+import { STORAGE_KEYS } from '@/src/const/localStorage';
 
 // 🛡️ Type guard ตรวจสอบว่า guess entry ตรง schema ปัจจุบันจริง กัน corrupted/legacy data
 function isValidGuessEntry(entry: unknown): entry is SongGuessEntry {
@@ -23,6 +24,7 @@ export const useSongGame = create<SongGameController>()(
     persist(
         (set, get) => ({
             target: null,
+            targetSegmentId: null,
             guesses: [],
             hasFinalized: false,
             _hasHydrated: false,
@@ -57,39 +59,48 @@ export const useSongGame = create<SongGameController>()(
                 if (!_hasHydrated) return;
                 if (!force && target) return;
 
-                const allSongs = getSongs();
+                // 🧠 1. ดึงเซกเมนต์ทั้งหมดมาแทน (สมมติว่าคุณมีฟังก์ชันนี้)
+                const allSegments = getAllSongSegments();
 
-                const completedData = JSON.parse(localStorage.getItem('bleachdle-song-completed') || '{}');
-                const completedIds: string[] = completedData.unlimited || [];
+                const completedData = JSON.parse(localStorage.getItem(STORAGE_KEYS.SONG_COMPLETED) || '{}');
+                // 🧠 2. ตอนนี้ completedIds คือ "ID ของเซกเมนต์" ที่เคยทายถูกแล้ว
+                const completedSegmentIds: string[] = completedData.unlimited || [];
 
-                const remainingSongs = allSongs.filter(s => !completedIds.includes(s.id));
+                const remainingSegments = allSegments.filter(s => !completedSegmentIds.includes(s.id));
 
-                if (remainingSongs.length === 0) {
-                    set({ target: null, guesses: [], hasFinalized: false });
+                if (remainingSegments.length === 0) {
+                    set({ target: null, targetSegmentId: null, guesses: [], hasFinalized: false });
                 } else {
-                    set({
-                        target: remainingSongs[Math.floor(Math.random() * remainingSongs.length)],
-                        guesses: [],
-                        hasFinalized: false
-                    });
+                    // 🧠 3. สุ่มเซกเมนต์ และหาเพลงแม่ของมัน
+                    const randomSegment = remainingSegments[Math.floor(Math.random() * remainingSegments.length)];
+                    const parentSong = getSongById(randomSegment.song_id);
+
+                    if (parentSong) {
+                        set({
+                            target: parentSong, // 👈 ตัวตรวจคำตอบ (UI) ยังใช้เพลงหลักเหมือนเดิม ไม่พังแน่นอน
+                            targetSegmentId: randomSegment.id, // 👈 เก็บ ID ควิซไว้
+                            guesses: [],
+                            hasFinalized: false
+                        });
+                    }
                 }
             },
 
             finalizeGame: (isWin) => {
-                const { target, hasFinalized } = get();
-                if (!target || hasFinalized) return;
+                const { target, targetSegmentId, hasFinalized } = get();
+                if (!target || !targetSegmentId || hasFinalized) return; // เช็ค targetSegmentId ด้วย
 
-                const completedData = JSON.parse(localStorage.getItem('bleachdle-song-completed') || '{}');
+                const completedData = JSON.parse(localStorage.getItem(STORAGE_KEYS.SONG_COMPLETED) || '{}');
 
                 if (isWin) {
                     const currentUnlimited: string[] = completedData.unlimited || [];
-                    completedData.unlimited = [...new Set([...currentUnlimited, target.id])];
+                    // 🧠 4. บันทึก ID เซกเมนต์ ว่าควิซข้อนี้ผ่านแล้ว (เพลงเดียวกันแต่คนละเซกเมนต์จะยังเล่นได้)
+                    completedData.unlimited = [...new Set([...currentUnlimited, targetSegmentId])];
                 } else {
-                    // ⚠️ แพ้ = เคลียร์ progress การเก็บครบชุดทิ้งทั้งหมด (เหมือน logic character เป๊ะ)
                     completedData.unlimited = [];
                 }
 
-                localStorage.setItem('bleachdle-song-completed', JSON.stringify(completedData));
+                localStorage.setItem(STORAGE_KEYS.SONG_COMPLETED, JSON.stringify(completedData));
                 set({ hasFinalized: true });
             },
 
@@ -98,13 +109,13 @@ export const useSongGame = create<SongGameController>()(
             },
 
             hardReset: () => {
-                const progressData = JSON.parse(localStorage.getItem('bleachdle-song-progress') || '{}');
+                const progressData = JSON.parse(localStorage.getItem(STORAGE_KEYS.SONG_PROGRESS) || '{}');
                 delete progressData.unlimited;
-                localStorage.setItem('bleachdle-song-progress', JSON.stringify(progressData));
+                localStorage.setItem(STORAGE_KEYS.SONG_PROGRESS, JSON.stringify(progressData));
 
-                const completedData = JSON.parse(localStorage.getItem('bleachdle-song-completed') || '{}');
+                const completedData = JSON.parse(localStorage.getItem(STORAGE_KEYS.SONG_COMPLETED) || '{}');
                 completedData.unlimited = [];
-                localStorage.setItem('bleachdle-song-completed', JSON.stringify(completedData));
+                localStorage.setItem(STORAGE_KEYS.SONG_COMPLETED, JSON.stringify(completedData));
 
                 set({ target: null, guesses: [], hasFinalized: false });
 
@@ -115,22 +126,22 @@ export const useSongGame = create<SongGameController>()(
         }),
         {
             name: 'unlimited',
-            // 🗄️ เก็บใน key ของตัวเอง 'bleachdle-song-progress' แยกจาก character โดยสิ้นเชิง
+            // 🗄️ เก็บใน key ของตัวเอง STORAGE_KEYS.SONG_PROGRESS แยกจาก character โดยสิ้นเชิง
             // แต่ยังคง nest 'unlimited' / (ต่อไป) 'daily' ไว้ข้างในแบบเดียวกับ character-progress
             storage: createJSONStorage(() => ({
                 getItem: (name) => {
-                    const data = JSON.parse(localStorage.getItem('bleachdle-song-progress') || '{}');
+                    const data = JSON.parse(localStorage.getItem(STORAGE_KEYS.SONG_PROGRESS) || '{}');
                     return data[name] ? JSON.stringify(data[name]) : null;
                 },
                 setItem: (name, value) => {
-                    const data = JSON.parse(localStorage.getItem('bleachdle-song-progress') || '{}');
+                    const data = JSON.parse(localStorage.getItem(STORAGE_KEYS.SONG_PROGRESS) || '{}');
                     data[name] = JSON.parse(value);
-                    localStorage.setItem('bleachdle-song-progress', JSON.stringify(data));
+                    localStorage.setItem(STORAGE_KEYS.SONG_PROGRESS, JSON.stringify(data));
                 },
                 removeItem: (name) => {
-                    const data = JSON.parse(localStorage.getItem('bleachdle-song-progress') || '{}');
+                    const data = JSON.parse(localStorage.getItem(STORAGE_KEYS.SONG_PROGRESS) || '{}');
                     delete data[name];
-                    localStorage.setItem('bleachdle-song-progress', JSON.stringify(data));
+                    localStorage.setItem(STORAGE_KEYS.SONG_PROGRESS, JSON.stringify(data));
                 }
             })),
             // ✅ ใหม่ — isNew เป็น ephemeral UI flag เท่านั้น ไม่ควรมีค่าจริงข้าม session
@@ -138,6 +149,7 @@ export const useSongGame = create<SongGameController>()(
             partialize: (state) => ({
                 guesses: state.guesses.map(({ guess, status }) => ({ guess, status, isNew: false })),
                 target: state.target,
+                targetSegmentId: state.targetSegmentId,
                 hasFinalized: state.hasFinalized,
             }),
             // 👇 หัวใจของ fix: บอก store ว่า rehydrate เสร็จแล้วจริงๆ (เหมือน character store)

@@ -82,6 +82,7 @@ CREATE TABLE daily_schedule (
     date DATE PRIMARY KEY,
     character_id TEXT REFERENCES characters(id) ON DELETE SET NULL,
     song_id TEXT REFERENCES songs(id) ON DELETE SET NULL,
+    song_segment_id TEXT REFERENCES song_segments(id) ON DELETE SET NULL,
     image_id TEXT REFERENCES images(id) ON DELETE SET NULL,
     release_id TEXT REFERENCES releases(id) ON DELETE SET NULL,
     emoji_id TEXT REFERENCES emojis(id) ON DELETE SET NULL,
