@@ -7,22 +7,37 @@ import React, { useEffect, useMemo, useState } from "react";
 //  GLYPH POOLS & DESIGN TOKENS
 // ─────────────────────────────────────────────
 
-const CENTRAL_GLYPHS = [
-    "❖", // Gotei 13 Division Badge Base (ตราหน่วยยมทูต)
-    "☸", // Wheel of Samsara (วัฏสงสาร)
-    "✟", // Quincy Holy Cross (กางเขนควินซี่)
-    "☠", // Hollow Mask / Death Silhouette (ฮอลโลว์)
-    "☯", // Konpaku Equilibrium (ความสมดุลแห่งวิญญาณ)
-    "☽", // Getsuga Crescent Moon (จันทร์เสี้ยวซันเกสึ)
-    "♛", // The Reio's Crown (บัลลังก์ราชาแห่งวิญญาณ)
-] as const;
+interface GlyphMetric {
+    x: string;
+    y: string;
+    scale?: number; // ใส่ ? เพื่อบอกว่า 'scale' จะมีหรือไม่มีก็ได้
+}
+
+const GLYPH_REGISTRY: Record<string, GlyphMetric> = {
+    "❖": { x: "0px", y: "2px" },
+    "☸": { x: "0px", y: "4px" },
+    "✟": { x: "0px", y: "2px" },
+    "☠": { x: "0px", y: "2px" },
+    "☯": { x: "0px", y: "3px" },
+    "☽": { x: "4px", y: "2px", scale: 1.05 },
+    "♛": { x: "0px", y: "2px" },
+    "❀": { x: "0px", y: "2px" },
+    "❁": { x: "0px", y: "2px" },
+    "➴": { x: "-2px", y: "2px" },
+    "✥": { x: "0px", y: "2px" },
+    "✬": { x: "0px", y: "0px" },
+    "☂": { x: "0px", y: "3px" },
+    "۞": { x: "0px", y: "6px", scale: 0.6 },
+};
 
 const REIATSU_PARTICLES = [
     "✦", "✧", "✵", "✹", "✺", // High-density Reiatsu flares
-    "◦", "◌", "☉"            // Dispersing Reishi Particles
+    "◦", "◌", "☉", "✣", "☀", "✰"            // Dispersing Reishi Particles
 ] as const;
 
-type GlyphType = (typeof CENTRAL_GLYPHS)[number];
+// Derived Types & Constants
+type GlyphType = keyof typeof GLYPH_REGISTRY;
+const CENTRAL_GLYPHS = Object.keys(GLYPH_REGISTRY) as GlyphType[];
 
 function pickRandom<T>(pool: readonly T[]): T {
     return pool[Math.floor(Math.random() * pool.length)];
@@ -34,18 +49,6 @@ const T = {
     muted: "#5a5a78",
     mutedDim: "#3f3f56",
 } as const;
-
-// 🎯 OPTICAL CALIBRATION MAP: ตารางจัดระเบียบแกนหมุนของอักขระพิเศษแต่ละตัว
-// อัปเดตค่าชดเชยใหม่ให้แม่นยำขึ้นสำหรับฟอนต์มาตรฐาน
-const GLYPH_METRICS: Record<GlyphType, { x: string; y: string; scale?: number }> = {
-    "❖": { x: "0px", y: "2px" },                  // สมมาตร
-    "☸": { x: "0px", y: "4px" },                  // สมมาตร
-    "✟": { x: "0px", y: "2px" },                 // ฐานกางเขนยาวมาก ต้องดึงขึ้นเยอะ
-    "☠": { x: "0px", y: "2px" },                 // กะโหลกมักชิดขอบล่าง ดึงขึ้นนิดนึง
-    "☯": { x: "0px", y: "3px" },                  // สมมาตร
-    "☽": { x: "4px", y: "2px", scale: 1.05 },    // น้ำหนักเทขวาชัดเจน ดึงกลับซ้าย
-    "♛": { x: "0px", y: "2px" },                 // มงกุฎฐานแบน ดึงลอยขึ้นให้ตรงจุดหมุน
-};
 
 export interface SoulSyncLoaderProps {
     label?: string;
@@ -63,10 +66,20 @@ export default function SoulSyncLoader({
     const [glyph, setGlyph] = useState<GlyphType>(CENTRAL_GLYPHS[0]);
     const [reducedMotion, setReducedMotion] = useState(false);
 
-    const particles = useMemo(
-        () => Array.from({ length: 8 }, () => pickRandom(REIATSU_PARTICLES)),
-        []
-    );
+    const [particles, setParticles] = useState<string[]>([]);
+
+    useEffect(() => {
+        // Randomize particles ONLY on the client
+        setParticles(
+            Array.from({ length: REIATSU_PARTICLES.length }, () => pickRandom(REIATSU_PARTICLES))
+        );
+
+        const mq = window.matchMedia("(prefers-reduced-motion: reduce)");
+        setReducedMotion(mq.matches);
+        const onChange = () => setReducedMotion(mq.matches);
+        mq.addEventListener("change", onChange);
+        return () => mq.removeEventListener("change", onChange);
+    }, []);
 
     useEffect(() => {
         const mq = window.matchMedia("(prefers-reduced-motion: reduce)");
@@ -84,7 +97,7 @@ export default function SoulSyncLoader({
         return () => clearInterval(id);
     }, [cycleMs, reducedMotion]);
 
-    const currentMetric = GLYPH_METRICS[glyph] || { x: "0px", y: "0px", scale: 1 };
+    const currentMetric = GLYPH_REGISTRY[glyph];
 
     return (
         <div
@@ -159,7 +172,7 @@ export default function SoulSyncLoader({
                         style={{
                             color: T.goldBright,
                             // 🛡️ ขยับพิกัดชดเชย (Offset) ได้ตรงๆ โดยไม่ต้องพึ่ง calc(-50%)
-                            transform: `translate(${currentMetric.x}, ${currentMetric.y}) scale(${currentMetric.scale || 1})`,
+                            transform: `translate(${currentMetric.x}, ${currentMetric.y}) scale(${currentMetric.scale ?? 1})`,
                             filter: `drop-shadow(0 0 12px rgba(200, 169, 110, 0.85)) drop-shadow(0 0 3px rgba(245, 235, 213, 0.9))`,
                         }}
                     >
