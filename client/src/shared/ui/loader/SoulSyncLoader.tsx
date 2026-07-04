@@ -43,6 +43,12 @@ function pickRandom<T>(pool: readonly T[]): T {
     return pool[Math.floor(Math.random() * pool.length)];
 }
 
+function getNextIndex(currentIndex: number, max: number): number {
+    if (max <= 1) return 0;
+    const offset = Math.floor(Math.random() * (max - 1)) + 1;
+    return (currentIndex + offset) % max;
+}
+
 const T = {
     gold: "#c8a96e",
     goldBright: "#f5ebd5",
@@ -81,17 +87,22 @@ export default function SoulSyncLoader({
 
     const [particles, setParticles] = useState<string[]>([]);
 
+    // 🎯 1. เพิ่ม Ref เพื่อเก็บ "Index ปัจจุบันของ Glyph" ใน CENTRAL_GLYPHS
+    const currentGlyphIndexRef = useRef<number>(0);
+
     useEffect(() => {
         activeSlotRef.current = activeSlot;
     }, [activeSlot]);
 
     useEffect(() => {
-        // Randomize particles + starting glyph ONLY on the client (avoids
-        // hydration mismatch from Math.random on the server)
         setParticles(
             Array.from({ length: REIATSU_PARTICLES.length }, () => pickRandom(REIATSU_PARTICLES))
         );
-        const firstGlyph = pickRandom(CENTRAL_GLYPHS);
+
+        // 🎯 2. ตอนจังหวะสุ่มตัวแรกสุด ให้บันทึก Index ของมันลง Ref ไว้ด้วย
+        const firstIndex = Math.floor(Math.random() * CENTRAL_GLYPHS.length);
+        currentGlyphIndexRef.current = firstIndex;
+        const firstGlyph = CENTRAL_GLYPHS[firstIndex];
         setSlots([firstGlyph, firstGlyph]);
 
         const mq = window.matchMedia("(prefers-reduced-motion: reduce)");
@@ -106,7 +117,13 @@ export default function SoulSyncLoader({
 
         const id = setInterval(() => {
             const incomingSlot: 0 | 1 = activeSlotRef.current === 0 ? 1 : 0;
-            const nextGlyph = pickRandom(CENTRAL_GLYPHS);
+
+            // 🎯 3. คำนวณหา Index ถัดไปโดยส่ง Index ปัจจุบันเข้าไป (การันตีว่าไม่ซ้ำ)
+            const nextIndex = getNextIndex(currentGlyphIndexRef.current, CENTRAL_GLYPHS.length);
+            // อัปเดต Ref ตัวปัจจุบันให้เป็นตัวใหม่ เพื่อใช้ในรอบถัดไป
+            currentGlyphIndexRef.current = nextIndex;
+
+            const nextGlyph = CENTRAL_GLYPHS[nextIndex];
 
             // Write the new glyph into the hidden slot first...
             setSlots((prev) => {
@@ -115,8 +132,7 @@ export default function SoulSyncLoader({
                 return next;
             });
 
-            // ...then flip which slot is active on the *next* paint, so the
-            // browser has something to transition from and to.
+            // ...then flip which slot is active on the *next* paint
             requestAnimationFrame(() => {
                 requestAnimationFrame(() => setActiveSlot(incomingSlot));
             });
