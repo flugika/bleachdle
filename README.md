@@ -2,7 +2,7 @@
 
 > A Wordle-style character guessing game for Bleach fans — unlimited mode, attribute-based feedback, Soul Society aesthetic.
 
-Lastest Updated: 4 July 2026, 2:28 AM.
+Lastest Updated: 5 July 2026, 0:17 AM.
 
 [![Next.js](https://img.shields.io/badge/Next.js-15-black?logo=next.js)](https://nextjs.org/)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5-blue?logo=typescript)](https://www.typescriptlang.org/)
@@ -207,6 +207,8 @@ bleachdle
 │  │  │     ├─ character
 │  │  │     │  └─ page.tsx
 │  │  │     ├─ page.tsx
+│  │  │     ├─ quote
+│  │  │     │  └─ page.tsx
 │  │  │     └─ song
 │  │  │        ├─ mockup
 │  │  │        │  └─ page.tsx
@@ -224,8 +226,9 @@ bleachdle
 │  │  ├─ loading
 │  │  │  └─ page.tsx
 │  │  ├─ loading.tsx
-│  │  ├─ not-found.tsx
-│  │  └─ support
+│  │  ├─ support
+│  │  │  └─ page.tsx
+│  │  └─ [...catchAll]
 │  │     └─ page.tsx
 │  ├─ CLAUDE.md
 │  ├─ eslint.config.mjs
@@ -243,10 +246,6 @@ bleachdle
 │  │  │  │     ├─ after_dark.mp3
 │  │  │  │     ├─ alones.mp3
 │  │  │  │     └─ ...
-│  │  │  ├─ bg_wallpaper_1.jpg
-│  │  │  ├─ bg_wallpaper_10.jpg
-│  │  │  ├─ bg_wallpaper_11.jpg
-│  │  │  ├─ ...
 │  │  │  ├─ bleachdle-avatar.psd
 │  │  │  ├─ characters
 │  │  │  │  ├─ Aaroniero_Arruruerie.webp
@@ -263,8 +262,12 @@ bleachdle
 │  │  │  │  ├─ soul.webp
 │  │  │  │  ├─ visored.webp
 │  │  │  │  └─ Xcution.webp
-│  │  │  ├─ promptpay-qr.webp
-│  │  │  └─ tensazangetsu.png
+│  │  │  ├─ tensazangetsu.png
+│  │  │  └─ wallpapers
+│  │  │     ├─ bg_wallpaper_1.jpg
+│  │  │     ├─ bg_wallpaper_2.jpg
+│  │  │     ├─ bg_wallpaper_3.jpg
+│  │  │     └─ ...
 │  │  ├─ file.svg
 │  │  ├─ globe.svg
 │  │  ├─ next.svg
@@ -273,7 +276,8 @@ bleachdle
 │  ├─ README.md
 │  ├─ src
 │  │  ├─ config
-│  │  │  └─ feature.flags.ts
+│  │  │  ├─ feature.flags.ts
+│  │  │  └─ mode.ts
 │  │  ├─ const
 │  │  │  ├─ guess.ts
 │  │  │  ├─ localStorage.ts
@@ -292,6 +296,7 @@ bleachdle
 │  │  │  ├─ emoji
 │  │  │  ├─ image
 │  │  │  ├─ quote
+│  │  │  │  └─ schema.ts
 │  │  │  └─ song
 │  │  │     └─ schema.ts
 │  │  ├─ features
@@ -316,6 +321,15 @@ bleachdle
 │  │  │  ├─ emoji
 │  │  │  ├─ image
 │  │  │  ├─ quote
+│  │  │  │  ├─ components
+│  │  │  │  │  └─ shared
+│  │  │  │  │     ├─ QuoteGuessTable.tsx
+│  │  │  │  │     ├─ QuoteHowToPlayModal.tsx
+│  │  │  │  │     └─ QuoteSummaryGuess.tsx
+│  │  │  │  ├─ hooks
+│  │  │  │  │  └─ unlimited
+│  │  │  │  │     └─ useQuoteGame.ts
+│  │  │  │  └─ types.ts
 │  │  │  ├─ song
 │  │  │  │  ├─ components
 │  │  │  │  │  ├─ daily
@@ -335,13 +349,14 @@ bleachdle
 │  │  │  │  └─ types.ts
 │  │  │  ├─ support
 │  │  │  │  ├─ KidoSeal.tsx
-│  │  │  │  ├─ PromptPayCard.tsx
+│  │  │  │  ├─ PortfolioCard.tsx
 │  │  │  │  ├─ SupportForm.tsx
 │  │  │  │  └─ SupportPageClient.tsx
 │  │  │  └─ unlimited
 │  │  ├─ lib
 │  │  │  ├─ game-engine
-│  │  │  │  ├─ compare.ts
+│  │  │  │  ├─ compareCharacter.ts
+│  │  │  │  ├─ compareQuote.ts
 │  │  │  │  └─ compareSong.ts
 │  │  │  ├─ search
 │  │  │  │  └─ fuzzy.ts
@@ -366,6 +381,7 @@ bleachdle
 │  │  │  │  ├─ checking.ts
 │  │  │  │  ├─ daily.ts
 │  │  │  │  ├─ format.ts
+│  │  │  │  ├─ quote.ts
 │  │  │  │  ├─ scripts
 │  │  │  │  │  ├─ check-assets.js
 │  │  │  │  │  ├─ extract-character-meta.js
@@ -390,16 +406,20 @@ bleachdle
 │  │  │  │  ├─ Divider.tsx
 │  │  │  │  ├─ Footer.tsx
 │  │  │  │  ├─ Header.tsx
+│  │  │  │  ├─ HeaderDivider.tsx
 │  │  │  │  └─ SubHeader.tsx
 │  │  │  └─ ui
 │  │  │     ├─ BleachReiatsuCursor.tsx
 │  │  │     ├─ button.tsx
 │  │  │     ├─ context
 │  │  │     │  └─ NavigationContext.tsx
-│  │  │     ├─ controlPanel
-│  │  │     │  ├─ GameControlPanel.tsx
+│  │  │     ├─ control-panel
+│  │  │     │  ├─ CharacterControlPanel.tsx
+│  │  │     │  ├─ QuoteControlPanel.tsx
 │  │  │     │  └─ SongControlPanel.tsx
 │  │  │     ├─ DailyResetTimer.tsx
+│  │  │     ├─ game-selector
+│  │  │     │  └─ ThematicModeSelector.tsx
 │  │  │     ├─ input.tsx
 │  │  │     ├─ loader
 │  │  │     │  ├─ SenkaimonTransition.tsx

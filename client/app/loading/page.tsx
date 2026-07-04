@@ -1,7 +1,6 @@
 'use client';
 
 import ZangetsuLoader from '@/src/shared/ui/loader/ZangetsuLoader';
-// import SoulSyncLoader from '@/src/shared/ui/loader/SoulSyncLoader';
 
 export default function LoadingPreview() {
     return (
@@ -41,8 +40,5 @@ export default function LoadingPreview() {
                 <ZangetsuLoader />
             </div>
         </div>
-        // <div className="fixed inset-0 z-50 flex flex-col items-center justify-center w-screen h-screen text-white overflow-hidden select-none">
-        //     <SoulSyncLoader />
-        // </div>
     );
 }

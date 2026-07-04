@@ -1,7 +1,7 @@
 // src/shared/ui/SoulSyncLoader.tsx
 "use client";
 
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 
 // ─────────────────────────────────────────────
 //  GLYPH POOLS & DESIGN TOKENS
@@ -70,16 +70,29 @@ export default function SoulSyncLoader({
     className = "",
     hideLabel = false,
 }: SoulSyncLoaderProps) {
-    const [glyph, setGlyph] = useState<GlyphType>(CENTRAL_GLYPHS[0]);
+    // 🎞️ Two-slot crossfade: instead of one glyph swapped via `key` (which
+    // force-remounts the span and skips any transition), we keep two slots
+    // and toggle which one is "active". Both animate on every toggle, so the
+    // outgoing glyph dissolves out while the incoming one materializes in.
+    const [slots, setSlots] = useState<[GlyphType, GlyphType]>([CENTRAL_GLYPHS[0], CENTRAL_GLYPHS[0]]);
+    const [activeSlot, setActiveSlot] = useState<0 | 1>(0);
+    const activeSlotRef = useRef<0 | 1>(0);
     const [reducedMotion, setReducedMotion] = useState(false);
 
     const [particles, setParticles] = useState<string[]>([]);
 
     useEffect(() => {
-        // Randomize particles ONLY on the client
+        activeSlotRef.current = activeSlot;
+    }, [activeSlot]);
+
+    useEffect(() => {
+        // Randomize particles + starting glyph ONLY on the client (avoids
+        // hydration mismatch from Math.random on the server)
         setParticles(
             Array.from({ length: REIATSU_PARTICLES.length }, () => pickRandom(REIATSU_PARTICLES))
         );
+        const firstGlyph = pickRandom(CENTRAL_GLYPHS);
+        setSlots([firstGlyph, firstGlyph]);
 
         const mq = window.matchMedia("(prefers-reduced-motion: reduce)");
         setReducedMotion(mq.matches);
@@ -89,14 +102,28 @@ export default function SoulSyncLoader({
     }, []);
 
     useEffect(() => {
-        setGlyph(pickRandom(CENTRAL_GLYPHS));
         if (cycleMs <= 0 || reducedMotion) return;
 
-        const id = setInterval(() => setGlyph(pickRandom(CENTRAL_GLYPHS)), cycleMs);
+        const id = setInterval(() => {
+            const incomingSlot: 0 | 1 = activeSlotRef.current === 0 ? 1 : 0;
+            const nextGlyph = pickRandom(CENTRAL_GLYPHS);
+
+            // Write the new glyph into the hidden slot first...
+            setSlots((prev) => {
+                const next: [GlyphType, GlyphType] = [...prev] as [GlyphType, GlyphType];
+                next[incomingSlot] = nextGlyph;
+                return next;
+            });
+
+            // ...then flip which slot is active on the *next* paint, so the
+            // browser has something to transition from and to.
+            requestAnimationFrame(() => {
+                requestAnimationFrame(() => setActiveSlot(incomingSlot));
+            });
+        }, cycleMs);
+
         return () => clearInterval(id);
     }, [cycleMs, reducedMotion]);
-
-    const currentMetric = GLYPH_REGISTRY[glyph];
 
     return (
         <div
@@ -167,21 +194,37 @@ export default function SoulSyncLoader({
                 <div
                     className={`absolute w-16 h-16 flex items-center justify-center ${reducedMotion ? "" : "animate-[spin_4s_linear_infinite]"}`}
                 >
-                    <span
-                        key={glyph}
-                        aria-hidden="true"
-                        // 🛡️ หัวใจการแก้ปัญหา: ลบ top-1/2 left-1/2 ออก และบังคับให้ span กว้าง/ยาวเต็มกล่องแม่
-                        // แล้วใช้ flex จัดเนื้อข้างในแทน จากนี้ Bounding Box ของฟอนต์จะไม่กวนแกนหมุนอีกต่อไป
-                        className="flex items-center justify-center w-full h-full text-5xl leading-none select-none transition-all duration-300"
-                        style={{
-                            color: T.goldBright,
-                            // 🛡️ ขยับพิกัดชดเชย (Offset) ได้ตรงๆ โดยไม่ต้องพึ่ง calc(-50%)
-                            transform: `translate(${currentMetric.x}, ${currentMetric.y}) scale(${currentMetric.scale ?? 1})`,
-                            filter: `drop-shadow(0 0 12px rgba(200, 169, 110, 0.85)) drop-shadow(0 0 3px rgba(245, 235, 213, 0.9))`,
-                        }}
-                    >
-                        {glyph}
-                    </span>
+                    {slots.map((slotGlyph, i) => {
+                        const metric = GLYPH_REGISTRY[slotGlyph];
+                        const isActive = activeSlot === i;
+                        return (
+                            <span
+                                key={i}
+                                aria-hidden="true"
+                                // 🛡️ หัวใจการแก้ปัญหา: ลบ top-1/2 left-1/2 ออก และบังคับให้ span กว้าง/ยาวเต็มกล่องแม่
+                                // แล้วใช้ flex จัดเนื้อข้างในแทน จากนี้ Bounding Box ของฟอนต์จะไม่กวนแกนหมุนอีกต่อไป
+                                // 🎞️ Both slots are always mounted (no `key={glyph}` remount), so this
+                                // transition actually has something to animate between.
+                                className="absolute inset-0 flex items-center justify-center text-5xl leading-none select-none"
+                                style={{
+                                    color: T.goldBright,
+                                    opacity: isActive ? 1 : 0,
+                                    // 🛡️ ขยับพิกัดชดเชย (Offset) ได้ตรงๆ โดยไม่ต้องพึ่ง calc(-50%)
+                                    // Incoming glyph eases in from slightly smaller; outgoing shrinks
+                                    // back down as it fades — a soft materialize/dissolve, not a swap.
+                                    transform: `translate(${metric.x}, ${metric.y}) scale(${(metric.scale ?? 1) * (isActive ? 1 : 0.85)})`,
+                                    filter: isActive
+                                        ? "blur(0px) drop-shadow(0 0 12px rgba(200, 169, 110, 0.85)) drop-shadow(0 0 3px rgba(245, 235, 213, 0.9))"
+                                        : "blur(5px) drop-shadow(0 0 0px rgba(200, 169, 110, 0))",
+                                    transition: reducedMotion
+                                        ? "none"
+                                        : "opacity 520ms ease-out, filter 520ms ease-out, transform 520ms cubic-bezier(0.22,1,0.36,1)",
+                                }}
+                            >
+                                {slotGlyph}
+                            </span>
+                        );
+                    })}
                 </div>
             </div>
 
