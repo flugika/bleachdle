@@ -100,21 +100,27 @@ export default function Home() {
             <div className="relative z-20 text-center mb-6 max-w-5xl w-full px-4 flex flex-col items-center justify-center">
 
                 {/* HUD Top-Link Trace */}
-                <div className="text-[10px] md:text-xs tracking-[0.7em] text-[#c8a96e] font-mono font-bold mb-6 flex items-center justify-center gap-3">
-                    <span className="w-2 h-2 bg-[#c8a96e] animate-ping rounded" />
-                    S.R.D.I_LINK // SENKAIMON_COORDINATES_STABILIZED
+                <div className="text-[6px] md:text-xs tracking-[0.7em] text-[#c8a96e] font-mono font-bold mb-6 flex flex-col md:flex-row items-center justify-center gap-3">
+                    {/* ใช้ items-center เพื่อจัดแนวตั้ง */}
+                    <div className="flex items-center gap-3">
+                        {/* เพิ่ม shrink-0 เพื่อป้องกัน Dot ยุบตัวหากข้อความยาว */}
+                        <span className="w-1 h-1 md:w-2 md:h-2 bg-[#c8a96e] animate-ping rounded shrink-0" />
+                        <span>S.R.D.I_LINK</span>
+                    </div>
+
+                    <span className="hidden md:inline">//</span>
+                    <span>SENKAIMON_COORDINATES_STABILIZED</span>
                 </div>
 
                 {/* Titanium Chrome Title Text */}
                 {/* 🛠️ FIX: ล็อคคำด้วย `whitespace-nowrap` และปรับสเกลฟอนต์ให้สมดุล (เริ่มต้นที่ text-5xl ไล่ระดับไปจนถึง text-8xl บน PC) */}
                 <h1
-                    className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-black tracking-[0.2em] pl-[0.2em] text-transparent bg-clip-text bg-gradient-to-b from-white via-neutral-200 to-neutral-500 drop-shadow-[0_0_50px_rgba(255,255,255,0.18)] uppercase select-text whitespace-nowrap text-center block w-full"
-                    style={{ fontFamily: "'Cinzel', serif" }}
+                    className="text-4xl sm:text-6xl md:text-7xl lg:text-8xl font-black tracking-[0.2em] pl-[0.2em] text-transparent bg-gradient-to-r from-[#c8a96e] via-[#f5ebd5] to-[#c8a96e] bg-clip-text drop-shadow-[0_0_50px_rgba(255,255,255,0.18)] select-text whitespace-nowrap text-center block w-full"
                 >
                     BLEACHDLE
                 </h1>
 
-                <HeaderDivider className="mt-6"/>
+                <HeaderDivider className="mt-6" />
 
                 {/* Subtitle Division Log — reworked with a sweeping HUD scan-light + two-tone label split */}
                 <div className="relative mt-8 max-w-xl w-full mx-auto group/subtitle">

@@ -65,18 +65,24 @@ export const ThematicModeSelector: React.FC<ThematicModeSelectorProps> = ({
             </div>
 
             {/* ================= HEADER HUD ================= */}
-            <div className="relative z-20 text-center mb-24 max-w-3xl px-4">
-                <div className="text-[10px] md:text-xs tracking-[0.6em] text-[#c8a96e] uppercase font-mono font-bold mb-4 flex items-center justify-center gap-2">
-                    <span className="w-2 h-2 rounded-full bg-[#c8a96e] animate-ping" />
-                    SYSTEM_ACCESS // SENKAIMON_GATE_ONLINE
+            <div className="relative z-20 text-center mb-16 max-w-3xl px-4">
+                <div className="text-[6px] md:text-xs tracking-[0.7em] text-[#c8a96e] font-mono font-bold mb-6 flex flex-col md:flex-row items-center justify-center gap-3">
+                    {/* ใช้ items-center เพื่อจัดแนวตั้ง */}
+                    <div className="flex items-center gap-2 md:gap-3">
+                        {/* เพิ่ม shrink-0 เพื่อป้องกัน Dot ยุบตัวหากข้อความยาว */}
+                        <span className="w-1 h-1 md:w-2 md:h-2 bg-[#c8a96e] animate-ping rounded shrink-0" />
+                        <span>SYSTEM_ACCESS</span>
+                    </div>
+
+                    <span className="hidden md:inline">//</span>
+                    <span>SENKAIMON_GATE_ONLINE</span>
                 </div>
                 <h1
-                    className="text-5xl md:text-7xl font-extrabold tracking-[0.4em] text-transparent bg-clip-text bg-gradient-to-b from-white via-white/90 to-white/60 uppercase drop-shadow-[0_0_35px_rgba(255,255,255,0.2)] pl-[0.4em]"
-                    style={{ fontFamily: "'Cinzel', serif" }}
+                    className="text-3xl md:text-7xl font-extrabold tracking-[0.4em] bg-gradient-to-r from-[#c8a96e] via-[#f5ebd5] to-[#c8a96e] bg-clip-text text-transparent drop-shadow-[0_0_35px_rgba(255,255,255,0.2)] pl-[0.4em]"
                 >
                     {modeType}
                 </h1>
-                <HeaderDivider className="mt-6"/>
+                <HeaderDivider className="mt-6" />
                 <p className="text-[10px] md:text-xs text-white/40 uppercase tracking-[0.3em] mt-6 leading-relaxed max-w-2xl mx-auto">
                     Synchronize your spiritual pressure to breach the dimensions. Only stabilized dimensional rifts are displayed.
                 </p>

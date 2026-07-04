@@ -24,8 +24,7 @@ export default function SupportPageClient() {
                     </button>
 
                     <h1
-                        className="text-3xl md:text-5xl font-black tracking-[0.15em] bg-gradient-to-r from-[#c8a96e] via-[#f5ebd5] to-[#c8a96e] bg-clip-text text-transparent uppercase mb-3"
-                        style={{ fontFamily: "'Cinzel', serif" }}
+                        className="text-3xl md:text-5xl font-black tracking-[0.15em] bg-gradient-to-r from-[#c8a96e] via-[#f5ebd5] to-[#c8a96e] bg-clip-text text-transparent mb-3"
                     >
                         Support &amp; Reports
                     </h1>
