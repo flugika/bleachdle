@@ -1,0 +1,29 @@
+[
+    {
+        "id": "q-001",
+        "character_id": "aizen-sousuke",
+        "text": "No one stands on the top of the world. Not you, not me, not even God. But the unbearable vacancy of the throne in the sky is over. From now on, I will be sitting in it.",
+        "episode": 145,
+        "chapter": 242,
+        "arc": "Hueco Mundo",
+        "context": "Aizen speaking to Ichigo after revealing his plan to ascend to the throne of heaven."
+    },
+    {
+        "id": "q-002",
+        "character_id": "kurosaki-ichigo",
+        "text": "If fate is a millstone, then we are the grain. Nothing can be done, so I've memorized the way the grain feels.",
+        "episode": 20,
+        "chapter": 76,
+        "arc": "Soul Society",
+        "context": "Ichigo reflecting on his struggle and the nature of battle early in the series."
+    },
+    {
+        "id": "q-003",
+        "character_id": "kuchiki-byakuya",
+        "text": "It is not a sin to fight for one's pride. But you must never forget that once you raise your sword, you commit yourself to the battle and stake your life upon it.",
+        "episode": 59,
+        "chapter": 169,
+        "arc": "Soul Society",
+        "context": "Byakuya lecturing Renji on the discipline and weight of being a Shinigami."
+    }
+]
