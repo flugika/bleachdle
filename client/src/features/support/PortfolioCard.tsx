@@ -37,7 +37,7 @@ export function PortfolioCard() {
             <div className="relative flex items-center justify-center h-[280px] mb-6">
                 <KidoSeal size={420} />
 
-                <div className="relative z-10 flex flex-col items-center justify-center gap-3 px-6 text-center">
+                <div className="relative z-10 flex flex-col items-center justify-center px-6 text-center">
                     <span
                         className="kido-emblem text-4xl md:text-5xl text-[#c8a96e]"
                         style={{ fontFamily: "'Cinzel', serif" }}
@@ -45,14 +45,14 @@ export function PortfolioCard() {
                     >
                         誠
                     </span>
-                    <p className="text-[9px] uppercase tracking-[0.3em] text-[#eed9c4]/40 font-mono">
-                        Sincerity, Not Currency
-                    </p>
                 </div>
             </div>
 
             {/* Portfolio CTA — the one "ask" this card actually makes */}
-            <div className="flex flex-col items-center gap-3 mb-2">
+            <div className="flex flex-col items-center gap-2 mb-2">
+                <p className="text-[9px] uppercase tracking-[0.3em] text-[#eed9c4]/30 font-mono">
+                    Sincerity, Not Currency
+                </p>
                 <p className="text-[9px] uppercase tracking-[0.3em] text-[#eed9c4]/30 font-mono">
                     Rather see more of my work?
                 </p>
