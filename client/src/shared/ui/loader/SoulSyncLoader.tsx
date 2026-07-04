@@ -164,7 +164,7 @@ export default function SoulSyncLoader({
 
                 {/* ✨ EFFECT 3: Orbiting Reishi Swarm */}
                 <div
-                    className={`absolute inset-0 flex items-center justify-center ${reducedMotion ? "" : "animate-[spin_12s_linear_infinite]"}`}
+                    className={`absolute inset-0 flex items-center pointer-events-none justify-center ${reducedMotion ? "" : "animate-[spin_12s_linear_infinite]"}`}
                 >
                     {particles.map((p, i) => {
                         const angle = (360 / particles.length) * i;
