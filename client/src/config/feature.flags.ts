@@ -8,6 +8,7 @@ export const FEATURE_FLAGS = {
         image: false,
         emoji: false,
         song: true,
+        release: false,
     },
 
     // ── ♾️ โหมดเล่นไม่จำกัด (Unlimited Mode)
@@ -17,9 +18,11 @@ export const FEATURE_FLAGS = {
         image: false,
         emoji: false,
         song: true,
+        release: false,
     },
 
     mockupSong: false,
+    support: true,
 } as const;
 
 // ── 🛡️ Type Helpers สำหรับทำนายขอบเขตพลังวิญญาณ (Optional)

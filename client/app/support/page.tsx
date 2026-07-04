@@ -1,12 +1,12 @@
 // app/support/page.tsx
-import type { Metadata } from "next";
 import SupportPageClient from "@/src/features/support/SupportPageClient";
-
-export const metadata: Metadata = {
-    title: "Support & Reports",
-    description: "แจ้งปัญหา ให้ feedback หรือสนับสนุนผู้พัฒนา",
-};
+import { FEATURE_FLAGS } from "@/src/config/feature.flags";
+import Sealed from "@/src/shared/ui/Sealed";
 
 export default function SupportPage() {
+    if (!FEATURE_FLAGS.support) {
+        return <Sealed />;
+    }
+
     return <SupportPageClient />;
 }

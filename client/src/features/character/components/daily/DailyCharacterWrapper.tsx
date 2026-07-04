@@ -12,7 +12,7 @@ import { SubHeader } from '@/src/shared/layout/SubHeader';
 import Sealed from '@/src/shared/ui/Sealed';
 import { FEATURE_FLAGS } from '@/src/config/feature.flags';
 import { Character } from '@/src/entities/character/schema';
-import { GameControlPanel } from '@/src/shared/ui/controlPanel/GameControlPanel';
+import { CharacterControlPanel } from '@/src/shared/ui/control-panel/CharacterControlPanel';
 import { ModeBadge } from '@/src/shared/ui/ModeBadge';
 import { usePathname, useRouter } from 'next/navigation';
 import { ModeSelectorModal } from '@/src/shared/ui/ModeSelectorModal';
@@ -189,7 +189,7 @@ export default function DailyCharacterWrapper({ initialTarget }: { initialTarget
                 <SubHeader title='REIRAKU PERCEPTION' description='System // Scanning for Reiatsu Signature' />
 
                 {!isModalOpen && (
-                    <GameControlPanel
+                    <CharacterControlPanel
                         mode="daily"
                         target={target}
                         characters={characters}

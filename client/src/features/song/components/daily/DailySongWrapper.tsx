@@ -13,7 +13,7 @@ import { SubHeader } from '@/src/shared/layout/SubHeader';
 import Sealed from '@/src/shared/ui/Sealed';
 import { FEATURE_FLAGS } from '@/src/config/feature.flags';
 import { BleachSong } from '@/src/entities/song/schema';
-import { SongControlPanel } from '@/src/shared/ui/controlPanel/SongControlPanel';
+import { SongControlPanel } from '@/src/shared/ui/control-panel/SongControlPanel';
 import { ModeBadge } from '@/src/shared/ui/ModeBadge';
 import { ModeSelectorModal } from '@/src/shared/ui/ModeSelectorModal';
 import { useSenkaimon } from '@/src/shared/ui/context/NavigationContext';
@@ -174,7 +174,7 @@ export default function DailySongWrapper({ initialTarget, initialSegmentId }: Da
                 {!isModalOpen && (
                     // ⚠️ ASSUMPTION: SongControlPanel ต้องรองรับ mode="daily" แล้ว "ปิด" max-guess
                     // cap เองภายใน (ไม่โชว์ remainingGuesses, ไม่ disable search bar ตามจำนวนเดา)
-                    // เหมือนที่ GameControlPanel ทำให้ character daily อยู่แล้ว — ถ้า SongControlPanel
+                    // เหมือนที่ CharacterControlPanel ทำให้ character daily อยู่แล้ว — ถ้า SongControlPanel
                     // ปัจจุบันยัง hardcode ใช้ remainingGuesses/maxGuesses เสมอ ต้องเพิ่ม branch
                     // `mode === 'daily'` ให้ข้ามการเช็คนั้นไปด้วย ไม่งั้น UI จะไปโชว์ "0 guesses left"
                     // หรือ disable ปุ่มทายผิดจังหวะ

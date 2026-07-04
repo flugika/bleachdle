@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { GuessTable } from '@/src/features/character';
-import { GameControlPanel } from '@/src/shared/ui/controlPanel/GameControlPanel';
+import { CharacterControlPanel } from '@/src/shared/ui/control-panel/CharacterControlPanel';
 import { useCharacterGame } from '@/src/features/character/hooks/unlimited/useCharacterGame';
 import { getCharacters } from '@/src/lib/utils/character';
 import { SummaryGuess } from '@/src/features/character/components/shared/SummaryGuess';
@@ -209,10 +209,10 @@ export default function UnlimitedCharacterGame() {
                 <SubHeader title='REIRAKU PERCEPTION' description='System // Scanning for Reiatsu Signature' />
 
                 {/* 🛡️ เปลี่ยนจาก SearchBar + stats block แบบ manual (ซ้ำโค้ดกับ daily) มาใช้
-                    GameControlPanel ตัวเดียวกับ daily — sync กับ isLimitReached fix ที่แก้ไปด้วย
+                    CharacterControlPanel ตัวเดียวกับ daily — sync กับ isLimitReached fix ที่แก้ไปด้วย
                     (เดิม unlimited mode ไม่เคยผ่าน component นี้เลยบั๊กเลยไม่เคยโผล่) */}
                 {!isModalOpen && (
-                    <GameControlPanel
+                    <CharacterControlPanel
                         mode="unlimited"
                         target={target}
                         characters={characters}

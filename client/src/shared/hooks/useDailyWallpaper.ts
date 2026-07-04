@@ -22,7 +22,7 @@ export const useDailyWallpaper = () => {
 
         document.documentElement.style.setProperty(
             '--bg-image',
-            `url('/assets/${selectedWallpaper}')`
+            `url('/assets/wallpapers/${selectedWallpaper}')`
         );
     }, []);
 };

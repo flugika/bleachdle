@@ -1,29 +1,27 @@
-// src/shared/ui/SongControlPanel.tsx
+// src/shared/ui/controlPanel/QuoteControlPanel.tsx
 import { useState } from 'react';
-import { SongSearchBar } from '@/src/features/song/components/shared/SongSearchBar';
-import { SongAudioPlayer } from '@/src/features/song/components/shared/SongAudioPlayer';
-import { BleachSong } from '@/src/entities/song/schema';
-import { SongGuessable } from '@/src/features/song/types';
+import { SearchBar } from '@/src/shared/ui/SearchBar'; // ⚠️ reuse ของเดิม เพราะเดา Character เหมือนกัน
+import { getCharacters } from '@/src/lib/utils/character'; // ⚠️ ปรับ path ให้ตรงของจริง
+import { BleachQuote } from '@/src/entities/quote/schema';
+import { QuoteGuessable } from '@/src/features/quote/types';
 import { Modal } from '../modal';
 
-interface SongControlPanelProps {
+interface QuoteControlPanelProps {
     mode: 'daily' | 'unlimited';
-    target: BleachSong | null;
-    songs: BleachSong[];
+    target: BleachQuote | null;
     remainingGuesses?: number;
     stats: { currentStreak: number; maxStreak: number };
-    timeLeft?: string; // ใส่เฉพาะโหมด daily
-    game: SongGuessable;
+    timeLeft?: string;
+    game: QuoteGuessable;
     disabled?: boolean;
     maxGuesses?: number;
     isGameOver?: boolean;
     onSurrender?: () => void;
 }
 
-export function SongControlPanel({
+export function QuoteControlPanel({
     mode,
     target,
-    songs,
     remainingGuesses,
     stats,
     timeLeft,
@@ -31,37 +29,41 @@ export function SongControlPanel({
     disabled = false,
     maxGuesses,
     isGameOver = false,
-    onSurrender
-}: SongControlPanelProps) {
+    onSurrender,
+}: QuoteControlPanelProps) {
     const [isConfirmOpen, setIsConfirmOpen] = useState(false);
+    const characters = getCharacters();
+
     let isLimitReached = false;
     if (mode === 'unlimited') {
-        // attempts เหลือ 0 หรือน้อยกว่า = ปิดการเดาต่อ (sync กับ fix เดียวกันใน GameControlPanel)
         isLimitReached = remainingGuesses !== undefined && remainingGuesses <= 0;
     }
 
     const hasGuesses = game?.guesses?.length > 0;
-    const attemptIndex = game?.guesses?.length ?? 0;
+    const divider = '━'.repeat(20);
 
     return (
         <div className="flex flex-col items-center">
-            {/* Audio + Search Section */}
+            {/* Quote display card */}
             {target && (
-                <>
-                    <SongAudioPlayer
-                        target={target}
-                        attemptIndex={attemptIndex}
-                        disabled={disabled || isLimitReached}
-                    />
+                <div className="w-full max-w-lg bg-[#0a0a0f]/60 border border-[#c8a96e]/20 px-6 py-8 text-center mb-6 shadow-[0_8px_32px_rgba(0,0,0,0.4)]">
+                    <p className="text-[10px] text-[#5a5a78] font-mono tracking-widest select-none">{divider}</p>
+                    <p className="italic text-sm text-[#d8d0c8] leading-relaxed my-4 whitespace-pre-line">
+                        "{target.text}"
+                    </p>
+                    <p className="text-[10px] text-[#5a5a78] font-mono tracking-widest select-none">{divider}</p>
+                </div>
+            )}
 
-                    <div className="flex justify-center w-full mt-6 mb-6">
-                        <SongSearchBar
-                            songs={songs}
-                            disabled={disabled || isLimitReached || !target}
-                            game={game}
-                        />
-                    </div>
-                </>
+            {/* Search Section */}
+            {target && (
+                <div className="flex justify-center w-full mb-6">
+                    <SearchBar
+                        characters={characters}
+                        disabled={disabled || isLimitReached || !target}
+                        game={game}
+                    />
+                </div>
             )}
 
             {/* Stats Section */}
@@ -92,7 +94,6 @@ export function SongControlPanel({
                     <span className="text-[#c8a96e] text-lg font-bold">{stats.maxStreak}</span>
                 </div>
 
-                {/* ⚔️ FORFEIT NODE — เหมือน GameControlPanel เป๊ะ (ใช้เฉพาะ daily) */}
                 {mode === 'daily' && hasGuesses && !isGameOver && onSurrender && (
                     <>
                         <button

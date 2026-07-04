@@ -55,6 +55,12 @@ export interface SoulSyncLoaderProps {
     subLabel?: string;
     cycleMs?: number;
     className?: string;
+    /**
+     * Render the spinning glyph only — hides the visible label/subLabel text.
+     * The label is still exposed to assistive tech via aria-label, so the
+     * loading state remains announced to screen readers.
+     */
+    hideLabel?: boolean;
 }
 
 export default function SoulSyncLoader({
@@ -62,6 +68,7 @@ export default function SoulSyncLoader({
     subLabel,
     cycleMs = 2200,
     className = "",
+    hideLabel = false,
 }: SoulSyncLoaderProps) {
     const [glyph, setGlyph] = useState<GlyphType>(CENTRAL_GLYPHS[0]);
     const [reducedMotion, setReducedMotion] = useState(false);
@@ -74,14 +81,6 @@ export default function SoulSyncLoader({
             Array.from({ length: REIATSU_PARTICLES.length }, () => pickRandom(REIATSU_PARTICLES))
         );
 
-        const mq = window.matchMedia("(prefers-reduced-motion: reduce)");
-        setReducedMotion(mq.matches);
-        const onChange = () => setReducedMotion(mq.matches);
-        mq.addEventListener("change", onChange);
-        return () => mq.removeEventListener("change", onChange);
-    }, []);
-
-    useEffect(() => {
         const mq = window.matchMedia("(prefers-reduced-motion: reduce)");
         setReducedMotion(mq.matches);
         const onChange = () => setReducedMotion(mq.matches);
@@ -103,7 +102,12 @@ export default function SoulSyncLoader({
         <div
             role="status"
             aria-live="polite"
-            className={`mt-40 flex flex-col items-center justify-center ${className}`}
+            aria-label={label}
+            // 🛠️ FIX: `mt-40` used to be hardcoded here, so it fought any margin
+            // classes passed in via `className` (e.g. "mt-[0px]") instead of
+            // being overridden by them. Spacing is now controlled entirely by
+            // the caller — pass whatever margin you need via `className`.
+            className={`flex flex-col items-center justify-center ${className}`}
         >
             <div className="relative mb-8 flex items-center justify-center" style={{ width: 120, height: 120 }}>
 
@@ -181,14 +185,16 @@ export default function SoulSyncLoader({
                 </div>
             </div>
 
-            <p
-                className={`text-xs uppercase tracking-[0.25em] font-medium ${reducedMotion ? "" : "animate-pulse"}`}
-                style={{ color: T.gold, textShadow: "0 0 10px rgba(200, 169, 110, 0.3)" }}
-            >
-                {label}
-            </p>
+            {!hideLabel && (
+                <p
+                    className={`text-xs uppercase tracking-[0.25em] font-medium ${reducedMotion ? "" : "animate-pulse"}`}
+                    style={{ color: T.gold, textShadow: "0 0 10px rgba(200, 169, 110, 0.3)" }}
+                >
+                    {label}
+                </p>
+            )}
 
-            {subLabel && (
+            {!hideLabel && subLabel && (
                 <p className="mt-2 text-[10px] uppercase tracking-[0.3em]" style={{ color: T.muted }}>
                     {subLabel}
                 </p>

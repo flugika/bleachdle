@@ -3,7 +3,7 @@ import path from 'path';
 
 // 1. ระบุ Root ของโปรเจกต์ (ปรับจูนตามโครงสร้างจริงของคุณ)
 // ถ้าไฟล์นี้อยู่ที่ src/lib/utils/scripts ต้องถอยหลังกลับไป 5 ระดับถึงจะเจอ Root ของ app
-const projectRoot = path.resolve(process.cwd(), '../../../../../');
+const projectRoot = path.resolve(process.cwd(), '../../../../../wallpapers/');
 
 // 2. ระบุโฟลเดอร์ Assets และ Data
 const ASSETS_DIR = path.join(projectRoot, 'public', 'assets');

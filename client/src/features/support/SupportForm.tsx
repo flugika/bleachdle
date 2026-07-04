@@ -9,8 +9,8 @@ import { useCooldown, getOrCreateClientRef } from "@/src/shared/hooks/useCooldow
 type Category = "bug" | "feedback" | "suggestion" | "other";
 
 const CATEGORIES: { id: Category; label: string; kanji: string }[] = [
-    { id: "bug", label: "Bug Report", kanji: "虫" },
     { id: "feedback", label: "Feedback", kanji: "声" },
+    { id: "bug", label: "Bug Report", kanji: "虫" },
     { id: "suggestion", label: "Suggestion", kanji: "案" },
     { id: "other", label: "Other", kanji: "他" },
 ];

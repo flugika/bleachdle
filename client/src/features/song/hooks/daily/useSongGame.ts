@@ -2,7 +2,7 @@
 import { create } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware';
 import { BleachSong } from '@/src/entities/song/schema';
-import { getSongGuessStatus } from '@/src/lib/game-engine/compareSong';
+import { getSongStatus } from '@/src/lib/game-engine/compareSong';
 import { getSongById } from '@/src/lib/utils/song';
 import { recordDailyStat } from '@/src/services/statsClient';
 // 👇 ใช้ type กลางจาก types.ts แทนการประกาศ interface ซ้ำในไฟล์นี้ — กัน definition
@@ -48,7 +48,7 @@ export const useSongGame = create<DailySongGameState>()(
                 const alreadyGuessed = state.guesses.some(g => g.guess.id === guessedSong.id);
                 if (alreadyGuessed) return state;
 
-                const status = getSongGuessStatus(guessedSong, state.target);
+                const status = getSongStatus(guessedSong, state.target);
                 const newEntry: SongGuessEntry = { guess: guessedSong, status, isNew: true };
                 const prevGuesses = state.guesses.map(g => ({ ...g, isNew: false }));
 

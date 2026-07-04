@@ -74,7 +74,11 @@ CREATE TABLE emojis (
 CREATE TABLE quotes (
     id TEXT PRIMARY KEY,
     character_id TEXT REFERENCES characters(id) ON DELETE CASCADE,
-    text TEXT NOT NULL
+    text TEXT NOT NULL,
+    episode INTEGER,
+    chapter INTEGER,
+    arc TEXT,
+    context TEXT
 );
 
 -- 6. ตารางจัดคิวรายวัน (daily_schedule)

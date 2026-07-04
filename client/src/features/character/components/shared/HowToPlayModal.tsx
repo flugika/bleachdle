@@ -1,7 +1,7 @@
 // src/features/character/components/shared/HowToPlayModal.tsx
 'use client';
 
-import { compareCharacters } from "@/src/lib/game-engine/compare";
+import { compareCharacter } from "@/src/lib/game-engine/compareCharacter";
 import { getCharacterById } from "@/src/lib/utils/character"; 
 import { formatAge, formatHeight } from "@/src/lib/utils/format";
 import { useMemo } from "react";
@@ -31,7 +31,7 @@ export const HowToPlayModal = ({ isOpen, onClose, mode }: HowToPlayModalProps) =
 
     const comparison = useMemo(() => {
         if (target && guess) {
-            return compareCharacters(guess, target);
+            return compareCharacter(guess, target);
         }
         return null;
     }, [target, guess]);

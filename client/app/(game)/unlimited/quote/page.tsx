@@ -1,13 +1,13 @@
-// app/unlimited/song/page.tsx
+// app/unlimited/quote/page.tsx
 "use client";
 
 import { useEffect, useState } from 'react';
-import { SongGuessTable } from '@/src/features/song/components/shared/SongGuessTable';
-import { SongControlPanel } from '@/src/shared/ui/control-panel/SongControlPanel';
-import { useSongGame } from '@/src/features/song/hooks/unlimited/useSongGame';
-import { getSongs } from '@/src/lib/utils/song';
-import { SongSummaryGuess } from '@/src/features/song/components/shared/SongSummaryGuess';
-import { SongHowToPlayModal } from '@/src/features/song/components/shared/SongHowToPlayModal';
+import { QuoteGuessTable } from '@/src/features/quote/components/shared/QuoteGuessTable';
+import { QuoteControlPanel } from '@/src/shared/ui/control-panel/QuoteControlPanel';
+import { useQuoteGame } from '@/src/features/quote/hooks/unlimited/useQuoteGame';
+import { getQuotes } from '@/src/lib/utils/quote';
+import { QuoteSummaryGuess } from '@/src/features/quote/components/shared/QuoteSummaryGuess';
+import { QuoteHowToPlayModal } from '@/src/features/quote/components/shared/QuoteHowToPlayModal';
 import { Header } from '@/src/shared/layout/Header';
 import { Divider } from '@/src/shared/layout/Divider';
 import { SubHeader } from '@/src/shared/layout/SubHeader';
@@ -17,23 +17,21 @@ import { FEATURE_FLAGS } from '@/src/config/feature.flags';
 import { ModeBadge } from '@/src/shared/ui/ModeBadge';
 import { ModeSelectorModal } from '@/src/shared/ui/ModeSelectorModal';
 import { useSenkaimon } from '@/src/shared/ui/context/NavigationContext';
-import { MAX_SONG_GUESSES } from '@/src/const/guess';
-import SoulSyncLoader from '@/src/shared/ui/loader/SoulSyncLoader'
+import { MAX_QUOTE_GUESSES } from '@/src/const/guess';
+import SoulSyncLoader from '@/src/shared/ui/loader/SoulSyncLoader';
 import { STORAGE_KEYS } from '@/src/const/localStorage';
 
-export default function UnlimitedSongGame() {
-    // 🛡️ TODO: เพิ่ม key `song: { daily: boolean; unlimited: boolean }` ใน feature.flags.ts
-    // ถ้ายังไม่มี ให้ลบ optional chaining (?.) ออกแล้วใส่ FEATURE_FLAGS.unlimited.song ตรงๆ
-    if (!FEATURE_FLAGS.unlimited?.song) {
+export default function UnlimitedQuoteGame() {
+    // 🛡️ TODO: เพิ่ม key `quote: { daily: boolean; unlimited: boolean }` ใน feature.flags.ts
+    if (!FEATURE_FLAGS.unlimited?.quote) {
         return <Sealed />;
     }
 
-    const { navigate, state, reportReady } = useSenkaimon(); // 👈 pattern เดียวกับหน้า character unlimited เป๊ะ
+    const { navigate, state, reportReady } = useSenkaimon();
 
-    // 🛡️ subscribe store ครั้งเดียว แล้วส่ง object เดิมต่อให้ SongSearchBar ผ่าน prop `game`
-    const gameStore = useSongGame();
+    const gameStore = useQuoteGame();
     const { target, guesses, initializeGame, finalizeGame, resetGame, hardReset, hasFinalized, _hasHydrated } = gameStore;
-    const songs = getSongs();
+    const quotes = getQuotes();
 
     const [manuallyClosed, setManuallyClosed] = useState(false);
     const [stats, setStats] = useState({ currentStreak: 0, maxStreak: 0 });
@@ -44,7 +42,6 @@ export default function UnlimitedSongGame() {
     const [revealDelayDone, setRevealDelayDone] = useState(false);
     const [finalRoundGuesses, setFinalRoundGuesses] = useState<typeof guesses>([]);
 
-    // 🛡️ FIX (ปัญหา modal ค้าง): ปิด modal ทันทีที่ประตูเซนไกมงเริ่ม "closing"
     useEffect(() => {
         if (state === "closing") {
             setIsModeSelectorOpen(false);
@@ -54,22 +51,20 @@ export default function UnlimitedSongGame() {
     useEffect(() => {
         setManuallyClosed(false);
         if (target) {
-            console.log("target:", target)
+            console.log("target:", target);
         }
         setRevealDelayDone(false);
     }, [target]);
 
-    const remainingGuesses = Math.max(0, MAX_SONG_GUESSES - guesses.length);
+    const remainingGuesses = Math.max(0, MAX_QUOTE_GUESSES - guesses.length);
 
     const [soulName, setSoulName] = useState('');
     const [inputName, setInputName] = useState('');
     const [reincarnationCount, setReincarnationCount] = useState(0);
     const canReset = soulName.trim().length > 0;
 
-    // 🎵 Win condition ต่างจาก character: เพลงมีคำตอบเดียว ไม่ต้องเช็คทุก field == correct
-    // แค่ guess ล่าสุด (index 0) ตรงเพลงเป้าหมายเป๊ะก็พอ
     const isWin = guesses.some(g => g.status === 'correct');
-    const isLoss = guesses.length >= MAX_SONG_GUESSES && !isWin;
+    const isLoss = guesses.length >= MAX_QUOTE_GUESSES && !isWin;
     const isGameOver = isWin || isLoss;
     const showSummary = _hasHydrated && isReady && isGameOver && !manuallyClosed && revealDelayDone;
     const latestGuess = guesses[0];
@@ -78,13 +73,11 @@ export default function UnlimitedSongGame() {
     useEffect(() => {
         if (!isGameOver) return;
 
-        // F5 มาเจอเกมที่จบไปแล้ว → ไม่มี "โมเมนต์สด" ให้รอ โชว์ summary ได้เลย
         if (!isFreshFinish) {
             setRevealDelayDone(true);
             return;
         }
 
-        // ทายสดๆ → ให้เวลาโชว์ตั๋ว (ชนะให้เวลาดู confetti + stamp นานกว่า, แพ้สั้นกว่า)
         const delay = isWin ? 1600 : 900;
         const timer = setTimeout(() => setRevealDelayDone(true), delay);
         return () => clearTimeout(timer);
@@ -98,9 +91,8 @@ export default function UnlimitedSongGame() {
         }
     }, [isGameOver, hasFinalized, isWin, _hasHydrated, finalizeGame]);
 
-    // ── 🛡️ จัดการโครงสร้างสถิติแบบ Object Nesting (เหมือน character เป๊ะ)
     const updateStats = (won: boolean) => {
-        const statsData = JSON.parse(localStorage.getItem(STORAGE_KEYS.SONG_STATS) || '{}');
+        const statsData = JSON.parse(localStorage.getItem(STORAGE_KEYS.QOUTE_STATS) || '{}');
         const saved = statsData.unlimited || { currentStreak: 0, maxStreak: 0 };
 
         const newStats = {
@@ -109,22 +101,21 @@ export default function UnlimitedSongGame() {
         };
 
         statsData.unlimited = newStats;
-        localStorage.setItem(STORAGE_KEYS.SONG_STATS, JSON.stringify(statsData));
+        localStorage.setItem(STORAGE_KEYS.QOUTE_STATS, JSON.stringify(statsData));
         setStats(newStats);
     };
 
-    // 🛡️ รอ _hasHydrated (persist rehydrate จาก localStorage) ก่อนอ่าน/เขียนอะไรทั้งนั้น
     useEffect(() => {
         if (!_hasHydrated) return;
 
-        const statsData = JSON.parse(localStorage.getItem(STORAGE_KEYS.SONG_STATS) || '{}');
+        const statsData = JSON.parse(localStorage.getItem(STORAGE_KEYS.QOUTE_STATS) || '{}');
         setStats(statsData.unlimited || { currentStreak: 0, maxStreak: 0 });
 
-        const completedData = JSON.parse(localStorage.getItem(STORAGE_KEYS.SONG_COMPLETED) || '{}');
+        const completedData = JSON.parse(localStorage.getItem(STORAGE_KEYS.QOUTE_COMPLETED) || '{}');
         const completed = completedData.unlimited || [];
-        setIsGameCompleted(songs.length > 0 && completed.length >= songs.length);
+        setIsGameCompleted(quotes.length > 0 && completed.length >= quotes.length);
 
-        const registryData = JSON.parse(localStorage.getItem(STORAGE_KEYS.SONG_REGISTRY) || '{}');
+        const registryData = JSON.parse(localStorage.getItem(STORAGE_KEYS.QOUTE_REGISTRY) || '{}');
         const registry = registryData.unlimited || { name: "", count: 0 };
         if (registry.name) {
             setSoulName(registry.name);
@@ -133,9 +124,8 @@ export default function UnlimitedSongGame() {
 
         initializeGame();
         setIsReady(true);
-    }, [initializeGame, songs.length, _hasHydrated]);
+    }, [initializeGame, quotes.length, _hasHydrated]);
 
-    // 🚪 แจ้ง NavigationContext กลับไปตอน "isReady" เป็น true จริงๆ (หลัง hydrate + initializeGame เสร็จ)
     useEffect(() => {
         if (isReady) {
             reportReady();
@@ -144,11 +134,11 @@ export default function UnlimitedSongGame() {
 
     useEffect(() => {
         if (isReady) {
-            const completedData = JSON.parse(localStorage.getItem(STORAGE_KEYS.SONG_COMPLETED) || '{}');
+            const completedData = JSON.parse(localStorage.getItem(STORAGE_KEYS.QOUTE_COMPLETED) || '{}');
             const completed = completedData.unlimited || [];
-            setIsGameCompleted(songs.length > 0 && completed.length >= songs.length);
+            setIsGameCompleted(quotes.length > 0 && completed.length >= quotes.length);
         }
-    }, [target, songs.length, isReady]);
+    }, [target, quotes.length, isReady]);
 
     const handleCloseModal = () => {
         setManuallyClosed(true);
@@ -157,35 +147,33 @@ export default function UnlimitedSongGame() {
         window.scrollTo({ top: 0, behavior: 'smooth' });
     };
 
-    // ── 🛡️ ทะเบียนวิญญาณแบบจารึกรวมศูนย์ (แยก registry ของ song ออกจาก character โดยสิ้นเชิง)
     const handleRegisterSoul = (e: React.FormEvent) => {
         e.preventDefault();
         if (!inputName.trim()) return;
 
-        const registryData = JSON.parse(localStorage.getItem(STORAGE_KEYS.SONG_REGISTRY) || '{}');
+        const registryData = JSON.parse(localStorage.getItem(STORAGE_KEYS.QOUTE_REGISTRY) || '{}');
         const currentRegistry = registryData.unlimited || { name: "", count: 0 };
         const updated = { ...currentRegistry, name: inputName.trim() };
 
         registryData.unlimited = updated;
-        localStorage.setItem(STORAGE_KEYS.SONG_REGISTRY, JSON.stringify(registryData));
+        localStorage.setItem(STORAGE_KEYS.QOUTE_REGISTRY, JSON.stringify(registryData));
         setSoulName(inputName.trim());
     };
 
-    // ── 🛡️ คอมโบ Reset ข้อมูลโดยการเจาะทำลายเฉพาะกิ่งก้านของโหมด song/unlimited เท่านั้น
     const handleHardReset = () => {
-        const statsData = JSON.parse(localStorage.getItem(STORAGE_KEYS.SONG_STATS) || '{}');
+        const statsData = JSON.parse(localStorage.getItem(STORAGE_KEYS.QOUTE_STATS) || '{}');
         const saved = statsData.unlimited || { currentStreak: 0, maxStreak: 0 };
         statsData.unlimited = { currentStreak: 0, maxStreak: saved.maxStreak };
-        localStorage.setItem(STORAGE_KEYS.SONG_STATS, JSON.stringify(statsData));
+        localStorage.setItem(STORAGE_KEYS.QOUTE_STATS, JSON.stringify(statsData));
         setStats(statsData.unlimited);
 
-        const registryData = JSON.parse(localStorage.getItem(STORAGE_KEYS.SONG_REGISTRY) || '{}');
+        const registryData = JSON.parse(localStorage.getItem(STORAGE_KEYS.QOUTE_REGISTRY) || '{}');
         const currentRegistry = registryData.unlimited || { name: "", count: 0 };
         registryData.unlimited = {
             ...currentRegistry,
             count: (currentRegistry.count || 0) + 1
         };
-        localStorage.setItem(STORAGE_KEYS.SONG_REGISTRY, JSON.stringify(registryData));
+        localStorage.setItem(STORAGE_KEYS.QOUTE_REGISTRY, JSON.stringify(registryData));
         setReincarnationCount(registryData.unlimited.count);
 
         hardReset();
@@ -201,22 +189,17 @@ export default function UnlimitedSongGame() {
             <Header onOpenHowTo={() => setIsHowToOpen(true)} />
 
             <main className="max-w-[80%] mx-auto px-4 pb-16">
-                {/* mode ยังคง "unlimited" เพราะ /song อยู่ใต้มิติ unlimited เดิม แค่คนละประเภทเกม */}
                 <ModeBadge mode="unlimited" onClick={() => setIsModeSelectorOpen(true)} />
-                <SubHeader title="REIATSU RESONANCE" description="System // Scanning for Song Signature" />
+                <SubHeader title="REIATSU RESONANCE" description="System // Scanning for Quote Signature" />
 
-                {/* 🛡️ รวม SongAudioPlayer + SongSearchBar + stats เข้า SongControlPanel เดียว
-                    (เดิมแยกเรนเดอร์ 3 บล็อกซ้ำ pattern กับ character page) sync กับ isLimitReached
-                    fix ตัวเดียวกับ CharacterControlPanel */}
                 {!showSummary && (
-                    <SongControlPanel
+                    <QuoteControlPanel
                         mode="unlimited"
                         target={target}
-                        songs={songs}
                         remainingGuesses={remainingGuesses}
                         stats={stats}
                         game={gameStore}
-                        maxGuesses={MAX_SONG_GUESSES}
+                        maxGuesses={MAX_QUOTE_GUESSES}
                         isGameOver={isGameOver}
                     />
                 )}
@@ -227,7 +210,6 @@ export default function UnlimitedSongGame() {
                         <div className="flex flex-wrap justify-center gap-x-5 gap-y-1.5">
                             {([
                                 ['correct', '#0d2918', '#1a5530', '#4de880', 'Correct'],
-                                // 🛡️ นำสถานะ partial ออกจากตรงนี้ เพื่อให้สอดคล้องกับระบบเสียงReiatsu
                                 ['wrong', '#590e0e', '#a64747', '#3a2828', 'Wrong'],
                             ] as const).map(([key, bg, border, fg, label]) => (
                                 <div key={key} className="flex items-center gap-1.5">
@@ -240,12 +222,12 @@ export default function UnlimitedSongGame() {
                 )}
 
                 {showSummary ? (
-                    <SongSummaryGuess isOpen={showSummary} onClose={handleCloseModal} guesses={guesses} target={target} isWin={isWin} mode="unlimited" stats={stats} />
+                    <QuoteSummaryGuess isOpen={showSummary} onClose={handleCloseModal} guesses={guesses} target={target} isWin={isWin} mode="unlimited" stats={stats} />
                 ) : !isReady ? (
                     <SoulSyncLoader />
                 ) : target ? (
                     <div className="w-full overflow-x-auto">
-                        <SongGuessTable guesses={guesses} />
+                        <QuoteGuessTable guesses={guesses} />
                     </div>
                 ) : isGameCompleted ? (
                     <Central46ConfidentialArchive
@@ -268,7 +250,7 @@ export default function UnlimitedSongGame() {
                 )}
             </main>
 
-            <SongHowToPlayModal isOpen={isHowToOpen} onClose={() => setIsHowToOpen(false)} mode="unlimited" />
+            <QuoteHowToPlayModal isOpen={isHowToOpen} onClose={() => setIsHowToOpen(false)} mode="unlimited" />
             <ModeSelectorModal
                 isOpen={isModeSelectorOpen}
                 onClose={() => setIsModeSelectorOpen(false)}

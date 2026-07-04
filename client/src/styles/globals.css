@@ -1184,3 +1184,17 @@ button *:active,
 .kido-mote {
   animation: kido-drift-up 4.5s ease-in infinite;
 }
+
+@keyframes subtitle-scan {
+  0% {
+    left: -45%;
+  }
+
+  55% {
+    left: 100%;
+  }
+
+  100% {
+    left: 100%;
+  }
+}

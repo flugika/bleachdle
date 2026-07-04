@@ -9,62 +9,77 @@ interface KidoSealProps {
     className?: string;
 }
 
-// A dual-layer rotating Kido seal (two rings spinning opposite directions) —
-// used as a backdrop for the QR code or any other focal point. Built
-// standalone rather than reusing the project's existing loader, since that
-// component's internal structure isn't visible here.
+// Generic elemental glyphs — not tied to any specific copyrighted incantation,
+// just a decorative "kido circle" vocabulary (fire / water / wind / thunder / light / dark).
+const GLYPHS = ["火", "水", "風", "雷", "光", "闇"];
+
+// A layered, self-animating Kido seal: a breathing aura, three rings spinning
+// at different speeds/directions, a glyph band, and twinkling sparks.
+// All animation is defined locally via styled-jsx so it doesn't depend on
+// any global stylesheet — drop this component in anywhere and it just works.
 export function KidoSeal({ size = 340, color = "#c8a96e", className = "" }: KidoSealProps) {
+    const sparkPositions = Array.from({ length: 8 }).map((_, i) => {
+        const angle = (i / 8) * Math.PI * 2;
+        return {
+            left: 50 + 40 * Math.cos(angle),
+            top: 50 + 40 * Math.sin(angle),
+            delay: i * 0.3,
+        };
+    });
+
     return (
         <div
             className={`pointer-events-none absolute inset-0 flex items-center justify-center ${className}`}
             aria-hidden="true"
         >
+            {/* Breathing aura glow behind everything */}
+            <div
+                className="kido-aura absolute rounded-full"
+                style={{
+                    width: size * 0.95,
+                    height: size * 0.95,
+                    background: `radial-gradient(circle, ${color}30 0%, ${color}00 72%)`,
+                }}
+            />
+
+            {/* Outermost hairline ring — slow, faint drift */}
             <svg
                 width={size}
                 height={size}
                 viewBox="0 0 200 200"
-                className="kido-ring-glow"
-                style={{ position: "absolute" }}
+                className="kido-spin-slow absolute"
+                style={{ position: "absolute", filter: `drop-shadow(0 0 4px ${color}55)` }}
             >
-                <circle
-                    cx="100"
-                    cy="100"
-                    r="92"
-                    fill="none"
-                    stroke={color}
-                    strokeOpacity="0.15"
-                    strokeWidth="1"
-                />
+                <defs>
+                    <linearGradient id="kido-fade" x1="0%" y1="0%" x2="100%" y2="100%">
+                        <stop offset="0%" stopColor={color} stopOpacity="0.05" />
+                        <stop offset="50%" stopColor={color} stopOpacity="0.55" />
+                        <stop offset="100%" stopColor={color} stopOpacity="0.05" />
+                    </linearGradient>
+                </defs>
+                <circle cx="100" cy="100" r="94" fill="none" stroke="url(#kido-fade)" strokeWidth="1.2" />
             </svg>
 
+            {/* Tick ring — rotates clockwise */}
             <svg
                 width={size * 0.86}
                 height={size * 0.86}
                 viewBox="0 0 200 200"
-                className="kido-ring-outer"
-                style={{ position: "absolute" }}
+                className="kido-spin-cw absolute"
+                style={{ position: "absolute", filter: `drop-shadow(0 0 5px ${color}70)` }}
             >
-                <circle
-                    cx="100"
-                    cy="100"
-                    r="80"
-                    fill="none"
-                    stroke={color}
-                    strokeOpacity="0.35"
-                    strokeWidth="1"
-                    strokeDasharray="2 10"
-                />
+                <circle cx="100" cy="100" r="80" fill="none" stroke={color} strokeOpacity="0.4" strokeWidth="1" strokeDasharray="2 10" />
                 {Array.from({ length: 12 }).map((_, i) => {
                     const angle = (i / 12) * 360;
                     return (
                         <line
                             key={i}
                             x1="100"
-                            y1="14"
+                            y1="12"
                             x2="100"
                             y2="24"
                             stroke={color}
-                            strokeOpacity="0.5"
+                            strokeOpacity="0.55"
                             strokeWidth="1.5"
                             transform={`rotate(${angle} 100 100)`}
                         />
@@ -72,24 +87,145 @@ export function KidoSeal({ size = 340, color = "#c8a96e", className = "" }: Kido
                 })}
             </svg>
 
+            {/* Glyph band — rotates counter-clockwise, opposite the tick ring */}
             <svg
-                width={size * 0.7}
-                height={size * 0.7}
+                width={size * 0.72}
+                height={size * 0.72}
                 viewBox="0 0 200 200"
-                className="kido-ring-inner"
+                className="kido-spin-ccw absolute"
                 style={{ position: "absolute" }}
             >
-                <circle
-                    cx="100"
-                    cy="100"
-                    r="68"
-                    fill="none"
-                    stroke={color}
-                    strokeOpacity="0.25"
-                    strokeWidth="1"
-                    strokeDasharray="14 6"
-                />
+                <circle cx="100" cy="100" r="66" fill="none" stroke={color} strokeOpacity="0.25" strokeWidth="1" strokeDasharray="1 14" />
+                {GLYPHS.map((g, i) => {
+                    const angle = (i / GLYPHS.length) * 360 - 90;
+                    const rad = (angle * Math.PI) / 180;
+                    const x = 100 + 66 * Math.cos(rad);
+                    const y = 100 + 66 * Math.sin(rad);
+                    return (
+                        <text
+                            key={g}
+                            x={x}
+                            y={y}
+                            fill={color}
+                            fillOpacity="0.6"
+                            fontSize="10"
+                            textAnchor="middle"
+                            dominantBaseline="middle"
+                            style={{ fontFamily: "'Cinzel', serif" }}
+                        >
+                            {g}
+                        </text>
+                    );
+                })}
             </svg>
+
+            {/* Innermost ring — pulses rather than spins, like a held breath */}
+            <svg
+                width={size * 0.54}
+                height={size * 0.54}
+                viewBox="0 0 200 200"
+                className="kido-pulse absolute"
+                style={{ position: "absolute", filter: `drop-shadow(0 0 6px ${color}80)` }}
+            >
+                <circle cx="100" cy="100" r="52" fill="none" stroke={color} strokeOpacity="0.35" strokeWidth="1" strokeDasharray="14 6" />
+            </svg>
+
+            {/* Twinkling sparks orbiting the seal */}
+            {sparkPositions.map((s, i) => (
+                <span
+                    key={i}
+                    className="kido-sparkle absolute rounded-full"
+                    style={{
+                        left: `${s.left}%`,
+                        top: `${s.top}%`,
+                        width: 3,
+                        height: 3,
+                        background: color,
+                        boxShadow: `0 0 6px 1px ${color}`,
+                        animationDelay: `${s.delay}s`,
+                    }}
+                />
+            ))}
+
+            <style jsx>{`
+                .kido-aura {
+                    animation: kido-breathe 4.5s ease-in-out infinite;
+                }
+                .kido-spin-slow {
+                    animation: kido-rotate-cw 34s linear infinite;
+                }
+                .kido-spin-cw {
+                    animation: kido-rotate-cw 18s linear infinite;
+                }
+                .kido-spin-ccw {
+                    animation: kido-rotate-ccw 24s linear infinite;
+                }
+                .kido-pulse {
+                    animation: kido-pulse-scale 3s ease-in-out infinite;
+                }
+                .kido-sparkle {
+                    animation: kido-sparkle-twinkle 2.6s ease-in-out infinite;
+                }
+                @keyframes kido-rotate-cw {
+                    from {
+                        transform: rotate(0deg);
+                    }
+                    to {
+                        transform: rotate(360deg);
+                    }
+                }
+                @keyframes kido-rotate-ccw {
+                    from {
+                        transform: rotate(0deg);
+                    }
+                    to {
+                        transform: rotate(-360deg);
+                    }
+                }
+                @keyframes kido-breathe {
+                    0%,
+                    100% {
+                        opacity: 0.5;
+                        transform: scale(1);
+                    }
+                    50% {
+                        opacity: 0.95;
+                        transform: scale(1.08);
+                    }
+                }
+                @keyframes kido-pulse-scale {
+                    0%,
+                    100% {
+                        transform: scale(1);
+                        opacity: 0.7;
+                    }
+                    50% {
+                        transform: scale(1.07);
+                        opacity: 1;
+                    }
+                }
+                @keyframes kido-sparkle-twinkle {
+                    0%,
+                    100% {
+                        opacity: 0;
+                        transform: scale(0.3);
+                    }
+                    50% {
+                        opacity: 1;
+                        transform: scale(1);
+                    }
+                }
+                @media (prefers-reduced-motion: reduce) {
+                    .kido-aura,
+                    .kido-spin-slow,
+                    .kido-spin-cw,
+                    .kido-spin-ccw,
+                    .kido-pulse,
+                    .kido-sparkle {
+                        animation: none;
+                    }
+                }
+            `}</style>
         </div>
     );
 }

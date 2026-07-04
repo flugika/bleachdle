@@ -105,7 +105,7 @@ const compareAppearance = (guess: CharacterAppearance, target: CharacterAppearan
     return guessIndex < targetIndex ? 'higher' : 'lower';
 };
 
-export const compareCharacters = (guess: Character, target: Character): ComparisonOutcome => {
+export const compareCharacter = (guess: Character, target: Character): ComparisonOutcome => {
     const guessRace = guess.race as CharacterRace[];
     const targetRace = target.race as CharacterRace[];
     const guessFirstAp = guess.first_appearance_chapter as CharacterAppearance;

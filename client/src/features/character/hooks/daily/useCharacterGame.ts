@@ -1,7 +1,7 @@
 // src/features/character/hooks/daily/useCharacterGame.ts
 import { create } from 'zustand';
 import { Character } from '@/src/entities/character/schema';
-import { compareCharacters } from '@/src/lib/game-engine/compare';
+import { compareCharacter } from '@/src/lib/game-engine/compareCharacter';
 import { ComparisonOutcome } from '@/src/features/character/types';
 import { getCharacterById, getCharacters } from '@/src/lib/utils/character';
 import { persist, createJSONStorage } from 'zustand/middleware';
@@ -44,7 +44,7 @@ export const useCharacterGame = create<CharacterGameState>()(
                 const guessedCharacter = getCharacterById(guessId);
                 if (!guessedCharacter) return state;
 
-                const result = compareCharacters(guessedCharacter, state.target);
+                const result = compareCharacter(guessedCharacter, state.target);
                 const newEntry = { guess: guessedCharacter, result, isNew: true };
                 const prevGuesses = state.guesses.map(g => ({ ...g, isNew: false }));
 

@@ -1,7 +1,7 @@
 // src/features/song/hooks/unlimited/useSongGame.ts
 import { create } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware';
-import { getSongGuessStatus } from '@/src/lib/game-engine/compareSong';
+import { getSongStatus } from '@/src/lib/game-engine/compareSong';
 import { getAllSongSegments, getSongById, getSongs } from '@/src/lib/utils/song';
 import { SongGameController, SongGuessEntry } from '@/src/features/song/types';
 import { MAX_SONG_GUESSES } from '@/src/const/guess';
@@ -43,7 +43,7 @@ export const useSongGame = create<SongGameController>()(
                 const alreadyGuessed = state.guesses.some(g => g.guess.id === guessedSong.id);
                 if (alreadyGuessed) return state;
 
-                const status = getSongGuessStatus(guessedSong, state.target);
+                const status = getSongStatus(guessedSong, state.target);
                 const newEntry: SongGuessEntry = { guess: guessedSong, status, isNew: true };
                 const prevGuesses = state.guesses.map(g => ({ ...g, isNew: false }));
 
