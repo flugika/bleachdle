@@ -27,15 +27,18 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en" className="h-full">
-      <body className={`${cinzel.className} text-white antialiased`}>
-        {/* 🛡️ เปิดมิติตัวคุมเนวิเกชันครอบคลุมทุกเลเยอร์ของ Layout */}
+      <body className={`${cinzel.className} text-white antialiased relative`}>
+        {/* 1. ย้าย Scanlines มาไว้ตรงนี้ ให้เป็นเลเยอร์ที่อยู่ล่างสุดของทุกอย่าง */}
+        <div className="fixed inset-0 bleach-scanlines pointer-events-none z-[0] opacity-40" />
+
         <NavigationProvider>
           <SenkaimonTransition />
           <BleachReiatsuCursor />
           <WallpaperInitializer />
-          {/* Overlay คุมความมืดเพื่อให้ Contrast ของตัวหนังสือชัดเจน */}
+
           <div className="bg-overlay flex flex-col min-h-screen">
-            <main className="flex-grow w-full">
+            {/* 2. ให้ main เป็น relative และกำหนด z-index ให้มันอยู่เหนือ scanlines */}
+            <main className="flex-grow w-full relative z-10">
               {children}
             </main>
             <Footer />

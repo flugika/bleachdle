@@ -1,7 +1,7 @@
 // app/(home)/page.tsx
 "use client";
 
-import React from "react";
+import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import { useSenkaimon } from "@/src/shared/ui/context/NavigationContext"; // 💡 ตรวจสอบ Path ให้ตรงกับโครงสร้างจริงของคุณ
 import { HeaderDivider } from "@/src/shared/layout/HeaderDivider";
@@ -68,6 +68,11 @@ const GAME_MODES = [
 export default function Home() {
     const { navigate, state } = useSenkaimon();
 
+    const [isMounted, setIsMounted] = useState(false);
+    useEffect(() => {
+        setIsMounted(true);
+    }, []);
+
     // ⚔️ SENKAIMON GATEWAY INTERCEPTOR (SEO & USER EXPERIENCE SAFEGUARD)
     const handleNavigation = (e: React.MouseEvent<HTMLAnchorElement>, path: string) => {
         if (e.metaKey || e.altKey || e.ctrlKey || e.shiftKey) {
@@ -83,16 +88,18 @@ export default function Home() {
 
     return (
         <div className="relative w-full min-h-[100vh] flex flex-col items-center justify-center overflow-hidden px-4 md:px-8 select-none mt-16">
-
-            {/* 🌌 VISUAL LAYER 1: Cinematic Reishi Fields & Scanner Lines */}
-            <div className="absolute inset-0 bleach-scanlines pointer-events-none z-10 opacity-30 select-none" />
-            {/* <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(15,15,28,0.95)_0%,#020204_100%)] pointer-events-none z-0" /> */}
-
             {/* ⚡ VISUAL LAYER 2: Ambient Reiatsu Core Eruption */}
-            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-[radial-gradient(circle_at_center,rgba(200,169,110,0.03)_0%,transparent_70%)] pointer-events-none z-0 blur-[80px]" />
+            {/* 💡 แก้ไข: เพิ่ม Opacity เป็น 0.15 ขยายขนาดให้ครอบคลุม และใส่ Animation หายใจ (Pulse) */}
+            <div
+                className={`absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[120vw] h-[120vh] bg-[radial-gradient(circle_at_center,rgba(200,169,110,0.25)_0%,transparent_60%)] pointer-events-none z-0 blur-[100px] transition-all duration-[2000ms] ease-in-out ${isMounted ? "opacity-100 scale-100" : "opacity-0 scale-90"
+                    }`}
+            >
+                {/* วงในให้สีเข้มขึ้นอีกนิดเพื่อให้เห็นเป็นแกนพลัง */}
+                <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(200,169,110,0.2)_0%,transparent_30%)] animate-[pulse_4s_ease-in-out_infinite]" />
+            </div>
 
             {/* 卍解 VISUAL LAYER 3: Massive Shifting KANJI Watermark */}
-            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-[38vw] font-black text-white/[0.012] pointer-events-none tracking-[0.1em] leading-none z-0 select-none font-serif select-none transition-all duration-1000 animate-pulse">
+            <div className="absolute top-1/2 left-1/2 text-center -translate-x-1/2 -translate-y-1/2 text-[38vw] font-black text-white/[0.02] pointer-events-none tracking-[0.1em] leading-none z-0 select-none select-none transition-all duration-1000 animate-pulse">
                 卍解
             </div>
 

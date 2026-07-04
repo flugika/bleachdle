@@ -56,9 +56,6 @@ export const ThematicModeSelector: React.FC<ThematicModeSelectorProps> = ({
 
     return (
         <div className="relative w-full bleach-grid overflow-hidden flex flex-col items-center justify-start px-4 py-20 selection:bg-[#c8a96e]/30">
-            {/* 🔮 Cinematic Scanlines overlay */}
-            <div className="absolute inset-0 bleach-scanlines pointer-events-none z-10 opacity-40" />
-
             {/* 卍解 Huge Kanji Background Watermark */}
             <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-[28vw] font-bold text-kanji-watermark pointer-events-none select-none z-0 leading-none">
                 {modeType === "daily" ? "日常" : "無限"}
