@@ -593,10 +593,7 @@ export default function MockupSongGame() {
 
             <main className="max-w-[95%] mx-auto px-4 pb-16 mt-6">
                 <ModeBadge mode="unlimited" />
-                <SubHeader
-                    title="REIRAKU CHORD RESONANCE"
-                    description="SDRI // Gotei 13 Division 12 Audio Testing Laboratory & Live JSON Tuner Bench"
-                />
+                <SubHeader title="REIRAKU CHORD RESONANCE" subtitle="SDRI // Gotei 13 Division 12 Audio Testing Laboratory & Live JSON Tuner Bench" />
 
                 <DurationControlPanel
                     selected={selectedDuration}

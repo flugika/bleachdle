@@ -20,6 +20,7 @@ import { useSenkaimon } from '@/src/shared/ui/context/NavigationContext';
 import { MAX_QUOTE_GUESSES } from '@/src/const/guess';
 import SoulSyncLoader from '@/src/shared/ui/loader/SoulSyncLoader';
 import { STORAGE_KEYS } from '@/src/const/localStorage';
+import { BL_MODES_METADATA } from '@/src/config/mode';
 
 export default function UnlimitedQuoteGame() {
     // 🛡️ TODO: เพิ่ม key `quote: { daily: boolean; unlimited: boolean }` ใน feature.flags.ts
@@ -190,7 +191,7 @@ export default function UnlimitedQuoteGame() {
 
             <main className="max-w-[80%] mx-auto px-4 pb-16">
                 <ModeBadge mode="unlimited" onClick={() => setIsModeSelectorOpen(true)} />
-                <SubHeader title="REIATSU RESONANCE" description="System // Scanning for Quote Signature" />
+                <SubHeader title={BL_MODES_METADATA.quote.title} subtitle={BL_MODES_METADATA.quote.statusLine} />
 
                 {!showSummary && (
                     <QuoteControlPanel

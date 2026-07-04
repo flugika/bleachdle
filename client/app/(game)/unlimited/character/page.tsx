@@ -20,6 +20,7 @@ import { useSenkaimon } from '@/src/shared/ui/context/NavigationContext';
 import { MAX_CHARACTER_GUESSES } from '@/src/const/guess';
 import SoulSyncLoader from '@/src/shared/ui/loader/SoulSyncLoader';
 import { STORAGE_KEYS } from '@/src/const/localStorage';
+import { BL_MODES_METADATA } from '@/src/config/mode';
 
 export default function UnlimitedCharacterGame() {
     if (!FEATURE_FLAGS.unlimited.character) {
@@ -206,7 +207,7 @@ export default function UnlimitedCharacterGame() {
 
             <main className="max-w-[80%] mx-auto px-4 pb-16">
                 <ModeBadge mode="unlimited" onClick={() => setIsModeSelectorOpen(true)} />
-                <SubHeader title='REIRAKU PERCEPTION' description='System // Scanning for Reiatsu Signature' />
+                <SubHeader title={BL_MODES_METADATA.character.title} subtitle={BL_MODES_METADATA.character.statusLine} />
 
                 {/* 🛡️ เปลี่ยนจาก SearchBar + stats block แบบ manual (ซ้ำโค้ดกับ daily) มาใช้
                     CharacterControlPanel ตัวเดียวกับ daily — sync กับ isLimitReached fix ที่แก้ไปด้วย

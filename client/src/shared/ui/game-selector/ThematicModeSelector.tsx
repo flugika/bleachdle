@@ -4,8 +4,10 @@
 import React from "react";
 import Link from "next/link";
 import { FEATURE_FLAGS } from "@/src/config/feature.flags";
-import { BL_MODES_METADATA, ModeType, SubFeatureKey } from "@/src/shared/ui/game-selector/types";
+import { ModeType, SubFeatureKey } from "@/src/config/mode";
 import { useSenkaimon } from "@/src/shared/ui/context/NavigationContext";
+import { BL_MODES_METADATA } from "@/src/config/mode";
+import { HeaderDivider } from "../../layout/HeaderDivider";
 
 interface ThematicModeSelectorProps {
     modeType: ModeType;
@@ -74,7 +76,8 @@ export const ThematicModeSelector: React.FC<ThematicModeSelectorProps> = ({
                 >
                     {modeType}
                 </h1>
-                <p className="text-[10px] md:text-xs text-white/40 uppercase tracking-[0.3em] mt-6 leading-relaxed max-w-2xl mx-auto border-t border-white/10 pt-6">
+                <HeaderDivider className="mt-6"/>
+                <p className="text-[10px] md:text-xs text-white/40 uppercase tracking-[0.3em] mt-6 leading-relaxed max-w-2xl mx-auto">
                     Synchronize your spiritual pressure to breach the dimensions. Only stabilized dimensional rifts are displayed.
                 </p>
             </div>
@@ -124,17 +127,17 @@ export const ThematicModeSelector: React.FC<ThematicModeSelectorProps> = ({
                                     <div className="flex flex-col items-end font-mono text-[8px] tracking-[0.2em] text-right">
                                         <span className="text-[#c8a96e] font-bold flex items-center gap-1.5 bg-[#c8a96e]/10 px-2 py-0.5 border border-[#c8a96e]/20 rounded-none shadow-[0_0_10px_rgba(200,169,110,0.1)]">
                                             <span className="w-1.5 h-1.5 rounded-full bg-[#c8a96e] animate-pulse" />
-                                            READY TO BREACH
+                                            {config.technicalTerm}
                                         </span>
                                         <span className="mt-2 font-medium text-white/40">
-                                            {config.technicalTerm}
+                                            {config.romaji}
                                         </span>
                                     </div>
                                 </div>
 
                                 <div>
                                     <span className="text-[10px] font-mono tracking-[0.35em] block mb-2 font-bold text-[#c8a96e]/80 group-hover:text-white transition-colors duration-500">
-                                        {config.romaji}
+                                        {config.id}
                                     </span>
                                     <h2 className="text-xl font-extrabold tracking-[0.25em] text-white drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)] group-hover:text-[#c8a96e] group-hover:tracking-[0.28em] transition-all duration-500">
                                         {config.title}

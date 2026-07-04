@@ -20,6 +20,7 @@ import { useSenkaimon } from '@/src/shared/ui/context/NavigationContext';
 import { MAX_SONG_GUESSES } from '@/src/const/guess';
 import SoulSyncLoader from '@/src/shared/ui/loader/SoulSyncLoader'
 import { STORAGE_KEYS } from '@/src/const/localStorage';
+import { BL_MODES_METADATA } from '@/src/config/mode';
 
 export default function UnlimitedSongGame() {
     // 🛡️ TODO: เพิ่ม key `song: { daily: boolean; unlimited: boolean }` ใน feature.flags.ts
@@ -203,7 +204,7 @@ export default function UnlimitedSongGame() {
             <main className="max-w-[80%] mx-auto px-4 pb-16">
                 {/* mode ยังคง "unlimited" เพราะ /song อยู่ใต้มิติ unlimited เดิม แค่คนละประเภทเกม */}
                 <ModeBadge mode="unlimited" onClick={() => setIsModeSelectorOpen(true)} />
-                <SubHeader title="REIATSU RESONANCE" description="System // Scanning for Song Signature" />
+                <SubHeader title={BL_MODES_METADATA.song.title} subtitle={BL_MODES_METADATA.song.statusLine} />
 
                 {/* 🛡️ รวม SongAudioPlayer + SongSearchBar + stats เข้า SongControlPanel เดียว
                     (เดิมแยกเรนเดอร์ 3 บล็อกซ้ำ pattern กับ character page) sync กับ isLimitReached

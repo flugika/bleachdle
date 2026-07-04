@@ -19,10 +19,11 @@ import { ModeSelectorModal } from '@/src/shared/ui/ModeSelectorModal';
 import { useSenkaimon } from '@/src/shared/ui/context/NavigationContext';
 import SoulSyncLoader from '@/src/shared/ui/loader/SoulSyncLoader';
 import { STORAGE_KEYS } from '@/src/const/localStorage';
+import { BL_MODES_METADATA } from '@/src/config/mode';
 
 interface DailySongWrapperProps {
     initialTarget: BleachSong;
-    initialSegmentId: string; 
+    initialSegmentId: string;
 }
 
 export default function DailySongWrapper({ initialTarget, initialSegmentId }: DailySongWrapperProps) {
@@ -169,7 +170,7 @@ export default function DailySongWrapper({ initialTarget, initialSegmentId }: Da
 
             <main className="max-w-[80%] mx-auto px-4 pb-16">
                 <ModeBadge mode="daily" onClick={() => setIsModeSelectorOpen(true)} />
-                <SubHeader title="REIATSU RESONANCE" description="System // Scanning for Song Signature" />
+                <SubHeader title={BL_MODES_METADATA.song.title} subtitle={BL_MODES_METADATA.song.statusLine} />
 
                 {!isModalOpen && (
                     // ⚠️ ASSUMPTION: SongControlPanel ต้องรองรับ mode="daily" แล้ว "ปิด" max-guess

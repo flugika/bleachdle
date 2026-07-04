@@ -1,12 +1,19 @@
 "use client";
 
-import { useRouter } from "next/navigation";
+// นำเอา useRouter ออก และแทนที่ด้วย useSenkaimon
 import ZangetsuLoader from "./loader/ZangetsuLoader";
-import { Button } from "@/src/shared/ui/button"; // 👈 นำเข้าคอมโพเนนต์ปุ่มเดิมของคุณ
+import { Button } from "@/src/shared/ui/button";
+import { useSenkaimon } from "@/src/shared/ui/context/NavigationContext"; // 👈 นำเข้า useSenkaimon ของคุณ
+import { useEffect } from "react";
 
 export default function Sealed() {
-    const router = useRouter(); // 👈 เปิดใช้งาน Router สำหรับการกดย้อนกลับ
+    const { navigate, reportReady } = useSenkaimon(); // 👈 ดึง reportReady มาใช้งาน
 
+    // 👈 เพิ่ม useEffect ตัวนี้ เพื่อสั่งปลดล็อคให้เซนไกมงเปิดประตู
+    useEffect(() => {
+        reportReady();
+    }, [reportReady]);
+    
     return (
         <div className="fixed inset-0 z-50 flex flex-col items-center justify-center w-screen h-screen bg-[#020205] text-white overflow-hidden select-none">
 
@@ -92,11 +99,11 @@ export default function Sealed() {
                             Crypt_ID // 046-FUIN-REIATSU-GATE
                         </div>
 
-                        {/* ⚡ PREMIUM ACTION ZONE (ส่วนที่เพิ่มเข้ามาใหม่) ⚡ */}
+                        {/* ⚡ PREMIUM ACTION ZONE ⚡ */}
                         <div className="w-full max-w-md border-t border-white/[0.04] flex flex-col items-center gap-2 group/btn">
                             <Button
                                 variant="primary"
-                                onClick={() => router.push('/')}
+                                onClick={() => navigate('/')} // 👈 ใช้งาน navigate จาก Senkaimon ตรงนี้
                                 className="w-full text-[11px] tracking-[0.3em] font-black relative overflow-hidden group/shimmer shadow-[0_0_15px_rgba(200,169,110,0.05)] hover:shadow-[0_0_25px_rgba(200,169,110,0.2)] duration-300"
                             >
                                 {/* Effect แสงวิ่งผ่าน (Reiatsu Shimmer) ตอนเมาส์ชี้ */}
