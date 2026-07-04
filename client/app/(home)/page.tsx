@@ -135,8 +135,6 @@ export default function Home() {
                 </div>
             </div>
 
-            <SoulSyncLoader hideLabel className="mt-0 mb-0" />
-
             {/* ================= 🌌 DIMENSIONAL GATEWAY CHASSIS ================= */}
             <div className="relative z-20 grid grid-cols-1 md:grid-cols-2 gap-8 w-full max-w-5xl px-4 pb-12">
 
@@ -245,6 +243,8 @@ export default function Home() {
                 </Link>
 
             </div>
+
+            <SoulSyncLoader hideLabel className="mt-0 mb-0" />
 
             {/* ================= 📖 ABOUT / WHAT IS BLEACHDLE SECTION ================= */}
             <div className="relative z-20 w-full max-w-5xl px-4 pb-16">
