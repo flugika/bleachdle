@@ -1,4 +1,4 @@
-// npx tsx --env-file=.env src/lib/supabase/seeds/daily/seed-characters.js
+// npx tsx --env-file=.env src/scripts/seeds/daily/seed-characters.js
 
 import { supabase } from '@/src/lib/supabase/supabase'
 import fs from 'fs';

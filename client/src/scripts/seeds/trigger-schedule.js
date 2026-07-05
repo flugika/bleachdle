@@ -1,4 +1,4 @@
-// npx tsx --env-file=.env src/lib/supabase/seeds/trigger-schedule.js
+// npx tsx --env-file=.env src/scripts/seeds/trigger-schedule.js
 
 import { supabase } from '@/src/lib/supabase/supabase';
 

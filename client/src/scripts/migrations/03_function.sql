@@ -98,6 +98,7 @@ CREATE OR REPLACE FUNCTION generate_daily_schedule()
 RETURNS TEXT
 LANGUAGE plpgsql
 SECURITY DEFINER
+SET search_path = public
 AS $$
 DECLARE
     char_ids TEXT[];
@@ -162,13 +163,30 @@ CREATE OR REPLACE FUNCTION increment_daily_stat(
   p_mode text,
   p_passed boolean,
   p_guess_count integer DEFAULT NULL
-) RETURNS void AS $$
+) RETURNS void
+LANGUAGE plpgsql
+SECURITY DEFINER
+SET search_path = public
+AS $$
 DECLARE
-  played_col text := p_mode || '_played_count';
-  passed_col text := p_mode || '_passed_count';
-  dist_col   text := p_mode || '_guess_distribution';
+  played_col text;
+  passed_col text;
+  dist_col   text;
   dist_key   text := COALESCE(p_guess_count::text, 'fail');
 BEGIN
+  IF p_mode NOT IN ('character', 'song', 'image', 'release', 'emoji', 'quote') THEN
+    RAISE EXCEPTION 'invalid mode: %', p_mode;
+  END IF;
+
+  -- ✅ เพิ่มตรงนี้: กัน guess_count นอก range แม้เรียก RPC ตรงๆ
+  IF p_guess_count IS NOT NULL AND (p_guess_count < 1 OR p_guess_count > 10) THEN
+    RAISE EXCEPTION 'invalid guess count: %', p_guess_count;
+  END IF;
+
+  played_col := p_mode || '_played_count';
+  passed_col := p_mode || '_passed_count';
+  dist_col   := p_mode || '_guess_distribution';
+
   EXECUTE format('
     INSERT INTO daily_stats (date, %I, %I, %I)
     VALUES ($1, 1, CASE WHEN $2 THEN 1 ELSE 0 END,
@@ -187,4 +205,4 @@ BEGIN
      dist_col, dist_col, dist_col)
   USING p_date, p_passed, dist_key;
 END;
-$$ LANGUAGE plpgsql;
+$$;

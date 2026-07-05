@@ -15,6 +15,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { supabase } from "@/src/lib/supabase/supabase";
 import { packCookie, unpackCookie, todayKey } from "@/src/lib/support/rateLimitCookie";
+import { sanitizeInput } from "@/src/lib/utils/sanitize";
 
 export const runtime = "nodejs";
 
@@ -104,7 +105,7 @@ export async function POST(req: NextRequest) {
         // --- Write the ticket. Notice: no ip, no user_agent. ---
         const { error: insertErr } = await supabase.from("support_tickets").insert({
             category,
-            message: message.trim(),
+            message: sanitizeInput(message.trim()),
             client_ref: typeof clientRef === "string" ? clientRef.slice(0, 64) : null,
         });
 

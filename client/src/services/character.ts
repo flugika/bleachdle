@@ -1,4 +1,6 @@
-// src/services/scheduleServer.ts
+// src/services/character.ts
+import 'server-only'
+
 import { supabase } from '@/src/lib/supabase/supabase';
 import { Character } from '@/src/entities/character/schema';
 

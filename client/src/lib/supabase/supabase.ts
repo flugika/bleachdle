@@ -1,3 +1,5 @@
+import 'server-only'
+
 import { createClient } from '@supabase/supabase-js';
 
 // ตรวจสอบว่ามีตัวแปรเหล่านี้ใน .env ของคุณ

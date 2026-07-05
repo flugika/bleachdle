@@ -1,4 +1,6 @@
 // src/services/song.ts
+import 'server-only'
+
 import { supabase } from '@/src/lib/supabase/supabase';
 import { BleachSong } from '@/src/entities/song/schema';
 import { getAllSongSegments, getSongById } from '@/src/features/song/song';

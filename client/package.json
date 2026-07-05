@@ -2,23 +2,36 @@
   "name": "client",
   "version": "0.1.0",
   "private": true,
+  "pnpm": {
+    "overrides": {
+      "postcss": ">=8.5.10"
+    }
+  },
   "scripts": {
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
-    "extract-meta": "node extract-meta.mjs",
+    "check-assets": "npx tsx src/scripts/check-assets.js",
+    "extract-meta": "npx tsx src/scripts/extract-character-meta.js",
+    "extract-character": "npx tsx src/scripts/extract-character.js",
+    "generate-wallpapers": "npx tsx src/scripts/generate-wallpapers.js",
+    "seed:characters": "npx tsx --env-file=.env src/scripts/seeds/daily/seed-characters.js",
+    "seed:songs": "npx tsx --env-file=.env src/scripts/seeds/daily/seed-songs.js",
+    "seed:trigger-schedule": "npx tsx --env-file=.env src/scripts/seeds/trigger-schedule.js",
     "preinstall": "npx only-allow pnpm"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.110.0",
+    "@upstash/ratelimit": "^2.0.8",
+    "@upstash/redis": "^1.38.0",
     "framer-motion": "^12.42.0",
-    "fs": "0.0.1-security",
     "fuse.js": "^7.4.2",
     "lucide-react": "^1.23.0",
     "next": "16.2.9",
     "react": "19.2.4",
     "react-dom": "19.2.4",
+    "server-only": "^0.0.1",
     "zod": "^4.4.3",
     "zustand": "^5.0.14"
   },

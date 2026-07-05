@@ -1,5 +1,5 @@
 // src/lib/services/statsClient.ts
-type StatMode = 'character' | 'song' | 'image' | 'release' | 'emoji';
+import type { StatMode } from '@/src/entities/stats/types';
 
 export async function recordDailyStat(mode: StatMode, isWin: boolean, guessCount: number) {
     try {
