@@ -1,7 +1,7 @@
 // src/features/character/components/shared/HowToPlayModal.tsx
 'use client';
 
-import { compareCharacter } from "@/src/lib/game-engine/compareCharacter";
+import { compareCharacter } from "@/src/features/character/compareCharacter";
 import { getCharacterById } from "@/src/lib/utils/character"; 
 import { formatAge, formatHeight } from "@/src/lib/utils/format";
 import { useMemo } from "react";

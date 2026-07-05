@@ -7,7 +7,8 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
-    "extract-meta": "node extract-meta.mjs"
+    "extract-meta": "node extract-meta.mjs",
+    "preinstall": "npx only-allow pnpm"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.110.0",

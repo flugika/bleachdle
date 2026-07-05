@@ -1,7 +1,7 @@
 // src/features/song/hooks/unlimited/useSongGame.ts
 import { create } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware';
-import { getSongStatus } from '@/src/lib/game-engine/compareSong';
+import { getSongStatus } from '@/src/features/song/compareSong';
 import { getAllSongSegments, getSongById, getSongs } from '@/src/lib/utils/song';
 import { SongGameController, SongGuessEntry } from '@/src/features/song/types';
 import { MAX_SONG_GUESSES } from '@/src/const/guess';

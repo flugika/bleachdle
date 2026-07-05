@@ -1,7 +1,7 @@
 // src/features/quote/hooks/unlimited/useQuoteGame.ts
 import { create } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware';
-import { getQuoteStatus } from '@/src/lib/game-engine/compareQuote';
+import { getQuoteStatus } from '@/src/features/quote/compareQuote';
 import { getCharacterById } from '@/src/lib/utils/character'; // ⚠️ ปรับ path ให้ตรงของจริงถ้าไม่ตรงนี้
 import { getQuotes } from '@/src/lib/utils/quote';
 import { QuoteGameController, QuoteGuessEntry } from '@/src/features/quote/types';

@@ -1,7 +1,7 @@
 // src/features/character/hooks/daily/useCharacterGame.ts
 import { create } from 'zustand';
 import { Character } from '@/src/entities/character/schema';
-import { compareCharacter } from '@/src/lib/game-engine/compareCharacter';
+import { compareCharacter } from '@/src/features/character/compareCharacter';
 import { ComparisonOutcome } from '@/src/features/character/types';
 import { getCharacterById, getCharacters } from '@/src/lib/utils/character';
 import { persist, createJSONStorage } from 'zustand/middleware';

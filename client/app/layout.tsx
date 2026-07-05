@@ -4,7 +4,7 @@ import '../src/styles/globals.css';
 import { Cinzel } from "next/font/google";
 import Footer from "@/src/shared/layout/Footer";
 import { BleachReiatsuCursor } from "@/src/shared/ui/BleachReiatsuCursor";
-import { WallpaperInitializer } from "@/src/shared/hooks/WallpaperInitializer";
+import { WallpaperInitializer } from "@/src/shared/ui/WallpaperInitializer";
 import { SenkaimonTransition } from "@/src/shared/ui/loader/SenkaimonTransition";
 import { NavigationProvider } from "@/src/shared/ui/context/NavigationContext";
 // 💡 นำเข้าตัว Ambient พรีเมียมตัวใหม่ที่เราเพิ่งสร้าง

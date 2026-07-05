@@ -276,6 +276,7 @@ bleachdle
 │  ├─ README.md
 │  ├─ src
 │  │  ├─ config
+│  │  │  ├─ daily-hub.config.ts
 │  │  │  ├─ feature.flags.ts
 │  │  │  └─ mode.ts
 │  │  ├─ const
@@ -317,7 +318,6 @@ bleachdle
 │  │  │  │  │     └─ useCharacterGame.ts
 │  │  │  │  ├─ index.ts
 │  │  │  │  └─ types.ts
-│  │  │  ├─ daily
 │  │  │  ├─ emoji
 │  │  │  ├─ image
 │  │  │  ├─ quote
@@ -347,12 +347,11 @@ bleachdle
 │  │  │  │  │  └─ unlimited
 │  │  │  │  │     └─ useSongGame.ts
 │  │  │  │  └─ types.ts
-│  │  │  ├─ support
-│  │  │  │  ├─ KidoSeal.tsx
-│  │  │  │  ├─ PortfolioCard.tsx
-│  │  │  │  ├─ SupportForm.tsx
-│  │  │  │  └─ SupportPageClient.tsx
-│  │  │  └─ unlimited
+│  │  │  └─ support
+│  │  │     ├─ KidoSeal.tsx
+│  │  │     ├─ PortfolioCard.tsx
+│  │  │     ├─ SupportForm.tsx
+│  │  │     └─ SupportPageClient.tsx
 │  │  ├─ lib
 │  │  │  ├─ game-engine
 │  │  │  │  ├─ compareCharacter.ts
@@ -399,6 +398,7 @@ bleachdle
 │  │  │  ├─ hooks
 │  │  │  │  ├─ useCooldown.ts
 │  │  │  │  ├─ useCountdown.ts
+│  │  │  │  ├─ useDailyHub.ts
 │  │  │  │  ├─ useDailyWallpaper.ts
 │  │  │  │  ├─ useTestWallpaper.ts
 │  │  │  │  └─ WallpaperInitializer.tsx
@@ -407,6 +407,7 @@ bleachdle
 │  │  │  │  ├─ Footer.tsx
 │  │  │  │  ├─ Header.tsx
 │  │  │  │  ├─ HeaderDivider.tsx
+│  │  │  │  ├─ ReiatsuAmbientSides.tsx
 │  │  │  │  └─ SubHeader.tsx
 │  │  │  └─ ui
 │  │  │     ├─ BleachReiatsuCursor.tsx
@@ -417,8 +418,15 @@ bleachdle
 │  │  │     │  ├─ CharacterControlPanel.tsx
 │  │  │     │  ├─ QuoteControlPanel.tsx
 │  │  │     │  └─ SongControlPanel.tsx
+│  │  │     ├─ daily-hub
+│  │  │     │  ├─ DailyHubModalFooter.tsx
+│  │  │     │  └─ DailyProgressBar.tsx
 │  │  │     ├─ DailyResetTimer.tsx
 │  │  │     ├─ game-selector
+│  │  │     │  ├─ AllModesButton.tsx
+│  │  │     │  ├─ AllModesModal.tsx
+│  │  │     │  ├─ ModeBadge.tsx
+│  │  │     │  ├─ ModeSelectorModal.tsx
 │  │  │     │  └─ ThematicModeSelector.tsx
 │  │  │     ├─ input.tsx
 │  │  │     ├─ loader
@@ -426,8 +434,6 @@ bleachdle
 │  │  │     │  ├─ SoulSyncLoader.tsx
 │  │  │     │  └─ ZangetsuLoader.tsx
 │  │  │     ├─ modal.tsx
-│  │  │     ├─ ModeBadge.tsx
-│  │  │     ├─ ModeSelectorModal.tsx
 │  │  │     ├─ Sealed.tsx
 │  │  │     ├─ SearchBar.tsx
 │  │  │     ├─ test.tsx

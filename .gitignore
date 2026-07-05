@@ -40,3 +40,4 @@ client/.vercel
 # typescript
 client/next-env.d.ts
 client/*.tsbuildinfo
+client/package-lock.json
