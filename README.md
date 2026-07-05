@@ -2,7 +2,7 @@
 
 > A Wordle-style character guessing game for Bleach fans — unlimited mode, attribute-based feedback, Soul Society aesthetic.
 
-Lastest Updated: 5 July 2026, 0:17 AM.
+Lastest Updated: 5 July 2026, 21:24 PM.
 
 [![Next.js](https://img.shields.io/badge/Next.js-15-black?logo=next.js)](https://nextjs.org/)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5-blue?logo=typescript)](https://www.typescriptlang.org/)
@@ -233,7 +233,6 @@ bleachdle
 │  ├─ CLAUDE.md
 │  ├─ eslint.config.mjs
 │  ├─ next.config.ts
-│  ├─ package-lock.json
 │  ├─ package.json
 │  ├─ pnpm-lock.yaml
 │  ├─ pnpm-workspace.yaml
@@ -302,6 +301,7 @@ bleachdle
 │  │  │     └─ schema.ts
 │  │  ├─ features
 │  │  │  ├─ character
+│  │  │  │  ├─ compareCharacter.ts
 │  │  │  │  ├─ components
 │  │  │  │  │  ├─ daily
 │  │  │  │  │  │  └─ DailyCharacterWrapper.tsx
@@ -321,6 +321,7 @@ bleachdle
 │  │  │  ├─ emoji
 │  │  │  ├─ image
 │  │  │  ├─ quote
+│  │  │  │  ├─ compareQuote.ts
 │  │  │  │  ├─ components
 │  │  │  │  │  └─ shared
 │  │  │  │  │     ├─ QuoteGuessTable.tsx
@@ -331,6 +332,7 @@ bleachdle
 │  │  │  │  │     └─ useQuoteGame.ts
 │  │  │  │  └─ types.ts
 │  │  │  ├─ song
+│  │  │  │  ├─ compareSong.ts
 │  │  │  │  ├─ components
 │  │  │  │  │  ├─ daily
 │  │  │  │  │  │  └─ DailySongWrapper.tsx
@@ -353,43 +355,38 @@ bleachdle
 │  │  │     ├─ SupportForm.tsx
 │  │  │     └─ SupportPageClient.tsx
 │  │  ├─ lib
-│  │  │  ├─ game-engine
-│  │  │  │  ├─ compareCharacter.ts
-│  │  │  │  ├─ compareQuote.ts
-│  │  │  │  └─ compareSong.ts
 │  │  │  ├─ search
 │  │  │  │  └─ fuzzy.ts
 │  │  │  ├─ supabase
-│  │  │  │  ├─ migrations
-│  │  │  │  │  ├─ 0001_support_tickets.sql
-│  │  │  │  │  ├─ 01_table.sql
-│  │  │  │  │  ├─ 02_type.sql
-│  │  │  │  │  ├─ 03_function.sql
-│  │  │  │  │  └─ 04_cronjob.sql
-│  │  │  │  ├─ seeds
-│  │  │  │  │  ├─ daily
-│  │  │  │  │  │  ├─ seed-characters.js
-│  │  │  │  │  │  └─ seed-songs.js
-│  │  │  │  │  └─ trigger-schedule.js
 │  │  │  │  └─ supabase.ts
 │  │  │  ├─ support
 │  │  │  │  └─ rateLimitCookie.ts
-│  │  │  ├─ utils
-│  │  │  │  ├─ absolutePathEntities.ts
-│  │  │  │  ├─ character.ts
-│  │  │  │  ├─ checking.ts
-│  │  │  │  ├─ daily.ts
-│  │  │  │  ├─ format.ts
-│  │  │  │  ├─ quote.ts
-│  │  │  │  ├─ scripts
-│  │  │  │  │  ├─ check-assets.js
-│  │  │  │  │  ├─ extract-character-meta.js
-│  │  │  │  │  ├─ extract-character.js
-│  │  │  │  │  └─ generate-wallpapers.js
-│  │  │  │  ├─ song.ts
-│  │  │  │  ├─ songSegment.ts
-│  │  │  │  └─ ui.ts
-│  │  │  └─ uuid.ts
+│  │  │  └─ utils
+│  │  │     ├─ absolutePathEntities.ts
+│  │  │     ├─ character.ts
+│  │  │     ├─ checking.ts
+│  │  │     ├─ daily.ts
+│  │  │     ├─ format.ts
+│  │  │     ├─ quote.ts
+│  │  │     ├─ song.ts
+│  │  │     ├─ songSegment.ts
+│  │  │     └─ ui.ts
+│  │  ├─ scripts
+│  │  │  ├─ check-assets.js
+│  │  │  ├─ extract-character-meta.js
+│  │  │  ├─ extract-character.js
+│  │  │  ├─ generate-wallpapers.js
+│  │  │  ├─ migrations
+│  │  │  │  ├─ 0001_support_tickets.sql
+│  │  │  │  ├─ 01_table.sql
+│  │  │  │  ├─ 02_type.sql
+│  │  │  │  ├─ 03_function.sql
+│  │  │  │  └─ 04_cronjob.sql
+│  │  │  └─ seeds
+│  │  │     ├─ daily
+│  │  │     │  ├─ seed-characters.js
+│  │  │     │  └─ seed-songs.js
+│  │  │     └─ trigger-schedule.js
 │  │  ├─ services
 │  │  │  ├─ character.ts
 │  │  │  ├─ song.ts
@@ -400,8 +397,7 @@ bleachdle
 │  │  │  │  ├─ useCountdown.ts
 │  │  │  │  ├─ useDailyHub.ts
 │  │  │  │  ├─ useDailyWallpaper.ts
-│  │  │  │  ├─ useTestWallpaper.ts
-│  │  │  │  └─ WallpaperInitializer.tsx
+│  │  │  │  └─ useTestWallpaper.ts
 │  │  │  ├─ layout
 │  │  │  │  ├─ Divider.tsx
 │  │  │  │  ├─ Footer.tsx
@@ -436,8 +432,8 @@ bleachdle
 │  │  │     ├─ modal.tsx
 │  │  │     ├─ Sealed.tsx
 │  │  │     ├─ SearchBar.tsx
-│  │  │     ├─ test.tsx
-│  │  │     └─ tooltip.tsx
+│  │  │     ├─ tooltip.tsx
+│  │  │     └─ WallpaperInitializer.tsx
 │  │  └─ styles
 │  │     └─ globals.css
 │  └─ tsconfig.json

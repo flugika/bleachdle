@@ -80,7 +80,7 @@ export default function Footer() {
                 {/* Metadata/Copyright */}
                 <div className="text-[9px] text-white/20 tracking-wider text-center md:text-right">
                     © {new Date().getFullYear()} fukusana.dev <br />
-                    Latest Updated: 5 July 2026, 0:17 AM. <br />
+                    Latest Updated: 5 July 2026, 21:24 PM. <br />
                     Thousand-Year Blood War Cour 3 (The Conflict)
                 </div>
             </div>
