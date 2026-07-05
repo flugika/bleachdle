@@ -1,12 +1,13 @@
 // src/features/quote/hooks/unlimited/useQuoteGame.ts
 import { create } from 'zustand';
-import { persist, createJSONStorage } from 'zustand/middleware';
+import { persist } from 'zustand/middleware';
 import { getQuoteStatus } from '@/src/features/quote/compareQuote';
 import { getCharacterById } from '@/src/features/character/character'; // ⚠️ ปรับ path ให้ตรงของจริงถ้าไม่ตรงนี้
 import { getQuotes } from '@/src/features/quote/quote';
 import { QuoteGameController, QuoteGuessEntry } from '@/src/features/quote/types';
 import { MAX_QUOTE_GUESSES } from '@/src/const/guess';
 import { STORAGE_KEYS } from '@/src/const/localStorage';
+import { nestedJSONStorage } from '@/src/lib/store/createNestedStorage';
 
 // 🛡️ Type guard กันข้อมูล legacy/corrupted เหมือน useSongGame
 function isValidGuessEntry(entry: unknown): entry is QuoteGuessEntry {
@@ -111,22 +112,7 @@ export const useQuoteGame = create<QuoteGameController>()(
         }),
         {
             name: 'unlimited',
-            storage: createJSONStorage(() => ({
-                getItem: (name) => {
-                    const data = JSON.parse(localStorage.getItem(STORAGE_KEYS.QOUTE_PROGRESS) || '{}');
-                    return data[name] ? JSON.stringify(data[name]) : null;
-                },
-                setItem: (name, value) => {
-                    const data = JSON.parse(localStorage.getItem(STORAGE_KEYS.QOUTE_PROGRESS) || '{}');
-                    data[name] = JSON.parse(value);
-                    localStorage.setItem(STORAGE_KEYS.QOUTE_PROGRESS, JSON.stringify(data));
-                },
-                removeItem: (name) => {
-                    const data = JSON.parse(localStorage.getItem(STORAGE_KEYS.QOUTE_PROGRESS) || '{}');
-                    delete data[name];
-                    localStorage.setItem(STORAGE_KEYS.QOUTE_PROGRESS, JSON.stringify(data));
-                }
-            })),
+            storage: nestedJSONStorage(STORAGE_KEYS.QOUTE_PROGRESS),
             // ✅ isNew เป็น ephemeral UI flag เท่านั้น
             partialize: (state) => ({
                 guesses: state.guesses.map(({ guess, status }) => ({ guess, status, isNew: false })),

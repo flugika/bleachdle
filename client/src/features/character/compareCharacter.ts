@@ -27,21 +27,9 @@ const compareNumber = (guess: number, target: number): MatchResult => {
         return guess === target ? 'correct' : 'wrong';
     }
 
-    // กรณีเลขตรงกันเป๊ะ
     if (guess === target) return 'correct';
 
-    // กรณีเลขไม่เท่ากัน ให้เช็ค Range
-    const guessRange = getAgeRange(guess);
-    const targetRange = getAgeRange(target);
-
-    // ถ้าอยู่ใน Range เดียวกัน แต่เลขไม่เท่ากัน (เช่น 19 กับ 20)
-    // สำหรับ < 100 เราอยากให้มันบอก higher/lower ได้ปกติ
-    if (guessRange === targetRange && guessRange < 100) {
-        return guess < target ? 'higher' : 'lower';
-    }
-
-    // ถ้า Range ต่างกัน ให้เปรียบเทียบตาม Range
-    return guessRange < targetRange ? 'higher' : 'lower';
+    return guess < target ? 'higher' : 'lower';
 };
 
 const compareAge = (guess: number, target: number): MatchResult => {

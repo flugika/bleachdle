@@ -4,13 +4,15 @@ import { Character } from '@/src/entities/character/schema';
 import { compareCharacter } from '@/src/features/character/compareCharacter';
 import { ComparisonOutcome } from '@/src/features/character/types';
 import { getCharacterById, getCharacters } from '@/src/features/character/character';
-import { persist, createJSONStorage } from 'zustand/middleware';
+import { persist } from 'zustand/middleware';
 import { MAX_CHARACTER_GUESSES } from '@/src/const/guess';
 import { STORAGE_KEYS } from '@/src/const/localStorage'
+import { nestedJSONStorage } from '@/src/lib/store/createNestedStorage';
 
 interface GuessEntry {
     guess: Character;
     result: ComparisonOutcome;
+    isNew: boolean;
 }
 
 interface CharacterGameState {
@@ -39,15 +41,16 @@ export const useCharacterGame = create<CharacterGameState>()(
             setTarget: (target) => set({ target }),
 
             addGuess: (guessId: string) => set((state) => {
-                const isGameOver = state.guesses.length >= MAX_CHARACTER_GUESSES;
+                const isGameOver = state.guesses.length >= MAX_CHARACTER_GUESSES; // หรือ 10 ในกรณี daily
                 if (!state.target || isGameOver) return state;
 
                 const guessedCharacter = getCharacterById(guessId);
                 if (!guessedCharacter) return state;
 
                 const result = compareCharacter(guessedCharacter, state.target);
-                const newEntry = { guess: guessedCharacter, result, isNew: true };
-                const prevGuesses = state.guesses.map(g => ({ ...g, isNew: false }));
+
+                const newEntry: GuessEntry = { guess: guessedCharacter, result, isNew: true };
+                const prevGuesses: GuessEntry[] = state.guesses.map(g => ({ ...g, isNew: false }));
 
                 return { guesses: [newEntry, ...prevGuesses] };
             }),
@@ -135,22 +138,7 @@ export const useCharacterGame = create<CharacterGameState>()(
         }),
         {
             name: 'unlimited',
-            storage: createJSONStorage(() => ({
-                getItem: (name) => {
-                    const data = JSON.parse(localStorage.getItem(STORAGE_KEYS.CHARACTER_PROGRESS) || '{}');
-                    return data[name] ? JSON.stringify(data[name]) : null;
-                },
-                setItem: (name, value) => {
-                    const data = JSON.parse(localStorage.getItem(STORAGE_KEYS.CHARACTER_PROGRESS) || '{}');
-                    data[name] = JSON.parse(value);
-                    localStorage.setItem(STORAGE_KEYS.CHARACTER_PROGRESS, JSON.stringify(data));
-                },
-                removeItem: (name) => {
-                    const data = JSON.parse(localStorage.getItem(STORAGE_KEYS.CHARACTER_PROGRESS) || '{}');
-                    delete data[name];
-                    localStorage.setItem(STORAGE_KEYS.CHARACTER_PROGRESS, JSON.stringify(data));
-                }
-            })),
+            storage: nestedJSONStorage(STORAGE_KEYS.CHARACTER_PROGRESS),
             partialize: (state) => ({
                 guesses: state.guesses,
                 target: state.target,

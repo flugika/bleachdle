@@ -1,6 +1,6 @@
 // src/features/song/hooks/daily/useSongGame.ts
 import { create } from 'zustand';
-import { persist, createJSONStorage } from 'zustand/middleware';
+import { persist } from 'zustand/middleware';
 import { BleachSong } from '@/src/entities/song/schema';
 import { getSongStatus } from '@/src/features/song/compareSong';
 import { getSongById } from '@/src/features/song/song';
@@ -9,6 +9,7 @@ import { recordDailyStat } from '@/src/services/statsClient';
 // สองที่ drift ออกจากกันในอนาคต (เช่นถ้ามีคนแก้ shape ใน types.ts แต่ลืมแก้ที่นี่)
 import { SongGuessEntry, DailySongGameState } from '@/src/features/song/types';
 import { STORAGE_KEYS } from '@/src/const/localStorage';
+import { nestedJSONStorage } from '@/src/lib/store/createNestedStorage';
 
 // 🛡️ Type guard ตรวจสอบว่า guess entry ตรง schema ปัจจุบันจริง กัน corrupted/legacy data
 // (ก็อปมาจาก useSongGame.ts ฝั่ง unlimited เป๊ะ — daily เจอ path เดียวกันได้เหมือนกัน)
@@ -105,22 +106,7 @@ export const useSongGame = create<DailySongGameState>()(
             name: 'daily',
             // 🗄️ เก็บใน key ของตัวเอง STORAGE_KEYS.SONG_PROGRESS นamespace 'daily' แยกจาก
             // 'unlimited' ที่อยู่ในไฟล์เดียวกัน (โครงสร้างเดียวกับ character-progress เป๊ะ)
-            storage: createJSONStorage(() => ({
-                getItem: (name) => {
-                    const data = JSON.parse(localStorage.getItem(STORAGE_KEYS.SONG_PROGRESS) || '{}');
-                    return data[name] ? JSON.stringify(data[name]) : null;
-                },
-                setItem: (name, value) => {
-                    const data = JSON.parse(localStorage.getItem(STORAGE_KEYS.SONG_PROGRESS) || '{}');
-                    data[name] = JSON.parse(value);
-                    localStorage.setItem(STORAGE_KEYS.SONG_PROGRESS, JSON.stringify(data));
-                },
-                removeItem: (name) => {
-                    const data = JSON.parse(localStorage.getItem(STORAGE_KEYS.SONG_PROGRESS) || '{}');
-                    delete data[name];
-                    localStorage.setItem(STORAGE_KEYS.SONG_PROGRESS, JSON.stringify(data));
-                }
-            })),
+            storage: nestedJSONStorage(STORAGE_KEYS.SONG_PROGRESS),
             // isNew เป็น ephemeral UI flag เท่านั้น ไม่ควรมีค่าจริงข้าม session — force false เสมอ
             // ตอน persist กัน "ทายสดๆ" false-positive หลัง F5 (เหมือน unlimited เป๊ะ)
             partialize: (state) => ({
