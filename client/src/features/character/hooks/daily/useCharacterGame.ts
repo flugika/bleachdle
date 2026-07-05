@@ -3,7 +3,7 @@ import { create } from 'zustand';
 import { Character } from '@/src/entities/character/schema';
 import { compareCharacter } from '@/src/features/character/compareCharacter';
 import { ComparisonOutcome } from '@/src/features/character/types';
-import { getCharacterById, getCharacters } from '@/src/lib/utils/character';
+import { getCharacterById, getCharacters } from '@/src/features/character/character';
 import { persist, createJSONStorage } from 'zustand/middleware';
 import { recordDailyStat } from '@/src/services/statsClient';
 import { STORAGE_KEYS } from '@/src/const/localStorage'

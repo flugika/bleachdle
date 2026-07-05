@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useRef, useEffect, useCallback, useMemo } from 'react';
-import { getSongs } from '@/src/lib/utils/song';
+import { getSongs } from '@/src/features/song/song';
 import { BleachSong, BleachSongSegment } from '@/src/entities/song/schema';
 import { createSearchEngine } from '@/src/lib/search/fuzzy';
 

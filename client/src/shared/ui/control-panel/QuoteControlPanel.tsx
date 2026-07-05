@@ -1,7 +1,7 @@
 // src/shared/ui/controlPanel/QuoteControlPanel.tsx
 import { useState } from 'react';
 import { SearchBar } from '@/src/shared/ui/SearchBar'; // ⚠️ reuse ของเดิม เพราะเดา Character เหมือนกัน
-import { getCharacters } from '@/src/lib/utils/character'; // ⚠️ ปรับ path ให้ตรงของจริง
+import { getCharacters } from '@/src/features/character/character'; // ⚠️ ปรับ path ให้ตรงของจริง
 import { BleachQuote } from '@/src/entities/quote/schema';
 import { QuoteGuessable } from '@/src/features/quote/types';
 import { Modal } from '../modal';

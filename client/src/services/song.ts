@@ -1,7 +1,7 @@
 // src/services/song.ts
 import { supabase } from '@/src/lib/supabase/supabase';
 import { BleachSong } from '@/src/entities/song/schema';
-import { getAllSongSegments, getSongById } from '@/src/lib/utils/song';
+import { getAllSongSegments, getSongById } from '@/src/features/song/song';
 
 export async function getDailySong(): Promise<{ song: BleachSong; segmentId: string } | null> {
     const todayStr = new Date().toLocaleDateString('en-CA', { timeZone: 'Asia/Bangkok' });

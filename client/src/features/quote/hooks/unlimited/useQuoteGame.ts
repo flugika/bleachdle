@@ -2,8 +2,8 @@
 import { create } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware';
 import { getQuoteStatus } from '@/src/features/quote/compareQuote';
-import { getCharacterById } from '@/src/lib/utils/character'; // ⚠️ ปรับ path ให้ตรงของจริงถ้าไม่ตรงนี้
-import { getQuotes } from '@/src/lib/utils/quote';
+import { getCharacterById } from '@/src/features/character/character'; // ⚠️ ปรับ path ให้ตรงของจริงถ้าไม่ตรงนี้
+import { getQuotes } from '@/src/features/quote/quote';
 import { QuoteGameController, QuoteGuessEntry } from '@/src/features/quote/types';
 import { MAX_QUOTE_GUESSES } from '@/src/const/guess';
 import { STORAGE_KEYS } from '@/src/const/localStorage';

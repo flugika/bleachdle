@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import { CharacterGuessTable } from '@/src/features/character';
 import { CharacterControlPanel } from '@/src/shared/ui/control-panel/CharacterControlPanel';
 import { useCharacterGame } from '@/src/features/character/hooks/unlimited/useCharacterGame';
-import { getCharacters } from '@/src/lib/utils/character';
+import { getCharacters } from '@/src/features/character/character';
 import { CharacterSummaryGuess } from '@/src/features/character/components/shared/CharacterSummaryGuess';
 import { HowToPlayModal } from '@/src/features/character/components/shared/HowToPlayModal';
 import { Header } from '@/src/shared/layout/Header';
@@ -18,7 +18,6 @@ import { usePathname, useRouter } from 'next/navigation';
 import { ModeSelectorModal } from '@/src/shared/ui/game-selector/ModeSelectorModal';
 import { useSenkaimon } from '@/src/shared/ui/context/NavigationContext';
 import { MAX_CHARACTER_GUESSES } from '@/src/const/guess';
-import SoulSyncLoader from '@/src/shared/ui/loader/SoulSyncLoader';
 import { STORAGE_KEYS } from '@/src/const/localStorage';
 import { BL_MODES_METADATA } from '@/src/config/mode';
 
@@ -246,8 +245,6 @@ export default function UnlimitedCharacterGame() {
 
                 {isModalOpen ? (
                     <CharacterSummaryGuess isOpen={isModalOpen} onClose={handleCloseModal} guesses={guesses} target={target} isWin={isWin} mode="unlimited" stats={stats} />
-                ) : !isReady ? (
-                    <SoulSyncLoader />
                 ) : target ? (
                     <div className="w-full overflow-x-auto">
                         <CharacterGuessTable guesses={guesses} />

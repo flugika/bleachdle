@@ -14,7 +14,7 @@ export const FEATURE_FLAGS = {
     // ── ♾️ โหมดเล่นไม่จำกัด (Unlimited Mode)
     unlimited: {
         character: true,
-        quote: false,
+        quote: true,
         image: false,
         emoji: false,
         song: true,

@@ -5,7 +5,7 @@ import { useEffect, useState } from 'react';
 import { QuoteGuessTable } from '@/src/features/quote/components/shared/QuoteGuessTable';
 import { QuoteControlPanel } from '@/src/shared/ui/control-panel/QuoteControlPanel';
 import { useQuoteGame } from '@/src/features/quote/hooks/unlimited/useQuoteGame';
-import { getQuotes } from '@/src/lib/utils/quote';
+import { getQuotes } from '@/src/features/quote/quote';
 import { QuoteSummaryGuess } from '@/src/features/quote/components/shared/QuoteSummaryGuess';
 import { QuoteHowToPlayModal } from '@/src/features/quote/components/shared/QuoteHowToPlayModal';
 import { Header } from '@/src/shared/layout/Header';
@@ -18,7 +18,6 @@ import { ModeBadge } from '@/src/shared/ui/game-selector/ModeBadge';
 import { ModeSelectorModal } from '@/src/shared/ui/game-selector/ModeSelectorModal';
 import { useSenkaimon } from '@/src/shared/ui/context/NavigationContext';
 import { MAX_QUOTE_GUESSES } from '@/src/const/guess';
-import SoulSyncLoader from '@/src/shared/ui/loader/SoulSyncLoader';
 import { STORAGE_KEYS } from '@/src/const/localStorage';
 import { BL_MODES_METADATA } from '@/src/config/mode';
 
@@ -224,8 +223,6 @@ export default function UnlimitedQuoteGame() {
 
                 {showSummary ? (
                     <QuoteSummaryGuess isOpen={showSummary} onClose={handleCloseModal} guesses={guesses} target={target} isWin={isWin} mode="unlimited" stats={stats} />
-                ) : !isReady ? (
-                    <SoulSyncLoader />
                 ) : target ? (
                     <div className="w-full overflow-x-auto">
                         <QuoteGuessTable guesses={guesses} />

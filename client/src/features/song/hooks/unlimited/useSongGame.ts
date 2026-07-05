@@ -2,7 +2,7 @@
 import { create } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware';
 import { getSongStatus } from '@/src/features/song/compareSong';
-import { getAllSongSegments, getSongById, getSongs } from '@/src/lib/utils/song';
+import { getAllSongSegments, getSongById, getSongs } from '@/src/features/song/song';
 import { SongGameController, SongGuessEntry } from '@/src/features/song/types';
 import { MAX_SONG_GUESSES } from '@/src/const/guess';
 import { STORAGE_KEYS } from '@/src/const/localStorage';

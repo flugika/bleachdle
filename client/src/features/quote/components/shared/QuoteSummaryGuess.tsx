@@ -3,7 +3,7 @@
 
 import { BleachQuote } from '@/src/entities/quote/schema';
 import { QuoteGuessEntry } from '@/src/features/quote/types';
-import { getCharacterById } from '@/src/lib/utils/character'; // ⚠️ ปรับ path ให้ตรงของจริง
+import { getCharacterById } from '@/src/features/character/character'; // ⚠️ ปรับ path ให้ตรงของจริง
 import { QuoteGuessTable } from './QuoteGuessTable';
 import { Button } from '@/src/shared/ui/button';
 

@@ -4,7 +4,7 @@
 import { useEffect, useState } from 'react';
 import { SongGuessTable } from '@/src/features/song/components/shared/SongGuessTable';
 import { useSongGame } from '@/src/features/song/hooks/daily/useSongGame';
-import { getSongs } from '@/src/lib/utils/song';
+import { getSongs } from '@/src/features/song/song';
 import { SongSummaryGuess } from '@/src/features/song/components/shared/SongSummaryGuess';
 import { SongHowToPlayModal } from '@/src/features/song/components/shared/SongHowToPlayModal';
 import { Header } from '@/src/shared/layout/Header';
@@ -17,7 +17,6 @@ import { SongControlPanel } from '@/src/shared/ui/control-panel/SongControlPanel
 import { ModeBadge } from '@/src/shared/ui/game-selector/ModeBadge';
 import { ModeSelectorModal } from '@/src/shared/ui/game-selector/ModeSelectorModal';
 import { useSenkaimon } from '@/src/shared/ui/context/NavigationContext';
-import SoulSyncLoader from '@/src/shared/ui/loader/SoulSyncLoader';
 import { STORAGE_KEYS } from '@/src/const/localStorage';
 import { BL_MODES_METADATA } from '@/src/config/mode';
 // 📅 Daily Hub: แถบ progress รวมทุกโหมด daily + CTA เล่นต่อ
@@ -229,8 +228,6 @@ export default function DailySongWrapper({ initialTarget, initialSegmentId }: Da
                         {/* 📅 Daily Hub: CTA "เล่นต่อ" ต่อท้ายการ์ดสรุปผล */}
                         <DailyHubModalFooter activeMode="song" />
                     </>
-                ) : !isReady ? (
-                    <SoulSyncLoader subLabel="Scanning for Song Signature" />
                 ) : target ? (
                     <div className="w-full overflow-x-auto">
                         <SongGuessTable guesses={guesses} />

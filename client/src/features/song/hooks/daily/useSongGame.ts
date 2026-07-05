@@ -3,7 +3,7 @@ import { create } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware';
 import { BleachSong } from '@/src/entities/song/schema';
 import { getSongStatus } from '@/src/features/song/compareSong';
-import { getSongById } from '@/src/lib/utils/song';
+import { getSongById } from '@/src/features/song/song';
 import { recordDailyStat } from '@/src/services/statsClient';
 // 👇 ใช้ type กลางจาก types.ts แทนการประกาศ interface ซ้ำในไฟล์นี้ — กัน definition
 // สองที่ drift ออกจากกันในอนาคต (เช่นถ้ามีคนแก้ shape ใน types.ts แต่ลืมแก้ที่นี่)

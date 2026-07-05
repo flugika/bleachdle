@@ -5,7 +5,7 @@ import { useEffect, useState } from 'react';
 import { SongGuessTable } from '@/src/features/song/components/shared/SongGuessTable';
 import { SongControlPanel } from '@/src/shared/ui/control-panel/SongControlPanel';
 import { useSongGame } from '@/src/features/song/hooks/unlimited/useSongGame';
-import { getSongs } from '@/src/lib/utils/song';
+import { getSongs } from '@/src/features/song/song';
 import { SongSummaryGuess } from '@/src/features/song/components/shared/SongSummaryGuess';
 import { SongHowToPlayModal } from '@/src/features/song/components/shared/SongHowToPlayModal';
 import { Header } from '@/src/shared/layout/Header';
@@ -18,7 +18,6 @@ import { ModeBadge } from '@/src/shared/ui/game-selector/ModeBadge';
 import { ModeSelectorModal } from '@/src/shared/ui/game-selector/ModeSelectorModal';
 import { useSenkaimon } from '@/src/shared/ui/context/NavigationContext';
 import { MAX_SONG_GUESSES } from '@/src/const/guess';
-import SoulSyncLoader from '@/src/shared/ui/loader/SoulSyncLoader'
 import { STORAGE_KEYS } from '@/src/const/localStorage';
 import { BL_MODES_METADATA } from '@/src/config/mode';
 
@@ -242,8 +241,6 @@ export default function UnlimitedSongGame() {
 
                 {showSummary ? (
                     <SongSummaryGuess isOpen={showSummary} onClose={handleCloseModal} guesses={guesses} target={target} isWin={isWin} mode="unlimited" stats={stats} />
-                ) : !isReady ? (
-                    <SoulSyncLoader />
                 ) : target ? (
                     <div className="w-full overflow-x-auto">
                         <SongGuessTable guesses={guesses} />

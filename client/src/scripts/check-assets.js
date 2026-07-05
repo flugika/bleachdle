@@ -2,7 +2,7 @@
 
 import fs from 'fs';
 import path from 'path';
-import { getCharacters } from '../lib/utils/character.ts'; // ปรับ path ตามโปรเจกต์คุณ
+import { getCharacters } from '../features/character/character.ts'; // ปรับ path ตามโปรเจกต์คุณ
 
 const ASSETS_DIR = path.resolve(process.cwd(), '../../../../../public/assets/characters');
 

@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react';
 import { CharacterGuessTable } from '@/src/features/character';
 import { useCharacterGame } from '@/src/features/character/hooks/daily/useCharacterGame';
-import { getCharacters } from '@/src/lib/utils/character';
+import { getCharacters } from '@/src/features/character/character';
 import { CharacterSummaryGuess } from '@/src/features/character/components/shared/CharacterSummaryGuess';
 import { HowToPlayModal } from '@/src/features/character/components/shared/HowToPlayModal';
 import { Header } from '@/src/shared/layout/Header';
@@ -17,7 +17,6 @@ import { ModeBadge } from '@/src/shared/ui/game-selector/ModeBadge';
 import { usePathname, useRouter } from 'next/navigation';
 import { ModeSelectorModal } from '@/src/shared/ui/game-selector/ModeSelectorModal';
 import { useSenkaimon } from '@/src/shared/ui/context/NavigationContext';
-import SoulSyncLoader from '@/src/shared/ui/loader/SoulSyncLoader'
 import { STORAGE_KEYS } from '@/src/const/localStorage';
 import { BL_MODES_METADATA } from '@/src/config/mode';
 // 📅 Daily Hub: แถบ progress รวมทุกโหมด daily + CTA เล่นต่อ
@@ -238,8 +237,6 @@ export default function DailyCharacterWrapper({ initialTarget }: { initialTarget
                         {/* 📅 Daily Hub: CTA "เล่นต่อ" ต่อท้ายการ์ดสรุปผล */}
                         <DailyHubModalFooter activeMode="character" />
                     </>
-                ) : !isReady ? (
-                    <SoulSyncLoader />
                 ) : target ? (
                     <div className="w-full overflow-x-auto">
                         <CharacterGuessTable guesses={guesses} />

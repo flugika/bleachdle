@@ -2,7 +2,7 @@
 'use client';
 
 import { compareCharacter } from "@/src/features/character/compareCharacter";
-import { getCharacterById } from "@/src/lib/utils/character"; 
+import { getCharacterById } from "@/src/features/character/character"; 
 import { formatAge, formatHeight } from "@/src/lib/utils/format";
 import { useMemo } from "react";
 import { CELL_STYLES, ResultCell } from "./CharacterGuessTable";
