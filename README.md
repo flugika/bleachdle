@@ -305,9 +305,9 @@ bleachdle
 │  │  │  │  │  ├─ daily
 │  │  │  │  │  │  └─ DailyCharacterWrapper.tsx
 │  │  │  │  │  ├─ shared
-│  │  │  │  │  │  ├─ GuessTable.tsx
-│  │  │  │  │  │  ├─ HowToPlayModal.tsx
-│  │  │  │  │  │  └─ SummaryGuess.tsx
+│  │  │  │  │  │  ├─ CharacterGuessTable.tsx
+│  │  │  │  │  │  ├─ CharacterSummaryGuess.tsx
+│  │  │  │  │  │  └─ HowToPlayModal.tsx
 │  │  │  │  │  └─ unlimited
 │  │  │  │  │     └─ Central46ConfidentialArchive.tsx
 │  │  │  │  ├─ hooks

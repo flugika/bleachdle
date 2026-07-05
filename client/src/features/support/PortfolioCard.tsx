@@ -79,26 +79,6 @@ export function PortfolioCard() {
                     payment — your support is simply using it and sharing feedback below.
                 </p>
             </div>
-
-            <style jsx>{`
-                .kido-emblem {
-                    animation: kido-emblem-glow 3s ease-in-out infinite;
-                }
-                @keyframes kido-emblem-glow {
-                    0%,
-                    100% {
-                        text-shadow: 0 0 8px rgba(200, 169, 110, 0.35);
-                    }
-                    50% {
-                        text-shadow: 0 0 22px rgba(200, 169, 110, 0.75);
-                    }
-                }
-                @media (prefers-reduced-motion: reduce) {
-                    .kido-emblem {
-                        animation: none;
-                    }
-                }
-            `}</style>
         </div>
     );
 }

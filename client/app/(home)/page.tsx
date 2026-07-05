@@ -3,11 +3,12 @@
 
 import React, { useEffect, useState } from "react";
 import Link from "next/link";
-import { useSenkaimon } from "@/src/shared/ui/context/NavigationContext"; // 💡 ตรวจสอบ Path ให้ตรงกับโครงสร้างจริงของคุณ
+import { useSenkaimon } from "@/src/shared/ui/context/NavigationContext";
 import { HeaderDivider } from "@/src/shared/layout/HeaderDivider";
 import SoulSyncLoader from "@/src/shared/ui/loader/SoulSyncLoader";
+import { ModeSelectorModal, GameMode } from "@/src/shared/ui/game-selector/ModeSelectorModal"; // 💡 Import Component ของคุณให้ถูก Path
 
-// ================= 📖 GAME MODE DATABASE (used by the "What is Bleachdle" section) =================
+// ================= 📖 GAME MODE DATABASE =================
 const GAME_MODES = [
     {
         id: "character",
@@ -15,8 +16,7 @@ const GAME_MODES = [
         accent: "#c8a96e",
         name: "CHARACTER",
         tagline: "Classic deduction",
-        description:
-            "Guess the character one clue at a time — race, affiliation, height, first appearance, and more. Every guess narrows the field until only one soul reiatsu signature matches.",
+        description: "Guess the character one clue at a time — race, affiliation, height, first appearance, and more.",
     },
     {
         id: "quote",
@@ -24,8 +24,7 @@ const GAME_MODES = [
         accent: "#c8a96e",
         name: "QUOTE",
         tagline: "Who said it?",
-        description:
-            "A single line of dialogue is pulled from the series. Read it, feel it out, and name the character behind the words.",
+        description: "A single line of dialogue is pulled from the series. Read it, feel it out, and name the character.",
     },
     {
         id: "image",
@@ -33,8 +32,7 @@ const GAME_MODES = [
         accent: "#60a5fa",
         name: "IMAGE",
         tagline: "Zoom & reveal",
-        description:
-            "You start with an extreme close-up crop of a character. Every wrong guess pulls the camera back a little. You get 10 attempts total — after that, the full image and the answer are revealed.",
+        description: "You start with an extreme close-up crop of a character. Every wrong guess pulls the camera back a little.",
     },
     {
         id: "emoji",
@@ -42,8 +40,7 @@ const GAME_MODES = [
         accent: "#60a5fa",
         name: "EMOJI",
         tagline: "Four symbols, one soul",
-        description:
-            "A character is encoded into four emoji. One is shown to start — each wrong guess unlocks another, up to all four. Five wrong guesses and the round ends.",
+        description: "A character is encoded into four emoji. One is shown to start — each wrong guess unlocks another.",
     },
     {
         id: "song",
@@ -51,8 +48,7 @@ const GAME_MODES = [
         accent: "#c8a96e",
         name: "SONG",
         tagline: "Name that track",
-        description:
-            "Listen to a short clip from a Bleach opening, ending, or OST track — starting at just 0.2s and stretching to 1s, 3s, 5s, 10s, and 15s the longer you need. Name the track before time runs out.",
+        description: "Listen to a short clip from a Bleach opening, ending, or OST track. Name the track before time runs out.",
     },
     {
         id: "release",
@@ -60,24 +56,24 @@ const GAME_MODES = [
         accent: "#60a5fa",
         name: "RELEASE",
         tagline: "Command the blade",
-        description:
-            "You're given a release cue — an image of the moment, or an audio hint like the start of a Shikai incantation. Type the exact full release command to prove you know the blade.",
+        description: "You're given a release cue. Type the exact full release command to prove you know the blade.",
     },
 ] as const;
 
 export default function Home() {
     const { navigate, state } = useSenkaimon();
-
     const [isMounted, setIsMounted] = useState(false);
+
+    // 🛡️ State Management สำหรับ Interactive Flow
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [selectedGameSubFeature, setSelectedGameSubFeature] = useState<string | null>(null);
+
     useEffect(() => {
         setIsMounted(true);
     }, []);
 
-    // ⚔️ SENKAIMON GATEWAY INTERCEPTOR (SEO & USER EXPERIENCE SAFEGUARD)
     const handleNavigation = (e: React.MouseEvent<HTMLAnchorElement>, path: string) => {
-        if (e.metaKey || e.altKey || e.ctrlKey || e.shiftKey) {
-            return;
-        }
+        if (e.metaKey || e.altKey || e.ctrlKey || e.shiftKey) return;
         if (state !== "idle") {
             e.preventDefault();
             return;
@@ -86,50 +82,50 @@ export default function Home() {
         navigate(path);
     };
 
+    // 🎯 Handler เมื่อคลิกเลือกเกมใน Database Section
+    const handleSubFeatureClick = (subFeatureId: string) => {
+        setSelectedGameSubFeature(subFeatureId);
+        setIsModalOpen(true);
+    };
+
+    // 🚀 Handler เมื่อ Modal โยนค่ากลับมาว่าเลือก Daily หรือ Unlimited
+    const handleModeSelection = (baseMode: GameMode) => {
+        setIsModalOpen(false); // ปิด Modal
+        if (selectedGameSubFeature) {
+            // ถ้ายิงมาจาก Database Section ให้ต่อ Path: e.g. /daily/character
+            navigate(`/${baseMode}/${selectedGameSubFeature}`);
+        } else {
+            // เผื่อมีกรณีที่ไม่ได้เลือก SubFeature (Fallback)
+            navigate(`/${baseMode}`);
+        }
+        // ล้าง State ป้องกัน Bug ในอนาคต
+        setTimeout(() => setSelectedGameSubFeature(null), 300);
+    };
+
     return (
         <div className="relative w-full min-h-[100vh] flex flex-col items-center justify-center overflow-hidden px-4 md:px-8 select-none mt-16">
-            {/* ⚡ VISUAL LAYER 2: Ambient Reiatsu Core Eruption */}
-            {/* 💡 แก้ไข: เพิ่ม Opacity เป็น 0.15 ขยายขนาดให้ครอบคลุม และใส่ Animation หายใจ (Pulse) */}
-            <div
-                className={`absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[120vw] h-[120vh] bg-[radial-gradient(circle_at_center,rgba(200,169,110,0.25)_0%,transparent_60%)] pointer-events-none z-0 blur-[100px] transition-all duration-[2000ms] ease-in-out ${isMounted ? "opacity-100 scale-100" : "opacity-0 scale-90"
-                    }`}
-            >
-                {/* วงในให้สีเข้มขึ้นอีกนิดเพื่อให้เห็นเป็นแกนพลัง */}
+            {/* ... (Visual Layer 2 & 3 ของคุณ คงเดิม) ... */}
+            <div className={`absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[120vw] h-[120vh] bg-[radial-gradient(circle_at_center,rgba(200,169,110,0.25)_0%,transparent_60%)] pointer-events-none z-0 blur-[100px] transition-all duration-[2000ms] ease-in-out ${isMounted ? "opacity-100 scale-100" : "opacity-0 scale-90"}`}>
                 <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(200,169,110,0.2)_0%,transparent_30%)] animate-[pulse_4s_ease-in-out_infinite]" />
             </div>
-
-            {/* 卍解 VISUAL LAYER 3: Massive Shifting KANJI Watermark */}
             <div className="absolute top-1/2 left-1/2 text-center -translate-x-1/2 -translate-y-1/2 text-[38vw] font-black text-white/[0.02] pointer-events-none tracking-[0.1em] leading-none z-0 select-none select-none transition-all duration-1000 animate-pulse">
                 卍解
             </div>
 
-            {/* ================= ⚔️ HERO INTRO SECTION ⚔================= */}
+            {/* ... (HERO INTRO SECTION ของคุณ คงเดิม) ... */}
             <div className="relative z-20 text-center mb-6 max-w-5xl w-full px-4 flex flex-col items-center justify-center">
-
-                {/* HUD Top-Link Trace */}
                 <div className="text-[6px] md:text-xs tracking-[0.7em] text-[#c8a96e] font-mono font-bold mb-6 flex flex-col md:flex-row items-center justify-center gap-3">
-                    {/* ใช้ items-center เพื่อจัดแนวตั้ง */}
                     <div className="flex items-center gap-3">
-                        {/* เพิ่ม shrink-0 เพื่อป้องกัน Dot ยุบตัวหากข้อความยาว */}
                         <span className="w-1 h-1 md:w-2 md:h-2 bg-[#c8a96e] animate-ping rounded shrink-0" />
                         <span>S.R.D.I_LINK</span>
                     </div>
-
                     <span className="hidden md:inline">//</span>
                     <span>SENKAIMON_COORDINATES_STABILIZED</span>
                 </div>
-
-                {/* Titanium Chrome Title Text */}
-                {/* 🛠️ FIX: ล็อคคำด้วย `whitespace-nowrap` และปรับสเกลฟอนต์ให้สมดุล (เริ่มต้นที่ text-5xl ไล่ระดับไปจนถึง text-8xl บน PC) */}
-                <h1
-                    className="text-4xl sm:text-6xl md:text-7xl lg:text-8xl font-black tracking-[0.2em] pl-[0.2em] text-transparent bg-gradient-to-r from-[#c8a96e] via-[#f5ebd5] to-[#c8a96e] bg-clip-text drop-shadow-[0_0_50px_rgba(255,255,255,0.18)] select-text whitespace-nowrap text-center block w-full"
-                >
+                <h1 className="text-4xl sm:text-6xl md:text-7xl lg:text-8xl font-black tracking-[0.2em] pl-[0.2em] text-transparent bg-gradient-to-r from-[#c8a96e] via-[#f5ebd5] to-[#c8a96e] bg-clip-text drop-shadow-[0_0_50px_rgba(255,255,255,0.18)] select-text whitespace-nowrap text-center block w-full">
                     BLEACHDLE
                 </h1>
-
                 <HeaderDivider className="mt-6" />
-
-                {/* Subtitle Division Log — reworked with a sweeping HUD scan-light + two-tone label split */}
                 <div className="relative mt-8 max-w-xl w-full mx-auto group/subtitle">
                     <span className="absolute -left-[3px] top-1/2 -translate-y-1/2 w-1.5 h-1.5 rotate-45 bg-[#c8a96e]/50 group-hover/subtitle:bg-[#c8a96e] transition-colors duration-500" />
                     <span className="absolute -right-[3px] top-1/2 -translate-y-1/2 w-1.5 h-1.5 rotate-45 bg-[#c8a96e]/50 group-hover/subtitle:bg-[#c8a96e] transition-colors duration-500" />
@@ -143,6 +139,7 @@ export default function Home() {
             </div>
 
             {/* ================= 🌌 DIMENSIONAL GATEWAY CHASSIS ================= */}
+            {/* โซนนี้ปล่อยไว้เหมือนเดิม เป็นทางเข้าหลัก (Root Path) */}
             <div className="relative z-20 grid grid-cols-1 md:grid-cols-2 gap-8 w-full max-w-5xl px-4 pb-12">
 
                 {/* ☀️ CARD 1: DAILY REISHI RESONANCE (SHINIGAMI THEME) */}
@@ -251,19 +248,17 @@ export default function Home() {
 
             </div>
 
-            <SoulSyncLoader hideLabel className="mt-0 mb-0" />
+            <SoulSyncLoader hideLabel className="mt-0 mb-12" />
 
             {/* ================= 📖 ABOUT / WHAT IS BLEACHDLE SECTION ================= */}
             <div className="relative z-20 w-full max-w-5xl px-4 pb-16">
                 <div className="relative border border-white/5 bg-gradient-to-b from-[#09090e] to-[#030305] p-8 md:p-12 shadow-[0_20px_50px_rgba(0,0,0,0.8),inset_0_1px_1px_rgba(255,255,255,0.02)] overflow-hidden">
 
-                    {/* Corner ticks to match the gateway cards' HUD language */}
                     <div className="absolute top-0 left-0 w-8 h-[2px] bg-white/10" />
                     <div className="absolute top-0 left-0 w-[2px] h-8 bg-white/10" />
                     <div className="absolute bottom-0 right-0 w-8 h-[2px] bg-white/10" />
                     <div className="absolute bottom-0 right-0 w-[2px] h-8 bg-white/10" />
 
-                    {/* Section eyebrow */}
                     <div className="flex items-center gap-4 mb-6">
                         <span className="text-[9px] font-mono tracking-[0.4em] text-[#c8a96e] font-bold uppercase">
                             DATABASE_ENTRY // 12TH_DIV_ARCHIVE
@@ -271,29 +266,25 @@ export default function Home() {
                         <div className="h-px flex-1 bg-white/10" />
                     </div>
 
-                    <h3
-                        className="text-2xl md:text-3xl font-black tracking-[0.12em] text-white uppercase mb-4"
-                        style={{ fontFamily: "'Cinzel', serif" }}
-                    >
+                    <h3 className="text-2xl md:text-3xl font-black tracking-[0.12em] text-white uppercase mb-4" style={{ fontFamily: "'Cinzel', serif" }}>
                         What is Bleachdle?
                     </h3>
 
                     <p className="text-[13px] md:text-sm text-neutral-400 font-light leading-relaxed max-w-3xl mb-2">
-                        Bleachdle is a fan-made guessing game built by fans, for fans. It has no official
-                        connection to Tite Kubo, Shueisha, Studio Pierrot, or any Bleach publisher — just a
-                        tribute project for the community.
+                        Bleachdle is a fan-made guessing game built by fans, for fans...
                     </p>
                     <p className="text-[13px] md:text-sm text-neutral-400 font-light leading-relaxed max-w-3xl mb-10">
-                        Six modes, six different ways to test how well you really know the Soul Society.
+                        Select a target mode below to initiate Senkaimon protocol.
                     </p>
 
-                    {/* Mode grid */}
+                    {/* 🛠️ เปลี่ยน Grid Items เป็น `<button>` เพื่อให้ Interactive และรองรับ Keyboard Navigation */}
                     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
                         {GAME_MODES.map((mode) => (
-                            <div
+                            <button
                                 key={mode.id}
-                                className="group/mode relative p-5 border border-white/5 bg-black/20 hover:bg-black/30 transition-colors duration-500 overflow-hidden"
-                                style={{ borderColor: "rgba(255,255,255,0.05)" }}
+                                onClick={() => handleSubFeatureClick(mode.id)}
+                                className="group/mode relative p-5 border border-white/5 bg-black/20 hover:bg-black/40 hover:border-white/20 hover:-translate-y-1 hover:shadow-lg transition-all duration-500 overflow-hidden text-left focus:outline-none focus:ring-1 focus:ring-[#c8a96e]"
+                                aria-label={`Select ${mode.name} mode`}
                             >
                                 <div
                                     className="absolute inset-0 opacity-0 group-hover/mode:opacity-100 transition-opacity duration-500 pointer-events-none"
@@ -301,20 +292,26 @@ export default function Home() {
                                         background: `radial-gradient(circle at 50% 120%, ${mode.accent}1a 0%, transparent 60%)`,
                                     }}
                                 />
+
+                                {/* 🔹 เพิ่ม Micro-interaction : ข้อความบอกสถานะให้รู้ว่ากดได้ */}
+                                <div className="absolute top-2 right-2 text-[7px] font-mono tracking-widest uppercase opacity-0 group-hover/mode:opacity-100 transition-opacity duration-300" style={{ color: mode.accent }}>
+                                    [ CLICK TO INITIATE ]
+                                </div>
+
                                 <div className="relative z-10 flex items-start justify-between mb-3">
                                     <div>
                                         <span
-                                            className="text-[9px] font-mono tracking-[0.3em] font-bold uppercase block mb-1"
+                                            className="text-[9px] font-mono tracking-[0.3em] font-bold uppercase block mb-1 group-hover/mode:animate-pulse"
                                             style={{ color: mode.accent }}
                                         >
                                             {mode.tagline}
                                         </span>
-                                        <h4 className="text-lg font-black tracking-[0.12em] text-white">
+                                        <h4 className="text-lg font-black tracking-[0.12em] text-white group-hover/mode:text-shadow-sm transition-all">
                                             {mode.name}
                                         </h4>
                                     </div>
                                     <span
-                                        className="text-3xl font-serif font-black select-none opacity-[0.08] group-hover/mode:opacity-20 transition-opacity duration-500"
+                                        className="text-3xl font-serif font-black select-none opacity-[0.08] group-hover/mode:opacity-30 group-hover/mode:scale-110 transition-all duration-500"
                                         style={{ color: mode.accent }}
                                     >
                                         {mode.kanji}
@@ -323,20 +320,21 @@ export default function Home() {
                                 <p className="relative z-10 text-[11.5px] leading-relaxed text-neutral-500 group-hover/mode:text-neutral-300 transition-colors duration-500">
                                     {mode.description}
                                 </p>
-                            </div>
+                            </button>
                         ))}
                     </div>
                 </div>
             </div>
 
-            {/* ================= 🛰️ FOOTER RADAR HUD DECORATION ================= */}
-            <div className="absolute bottom-6 left-8 right-8 z-20 flex justify-between items-center text-[9px] font-mono tracking-[0.4em] text-white/10 hidden lg:flex pointer-events-none select-none">
-                <div className="flex items-center gap-3">
-                    <span className="w-1 h-1 bg-white/20 rounded-full animate-pulse" />
-                    SYS_LOC: // SEIREITEI_CENTRAL_COMM_CENTER
-                </div>
-                <div>AUTHENTICATION_KEY: STATUS_VERIFIED_BY_12TH_DIV</div>
-            </div>
+            {/* ================= 🛰️ FOOTER ... ================= */}
+
+            {/* 🚪 PORTAL: Mode Selector Modal */}
+            <ModeSelectorModal
+                isOpen={isModalOpen}
+                onClose={() => setIsModalOpen(false)}
+                onSelectMode={handleModeSelection}
+                selectedSubFeature={selectedGameSubFeature}
+            />
         </div>
     );
 }

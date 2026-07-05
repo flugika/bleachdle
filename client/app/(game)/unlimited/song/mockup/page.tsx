@@ -9,7 +9,7 @@ import { createSearchEngine } from '@/src/lib/search/fuzzy';
 import { Header } from '@/src/shared/layout/Header';
 import { Divider } from '@/src/shared/layout/Divider';
 import { SubHeader } from '@/src/shared/layout/SubHeader';
-import { ModeBadge } from '@/src/shared/ui/ModeBadge';
+import { ModeBadge } from '@/src/shared/ui/game-selector/ModeBadge';
 import Sealed from '@/src/shared/ui/Sealed';
 import { FEATURE_FLAGS } from '@/src/config/feature.flags';
 

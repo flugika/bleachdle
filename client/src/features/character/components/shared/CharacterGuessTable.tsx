@@ -1,4 +1,4 @@
-// src/features/character/components/shared/GuessTable.tsx
+// src/features/character/components/shared/CharacterGuessTable.tsx
 'use client';
 
 import { useRef, useEffect } from 'react';
@@ -266,9 +266,9 @@ const GuessRow = ({ guess, result, isNew = false }: GuessEntry) => {
     );
 };
 
-// ─── GuessTable (export) ─────────────────────────────────────────────────────
+// ─── CharacterGuessTable (export) ─────────────────────────────────────────────────────
 
-export const GuessTable = ({
+export const CharacterGuessTable = ({
     guesses,
 }: {
     guesses: GuessEntry[];

@@ -45,7 +45,7 @@ const EMBLEM_DATA: Record<string, { file: string; color: string }> = {
 };
 
 
-export const SummaryGuess = ({ isOpen, onClose, guesses, target, isWin, mode, stats = { currentStreak: 0, maxStreak: 0 } }: any) => {
+export const CharacterSummaryGuess = ({ isOpen, onClose, guesses, target, isWin, mode, stats = { currentStreak: 0, maxStreak: 0 } }: any) => {
     const [isHistoryExpanded, setIsHistoryExpanded] = useState(false);
     const timeLeft = useCountdown();
 

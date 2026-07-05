@@ -1,10 +1,10 @@
 "use client";
 
 import { useEffect, useState } from 'react';
-import { GuessTable } from '@/src/features/character';
+import { CharacterGuessTable } from '@/src/features/character';
 import { useCharacterGame } from '@/src/features/character/hooks/daily/useCharacterGame';
 import { getCharacters } from '@/src/lib/utils/character';
-import { SummaryGuess } from '@/src/features/character/components/shared/SummaryGuess';
+import { CharacterSummaryGuess } from '@/src/features/character/components/shared/CharacterSummaryGuess';
 import { HowToPlayModal } from '@/src/features/character/components/shared/HowToPlayModal';
 import { Header } from '@/src/shared/layout/Header';
 import { Divider } from '@/src/shared/layout/Divider';
@@ -13,13 +13,16 @@ import Sealed from '@/src/shared/ui/Sealed';
 import { FEATURE_FLAGS } from '@/src/config/feature.flags';
 import { Character } from '@/src/entities/character/schema';
 import { CharacterControlPanel } from '@/src/shared/ui/control-panel/CharacterControlPanel';
-import { ModeBadge } from '@/src/shared/ui/ModeBadge';
+import { ModeBadge } from '@/src/shared/ui/game-selector/ModeBadge';
 import { usePathname, useRouter } from 'next/navigation';
-import { ModeSelectorModal } from '@/src/shared/ui/ModeSelectorModal';
+import { ModeSelectorModal } from '@/src/shared/ui/game-selector/ModeSelectorModal';
 import { useSenkaimon } from '@/src/shared/ui/context/NavigationContext';
 import SoulSyncLoader from '@/src/shared/ui/loader/SoulSyncLoader'
 import { STORAGE_KEYS } from '@/src/const/localStorage';
 import { BL_MODES_METADATA } from '@/src/config/mode';
+// 📅 Daily Hub: แถบ progress รวมทุกโหมด daily + CTA เล่นต่อ
+import { DailyHubModalFooter } from '@/src/shared/ui/daily-hub/DailyHubModalFooter';
+import { useDailyHub } from '@/src/shared/hooks/useDailyHub';
 
 export default function DailyCharacterWrapper({ initialTarget }: { initialTarget: Character | null }) {
     if (!FEATURE_FLAGS.daily.character) {
@@ -36,6 +39,9 @@ export default function DailyCharacterWrapper({ initialTarget }: { initialTarget
     const gameStore = useCharacterGame();
     const { target, guesses, initializeGame, finalizeGame, resetGame, hasFinalized, _hasHydrated } = gameStore;
     const characters = getCharacters();
+
+    // 📅 Daily Hub: markModePlayed('character', won) จะถูกเรียกตอนเกมจบจริงเท่านั้น (ดู effect ด้านล่าง)
+    const { markModePlayed } = useDailyHub();
 
     useEffect(() => {
         if (!_hasHydrated) return;
@@ -87,7 +93,7 @@ export default function DailyCharacterWrapper({ initialTarget }: { initialTarget
         };
 
         statsData.daily = newStats;
-        localStorage.setItem(STORAGE_KEYS.CHARACTER_STATS, JSON.stringify(statsData));
+        localStorage.setItem(STORAGE_KEYS.CHARACTER_STATS, JSON.stringify(newStats));
         setStats(newStats);
     };
 
@@ -127,6 +133,7 @@ export default function DailyCharacterWrapper({ initialTarget }: { initialTarget
         if (isGameOver) {
             // 🛡️ คีย์เวิร์ดสำคัญ: หากสเตตัสถูกบันทึกถาวรลง Store เรียบร้อยแล้ว (เกิดจากการ F5)
             // ให้สั่งเปิดเบิกมอดอลสรุปผลทันที 0ms ไร้อาการหน่วงดีเลย์ให้ผู้เล่นเห็นตารางแวบแรก
+            // (markModePlayed ไม่ต้องเรียกซ้ำตรงนี้ เพราะถูกบันทึกไปแล้วตอนจบเกมครั้งแรกก่อนหน้านี้)
             if (hasFinalized) {
                 setIsModalOpen(true);
                 return;
@@ -138,6 +145,8 @@ export default function DailyCharacterWrapper({ initialTarget }: { initialTarget
                 if (!hasFinalized) {
                     finalizeGame(isWin);
                     updateStats(isWin);
+                    // 📅 Daily Hub: บันทึกว่าโหมด character ของวันนี้เล่นแล้ว + แพ้/ชนะ
+                    markModePlayed('character', isWin);
                 }
                 setIsModalOpen(true);
             }, targetDelay);
@@ -189,6 +198,8 @@ export default function DailyCharacterWrapper({ initialTarget }: { initialTarget
                 <ModeBadge mode="daily" onClick={() => setIsModeSelectorOpen(true)} />
                 <SubHeader title={BL_MODES_METADATA.character.title} subtitle={BL_MODES_METADATA.character.statusLine} />
 
+                {/* 📅 Daily Hub: ตั้งใจไม่โชว์บนหน้าเล่นเกม — ให้โผล่แค่ตอนจบเกม (DailyHubModalFooter
+                    ในโมดัลสรุปผลด้านล่าง) เพราะนั่นคือจังหวะ "จะเล่นต่อไหม" จริงๆ ไม่ใช่ตอนกำลังโฟกัสทาย */}
                 {!isModalOpen && (
                     <CharacterControlPanel
                         mode="daily"
@@ -222,12 +233,16 @@ export default function DailyCharacterWrapper({ initialTarget }: { initialTarget
                 )}
 
                 {isModalOpen ? (
-                    <SummaryGuess isOpen={isModalOpen} onClose={handleCloseModal} guesses={guesses} target={target} isWin={isWin} mode="daily" stats={stats} />
+                    <>
+                        <CharacterSummaryGuess isOpen={isModalOpen} onClose={handleCloseModal} guesses={guesses} target={target} isWin={isWin} mode="daily" stats={stats} />
+                        {/* 📅 Daily Hub: CTA "เล่นต่อ" ต่อท้ายการ์ดสรุปผล */}
+                        <DailyHubModalFooter activeMode="character" />
+                    </>
                 ) : !isReady ? (
                     <SoulSyncLoader />
                 ) : target ? (
                     <div className="w-full overflow-x-auto">
-                        <GuessTable guesses={guesses} />
+                        <CharacterGuessTable guesses={guesses} />
                     </div>
                 ) : (
                     <div className="mt-40 flex flex-col items-center justify-center">

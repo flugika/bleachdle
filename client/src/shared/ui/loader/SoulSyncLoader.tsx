@@ -10,7 +10,7 @@ import React, { useEffect, useRef, useState } from "react";
 interface GlyphMetric {
     x: string;
     y: string;
-    scale?: number; // ใส่ ? เพื่อบอกว่า 'scale' จะมีหรือไม่มีก็ได้
+    scale?: number;
 }
 
 const GLYPH_REGISTRY: Record<string, GlyphMetric> = {
@@ -35,7 +35,6 @@ const REIATSU_PARTICLES = [
     "◦", "◌", "☉", "✣", "☀", "✰"            // Dispersing Reishi Particles
 ] as const;
 
-// Derived Types & Constants
 type GlyphType = keyof typeof GLYPH_REGISTRY;
 const CENTRAL_GLYPHS = Object.keys(GLYPH_REGISTRY) as GlyphType[];
 
@@ -61,12 +60,12 @@ export interface SoulSyncLoaderProps {
     subLabel?: string;
     cycleMs?: number;
     className?: string;
-    /**
-     * Render the spinning glyph only — hides the visible label/subLabel text.
-     * The label is still exposed to assistive tech via aria-label, so the
-     * loading state remains announced to screen readers.
-     */
     hideLabel?: boolean;
+    /**
+     * ✨ ปรับขนาดความกว้าง/สูงของ Component วงแหวนที่หมุน (หน่วยเป็นพิกเซล)
+     * @default 120
+     */
+    size?: number;
 }
 
 export default function SoulSyncLoader({
@@ -75,20 +74,23 @@ export default function SoulSyncLoader({
     cycleMs = 2200,
     className = "",
     hideLabel = false,
+    size = 120, // ✨ กำหนดค่า Default ขนาดของ loader เป็น 120px
 }: SoulSyncLoaderProps) {
-    // 🎞️ Two-slot crossfade: instead of one glyph swapped via `key` (which
-    // force-remounts the span and skips any transition), we keep two slots
-    // and toggle which one is "active". Both animate on every toggle, so the
-    // outgoing glyph dissolves out while the incoming one materializes in.
     const [slots, setSlots] = useState<[GlyphType, GlyphType]>([CENTRAL_GLYPHS[0], CENTRAL_GLYPHS[0]]);
     const [activeSlot, setActiveSlot] = useState<0 | 1>(0);
     const activeSlotRef = useRef<0 | 1>(0);
     const [reducedMotion, setReducedMotion] = useState(false);
-
     const [particles, setParticles] = useState<string[]>([]);
-
-    // 🎯 1. เพิ่ม Ref เพื่อเก็บ "Index ปัจจุบันของ Glyph" ใน CENTRAL_GLYPHS
     const currentGlyphIndexRef = useRef<number>(0);
+
+    // 📐 คำนวณอัตราส่วนขนาดเอฟเฟกต์ภายในสัมพันธ์ตามขนาด `size` ที่ส่งเข้ามา
+    const backlightSize = Math.round(size * 0.75);
+    const ring1Size = Math.round(size * 0.95);
+    const ring2Size = Math.round(size * 0.733);
+    const ring3Size = Math.round(size * 0.55);
+    const particleRadius = Math.round(size * 0.4);
+    const glyphContainerSize = Math.round(size * 0.533);
+    const glyphFontSize = Math.round(size * 0.4);
 
     useEffect(() => {
         activeSlotRef.current = activeSlot;
@@ -99,7 +101,6 @@ export default function SoulSyncLoader({
             Array.from({ length: REIATSU_PARTICLES.length }, () => pickRandom(REIATSU_PARTICLES))
         );
 
-        // 🎯 2. ตอนจังหวะสุ่มตัวแรกสุด ให้บันทึก Index ของมันลง Ref ไว้ด้วย
         const firstIndex = Math.floor(Math.random() * CENTRAL_GLYPHS.length);
         currentGlyphIndexRef.current = firstIndex;
         const firstGlyph = CENTRAL_GLYPHS[firstIndex];
@@ -117,22 +118,16 @@ export default function SoulSyncLoader({
 
         const id = setInterval(() => {
             const incomingSlot: 0 | 1 = activeSlotRef.current === 0 ? 1 : 0;
-
-            // 🎯 3. คำนวณหา Index ถัดไปโดยส่ง Index ปัจจุบันเข้าไป (การันตีว่าไม่ซ้ำ)
             const nextIndex = getNextIndex(currentGlyphIndexRef.current, CENTRAL_GLYPHS.length);
-            // อัปเดต Ref ตัวปัจจุบันให้เป็นตัวใหม่ เพื่อใช้ในรอบถัดไป
             currentGlyphIndexRef.current = nextIndex;
-
             const nextGlyph = CENTRAL_GLYPHS[nextIndex];
 
-            // Write the new glyph into the hidden slot first...
             setSlots((prev) => {
                 const next: [GlyphType, GlyphType] = [...prev] as [GlyphType, GlyphType];
                 next[incomingSlot] = nextGlyph;
                 return next;
             });
 
-            // ...then flip which slot is active on the *next* paint
             requestAnimationFrame(() => {
                 requestAnimationFrame(() => setActiveSlot(incomingSlot));
             });
@@ -146,18 +141,15 @@ export default function SoulSyncLoader({
             role="status"
             aria-live="polite"
             aria-label={label}
-            // 🛠️ FIX: `mt-40` used to be hardcoded here, so it fought any margin
-            // classes passed in via `className` (e.g. "mt-[0px]") instead of
-            // being overridden by them. Spacing is now controlled entirely by
-            // the caller — pass whatever margin you need via `className`.
             className={`flex flex-col items-center justify-center ${className}`}
         >
-            <div className="relative mb-8 flex items-center justify-center" style={{ width: 120, height: 120 }}>
+            {/* 🛠️ เปลี่ยนความกว้าง/สูงตรงนี้ให้ใช้ตัวแปร `size` แบบ Dynamic */}
+            <div className={`relative ${!hideLabel && "mb-8"} flex items-center justify-center`} style={{ width: size, height: size }}>
 
                 {/* ✨ EFFECT 1: Volumetric Reiatsu Backlight */}
                 <div
                     className="absolute rounded-full bg-[#c8a96e]/10 blur-2xl transition-all duration-1000"
-                    style={{ width: 90, height: 90 }}
+                    style={{ width: backlightSize, height: backlightSize }}
                 />
 
                 {/* ✨ EFFECT 2: Concentric Senkaimon Rings */}
@@ -165,15 +157,15 @@ export default function SoulSyncLoader({
                     <>
                         <div
                             className="absolute rounded-full border border-dashed border-[#c8a96e]/30 animate-[spin_18s_linear_infinite]"
-                            style={{ width: 114, height: 114 }}
+                            style={{ width: ring1Size, height: ring1Size }}
                         />
                         <div
                             className="absolute rounded-full border border-double border-[#c8a96e]/40 animate-[spin_10s_linear_infinite_reverse] shadow-[0_0_15px_rgba(200,169,110,0.15)]"
-                            style={{ width: 88, height: 88 }}
+                            style={{ width: ring2Size, height: ring2Size }}
                         />
                         <div
                             className="absolute rounded-full border border-[#5a5a78]/30 animate-[spin_6s_linear_infinite]"
-                            style={{ width: 66, height: 66 }}
+                            style={{ width: ring3Size, height: ring3Size }}
                         />
                     </>
                 )}
@@ -185,17 +177,21 @@ export default function SoulSyncLoader({
                     {particles.map((p, i) => {
                         const angle = (360 / particles.length) * i;
                         const isEven = i % 2 === 0;
+                        // คำนวณขนาดของ Particle เม็ดเล็ก-ใหญ่ ตามสัดส่วน size
+                        const pSize = isEven ? Math.round(size * 0.108) : Math.round(size * 0.075);
+
                         return (
                             <span
                                 key={i}
                                 aria-hidden="true"
                                 className="absolute select-none animate-pulse"
                                 style={{
-                                    fontSize: isEven ? 13 : 9,
+                                    fontSize: pSize,
                                     color: isEven ? T.gold : T.goldBright,
                                     opacity: isEven ? 0.85 : 0.45,
                                     filter: `drop-shadow(0 0 4px ${T.gold})`,
-                                    transform: `rotate(${angle}deg) translate(48px) rotate(-${angle}deg)`,
+                                    // ✨ ปรับระยะวงโคจรเฉลี่ยด้วย `particleRadius`
+                                    transform: `rotate(${angle}deg) translate(${particleRadius}px) rotate(-${angle}deg)`,
                                     animationDelay: `${i * 0.18}s`,
                                     animationDuration: "2.2s",
                                 }}
@@ -207,8 +203,10 @@ export default function SoulSyncLoader({
                 </div>
 
                 {/* 🎯 EFFECT 4 & OPTICAL CENTER FIX: แกนหมุนล็อคเป้าหมาย */}
+                {/* 🛠️ ลบ `w-16 h-16` ออกแล้วใช้ `glyphContainerSize` ควบคุมแทนเพื่อขยายกล่องแกนหมุน */}
                 <div
-                    className={`absolute w-16 h-16 flex items-center justify-center ${reducedMotion ? "" : "animate-[spin_4s_linear_infinite]"}`}
+                    className={`absolute flex items-center justify-center ${reducedMotion ? "" : "animate-[spin_4s_linear_infinite]"}`}
+                    style={{ width: glyphContainerSize, height: glyphContainerSize }}
                 >
                     {slots.map((slotGlyph, i) => {
                         const metric = GLYPH_REGISTRY[slotGlyph];
@@ -217,17 +215,12 @@ export default function SoulSyncLoader({
                             <span
                                 key={i}
                                 aria-hidden="true"
-                                // 🛡️ หัวใจการแก้ปัญหา: ลบ top-1/2 left-1/2 ออก และบังคับให้ span กว้าง/ยาวเต็มกล่องแม่
-                                // แล้วใช้ flex จัดเนื้อข้างในแทน จากนี้ Bounding Box ของฟอนต์จะไม่กวนแกนหมุนอีกต่อไป
-                                // 🎞️ Both slots are always mounted (no `key={glyph}` remount), so this
-                                // transition actually has something to animate between.
-                                className="absolute inset-0 flex items-center justify-center text-5xl leading-none select-none"
+                                // 🛠️ ลบ `text-5xl` ออกและปรับขนาดฟอนต์ของ Glyph ด้านในผ่าน `glyphFontSize`
+                                className="absolute inset-0 flex items-center justify-center leading-none select-none"
                                 style={{
+                                    fontSize: glyphFontSize,
                                     color: T.goldBright,
                                     opacity: isActive ? 1 : 0,
-                                    // 🛡️ ขยับพิกัดชดเชย (Offset) ได้ตรงๆ โดยไม่ต้องพึ่ง calc(-50%)
-                                    // Incoming glyph eases in from slightly smaller; outgoing shrinks
-                                    // back down as it fades — a soft materialize/dissolve, not a swap.
                                     transform: `translate(${metric.x}, ${metric.y}) scale(${(metric.scale ?? 1) * (isActive ? 1 : 0.85)})`,
                                     filter: isActive
                                         ? "blur(0px) drop-shadow(0 0 12px rgba(200, 169, 110, 0.85)) drop-shadow(0 0 3px rgba(245, 235, 213, 0.9))"

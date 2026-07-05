@@ -1,10 +1,9 @@
+// src/components/ModeSelectorModal.tsx
 "use client";
 
-import React from "react";
+import React, { useMemo } from "react";
 import { usePathname } from "next/navigation";
-// ปรับเปลี่ยนพาร์ทการ Import ตัว Base Modal หลักของโปรเจกต์ให้ตรงกับโครงสร้างจริงของคุณ
-import { Modal } from "./modal";
-import { useSenkaimon } from "./context/NavigationContext";
+import { Modal } from "../modal";
 
 export type GameMode = "daily" | "unlimited";
 
@@ -14,13 +13,12 @@ interface ModeConfig {
     label: string;
     subText: string;
     pathPrefix: string;
-    color: string;     /* Hex Code หลักสำหรับการเล่น Dynamic Style */
-    glowColor: string; /* Glow Shadow Alpha */
+    color: string;
+    glowColor: string;
     borderClass: string;
     hoverBgClass: string;
 }
 
-// ☀️ Data Token Config: ซิงค์โครงสร้างและสี Reiatsu ให้เป็นมาตรฐานเดียวกับระบบ Badge
 const MODE_CONFIGS: Record<GameMode, ModeConfig> = {
     daily: {
         id: "daily",
@@ -49,12 +47,30 @@ const MODE_CONFIGS: Record<GameMode, ModeConfig> = {
 interface ModeSelectorModalProps {
     isOpen: boolean;
     onClose: () => void;
-    onSelectMode: (mode: GameMode) => void;
+    // ปรับให้ onSelect ส่งค่า Mode ที่เลือก และ SubFeature ปัจจุบัน (ถ้ามี) กลับไปให้คนเรียกใช้งาน
+    onSelectMode: (mode: GameMode, currentSubFeature?: string) => void;
+    selectedSubFeature?: string | null;
 }
 
-export function ModeSelectorModal({ isOpen, onClose, onSelectMode }: ModeSelectorModalProps) {
-    const { navigate } = useSenkaimon();
+export function ModeSelectorModal({
+    isOpen,
+    onClose,
+    onSelectMode,
+    selectedSubFeature
+}: ModeSelectorModalProps) {
     const pathname = usePathname();
+
+    // 🧠 [Smart Path Parsing] วิเคราะห์ URL ปัจจุบัน
+    const { activeBaseMode, activeSubFeature } = useMemo(() => {
+        // แตก URL ออกเป็นส่วนๆ เช่น "/unlimited/character" -> ["unlimited", "character"]
+        const pathSegments = pathname.split('/').filter(Boolean);
+
+        return {
+            activeBaseMode: pathSegments[0] || null,
+            // ถ้ามี Prop ส่งมา (เช่น กดจากหน้า Home) ให้ยึด Prop ก่อน, ถ้าไม่มีให้ดึงจาก URL 
+            activeSubFeature: selectedSubFeature || pathSegments[1] || null
+        };
+    }, [pathname, selectedSubFeature]);
 
     return (
         <Modal
@@ -66,28 +82,31 @@ export function ModeSelectorModal({ isOpen, onClose, onSelectMode }: ModeSelecto
         >
             <div className="flex flex-col gap-4 mt-2">
                 <p className="text-[10px] uppercase tracking-[0.25em] text-[#5a5a78] text-center mb-4 font-mono select-none">
-                    Altering Spiritual Frequency // Select Destination
+                    Target: {activeSubFeature ? activeSubFeature.toUpperCase() : "AWAITING SELECTION"} // Select Destination
                 </p>
 
-                {/* ⚔️ High-Fidelity Data-Driven Loops */}
                 {(Object.keys(MODE_CONFIGS) as GameMode[]).map((key) => {
                     const config = MODE_CONFIGS[key];
+
+                    // 🔥 [Core Fix]: เช็ค Active จากการ StartsWith แทนที่จะเป็น Exact Match
+                    // เช่น ถ้า pathname คือ "/unlimited/character" และ config.pathPrefix คือ "/unlimited" ก็จะ Active ทันที
                     const isActive = pathname.startsWith(config.pathPrefix);
 
                     return (
                         <button
                             key={config.id}
-                            onClick={() => navigate(config.id)}
-                            /* 🔗 กินค่าสีผ่าน CSS Variable [var(--focus-color)] ทันทีเมื่อกด Tab โฟกัส */
+                            onClick={() => {
+                                // ส่งกลับไปให้ Parent พร้อมบอกว่าตอนนี้เล็ง SubFeature อะไรอยู่
+                                onSelectMode(config.id, activeSubFeature || undefined);
+                            }}
                             className={`group relative w-full p-5 border text-left transition-all duration-300 outline-none cursor-pointer
                                 bg-[#0a0a0f]/60 ${config.borderClass} ${config.hoverBgClass}
                                 focus-visible:ring-1 focus-visible:ring-[var(--focus-color)] focus-visible:ring-offset-1 focus-visible:ring-offset-[#0e0e1a]`}
                             style={{
-                                // 🪄 แปลงเป็น CSS Variable แล้วหลบ Type ด้วยการประกาศเป็น Custom Key & Type Cast
                                 "--focus-color": config.color,
                                 boxShadow: isActive ? `inset 0 0 12px ${config.glowColor}` : "none",
                                 borderColor: isActive ? config.color : undefined
-                            } as React.CSSProperties} // Cast เป็น CSSProperties เพื่อเคลียร์เงื่อนไข TS
+                            } as React.CSSProperties}
                         >
                             <div className="flex justify-between items-center">
                                 <div className="flex flex-col">
@@ -110,7 +129,6 @@ export function ModeSelectorModal({ isOpen, onClose, onSelectMode }: ModeSelecto
                                     </p>
                                 </div>
 
-                                {/* 🔮 Dynamic Status Badge */}
                                 {isActive ? (
                                     <span
                                         className="text-[9px] font-mono tracking-[0.15em] px-2 py-0.5 font-black uppercase text-black animate-pulse shadow-md"
@@ -119,11 +137,12 @@ export function ModeSelectorModal({ isOpen, onClose, onSelectMode }: ModeSelecto
                                             boxShadow: `0 0 10px ${config.glowColor}`
                                         }}
                                     >
-                                        ACTIVE
+                                        CURRENT
                                     </span>
                                 ) : (
                                     <span className="text-[8px] font-mono tracking-[0.1em] px-2 py-0.5 text-[#5a5a78] opacity-0 group-hover:opacity-100 transition-opacity duration-300 uppercase">
-                                        CONNECT &rarr;
+                                        {/* ถ้าหน้าปัจจุบันคือ /unlimited/character แล้วปุ่มนี้คือ Daily ให้เขียนว่า SWITCH TO DAILY */}
+                                        {activeBaseMode ? "SWITCH MODE \u2192" : "CONNECT \u2192"}
                                     </span>
                                 )}
                             </div>

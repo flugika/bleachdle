@@ -14,12 +14,16 @@ import Sealed from '@/src/shared/ui/Sealed';
 import { FEATURE_FLAGS } from '@/src/config/feature.flags';
 import { BleachSong } from '@/src/entities/song/schema';
 import { SongControlPanel } from '@/src/shared/ui/control-panel/SongControlPanel';
-import { ModeBadge } from '@/src/shared/ui/ModeBadge';
-import { ModeSelectorModal } from '@/src/shared/ui/ModeSelectorModal';
+import { ModeBadge } from '@/src/shared/ui/game-selector/ModeBadge';
+import { ModeSelectorModal } from '@/src/shared/ui/game-selector/ModeSelectorModal';
 import { useSenkaimon } from '@/src/shared/ui/context/NavigationContext';
 import SoulSyncLoader from '@/src/shared/ui/loader/SoulSyncLoader';
 import { STORAGE_KEYS } from '@/src/const/localStorage';
 import { BL_MODES_METADATA } from '@/src/config/mode';
+// 📅 Daily Hub: แถบ progress รวมทุกโหมด daily + CTA เล่นต่อ
+import { DailyProgressBar } from '@/src/shared/ui/daily-hub/DailyProgressBar';
+import { DailyHubModalFooter } from '@/src/shared/ui/daily-hub/DailyHubModalFooter';
+import { useDailyHub } from '@/src/shared/hooks/useDailyHub';
 
 interface DailySongWrapperProps {
     initialTarget: BleachSong;
@@ -38,6 +42,9 @@ export default function DailySongWrapper({ initialTarget, initialSegmentId }: Da
     const gameStore = useSongGame();
     const { target, guesses, initializeGame, finalizeGame, resetGame, hasFinalized, _hasHydrated } = gameStore;
     const songs = getSongs(); // 👈 ใช้แค่ทำ autocomplete list ของ search bar เท่านั้น ไม่ใช่แหล่งสุ่ม target
+
+    // 📅 Daily Hub: markModePlayed('song', won) จะถูกเรียกตอนเกมจบจริงเท่านั้น (ดู effect ด้านล่าง)
+    const { markModePlayed } = useDailyHub();
 
     useEffect(() => {
         if (!_hasHydrated) return;
@@ -113,6 +120,7 @@ export default function DailySongWrapper({ initialTarget, initialSegmentId }: Da
 
         if (isGameOver) {
             // มาเจอเกมที่จบไปแล้ว (F5) → เปิด modal สรุปทันที ไม่ต้องรอ delay
+            // (markModePlayed ไม่ต้องเรียกซ้ำตรงนี้ เพราะถูกบันทึกไปแล้วตอนจบเกมครั้งแรกก่อนหน้านี้)
             if (hasFinalized) {
                 setIsModalOpen(true);
                 return;
@@ -124,6 +132,8 @@ export default function DailySongWrapper({ initialTarget, initialSegmentId }: Da
                 if (!hasFinalized) {
                     finalizeGame(isWin);
                     updateStats(isWin);
+                    // 📅 Daily Hub: บันทึกว่าโหมด song ของวันนี้เล่นแล้ว + แพ้/ชนะ
+                    markModePlayed('song', isWin);
                 }
                 setIsModalOpen(true);
             }, targetDelay);
@@ -172,6 +182,11 @@ export default function DailySongWrapper({ initialTarget, initialSegmentId }: Da
                 <ModeBadge mode="daily" onClick={() => setIsModeSelectorOpen(true)} />
                 <SubHeader title={BL_MODES_METADATA.song.title} subtitle={BL_MODES_METADATA.song.statusLine} />
 
+                {/* 📅 Daily Hub: ซ่อนตอน modal สรุปผลเปิดอยู่ เพราะ DailyHubModalFooter ข้างล่างโชว์ซ้ำในโมดัลแล้ว */}
+                {!isModalOpen && (
+                    <DailyProgressBar activeMode="song" className="mb-5" />
+                )}
+
                 {!isModalOpen && (
                     // ⚠️ ASSUMPTION: SongControlPanel ต้องรองรับ mode="daily" แล้ว "ปิด" max-guess
                     // cap เองภายใน (ไม่โชว์ remainingGuesses, ไม่ disable search bar ตามจำนวนเดา)
@@ -209,7 +224,11 @@ export default function DailySongWrapper({ initialTarget, initialSegmentId }: Da
                 )}
 
                 {isModalOpen ? (
-                    <SongSummaryGuess isOpen={isModalOpen} onClose={handleCloseModal} guesses={guesses} target={target} isWin={isWin} mode="daily" stats={stats} />
+                    <>
+                        <SongSummaryGuess isOpen={isModalOpen} onClose={handleCloseModal} guesses={guesses} target={target} isWin={isWin} mode="daily" stats={stats} />
+                        {/* 📅 Daily Hub: CTA "เล่นต่อ" ต่อท้ายการ์ดสรุปผล */}
+                        <DailyHubModalFooter activeMode="song" />
+                    </>
                 ) : !isReady ? (
                     <SoulSyncLoader subLabel="Scanning for Song Signature" />
                 ) : target ? (

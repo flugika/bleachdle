@@ -5,7 +5,7 @@ import { compareCharacter } from "@/src/lib/game-engine/compareCharacter";
 import { getCharacterById } from "@/src/lib/utils/character"; 
 import { formatAge, formatHeight } from "@/src/lib/utils/format";
 import { useMemo } from "react";
-import { CELL_STYLES, ResultCell } from "./GuessTable";
+import { CELL_STYLES, ResultCell } from "./CharacterGuessTable";
 import { Button } from "@/src/shared/ui/button";
 import { Modal } from "@/src/shared/ui/modal";
 import Image from 'next/image';

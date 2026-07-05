@@ -1,4 +1,6 @@
 export const STORAGE_KEYS = {
+    DAILY_HUB_STATUS: 'bleachdle-daily-hub-status',
+    
     CHARACTER_PROGRESS: 'bleachdle-character-progress',
     CHARACTER_COMPLETED: 'bleachdle-character-completed',
     CHARACTER_STATS: 'bleachdle-character-stats',

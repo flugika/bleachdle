@@ -1,11 +1,11 @@
 "use client";
 
 import { useEffect, useState } from 'react';
-import { GuessTable } from '@/src/features/character';
+import { CharacterGuessTable } from '@/src/features/character';
 import { CharacterControlPanel } from '@/src/shared/ui/control-panel/CharacterControlPanel';
 import { useCharacterGame } from '@/src/features/character/hooks/unlimited/useCharacterGame';
 import { getCharacters } from '@/src/lib/utils/character';
-import { SummaryGuess } from '@/src/features/character/components/shared/SummaryGuess';
+import { CharacterSummaryGuess } from '@/src/features/character/components/shared/CharacterSummaryGuess';
 import { HowToPlayModal } from '@/src/features/character/components/shared/HowToPlayModal';
 import { Header } from '@/src/shared/layout/Header';
 import { Divider } from '@/src/shared/layout/Divider';
@@ -13,9 +13,9 @@ import { SubHeader } from '@/src/shared/layout/SubHeader';
 import Central46ConfidentialArchive from '@/src/features/character/components/unlimited/Central46ConfidentialArchive';
 import Sealed from '@/src/shared/ui/Sealed';
 import { FEATURE_FLAGS } from '@/src/config/feature.flags';
-import { ModeBadge } from '@/src/shared/ui/ModeBadge';
+import { ModeBadge } from '@/src/shared/ui/game-selector/ModeBadge';
 import { usePathname, useRouter } from 'next/navigation';
-import { ModeSelectorModal } from '@/src/shared/ui/ModeSelectorModal';
+import { ModeSelectorModal } from '@/src/shared/ui/game-selector/ModeSelectorModal';
 import { useSenkaimon } from '@/src/shared/ui/context/NavigationContext';
 import { MAX_CHARACTER_GUESSES } from '@/src/const/guess';
 import SoulSyncLoader from '@/src/shared/ui/loader/SoulSyncLoader';
@@ -245,12 +245,12 @@ export default function UnlimitedCharacterGame() {
                 )}
 
                 {isModalOpen ? (
-                    <SummaryGuess isOpen={isModalOpen} onClose={handleCloseModal} guesses={guesses} target={target} isWin={isWin} mode="unlimited" stats={stats} />
+                    <CharacterSummaryGuess isOpen={isModalOpen} onClose={handleCloseModal} guesses={guesses} target={target} isWin={isWin} mode="unlimited" stats={stats} />
                 ) : !isReady ? (
                     <SoulSyncLoader />
                 ) : target ? (
                     <div className="w-full overflow-x-auto">
-                        <GuessTable guesses={guesses} />
+                        <CharacterGuessTable guesses={guesses} />
                     </div>
                 ) : isGameCompleted ? (
                     <Central46ConfidentialArchive
