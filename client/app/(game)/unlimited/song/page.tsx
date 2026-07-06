@@ -54,10 +54,8 @@ export default function UnlimitedSongGame() {
 
     useEffect(() => {
         setManuallyClosed(false);
-        if (target) {
-            if (process.env.NODE_ENV !== 'production') {
-                console.log('target:', useSongGame.getState().target);
-            }
+        if (target && process.env.NODE_ENV !== 'production') {
+            console.log('target:', useSongGame.getState().target);
         }
         setRevealDelayDone(false);
     }, [target]);

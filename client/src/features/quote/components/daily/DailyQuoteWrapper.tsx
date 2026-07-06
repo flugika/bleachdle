@@ -48,7 +48,7 @@ export default function DailyQuoteWrapper({ initialTarget }: { initialTarget: Qu
         if (initialTarget !== null) {
             initializeGame(initialTarget);
 
-            if (process.env.NODE_ENV !== 'production') {
+            if (target && process.env.NODE_ENV !== 'production') {
                 console.log('target:', useQuoteGame.getState().target);
             }
         }

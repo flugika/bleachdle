@@ -109,10 +109,8 @@ export default function UnlimitedCharacterGame() {
     }, [target, characters.length, isReady]);
 
     useEffect(() => {
-        if (target) {
-            if (process.env.NODE_ENV !== 'production') {
-                console.log('target:', useCharacterGame.getState().target);
-            }
+        if (target && process.env.NODE_ENV !== 'production') {
+            console.log('target:', useCharacterGame.getState().target);
         }
     }, [target]);
 

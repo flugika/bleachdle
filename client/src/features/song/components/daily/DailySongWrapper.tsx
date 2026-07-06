@@ -52,7 +52,7 @@ export default function DailySongWrapper({ initialTarget, initialSegmentId }: Da
         if (initialTarget !== null) {
             initializeGame(initialTarget, initialSegmentId);
 
-            if (process.env.NODE_ENV !== 'production') {
+            if (target && process.env.NODE_ENV !== 'production') {
                 console.log('target:', useSongGame.getState().target);
             }
         }

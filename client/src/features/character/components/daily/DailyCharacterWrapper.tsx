@@ -53,7 +53,7 @@ export default function DailyCharacterWrapper({ initialTarget }: { initialTarget
             // 🛡️ debug log แบบ deterministic — log ค่า "settled" ที่ set ไปจริงๆ ครั้งเดียว
             // แทนที่จะ subscribe แบบ reactive กับทุก mutation ของ store (ของเดิม log ค่า target
             // ที่ persist ค้างจากเมื่อวานแวบหนึ่งก่อนจะถูกแก้เป็นของวันนี้ เลยเห็น log ผิดสลับถูก)
-            if (process.env.NODE_ENV !== 'production') {
+            if (target && process.env.NODE_ENV !== 'production') {
                 console.log('target:', useCharacterGame.getState().target);
             }
         }

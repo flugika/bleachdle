@@ -51,8 +51,8 @@ export default function UnlimitedQuoteGame() {
 
     useEffect(() => {
         setManuallyClosed(false);
-        if (target) {
-            console.log("target:", target);
+        if (target && process.env.NODE_ENV !== 'production') {
+            console.log('target:', useQuoteGame.getState().target);
         }
         setRevealDelayDone(false);
     }, [target]);

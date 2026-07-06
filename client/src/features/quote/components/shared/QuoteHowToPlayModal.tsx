@@ -16,13 +16,13 @@ interface QuoteHowToPlayModalProps {
 const EXAMPLE_WRONG_CHARACTER = {
     id: 'example-wrong',
     name: 'Kon',
-    image: 'kon.webp',
+    image: 'Kon.webp',
 } as unknown as Character;
 
 const EXAMPLE_CORRECT_CHARACTER = {
     id: 'example-correct',
     name: 'Sōsuke Aizen',
-    image: 'sosuke_aizen.webp',
+    image: 'Sosuke_Aizen.webp',
 } as unknown as Character;
 
 const EXAMPLE_QUOTE = `"If you wish to kill 100 men, you must be prepared to be killed by 100 men."`;
