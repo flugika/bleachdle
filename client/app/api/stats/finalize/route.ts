@@ -3,20 +3,16 @@ import { NextRequest, NextResponse } from 'next/server';
 import { supabaseServer } from '@/src/lib/supabase/supabase-server';
 import { packCookie, unpackCookie } from '@/src/lib/support/rateLimitCookie';
 import { VALID_STAT_MODES, type StatMode } from '@/src/entities/stats/types';
+import { checkIpRateLimit } from '@/src/lib/support/ipRateLimit'; // 💡 นำเข้าตัวตรวจ IP
 
 interface FinalizeStatBody {
     mode: StatMode;
     isWin: boolean;
     guessCount: number;
-    turnstileToken: string;
 }
 
-// ── กันยิงถี่: ไม่ต้องเข้มเท่า /api/support (ไม่มีเนื้อหาต้องกัน spam)
-// แค่กันสคริปต์ยิงรัวๆ เพื่อปั่นตัวเลข daily_stats
-// Turnstile คือชั้นป้องกันเสริม (defense-in-depth) สำหรับคนที่ตั้งใจข้าม cookie cooldown
-// (เช่น script ที่ไม่เก็บ cookie หรือ clear cookie ทุกครั้ง) ไม่ได้มาแทน cooldown
 const COOLDOWN_SECONDS = 5;
-const COOLDOWN_COOKIE_PREFIX = 'sfz_cd_'; // แยก cookie ต่อ mode กันโหมดนึงบล็อกอีกโหมด
+const COOLDOWN_COOKIE_PREFIX = 'sfz_cd_';
 
 export async function POST(req: NextRequest) {
     let body: FinalizeStatBody;
@@ -29,8 +25,7 @@ export async function POST(req: NextRequest) {
 
     const { mode, isWin, guessCount } = body;
 
-    // ── 1. Cheap, in-memory validation FIRST — ไม่ยิง network call (Turnstile) ทิ้งเปล่าๆ
-    // สำหรับ request ที่ malformed อยู่แล้วตั้งแต่ shape พื้นฐาน
+    // ── ด่าน 1: Cheap, in-memory validation
     if (!VALID_STAT_MODES.includes(mode)) {
         return NextResponse.json({ error: 'Invalid mode' }, { status: 400 });
     }
@@ -41,9 +36,7 @@ export async function POST(req: NextRequest) {
         return NextResponse.json({ error: 'Invalid guessCount' }, { status: 400 });
     }
 
-    // ── 2. Cooldown check (signed cookie, ต่อ mode ต่อ device) ──
-    // เช็คก่อน Turnstile เพราะถูกกว่า (ไม่มี network call) — ถ้าติด cooldown อยู่แล้ว
-    // ไม่จำเป็นต้องเสีย round-trip ไป Cloudflare เลย
+    // ── ด่าน 2: Cooldown check ด้วย Browser Cookie (กรองผู้ใช้ธรรมดาที่กดรัวๆ ได้เร็วสุด)
     const cookieName = `${COOLDOWN_COOKIE_PREFIX}${mode}`;
     const cooldownPayload = unpackCookie(req.cookies.get(cookieName)?.value);
     if (cooldownPayload) {
@@ -52,16 +45,23 @@ export async function POST(req: NextRequest) {
             const elapsedSec = (Date.now() - lastSubmitMs) / 1000;
             if (elapsedSec < COOLDOWN_SECONDS) {
                 const retryAfter = Math.ceil(COOLDOWN_SECONDS - elapsedSec);
-                return NextResponse.json(
-                    { error: 'Too many requests, slow down.', retryAfter },
-                    { status: 429 }
-                );
+                return NextResponse.json({ error: 'Too many requests, slow down.', retryAfter }, { status: 429 });
             }
         }
     }
 
-    const todayStr = new Date().toLocaleDateString('en-CA');
+    // ── ด่าน 3: สกัดกั้นสคริปต์ล้างคุกกี้ ด้วยการเช็คความถี่เน็ตบ้าน (In-Memory IP Hash) 🛡️
+    // ยิงได้สูงสุด 1 ครั้ง ทุกๆ 5 วินาที ต่อ 1 IP Hash
+    const ipCheck = checkIpRateLimit(req, 1, COOLDOWN_SECONDS);
+    if (!ipCheck.success) {
+        return NextResponse.json(
+            { error: 'Kido Barrier: Rate limit exceeded by IP network.', retryAfter: ipCheck.retryAfter },
+            { status: 429 }
+        );
+    }
 
+    // ผ่านทุกด่าน -> บันทึกข้อมูลลง Supabase แบบสบายใจ
+    const todayStr = new Date().toLocaleDateString('en-CA');
     const { error } = await supabaseServer.rpc('increment_daily_stat', {
         p_date: todayStr,
         p_mode: mode,
@@ -75,7 +75,6 @@ export async function POST(req: NextRequest) {
     }
 
     const res = NextResponse.json({ success: true });
-
     res.cookies.set(cookieName, packCookie(String(Date.now())), {
         httpOnly: true,
         sameSite: 'lax',

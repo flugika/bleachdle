@@ -38,13 +38,8 @@ export function SupportForm() {
 
     const trimmedLen = message.trim().length;
     const isTooShort = trimmedLen > 0 && trimmedLen < MIN_LEN;
+    const isFormValid = trimmedLen >= MIN_LEN && trimmedLen <= MAX_LEN;
     const canSubmit = trimmedLen >= MIN_LEN && trimmedLen <= MAX_LEN && !submitting && !isActive;
-
-    const formatCountdown = (sec: number) => {
-        const m = Math.floor(sec / 60).toString().padStart(2, "0");
-        const s = (sec % 60).toString().padStart(2, "0");
-        return `${m}:${s}`;
-    };
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -150,9 +145,8 @@ export function SupportForm() {
                                 Details
                             </label>
                             <span
-                                className={`text-[11px] font-mono tracking-wider ${
-                                    trimmedLen > MAX_LEN ? "text-red-500" : "text-[#eed9c4]/50"
-                                }`}
+                                className={`text-[11px] font-mono tracking-wider ${trimmedLen > MAX_LEN ? "text-red-500" : "text-[#eed9c4]/50"
+                                    }`}
                             >
                                 {trimmedLen}/{MAX_LEN}
                             </span>
@@ -191,15 +185,17 @@ export function SupportForm() {
                         />
                     </div>
 
-                    <Button type="submit" variant="primary" disabled={!canSubmit} className="w-full disabled:opacity-30 disabled:hover:bg-transparent disabled:hover:text-[#c8a96e]">
-                        {submitting ? "TRANSMITTING..." : isActive ? `RECHARGING // ${formatCountdown(remainingSec)}` : "SEND REPORT"}
+                    <Button
+                        type="submit"
+                        variant="primary"
+                        isLoading={submitting}
+                        loadingText="TRANSMITTING..."
+                        cooldownSeconds={remainingSec} // ส่งเวลาวินาทีให้ปุ่มไปนับถอยหลังและโชว์ตัวเลขเอง
+                        disabled={!isFormValid}       // คุมแค่ว่าฟอร์มกรอกครบเงื่อนไขไหมพอ
+                        className="w-full"
+                    >
+                        SEND REPORT
                     </Button>
-
-                    {isActive && (
-                        <p className="text-center text-[11px] font-mono text-[#eed9c4]/50 tracking-[0.2em] uppercase -mt-2">
-                            Kido barrier recharging — next report available in {formatCountdown(remainingSec)}
-                        </p>
-                    )}
                 </form>
             </div>
 
