@@ -193,7 +193,7 @@ export const CharacterSummaryGuess = ({ isOpen, onClose, guesses, target, isWin,
                                 <p className="text-[12px] font-bold uppercase tracking-[0.3em] text-[#c8a96e]/70">
                                     {isWin ? "Identity Verified" : "Data Analysis Report"}
                                 </p>
-                                <div className="w-1.5 h-1.5 rounded-full bg-[#c8a96e] animate-pulse shadow-[0_0_10px_#c8a96e]" />
+                                <div className="w-1.5 h-1.5 rounded-full bg-[#c8a96e] animate-pulse shadow-[0_0_10px_#c8a96e] pointer-events-none" />
                             </div>
 
                             {/* กล่องข้อมูลตัวละครตรงกลาง */}

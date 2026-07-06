@@ -18,13 +18,13 @@ const statusDefinitions = [
 ];
 
 // ── 🎯 รับ `mode` เข้ามาจาก Parent Directly (Type-Safe)
-interface HowToPlayModalProps {
+interface CharacterHowToPlayModalProps {
     isOpen: boolean;
     onClose: () => void;
     mode: 'daily' | 'unlimited';
 }
 
-export const HowToPlayModal = ({ isOpen, onClose, mode }: HowToPlayModalProps) => {
+export const CharacterHowToPlayModal = ({ isOpen, onClose, mode }: CharacterHowToPlayModalProps) => {
     // ── 🎯 1. ประกาศ Hooks ทั้งหมดไว้ที่ TOP LEVEL ──────────────────
     const target = useMemo(() => getCharacterById("e9a8f2c3-9d10-4f5a-8b2c-1d0e9f8a7b6c"), []);
     const guess = useMemo(() => getCharacterById("c7a8b9d0-1e2f-4a3b-8c5d-6e7f8a9b0c1d"), []);

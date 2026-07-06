@@ -3,6 +3,7 @@
 CREATE OR REPLACE FUNCTION build_no_repeat_sequence(p_table TEXT, p_length INT)
 RETURNS TEXT[]
 LANGUAGE plpgsql
+SET search_path = public
 AS $$
 DECLARE
     pool TEXT[];
@@ -41,6 +42,7 @@ $$;
 CREATE OR REPLACE FUNCTION build_song_segment_sequence(p_length INT)
 RETURNS song_segment_pair[]
 LANGUAGE plpgsql
+SET search_path = public
 AS $$
 DECLARE
     song_pool TEXT[];
@@ -105,6 +107,92 @@ BEGIN
 END;
 $$;
 
+CREATE OR REPLACE FUNCTION build_grouped_no_repeat_sequence(
+    p_item_table TEXT,
+    p_group_column TEXT,
+    p_length INT,
+    p_item_id_column TEXT DEFAULT 'id'
+)
+RETURNS group_item_pair[]
+LANGUAGE plpgsql
+SET search_path = public
+AS $$
+DECLARE
+    group_pool TEXT[];
+    pool_idx INT := 1;
+    pool_size INT;
+    final_pairs group_item_pair[] := ARRAY[]::group_item_pair[];
+
+    current_group_id TEXT;
+    prev_group_id TEXT := NULL;
+    selected_item_id TEXT;
+
+    i INT;
+    temp_swap TEXT;
+BEGIN
+    -- 🩹 FIX: แยก DISTINCT (ชั้นใน) กับ ORDER BY random() (ชั้นนอก) ออกจากกัน
+    -- เพราะ SELECT DISTINCT ... ORDER BY random() ทำไม่ได้ตรงๆ ใน Postgres
+    EXECUTE format(
+        'SELECT COALESCE(array_agg(gid), ARRAY[]::TEXT[])
+         FROM (
+             SELECT gid FROM (
+                 SELECT DISTINCT %I AS gid FROM %I WHERE %I IS NOT NULL
+             ) d
+             ORDER BY random()
+         ) t',
+        p_group_column, p_item_table, p_group_column
+    ) INTO group_pool;
+
+    pool_size := cardinality(group_pool);
+
+    IF pool_size IS NULL OR pool_size = 0 THEN
+        RAISE EXCEPTION 'ไม่มี distinct % ในตาราง %', p_group_column, p_item_table;
+    END IF;
+
+    FOR i IN 1..p_length LOOP
+        IF pool_idx > pool_size THEN
+            -- 🩹 FIX: เหมือนกันกับตอน reshuffle
+            EXECUTE format(
+                'SELECT array_agg(gid)
+                 FROM (
+                     SELECT gid FROM (
+                         SELECT DISTINCT %I AS gid FROM %I WHERE %I IS NOT NULL
+                     ) d
+                     ORDER BY random()
+                 ) t',
+                p_group_column, p_item_table, p_group_column
+            ) INTO group_pool;
+            pool_idx := 1;
+        END IF;
+
+        current_group_id := group_pool[pool_idx];
+
+        IF current_group_id = prev_group_id AND pool_size > 1 AND pool_idx < pool_size THEN
+            temp_swap := group_pool[pool_idx];
+            group_pool[pool_idx] := group_pool[pool_idx + 1];
+            group_pool[pool_idx + 1] := temp_swap;
+            current_group_id := group_pool[pool_idx];
+        END IF;
+
+        EXECUTE format(
+            'SELECT %I FROM %I WHERE %I = $1 ORDER BY random() LIMIT 1',
+            p_item_id_column, p_item_table, p_group_column
+        ) INTO selected_item_id USING current_group_id;
+
+        IF selected_item_id IS NULL THEN
+            selected_item_id := 'no-item';
+        END IF;
+
+        final_pairs := final_pairs || ROW(current_group_id, selected_item_id)::group_item_pair;
+
+        prev_group_id := current_group_id;
+        pool_idx := pool_idx + 1;
+    END LOOP;
+
+    RETURN final_pairs;
+END;
+$$;
+
 CREATE OR REPLACE FUNCTION generate_daily_schedule()
 RETURNS TEXT
 LANGUAGE plpgsql
@@ -116,13 +204,12 @@ DECLARE
     total_days INT;
     start_date DATE;
 
-    -- เปลี่ยนโครงสร้างตัวแปรรับค่า
-    song_pair_seq song_segment_pair[]; 
-    
+    song_pair_seq song_segment_pair[];
+    quote_pair_seq group_item_pair[];   -- 🆕 ใช้ generic pair แทน quote_seq เดิม
+
     image_seq   TEXT[];
     release_seq TEXT[];
     emoji_seq   TEXT[];
-    quote_seq   TEXT[];
 BEGIN
     IF EXISTS (SELECT 1 FROM daily_schedule WHERE date = CURRENT_DATE) THEN
         RETURN 'Notification: Schedule for today already exists.';
@@ -138,29 +225,28 @@ BEGIN
         RETURN 'Error: No characters found.';
     END IF;
 
-    -- รับค่าคู่ (song_id, segment_id)
-    song_pair_seq := build_song_segment_sequence(total_days);
-    
+    song_pair_seq  := build_song_segment_sequence(total_days);
+    quote_pair_seq := build_grouped_no_repeat_sequence('quotes', 'character_id', total_days); -- 🆕
+
     image_seq   := build_no_repeat_sequence('images', total_days);
     release_seq := build_no_repeat_sequence('releases', total_days);
     emoji_seq   := build_no_repeat_sequence('emojis', total_days);
-    quote_seq   := build_no_repeat_sequence('quotes', total_days);
 
     FOR i IN 1..total_days LOOP
         INSERT INTO daily_schedule (
-            date, character_id, 
-            song_id, song_segment_id, -- ใส่ทั้ง 2 คอลัมน์ที่ผูกกัน
+            date, character_id,
+            song_id, song_segment_id,
             image_id, release_id, emoji_id, quote_id
         )
         VALUES (
             start_date + (i - 1),
             char_ids[i],
-            (song_pair_seq[i]).song_id,      -- ดึงจาก struct
-            (song_pair_seq[i]).segment_id,   -- ดึงจาก struct
+            (song_pair_seq[i]).song_id,
+            (song_pair_seq[i]).segment_id,
             image_seq[i],
             release_seq[i],
             emoji_seq[i],
-            quote_seq[i]
+            (quote_pair_seq[i]).item_id     -- 🆕 ดึง quote_id จาก pair แทน quote_seq[i]
         )
         ON CONFLICT (date) DO NOTHING;
     END LOOP;

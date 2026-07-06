@@ -5,6 +5,7 @@ import { BleachQuote } from '@/src/entities/quote/schema';
 import { QuoteGuessable } from '@/src/features/quote/types';
 import { Modal } from '../modal';
 import { QuoteTestimonyDisplay } from '@/src/features/quote/components/shared/QuoteTestimonyDisplay';
+import { Character } from '@/src/entities/character/schema';
 import { getCharacters } from '@/src/features/character/character';
 
 interface QuoteControlPanelProps {
@@ -43,7 +44,6 @@ export function QuoteControlPanel({
     }
 
     const hasGuesses = game?.guesses?.length > 0;
-    const divider = '━'.repeat(20);
 
     return (
         <div className="flex flex-col items-center">
@@ -53,7 +53,7 @@ export function QuoteControlPanel({
             )}
 
             {/* Search Section */}
-            {target && (
+            {target && characters && (
                 <div className="flex justify-center w-full mb-6">
                     <SearchBar
                         characters={characters}

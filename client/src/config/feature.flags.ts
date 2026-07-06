@@ -4,7 +4,7 @@ export const FEATURE_FLAGS = {
     // ── 📅 โหมดทายรายวัน (Daily Mode)
     daily: {
         character: true,
-        quote: false,
+        quote: true,
         image: false,
         emoji: false,
         song: true,
@@ -21,7 +21,7 @@ export const FEATURE_FLAGS = {
         release: false,
     },
 
-    mockupSong: true,
+    mockupSong: false,
     support: true,
 } as const;
 

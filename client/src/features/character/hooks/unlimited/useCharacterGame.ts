@@ -9,6 +9,7 @@ import { MAX_CHARACTER_GUESSES } from '@/src/const/guess';
 import { STORAGE_KEYS } from '@/src/const/localStorage'
 import { nestedJSONStorage } from '@/src/lib/store/createNestedStorage';
 import { isValidCharacterGuessEntry } from '../../validGuessEntry';
+import { Stats } from '@/src/shared/types/guessGame';
 
 interface GuessEntry {
     guess: Character;
@@ -19,15 +20,18 @@ interface GuessEntry {
 interface CharacterGameState {
     target: Character | null;
     guesses: GuessEntry[];
+    stats: Stats; // 🆕
     addGuess: (guessId: string) => void;
     setTarget: (target: Character) => void;
     initializeGame: (force?: boolean) => void;
     finalizeGame: (isWin: boolean) => void;
+    loadStats: () => void; // 🆕
     resetGame: () => void;
     hardReset: () => void;
     hasFinalized: boolean;
     _hasHydrated: boolean;                    // 👈 เพิ่ม (เดิม unlimited ไม่มี ต่างจาก daily)
     setHasHydrated: (state: boolean) => void; // 👈 เพิ่ม
+    resetStreakKeepMax: () => void; // 🆕ว
 }
 
 export const useCharacterGame = create<CharacterGameState>()(
@@ -35,11 +39,20 @@ export const useCharacterGame = create<CharacterGameState>()(
         (set, get) => ({
             target: null,
             guesses: [],
+            stats: { currentStreak: 0, maxStreak: 0 }, // 🆕
             hasFinalized: false,
             _hasHydrated: false,
             setHasHydrated: (state) => set({ _hasHydrated: state }),
 
             setTarget: (target) => set({ target }),
+
+            // 🆕 ย้ายมาจาก component: อ่าน STORAGE_KEYS.CHARACTER_STATS เข้า store
+            loadStats: () => {
+                if (typeof window === 'undefined') return;
+                const statsData = JSON.parse(localStorage.getItem(STORAGE_KEYS.CHARACTER_STATS) || '{}');
+                const saved: Stats = statsData.unlimited || { currentStreak: 0, maxStreak: 0 };
+                set({ stats: saved });
+            },
 
             addGuess: (guessId: string) => set((state) => {
                 const isGameOver = state.guesses.length >= MAX_CHARACTER_GUESSES; // หรือ 10 ในกรณี daily
@@ -114,8 +127,22 @@ export const useCharacterGame = create<CharacterGameState>()(
                     JSON.stringify(completedData)
                 );
 
+                const statsData = JSON.parse(localStorage.getItem(STORAGE_KEYS.CHARACTER_STATS) || '{}');
+                const savedStats: Stats = statsData.unlimited || { currentStreak: 0, maxStreak: 0 };
+
+                const newStats: Stats = {
+                    currentStreak: isWin ? savedStats.currentStreak + 1 : 0,
+                    maxStreak: isWin
+                        ? Math.max(savedStats.maxStreak, savedStats.currentStreak + 1)
+                        : savedStats.maxStreak,
+                };
+
+                statsData.unlimited = newStats;
+                localStorage.setItem(STORAGE_KEYS.CHARACTER_STATS, JSON.stringify(statsData));
+
                 set({
                     hasFinalized: true,
+                    stats: newStats, // 🆕
                 });
             },
             resetGame: () => {
@@ -135,6 +162,17 @@ export const useCharacterGame = create<CharacterGameState>()(
                 setTimeout(() => {
                     get().initializeGame(true);
                 }, 0);
+            },
+            resetStreakKeepMax: () => {
+                const statsData = JSON.parse(localStorage.getItem(STORAGE_KEYS.CHARACTER_STATS) || '{}');
+                const saved: Stats = statsData.unlimited || { currentStreak: 0, maxStreak: 0 };
+
+                const resetStats: Stats = { currentStreak: 0, maxStreak: saved.maxStreak };
+
+                statsData.unlimited = resetStats;
+                localStorage.setItem(STORAGE_KEYS.CHARACTER_STATS, JSON.stringify(statsData));
+
+                set({ stats: resetStats });
             },
         }),
         {

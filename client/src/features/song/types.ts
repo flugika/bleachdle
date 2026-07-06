@@ -1,5 +1,6 @@
 // src/features/song/types.ts
 import { BleachSong } from '@/src/entities/song/schema';
+import { Stats } from '@/src/shared/types/guessGame';
 
 /**
  * 🎯 เพลงตอบเดียวเป๊ะ ไม่มีการเทียบ field ย่อย (artist/album) แบบ higher-lower/partial เหมือน
@@ -22,6 +23,8 @@ export interface SongGameController {
     target: BleachSong | null;
     targetSegmentId: string | null;
     guesses: SongGuessEntry[];
+    stats: Stats; // 🆕
+    loadStats: () => void; // 🆕
     addGuess: (songId: string) => void;
     setTarget: (target: BleachSong) => void;
     initializeGame: (force?: boolean) => void;
@@ -31,16 +34,19 @@ export interface SongGameController {
     hasFinalized: boolean;
     _hasHydrated: boolean;
     setHasHydrated: (state: boolean) => void;
+    resetStreakKeepMax: () => void; // 🆕
 }
 
 export interface DailySongGameState {
     target: BleachSong | null;
     targetSegmentId: string | null;
     guesses: SongGuessEntry[];
+    stats: Stats; // 🆕
     addGuess: (songId: string) => void;
     setTarget: (target: BleachSong) => void;
     initializeGame: (target?: BleachSong, segmentId?: string) => void;
     finalizeGame: (isWin: boolean) => void;
+    loadStats: () => void; // 🆕
     resetGame: () => void;
     hasFinalized: boolean;
     _hasHydrated: boolean;

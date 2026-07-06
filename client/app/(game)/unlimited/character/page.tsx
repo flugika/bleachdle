@@ -6,7 +6,7 @@ import { CharacterControlPanel } from '@/src/shared/ui/control-panel/CharacterCo
 import { useCharacterGame } from '@/src/features/character/hooks/unlimited/useCharacterGame';
 import { getCharacters } from '@/src/features/character/character';
 import { CharacterSummaryGuess } from '@/src/features/character/components/shared/CharacterSummaryGuess';
-import { HowToPlayModal } from '@/src/features/character/components/shared/HowToPlayModal';
+import { CharacterHowToPlayModal } from '@/src/features/character/components/shared/CharacterHowToPlayModal';
 import { Header } from '@/src/shared/layout/Header';
 import { Divider } from '@/src/shared/layout/Divider';
 import { SubHeader } from '@/src/shared/layout/SubHeader';
@@ -14,7 +14,6 @@ import Central46ConfidentialArchive from '@/src/shared/ui/Central46ConfidentialA
 import Sealed from '@/src/shared/ui/Sealed';
 import { FEATURE_FLAGS } from '@/src/config/feature.flags';
 import { ModeBadge } from '@/src/shared/ui/game-selector/ModeBadge';
-import { usePathname, useRouter } from 'next/navigation';
 import { ModeSelectorModal } from '@/src/shared/ui/game-selector/ModeSelectorModal';
 import { useSenkaimon } from '@/src/shared/ui/context/NavigationContext';
 import { MAX_CHARACTER_GUESSES } from '@/src/const/guess';
@@ -28,23 +27,22 @@ export default function UnlimitedCharacterGame() {
         )
     }
 
-    const router = useRouter();
-    const pathname = usePathname();
     const { navigate, state, reportReady } = useSenkaimon(); // 👈 ดึง state + reportReady มาด้วย ใช้คุม modal ตอน transition และแจ้งความพร้อมกลับไปที่ Senkaimon
 
     // 🛡️ เดิมเรียก useCharacterGame() 2 ครั้งแยกกัน (ตัวแปร game + destructure ซ้ำ)
     // ตอนนี้ subscribe ครั้งเดียว แล้วส่ง store object เดิมต่อให้ SearchBar ผ่าน prop `game`
     const gameStore = useCharacterGame();
-    const { target, guesses, initializeGame, finalizeGame, resetGame, hardReset, hasFinalized, _hasHydrated } = gameStore;
+    const { target, guesses, initializeGame, finalizeGame, resetGame, hardReset, hasFinalized, _hasHydrated, resetStreakKeepMax } = gameStore;
     const characters = getCharacters();
 
     const [isModalOpen, setIsModalOpen] = useState(false);
-    const [stats, setStats] = useState({ currentStreak: 0, maxStreak: 0 });
     const [isHowToOpen, setIsHowToOpen] = useState(false);
     const [isReady, setIsReady] = useState(false);
     const [isGameCompleted, setIsGameCompleted] = useState(false);
     const [isModeSelectorOpen, setIsModeSelectorOpen] = useState(false);
     const [finalRoundGuesses, setFinalRoundGuesses] = useState<typeof guesses>([]);
+    const stats = useCharacterGame(s => s.stats);
+    const loadStats = useCharacterGame(s => s.loadStats);
 
     // 🛡️ FIX (ปัญหา modal ค้าง): ปิด modal ทันทีที่ประตูเซนไกมงเริ่ม "closing"
     // ผูกกับ state ตรงๆ ไม่พึ่งลำดับการเรียกจาก handleSwitchDimension เพียงจุดเดียว
@@ -69,21 +67,6 @@ export default function UnlimitedCharacterGame() {
     const isLoss = guesses.length >= 10 && !isWin;
     const isGameOver = isWin || isLoss;
 
-    // ── 🛡️ จัดการโครงสร้างสถิติแบบ Object Nesting
-    const updateStats = (won: boolean) => {
-        const statsData = JSON.parse(localStorage.getItem(STORAGE_KEYS.CHARACTER_STATS) || '{}');
-        const saved = statsData.unlimited || { currentStreak: 0, maxStreak: 0 };
-
-        const newStats = {
-            currentStreak: won ? saved.currentStreak + 1 : 0,
-            maxStreak: won ? Math.max(saved.maxStreak, saved.currentStreak + 1) : saved.maxStreak
-        };
-
-        statsData.unlimited = newStats;
-        localStorage.setItem(STORAGE_KEYS.CHARACTER_STATS, JSON.stringify(statsData));
-        setStats(newStats);
-    };
-
     // 🛡️ FIX: เพิ่ม _hasHydrated เข้า dependency + เงื่อนไข guard
     // effect นี้จะรอจน zustand persist rehydrate จาก localStorage เสร็จจริงก่อน ค่อยยิง initializeGame()
     // ต่อให้ effect ถูกยิงซ้ำ (StrictMode dev double-invoke / remount ตอนสลับหน้าผ่าน Senkaimon)
@@ -91,8 +74,7 @@ export default function UnlimitedCharacterGame() {
     useEffect(() => {
         if (!_hasHydrated) return;
 
-        const statsData = JSON.parse(localStorage.getItem(STORAGE_KEYS.CHARACTER_STATS) || '{}');
-        setStats(statsData.unlimited || { currentStreak: 0, maxStreak: 0 });
+        loadStats();
 
         const completedData = JSON.parse(localStorage.getItem(STORAGE_KEYS.CHARACTER_COMPLETED) || '{}');
         const completed = completedData.unlimited || [];
@@ -107,7 +89,7 @@ export default function UnlimitedCharacterGame() {
 
         initializeGame();
         setIsReady(true);
-    }, [initializeGame, characters.length, _hasHydrated]);
+    }, [initializeGame, characters.length, _hasHydrated, loadStats]);
 
     // 🚪 FIX (ประตูเปิดก่อนหน้าพร้อม): แจ้ง NavigationContext กลับไปตอน "isReady" เป็น true จริงๆ
     // (คือหลัง zustand rehydrate + initializeGame() เสร็จสมบูรณ์) แทนที่จะปล่อยให้ระบบ
@@ -128,7 +110,9 @@ export default function UnlimitedCharacterGame() {
 
     useEffect(() => {
         if (target) {
-            console.log("target:", target);
+            if (process.env.NODE_ENV !== 'production') {
+                console.log('target:', useCharacterGame.getState().target);
+            }
         }
     }, [target]);
 
@@ -139,7 +123,6 @@ export default function UnlimitedCharacterGame() {
                 if (!hasFinalized) {
                     setFinalRoundGuesses(guesses);
                     finalizeGame(isWin);
-                    updateStats(isWin);
                 }
 
                 // 2. ทำ UI: เปิด Modal ทุกครั้งที่โหลดหน้าเว็บหากเกมจบแล้ว
@@ -174,11 +157,7 @@ export default function UnlimitedCharacterGame() {
 
     // ── 🛡️ คอมโบ Reset ข้อมูลโดยการเจาะทำลายเฉพาะกิ่งก้านของโหมดตัวเอง
     const handleHardReset = () => {
-        const statsData = JSON.parse(localStorage.getItem(STORAGE_KEYS.CHARACTER_STATS) || '{}');
-        const saved = statsData.unlimited || { currentStreak: 0, maxStreak: 0 };
-        statsData.unlimited = { currentStreak: 0, maxStreak: saved.maxStreak };
-        localStorage.setItem(STORAGE_KEYS.CHARACTER_STATS, JSON.stringify(statsData));
-        setStats(statsData.unlimited);
+        resetStreakKeepMax();
 
         const registryData = JSON.parse(localStorage.getItem(STORAGE_KEYS.CHARACTER_REGISTRY) || '{}');
         const currentRegistry = registryData.unlimited || { name: "", count: 0 };
@@ -270,7 +249,7 @@ export default function UnlimitedCharacterGame() {
                     </div>
                 )}
             </main>
-            <HowToPlayModal isOpen={isHowToOpen} onClose={() => setIsHowToOpen(false)} mode="unlimited" />
+            <CharacterHowToPlayModal isOpen={isHowToOpen} onClose={() => setIsHowToOpen(false)} mode="unlimited" />
             <ModeSelectorModal
                 isOpen={isModeSelectorOpen}
                 onClose={() => setIsModeSelectorOpen(false)}

@@ -4,15 +4,35 @@ import { useState, useMemo, useRef, useEffect } from 'react';
 import { createSearchEngine } from '@/src/lib/search/fuzzy';
 import { Character } from '@/src/entities/character/schema';
 import Image from 'next/image';
-import { CharacterGameController } from '@/src/features/character/types';
+import { GuessGameController } from '@/src/shared/types/guessGame';
 
-interface SearchBarProps {
+interface GuessSearchBarProps {
     characters: Character[];
     disabled?: boolean;
-    game: CharacterGameController; // 👈 inject มาแทน hook
+    game: GuessGameController;
+    /**
+     * DOM id prefix used to scroll-to + shake an already-guessed row when
+     * the player re-selects it from the dropdown.
+     *
+     * ⚠️ Must match whatever your guess table actually renders as the row id:
+     *   - CharacterGuessTable renders  `id={`row-${guess.id}`}`        → prefix "row"
+     *   - QuoteGuessTable renders      `id={`quote-row-${guess.id}`}`  → prefix "quote-row"
+     * Passing the wrong prefix silently no-ops the scroll/shake (no crash,
+     * just a missed UX nicety) — this was the actual reusability bug: the
+     * old copy-pasted SearchBar.tsx hardcoded `row-${id}`, which is wrong
+     * for the quote table.
+     */
+    rowIdPrefix?: string;
+    placeholder?: string;
 }
 
-export const SearchBar = ({ characters, disabled = false, game }: SearchBarProps) => {
+export const SearchBar = ({
+    characters,
+    disabled = false,
+    game,
+    rowIdPrefix = 'row',
+    placeholder = 'ENTER SOUL NAME...',
+}: GuessSearchBarProps) => {
     const [query, setQuery] = useState('');
     const [isOpen, setIsOpen] = useState(false);
     const [activeIdx, setActiveIdx] = useState(-1);
@@ -49,7 +69,7 @@ export const SearchBar = ({ characters, disabled = false, game }: SearchBarProps
     }, []);
 
     const triggerScrollAndShake = (charId: string) => {
-        const rowEl = document.getElementById(`row-${charId}`);
+        const rowEl = document.getElementById(`${rowIdPrefix}-${charId}`);
         if (!rowEl) return;
 
         rowEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
@@ -114,7 +134,6 @@ export const SearchBar = ({ characters, disabled = false, game }: SearchBarProps
         <div ref={wrapRef} className="relative w-full max-w-md mx-auto">
             {/* INPUT BOX - TYBW STYLING */}
             <div className="relative group/input">
-                {/* ขอบเงาสีแดงเลือดแบบบางซ่อนอยู่เบื้องหลัง */}
                 <div className="absolute -inset-px bg-gradient-to-r from-red-900/0 via-red-600/0 to-red-900/0 group-focus-within/input:via-red-600/40 transition-all duration-500" />
 
                 <input
@@ -124,12 +143,11 @@ export const SearchBar = ({ characters, disabled = false, game }: SearchBarProps
                     onChange={e => { setQuery(e.target.value); setIsOpen(true); }}
                     onFocus={() => results.length && setIsOpen(true)}
                     onKeyDown={handleKeyDown}
-                    placeholder="ENTER SOUL NAME..."
+                    placeholder={placeholder}
                     autoComplete="off"
                     className="relative w-full py-3.5 pl-5 pr-12 bg-[#050507] text-[#e2e2e5] text-xs font-medium tracking-[0.15em] uppercase border border-[#1a1a24] focus:outline-none focus:border-red-600/80 focus:text-white transition-all duration-300 placeholder-[#444452]"
                 />
 
-                {/* ไอคอนประดับสไตล์ดาบฟันวิญญาณ */}
                 <div className="absolute right-4 top-1/2 -translate-y-1/2 flex items-center justify-center pointer-events-none">
                     <span className="text-[12px] text-[#444452] group-focus-within/input:text-red-500 tracking-widest transition-colors duration-300 font-mono">
                         卍
@@ -137,7 +155,7 @@ export const SearchBar = ({ characters, disabled = false, game }: SearchBarProps
                 </div>
             </div>
 
-            {/* DROPDOWN MENU - LUXURY BLADE DESIGN */}
+            {/* DROPDOWN MENU */}
             {isOpen && results.length > 0 && (
                 <ul className="absolute top-[calc(100%+8px)] left-0 right-0 z-50 bg-[#050507] border border-red-900/40 max-h-[360px] overflow-y-auto shadow-[0_20px_50px_rgba(0,0,0,0.9)] backdrop-blur-md">
                     {results.map(({ item }, idx) => {
@@ -155,13 +173,11 @@ export const SearchBar = ({ characters, disabled = false, game }: SearchBarProps
                                     isGuessed ? 'opacity-40' : ''
                                 ].join(' ')}
                             >
-                                {/* เอฟเฟกต์เส้นขอบคมดาบวิ่งด้านข้างตอน Hover */}
                                 <div className={[
                                     'absolute left-0 top-0 bottom-0 w-[4px] bg-red-600 transition-all duration-300 scale-y-0 origin-center',
                                     isActive ? 'scale-y-100 shadow-[0_0_10px_#dc2626]' : ''
                                 ].join(' ')} />
 
-                                {/* AVATAR + NAME LAYOUT — คงรูปตัวละครไว้ (song ไม่มี field นี้) */}
                                 <div className="flex items-center gap-3 min-w-0 pr-4 transition-transform duration-200 group-hover:translate-x-1">
                                     <div className="relative w-8 h-8 shrink-0 border border-[#1a1a24]">
                                         <Image
@@ -184,13 +200,11 @@ export const SearchBar = ({ characters, disabled = false, game }: SearchBarProps
                                     </span>
                                 </div>
 
-                                {/* BADGE STATE */}
                                 {isGuessed ? (
                                     <span className="ml-3 shrink-0 text-[10px] tracking-[0.2em] font-bold uppercase text-[#faaea7] border border-[#faaea7]/60 bg-red-950/20 px-2 py-0.5 shadow-[inset_0_0_6px_rgba(185,28,28,0.1)]">
                                         SEALED
                                     </span>
                                 ) : (
-                                    /* ดอทสีแดงสไตล์เป้าเล็งสำหรับการเลือก */
                                     <span className={[
                                         'ml-3 shrink-0 w-1 h-1 bg-red-500 transition-all duration-200 opacity-0 scale-50 rounded',
                                         isActive ? 'opacity-100 scale-100 shadow-[0_0_8px_#dc2626]' : ''

@@ -8,6 +8,7 @@ import { MAX_SONG_GUESSES } from '@/src/const/guess';
 import { STORAGE_KEYS } from '@/src/const/localStorage';
 import { nestedJSONStorage } from '@/src/lib/store/createNestedStorage';
 import { isValidGuessEntry } from '../../validGuessEntry';
+import { Stats } from '@/src/shared/types/guessGame';
 
 export const useSongGame = create<SongGameController>()(
     persist(
@@ -20,6 +21,14 @@ export const useSongGame = create<SongGameController>()(
             setHasHydrated: (state) => set({ _hasHydrated: state }),
 
             setTarget: (target) => set({ target }),
+
+            stats: { currentStreak: 0, maxStreak: 0 }, // 🆕
+            loadStats: () => {
+                if (typeof window === 'undefined') return;
+                const statsData = JSON.parse(localStorage.getItem(STORAGE_KEYS.SONG_STATS) || '{}');
+                const saved: Stats = statsData.unlimited || { currentStreak: 0, maxStreak: 0 };
+                set({ stats: saved });
+            },
 
             addGuess: (songId: string) => set((state) => {
                 const isGameOver = state.guesses.length >= MAX_SONG_GUESSES;
@@ -90,7 +99,24 @@ export const useSongGame = create<SongGameController>()(
                 }
 
                 localStorage.setItem(STORAGE_KEYS.SONG_COMPLETED, JSON.stringify(completedData));
-                set({ hasFinalized: true });
+                // 🆕 ย้าย logic ของ updateStats เดิม (ที่เคยอยู่ในคอมโพเนนต์) เข้ามาตรงนี้
+                const statsData = JSON.parse(localStorage.getItem(STORAGE_KEYS.SONG_STATS) || '{}');
+                const savedStats: Stats = statsData.unlimited || { currentStreak: 0, maxStreak: 0 };
+
+                const newStats: Stats = {
+                    currentStreak: isWin ? savedStats.currentStreak + 1 : 0,
+                    maxStreak: isWin
+                        ? Math.max(savedStats.maxStreak, savedStats.currentStreak + 1)
+                        : savedStats.maxStreak,
+                };
+
+                statsData.unlimited = newStats;
+                localStorage.setItem(STORAGE_KEYS.SONG_STATS, JSON.stringify(statsData));
+
+                set({
+                    hasFinalized: true,
+                    stats: newStats, // 🆕
+                });
             },
 
             resetGame: () => {
@@ -111,6 +137,17 @@ export const useSongGame = create<SongGameController>()(
                 setTimeout(() => {
                     get().initializeGame(true);
                 }, 0);
+            },
+            resetStreakKeepMax: () => {
+                const statsData = JSON.parse(localStorage.getItem(STORAGE_KEYS.SONG_STATS) || '{}');
+                const saved: Stats = statsData.unlimited || { currentStreak: 0, maxStreak: 0 };
+
+                const resetStats: Stats = { currentStreak: 0, maxStreak: saved.maxStreak };
+
+                statsData.unlimited = resetStats;
+                localStorage.setItem(STORAGE_KEYS.SONG_STATS, JSON.stringify(statsData));
+
+                set({ stats: resetStats });
             },
         }),
         {

@@ -30,17 +30,18 @@ export default function UnlimitedQuoteGame() {
     const { navigate, state, reportReady } = useSenkaimon();
 
     const gameStore = useQuoteGame();
-    const { target, guesses, initializeGame, finalizeGame, resetGame, hardReset, hasFinalized, _hasHydrated } = gameStore;
+    const { target, guesses, initializeGame, finalizeGame, resetGame, hardReset, hasFinalized, _hasHydrated, resetStreakKeepMax } = gameStore;
     const quotes = getQuotes();
 
     const [manuallyClosed, setManuallyClosed] = useState(false);
-    const [stats, setStats] = useState({ currentStreak: 0, maxStreak: 0 });
     const [isHowToOpen, setIsHowToOpen] = useState(false);
     const [isReady, setIsReady] = useState(false);
     const [isGameCompleted, setIsGameCompleted] = useState(false);
     const [isModeSelectorOpen, setIsModeSelectorOpen] = useState(false);
     const [revealDelayDone, setRevealDelayDone] = useState(false);
     const [finalRoundGuesses, setFinalRoundGuesses] = useState<typeof guesses>([]);
+    const stats = useQuoteGame(s => s.stats);
+    const loadStats = useQuoteGame(s => s.loadStats);
 
     useEffect(() => {
         if (state === "closing") {
@@ -87,29 +88,13 @@ export default function UnlimitedQuoteGame() {
         if (_hasHydrated && isGameOver && !hasFinalized) {
             setFinalRoundGuesses(guesses);
             finalizeGame(isWin);
-            updateStats(isWin);
         }
     }, [isGameOver, hasFinalized, isWin, _hasHydrated, finalizeGame]);
-
-    const updateStats = (won: boolean) => {
-        const statsData = JSON.parse(localStorage.getItem(STORAGE_KEYS.QOUTE_STATS) || '{}');
-        const saved = statsData.unlimited || { currentStreak: 0, maxStreak: 0 };
-
-        const newStats = {
-            currentStreak: won ? saved.currentStreak + 1 : 0,
-            maxStreak: won ? Math.max(saved.maxStreak, saved.currentStreak + 1) : saved.maxStreak
-        };
-
-        statsData.unlimited = newStats;
-        localStorage.setItem(STORAGE_KEYS.QOUTE_STATS, JSON.stringify(statsData));
-        setStats(newStats);
-    };
 
     useEffect(() => {
         if (!_hasHydrated) return;
 
-        const statsData = JSON.parse(localStorage.getItem(STORAGE_KEYS.QOUTE_STATS) || '{}');
-        setStats(statsData.unlimited || { currentStreak: 0, maxStreak: 0 });
+        loadStats();
 
         const completedData = JSON.parse(localStorage.getItem(STORAGE_KEYS.QOUTE_COMPLETED) || '{}');
         const completed = completedData.unlimited || [];
@@ -124,7 +109,7 @@ export default function UnlimitedQuoteGame() {
 
         initializeGame();
         setIsReady(true);
-    }, [initializeGame, quotes.length, _hasHydrated]);
+    }, [initializeGame, quotes.length, _hasHydrated, loadStats]);
 
     useEffect(() => {
         if (isReady) {
@@ -161,11 +146,7 @@ export default function UnlimitedQuoteGame() {
     };
 
     const handleHardReset = () => {
-        const statsData = JSON.parse(localStorage.getItem(STORAGE_KEYS.QOUTE_STATS) || '{}');
-        const saved = statsData.unlimited || { currentStreak: 0, maxStreak: 0 };
-        statsData.unlimited = { currentStreak: 0, maxStreak: saved.maxStreak };
-        localStorage.setItem(STORAGE_KEYS.QOUTE_STATS, JSON.stringify(statsData));
-        setStats(statsData.unlimited);
+        resetStreakKeepMax();
 
         const registryData = JSON.parse(localStorage.getItem(STORAGE_KEYS.QOUTE_REGISTRY) || '{}');
         const currentRegistry = registryData.unlimited || { name: "", count: 0 };

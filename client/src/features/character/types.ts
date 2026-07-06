@@ -1,4 +1,5 @@
 import { Character } from "@/src/entities/character/schema";
+import { GuessGameController } from "@/src/shared/types/guessGame";
 
 export type CharacterRace =
     | "Soul"
@@ -79,10 +80,13 @@ export interface GuessEntry {
     result: ComparisonOutcome;
 }
 
-export interface CharacterGameController {
-    guesses: {
-        guess: { id: string };
-    }[];
-
-    addGuess: (id: string) => void;
-}
+/**
+ * 🔁 CharacterGameController now simply extends the shared GuessGameController
+ * contract (moved to src/shared/types/guessGame.ts) so <SearchBar /> / the new
+ * <GuessSearchBar /> isn't hard-coupled to "character" — Quote mode's
+ * QuoteGameController extends the exact same base.
+ *
+ * The name is kept for backward compatibility with every existing import
+ * of `CharacterGameController` across the codebase — nothing else needs to change.
+ */
+export interface CharacterGameController extends GuessGameController { }

@@ -41,6 +41,8 @@ export default function DailySongWrapper({ initialTarget, initialSegmentId }: Da
     const gameStore = useSongGame();
     const { target, guesses, initializeGame, finalizeGame, resetGame, hasFinalized, _hasHydrated } = gameStore;
     const songs = getSongs(); // 👈 ใช้แค่ทำ autocomplete list ของ search bar เท่านั้น ไม่ใช่แหล่งสุ่ม target
+    const stats = useSongGame(s => s.stats);
+    const loadStats = useSongGame(s => s.loadStats);
 
     // 📅 Daily Hub: markModePlayed('song', won) จะถูกเรียกตอนเกมจบจริงเท่านั้น (ดู effect ด้านล่าง)
     const { markModePlayed } = useDailyHub();
@@ -57,7 +59,6 @@ export default function DailySongWrapper({ initialTarget, initialSegmentId }: Da
     }, [initialTarget, _hasHydrated]);
 
     const [isModalOpen, setIsModalOpen] = useState(false);
-    const [stats, setStats] = useState({ currentStreak: 0, maxStreak: 0 });
     const [isHowToOpen, setIsHowToOpen] = useState(false);
     const [isReady, setIsReady] = useState(false);
     const [timeLeft, setTimeLeft] = useState('');
@@ -78,21 +79,6 @@ export default function DailySongWrapper({ initialTarget, initialSegmentId }: Da
     const isLoss = isSurrendered || (hasFinalized && !isWin);
     const isGameOver = isWin || isLoss;
 
-    // ── 🛡️ จัดการโครงสร้างสถิติแบบ Object Nesting (เหมือน character daily เป๊ะ)
-    const updateStats = (won: boolean) => {
-        const statsData = JSON.parse(localStorage.getItem(STORAGE_KEYS.SONG_STATS) || '{}');
-        const saved = statsData.daily || { currentStreak: 0, maxStreak: 0 };
-
-        const newStats = {
-            currentStreak: won ? saved.currentStreak + 1 : 0,
-            maxStreak: won ? Math.max(saved.maxStreak, saved.currentStreak + 1) : saved.maxStreak
-        };
-
-        statsData.daily = newStats;
-        localStorage.setItem(STORAGE_KEYS.SONG_STATS, JSON.stringify(statsData));
-        setStats(newStats);
-    };
-
     const handleSwitchDimension = (targetMode: 'daily' | 'unlimited') => {
         setIsModeSelectorOpen(false);
         navigate(targetMode);
@@ -101,12 +87,15 @@ export default function DailySongWrapper({ initialTarget, initialSegmentId }: Da
     // โหลดและซิงค์ข้อมูลฝั่ง Client หลัง hydrate เสร็จ
     useEffect(() => {
         if (!_hasHydrated) return;
-        const statsData = JSON.parse(localStorage.getItem(STORAGE_KEYS.SONG_STATS) || '{}');
-        setStats(statsData.daily || { currentStreak: 0, maxStreak: 0 });
+        loadStats();
 
         initializeGame();
         setIsReady(true);
-    }, [initializeGame, songs.length, _hasHydrated]);
+    }, [initializeGame, songs.length, _hasHydrated, loadStats]);
+
+    useEffect(() => {
+        loadStats(); // โหลด stats จาก localStorage เข้า store ครั้งเดียวตอน mount
+    }, [loadStats]);
 
     // 🚪 แจ้ง NavigationContext กลับไปตอน "isReady" เป็น true จริงๆ (หลัง hydrate + initializeGame เสร็จ)
     useEffect(() => {
@@ -129,7 +118,6 @@ export default function DailySongWrapper({ initialTarget, initialSegmentId }: Da
             const timer = setTimeout(() => {
                 if (!hasFinalized) {
                     finalizeGame(isWin);
-                    updateStats(isWin);
                     markModePlayed('song', isWin);
                 }
                 setIsModalOpen(true);

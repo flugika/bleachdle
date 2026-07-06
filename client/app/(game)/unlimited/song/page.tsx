@@ -32,17 +32,18 @@ export default function UnlimitedSongGame() {
 
     // 🛡️ subscribe store ครั้งเดียว แล้วส่ง object เดิมต่อให้ SongSearchBar ผ่าน prop `game`
     const gameStore = useSongGame();
-    const { target, guesses, initializeGame, finalizeGame, resetGame, hardReset, hasFinalized, _hasHydrated } = gameStore;
+    const { target, guesses, initializeGame, finalizeGame, resetGame, hardReset, hasFinalized, _hasHydrated, resetStreakKeepMax } = gameStore;
     const songs = getSongs();
 
     const [manuallyClosed, setManuallyClosed] = useState(false);
-    const [stats, setStats] = useState({ currentStreak: 0, maxStreak: 0 });
     const [isHowToOpen, setIsHowToOpen] = useState(false);
     const [isReady, setIsReady] = useState(false);
     const [isGameCompleted, setIsGameCompleted] = useState(false);
     const [isModeSelectorOpen, setIsModeSelectorOpen] = useState(false);
     const [revealDelayDone, setRevealDelayDone] = useState(false);
     const [finalRoundGuesses, setFinalRoundGuesses] = useState<typeof guesses>([]);
+    const stats = useSongGame(s => s.stats);
+    const loadStats = useSongGame(s => s.loadStats);
 
     // 🛡️ FIX (ปัญหา modal ค้าง): ปิด modal ทันทีที่ประตูเซนไกมงเริ่ม "closing"
     useEffect(() => {
@@ -54,7 +55,9 @@ export default function UnlimitedSongGame() {
     useEffect(() => {
         setManuallyClosed(false);
         if (target) {
-            console.log("target:", target)
+            if (process.env.NODE_ENV !== 'production') {
+                console.log('target:', useSongGame.getState().target);
+            }
         }
         setRevealDelayDone(false);
     }, [target]);
@@ -94,31 +97,14 @@ export default function UnlimitedSongGame() {
         if (_hasHydrated && isGameOver && !hasFinalized) {
             setFinalRoundGuesses(guesses);
             finalizeGame(isWin);
-            updateStats(isWin);
         }
     }, [isGameOver, hasFinalized, isWin, _hasHydrated, finalizeGame]);
-
-    // ── 🛡️ จัดการโครงสร้างสถิติแบบ Object Nesting (เหมือน character เป๊ะ)
-    const updateStats = (won: boolean) => {
-        const statsData = JSON.parse(localStorage.getItem(STORAGE_KEYS.SONG_STATS) || '{}');
-        const saved = statsData.unlimited || { currentStreak: 0, maxStreak: 0 };
-
-        const newStats = {
-            currentStreak: won ? saved.currentStreak + 1 : 0,
-            maxStreak: won ? Math.max(saved.maxStreak, saved.currentStreak + 1) : saved.maxStreak
-        };
-
-        statsData.unlimited = newStats;
-        localStorage.setItem(STORAGE_KEYS.SONG_STATS, JSON.stringify(statsData));
-        setStats(newStats);
-    };
 
     // 🛡️ รอ _hasHydrated (persist rehydrate จาก localStorage) ก่อนอ่าน/เขียนอะไรทั้งนั้น
     useEffect(() => {
         if (!_hasHydrated) return;
 
-        const statsData = JSON.parse(localStorage.getItem(STORAGE_KEYS.SONG_STATS) || '{}');
-        setStats(statsData.unlimited || { currentStreak: 0, maxStreak: 0 });
+        loadStats();
 
         const completedData = JSON.parse(localStorage.getItem(STORAGE_KEYS.SONG_COMPLETED) || '{}');
         const completed = completedData.unlimited || [];
@@ -133,7 +119,7 @@ export default function UnlimitedSongGame() {
 
         initializeGame();
         setIsReady(true);
-    }, [initializeGame, songs.length, _hasHydrated]);
+    }, [initializeGame, songs.length, _hasHydrated, loadStats]);
 
     // 🚪 แจ้ง NavigationContext กลับไปตอน "isReady" เป็น true จริงๆ (หลัง hydrate + initializeGame เสร็จ)
     useEffect(() => {
@@ -173,11 +159,7 @@ export default function UnlimitedSongGame() {
 
     // ── 🛡️ คอมโบ Reset ข้อมูลโดยการเจาะทำลายเฉพาะกิ่งก้านของโหมด song/unlimited เท่านั้น
     const handleHardReset = () => {
-        const statsData = JSON.parse(localStorage.getItem(STORAGE_KEYS.SONG_STATS) || '{}');
-        const saved = statsData.unlimited || { currentStreak: 0, maxStreak: 0 };
-        statsData.unlimited = { currentStreak: 0, maxStreak: saved.maxStreak };
-        localStorage.setItem(STORAGE_KEYS.SONG_STATS, JSON.stringify(statsData));
-        setStats(statsData.unlimited);
+        resetStreakKeepMax();
 
         const registryData = JSON.parse(localStorage.getItem(STORAGE_KEYS.SONG_REGISTRY) || '{}');
         const currentRegistry = registryData.unlimited || { name: "", count: 0 };

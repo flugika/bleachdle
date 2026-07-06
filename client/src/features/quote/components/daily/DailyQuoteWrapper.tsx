@@ -1,20 +1,19 @@
 "use client";
 
 import { useEffect, useState } from 'react';
-import { CharacterGuessTable } from '@/src/features/character';
-import { useCharacterGame } from '@/src/features/character/hooks/daily/useCharacterGame';
+import { QuoteGuessTable } from '@/src/features/quote/components/shared/QuoteGuessTable';
+import { QuoteSummaryGuess } from '@/src/features/quote/components/shared/QuoteSummaryGuess';
+import { useQuoteGame } from '@/src/features/quote/hooks/daily/useQuoteGame';
 import { getCharacters } from '@/src/features/character/character';
-import { CharacterSummaryGuess } from '@/src/features/character/components/shared/CharacterSummaryGuess';
-import { CharacterHowToPlayModal } from '@/src/features/character/components/shared/CharacterHowToPlayModal';
+import { QuoteHowToPlayModal } from '../shared/QuoteHowToPlayModal';
 import { Header } from '@/src/shared/layout/Header';
 import { Divider } from '@/src/shared/layout/Divider';
 import { SubHeader } from '@/src/shared/layout/SubHeader';
 import Sealed from '@/src/shared/ui/Sealed';
 import { FEATURE_FLAGS } from '@/src/config/feature.flags';
-import { Character } from '@/src/entities/character/schema';
-import { CharacterControlPanel } from '@/src/shared/ui/control-panel/CharacterControlPanel';
+import { QuoteTarget } from '@/src/features/quote/types';
+import { QuoteControlPanel } from '@/src/shared/ui/control-panel/QuoteControlPanel';
 import { ModeBadge } from '@/src/shared/ui/game-selector/ModeBadge';
-import { usePathname, useRouter } from 'next/navigation';
 import { ModeSelectorModal } from '@/src/shared/ui/game-selector/ModeSelectorModal';
 import { useSenkaimon } from '@/src/shared/ui/context/NavigationContext';
 import { STORAGE_KEYS } from '@/src/const/localStorage';
@@ -22,27 +21,26 @@ import { BL_MODES_METADATA } from '@/src/config/mode';
 // 📅 Daily Hub: แถบ progress รวมทุกโหมด daily + CTA เล่นต่อ
 import { DailyHubModalFooter } from '@/src/shared/ui/daily-hub/DailyHubModalFooter';
 import { useDailyHub } from '@/src/shared/hooks/useDailyHub';
+import { getQuotes } from '../../quote';
 
-export default function DailyCharacterWrapper({ initialTarget }: { initialTarget: Character | null }) {
-    if (!FEATURE_FLAGS.daily.character) {
+export default function DailyQuoteWrapper({ initialTarget }: { initialTarget: QuoteTarget | null }) {
+    if (!FEATURE_FLAGS.daily.quote) {
         return (
             <Sealed />
         )
     }
 
-    const router = useRouter();
-    const pathname = usePathname();
     const { navigate, state, reportReady } = useSenkaimon(); // 👈 ดึง state + reportReady มาด้วย ใช้คุม modal ตอน transition และแจ้งความพร้อมกลับไปที่ Senkaimon
 
-    // 🛡️ เดิมเรียก useCharacterGame() 2 ครั้งแยกกัน (ตัวแปร game + destructure ซ้ำ) รวมเป็นจุดเดียว
-    const gameStore = useCharacterGame();
+    const gameStore = useQuoteGame();
     const { target, guesses, initializeGame, finalizeGame, resetGame, hasFinalized, _hasHydrated } = gameStore;
     const characters = getCharacters();
+    const quotes = getQuotes();
     const isSynced = target !== null && initialTarget !== null && target.id === initialTarget.id;
-    const stats = useCharacterGame(s => s.stats);
-    const loadStats = useCharacterGame(s => s.loadStats);
+    const stats = useQuoteGame(s => s.stats);
+    const loadStats = useQuoteGame(s => s.loadStats);
 
-    // 📅 Daily Hub: markModePlayed('character', won) จะถูกเรียกตอนเกมจบจริงเท่านั้น (ดู effect ด้านล่าง)
+    // 📅 Daily Hub: markModePlayed('quote', won) จะถูกเรียกตอนเกมจบจริงเท่านั้น (ดู effect ด้านล่าง)
     const { markModePlayed } = useDailyHub();
 
     useEffect(() => {
@@ -50,11 +48,8 @@ export default function DailyCharacterWrapper({ initialTarget }: { initialTarget
         if (initialTarget !== null) {
             initializeGame(initialTarget);
 
-            // 🛡️ debug log แบบ deterministic — log ค่า "settled" ที่ set ไปจริงๆ ครั้งเดียว
-            // แทนที่จะ subscribe แบบ reactive กับทุก mutation ของ store (ของเดิม log ค่า target
-            // ที่ persist ค้างจากเมื่อวานแวบหนึ่งก่อนจะถูกแก้เป็นของวันนี้ เลยเห็น log ผิดสลับถูก)
             if (process.env.NODE_ENV !== 'production') {
-                console.log('target:', useCharacterGame.getState().target);
+                console.log('target:', useQuoteGame.getState().target);
             }
         }
     }, [initialTarget, _hasHydrated]);
@@ -67,51 +62,37 @@ export default function DailyCharacterWrapper({ initialTarget }: { initialTarget
     const [isModeSelectorOpen, setIsModeSelectorOpen] = useState(false);
 
     // 🛡️ FIX (ปัญหา modal ค้าง): ปิด modal ทันทีที่ประตูเซนไกมงเริ่ม "closing"
-    // ผูกกับ state ตรงๆ ไม่พึ่งลำดับการเรียกจาก handleSwitchDimension เพียงจุดเดียว
-    // ครอบคลุมทุกทางที่ modal อาจถูกเปิดค้างไว้ระหว่าง transition
     useEffect(() => {
         if (state === "closing") {
             setIsModeSelectorOpen(false);
         }
     }, [state]);
 
-    const isWin = guesses.length > 0 &&
-        (Object.entries(guesses[0].result)
-            .filter(([key]) => key !== 'image')
-            .every(([_, status]) => status === 'correct')
-        );
+    // 🗨️ Quote mode is binary (correct/wrong), not a multi-field comparison like
+    // character mode — a win is just "the most recent guess is correct".
+    const isWin = guesses.length > 0 && guesses[0].status === 'correct';
     const isLoss = isSurrendered || (hasFinalized && !isWin);
     const isGameOver = isWin || isLoss;
 
-    useEffect(() => {
-        loadStats(); // โหลด stats จาก localStorage เข้า store ครั้งเดียวตอน mount
-    }, [loadStats]);
-
     const handleSwitchDimension = (targetMode: 'daily' | 'unlimited') => {
-        // 1. ปิด Modal เลือกโหมด (redundant กับ effect ด้านบนโดยตั้งใจ — ปิดให้ไวที่สุดเท่าที่ทำได้
-        //    effect ที่ผูกกับ state คือ safety-net ปิดซ้ำอีกชั้นให้แน่ใจ)
         setIsModeSelectorOpen(false);
-
-        // 2. โยนเป้าหมายให้ระบบเซนไกมงจัดการคำนวณตำแหน่งและสลับมิติให้เองแบบไร้รอยต่อ
         navigate(targetMode);
     };
 
     // โหลดและซิงค์ข้อมูลฝั่ง Client จากคีย์หลักแบบไม่มีจุดทศนิยมต่อท้าย
     useEffect(() => {
         if (!_hasHydrated) return;
-        const statsData = JSON.parse(localStorage.getItem(STORAGE_KEYS.CHARACTER_STATS) || '{}');
-        // setStats(statsData.daily || { currentStreak: 0, maxStreak: 0 });
         loadStats();
 
         initializeGame();
         setIsReady(true);
     }, [initializeGame, characters.length, _hasHydrated, loadStats]);
 
-    // 🚪 FIX (ประตูเปิดก่อนหน้าพร้อม): แจ้ง NavigationContext กลับไปตอน "isReady" เป็น true จริงๆ
-    // (คือหลัง zustand rehydrate + initializeGame() เสร็จสมบูรณ์) แทนที่จะปล่อยให้ระบบ
-    // เปิดประตูเองผ่าน READY_FALLBACK_MS (1200ms) ซึ่ง race กับความเร็วเครื่อง/เน็ตของผู้เล่นได้
-    // เดิม component นี้ไม่เคยเรียก reportReady() เลย ทำให้ประตูเปิดตามเวลา fallback เสมอ
-    // ไม่ว่าหน้าจอจะพร้อมแสดงผลจริงหรือยัง
+    useEffect(() => {
+        loadStats(); // โหลด stats จาก localStorage เข้า store ครั้งเดียวตอน mount
+    }, [loadStats]);
+
+    // 🚪 แจ้ง NavigationContext กลับไปตอน "isReady" เป็น true จริงๆ (หลัง rehydrate + initializeGame เสร็จ)
     useEffect(() => {
         if (isReady) {
             reportReady();
@@ -132,7 +113,7 @@ export default function DailyCharacterWrapper({ initialTarget }: { initialTarget
             const timer = setTimeout(() => {
                 if (!hasFinalized) {
                     finalizeGame(isWin);
-                    markModePlayed('character', isWin);
+                    markModePlayed('quote', isWin);
                 }
                 setIsModalOpen(true);
             }, targetDelay);
@@ -152,7 +133,7 @@ export default function DailyCharacterWrapper({ initialTarget }: { initialTarget
         const calculateTimeLeft = () => {
             const now = new Date();
             const midnight = new Date();
-            midnight.setHours(24, 0, 0, 0); // ตั้งเวลาเป็นเที่ยงคืนถัดไป
+            midnight.setHours(24, 0, 0, 0);
 
             const diff = midnight.getTime() - now.getTime();
 
@@ -163,12 +144,8 @@ export default function DailyCharacterWrapper({ initialTarget }: { initialTarget
             return `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
         };
 
-        // 🛡️ FIX: คำนวณทันทีตอน mount ก่อน 1 ครั้ง — เดิม setInterval ไม่ยิง callback แรกทันที
-        // ต้องรอครบ 1000ms ก่อนเสมอ ทำให้ timeLeft ว่างเปล่าค้าง ~1 วินาทีทุกครั้งที่หน้านี้ mount
-        // (เห็นชัดตอนสลับมิติเข้ามาใหม่ เพราะ mount ใหม่ทุกครั้ง ไม่ใช่แค่ครั้งแรกที่เข้าเว็บ)
         setTimeLeft(calculateTimeLeft());
 
-        // อัปเดตทุกวินาที
         const timer = setInterval(() => {
             setTimeLeft(calculateTimeLeft());
         }, 1000);
@@ -182,32 +159,31 @@ export default function DailyCharacterWrapper({ initialTarget }: { initialTarget
 
             <main className="max-w-[80%] mx-auto px-4 pb-16">
                 <ModeBadge mode="daily" onClick={() => setIsModeSelectorOpen(true)} />
-                <SubHeader title={BL_MODES_METADATA.character.title} subtitle={BL_MODES_METADATA.character.statusLine} />
+                <SubHeader title={BL_MODES_METADATA.quote.title} subtitle={BL_MODES_METADATA.quote.statusLine} />
 
-                {/* 📅 Daily Hub: ตั้งใจไม่โชว์บนหน้าเล่นเกม — ให้โผล่แค่ตอนจบเกม (DailyHubModalFooter
-                    ในโมดัลสรุปผลด้านล่าง) เพราะนั่นคือจังหวะ "จะเล่นต่อไหม" จริงๆ ไม่ใช่ตอนกำลังโฟกัสทาย */}
+                {/* 📅 Daily Hub: ตั้งใจไม่โชว์บนหน้าเล่นเกม — ให้โผล่แค่ตอนจบเกม */}
                 {!isModalOpen && (
-                    <CharacterControlPanel
+                    <QuoteControlPanel
                         mode="daily"
                         target={target}
-                        characters={characters}
+                        quotes={quotes}
                         stats={stats}
                         timeLeft={timeLeft}
                         game={gameStore}
-                        isGameOver={isGameOver}                // 👈 ส่งสถานะการจบเกมไปเช็คซ่อนปุ่ม
-                        onSurrender={() => setIsSurrendered(true)}  // 👈 ส่ง Callback ไปสั่งยอมแพ้
+                        isGameOver={isGameOver}
+                        onSurrender={() => setIsSurrendered(true)}
                     />
                 )}
 
                 {guesses.length > 0 && (
                     <>
                         <Divider />
+                        {/* 🗨️ Legend เหลือแค่ correct/wrong ตามธรรมชาติของ quote mode
+                            (ไม่มี partial/higher-lower เหมือน character ที่เทียบทีละ field) */}
                         <div className="flex flex-wrap justify-center gap-x-5 gap-y-1.5">
                             {([
-                                ['correct', '#0d2918', '#1a5530', '#4de880', 'Correct'],
-                                ['partial', '#2a1f00', '#5a4000', '#e8b830', 'Partial'],
-                                ['wrong', '#590e0e', '#a64747', '#3a2828', 'Wrong'],
-                                ['dir', '#0a0a22', '#3a3a7a', '#7090f0', 'Higher ▲ / Lower ▼'],
+                                ['correct', '#0d2918', '#1a5530', '#4de880', 'Verified'],
+                                ['wrong', '#2a1010', '#5a2020', '#a64747', 'Rejected'],
                             ] as const).map(([key, bg, border, fg, label]) => (
                                 <div key={key} className="flex items-center gap-1.5">
                                     <span className="inline-block w-2.5 h-2.5 shrink-0" style={{ background: bg, border: `1px solid ${border}` }} />
@@ -220,13 +196,13 @@ export default function DailyCharacterWrapper({ initialTarget }: { initialTarget
 
                 {isModalOpen ? (
                     <>
-                        <CharacterSummaryGuess isOpen={isModalOpen} onClose={handleCloseModal} guesses={guesses} target={target} isWin={isWin} mode="daily" stats={stats} />
+                        <QuoteSummaryGuess isOpen={isModalOpen} onClose={handleCloseModal} guesses={guesses} target={target} isWin={isWin} mode="daily" stats={stats} />
                         {/* 📅 Daily Hub: CTA "เล่นต่อ" ต่อท้ายการ์ดสรุปผล */}
-                        <DailyHubModalFooter activeMode="character" />
+                        <DailyHubModalFooter activeMode="quote" />
                     </>
                 ) : target && isSynced ? (
                     <div className="w-full overflow-x-auto">
-                        <CharacterGuessTable guesses={guesses} />
+                        <QuoteGuessTable guesses={guesses} />
                     </div>
                 ) : (
                     <div className="mt-40 flex flex-col items-center justify-center">
@@ -236,7 +212,7 @@ export default function DailyCharacterWrapper({ initialTarget }: { initialTarget
                     </div>
                 )}
             </main>
-            <CharacterHowToPlayModal isOpen={isHowToOpen} onClose={() => setIsHowToOpen(false)} mode="daily" />
+            <QuoteHowToPlayModal isOpen={isHowToOpen} onClose={() => setIsHowToOpen(false)} mode="daily" />
             <ModeSelectorModal
                 isOpen={isModeSelectorOpen}
                 onClose={() => setIsModeSelectorOpen(false)}
