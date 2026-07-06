@@ -80,7 +80,7 @@ export const useSongGame = create<DailySongGameState>()(
 
                 set({ hasFinalized: true });
 
-                // recordDailyStat('song', isWin, guesses.length).catch(() => { });
+                recordDailyStat('song', isWin, guesses.length).catch(() => { });
             },
 
             resetGame: () => {

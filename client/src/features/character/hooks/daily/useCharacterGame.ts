@@ -97,7 +97,7 @@ export const useCharacterGame = create<CharacterGameState>()(
 
                 set({ hasFinalized: true });
 
-                // recordDailyStat('character', isWin, guesses.length).catch(() => { });
+                recordDailyStat('character', isWin, guesses.length).catch(() => { });
             },
 
             resetGame: () => {

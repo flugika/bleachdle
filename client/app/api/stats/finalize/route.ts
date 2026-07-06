@@ -3,7 +3,6 @@ import { NextRequest, NextResponse } from 'next/server';
 import { supabaseServer } from '@/src/lib/supabase/supabase-server';
 import { packCookie, unpackCookie } from '@/src/lib/support/rateLimitCookie';
 import { VALID_STAT_MODES, type StatMode } from '@/src/entities/stats/types';
-import { verifyTurnstileToken } from '@/src/lib/security/turnstile';
 
 interface FinalizeStatBody {
     mode: StatMode;
@@ -28,7 +27,7 @@ export async function POST(req: NextRequest) {
         return NextResponse.json({ error: 'Invalid JSON body' }, { status: 400 });
     }
 
-    const { mode, isWin, guessCount, turnstileToken } = body;
+    const { mode, isWin, guessCount } = body;
 
     // ── 1. Cheap, in-memory validation FIRST — ไม่ยิง network call (Turnstile) ทิ้งเปล่าๆ
     // สำหรับ request ที่ malformed อยู่แล้วตั้งแต่ shape พื้นฐาน
@@ -40,9 +39,6 @@ export async function POST(req: NextRequest) {
     }
     if (!Number.isInteger(guessCount) || guessCount < 1 || guessCount > 10) {
         return NextResponse.json({ error: 'Invalid guessCount' }, { status: 400 });
-    }
-    if (typeof turnstileToken !== 'string' || turnstileToken.length === 0) {
-        return NextResponse.json({ error: 'Missing verification token' }, { status: 400 });
     }
 
     // ── 2. Cooldown check (signed cookie, ต่อ mode ต่อ device) ──
@@ -62,14 +58,6 @@ export async function POST(req: NextRequest) {
                 );
             }
         }
-    }
-
-    // ── 3. Turnstile verify (network call — the expensive check, done last) ──
-    // const clientIp = req.headers.get('x-forwarded-for')?.split(',')[0]?.trim() || null;
-    const isHuman = await verifyTurnstileToken(turnstileToken, null);
-
-    if (!isHuman) {
-        return NextResponse.json({ error: 'Security verification failed' }, { status: 403 });
     }
 
     const todayStr = new Date().toLocaleDateString('en-CA');

@@ -23,8 +23,6 @@ import { BL_MODES_METADATA } from '@/src/config/mode';
 import { DailyProgressBar } from '@/src/shared/ui/daily-hub/DailyProgressBar';
 import { DailyHubModalFooter } from '@/src/shared/ui/daily-hub/DailyHubModalFooter';
 import { useDailyHub } from '@/src/shared/hooks/useDailyHub';
-import { useTurnstile } from '@/src/shared/hooks/useTurnstile';
-import { recordDailyStat } from '@/src/services/statsClient';
 
 interface DailySongWrapperProps {
     initialTarget: BleachSong;
@@ -37,8 +35,6 @@ export default function DailySongWrapper({ initialTarget, initialSegmentId }: Da
     if (!FEATURE_FLAGS.daily?.song) {
         return <Sealed />;
     }
-
-    const { containerRef, getToken } = useTurnstile();
 
     const { navigate, state, reportReady } = useSenkaimon(); // 👈 pattern เดียวกับ DailyCharacterWrapper เป๊ะ
 
@@ -130,18 +126,11 @@ export default function DailySongWrapper({ initialTarget, initialSegmentId }: Da
             }
 
             const targetDelay = isSurrendered ? 0 : 1000;
-            const timer = setTimeout(async () => {
+            const timer = setTimeout(() => {
                 if (!hasFinalized) {
-                    finalizeGame(isWin);        // localStorage เขียนเหมือนเดิม ไม่มี network
+                    finalizeGame(isWin);
                     updateStats(isWin);
                     markModePlayed('song', isWin);
-                    try {
-                        const turnstileToken = await getToken();
-                        await recordDailyStat('song', isWin, guesses.length, turnstileToken);
-                    } catch (err) {
-                        console.error('[stats] failed to record daily stat:', err);
-                        // ไม่ throw ต่อ — ผู้เล่นต้องเห็น modal สรุปผลเสมอ ไม่ว่าสถิติจะบันทึกสำเร็จไหม
-                    }
                 }
                 setIsModalOpen(true);
             }, targetDelay);
@@ -184,7 +173,6 @@ export default function DailySongWrapper({ initialTarget, initialSegmentId }: Da
 
     return (
         <div className="min-h-screen text-[#d8d0c8] overflow-x-hidden">
-            <div ref={containerRef} />
             <Header onOpenHowTo={() => setIsHowToOpen(true)} />
 
             <main className="max-w-[80%] mx-auto px-4 pb-16">

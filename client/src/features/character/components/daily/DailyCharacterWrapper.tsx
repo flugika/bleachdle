@@ -22,8 +22,6 @@ import { BL_MODES_METADATA } from '@/src/config/mode';
 // 📅 Daily Hub: แถบ progress รวมทุกโหมด daily + CTA เล่นต่อ
 import { DailyHubModalFooter } from '@/src/shared/ui/daily-hub/DailyHubModalFooter';
 import { useDailyHub } from '@/src/shared/hooks/useDailyHub';
-import { useTurnstile } from '@/src/shared/hooks/useTurnstile';
-import { recordDailyStat } from '@/src/services/statsClient';
 
 export default function DailyCharacterWrapper({ initialTarget }: { initialTarget: Character | null }) {
     if (!FEATURE_FLAGS.daily.character) {
@@ -32,7 +30,6 @@ export default function DailyCharacterWrapper({ initialTarget }: { initialTarget
         )
     }
 
-    const { containerRef, getToken } = useTurnstile();
     const router = useRouter();
     const pathname = usePathname();
     const { navigate, state, reportReady } = useSenkaimon(); // 👈 ดึง state + reportReady มาด้วย ใช้คุม modal ตอน transition และแจ้งความพร้อมกลับไปที่ Senkaimon
@@ -141,18 +138,11 @@ export default function DailyCharacterWrapper({ initialTarget }: { initialTarget
             }
 
             const targetDelay = isSurrendered ? 0 : 2500;
-            const timer = setTimeout(async () => {
+            const timer = setTimeout(() => {
                 if (!hasFinalized) {
-                    finalizeGame(isWin);        // localStorage เขียนเหมือนเดิม ไม่มี network
+                    finalizeGame(isWin);
                     updateStats(isWin);
-                    markModePlayed('song', isWin);
-                    try {
-                        const turnstileToken = await getToken();
-                        await recordDailyStat('song', isWin, guesses.length, turnstileToken);
-                    } catch (err) {
-                        console.error('[stats] failed to record daily stat:', err);
-                        // ไม่ throw ต่อ — ผู้เล่นต้องเห็น modal สรุปผลเสมอ ไม่ว่าสถิติจะบันทึกสำเร็จไหม
-                    }
+                    markModePlayed('character', isWin);
                 }
                 setIsModalOpen(true);
             }, targetDelay);
@@ -198,7 +188,6 @@ export default function DailyCharacterWrapper({ initialTarget }: { initialTarget
 
     return (
         <div className="min-h-screen text-[#d8d0c8] overflow-x-hidden">
-            <div ref={containerRef} />
             <Header onOpenHowTo={() => setIsHowToOpen(true)} />
 
             <main className="max-w-[80%] mx-auto px-4 pb-16">

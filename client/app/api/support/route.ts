@@ -16,7 +16,6 @@ import { NextRequest, NextResponse } from "next/server";
 import { supabaseServer } from "@/src/lib/supabase/supabase-server";
 import { packCookie, unpackCookie, todayKey } from "@/src/lib/support/rateLimitCookie";
 import { sanitizeInput } from "@/src/lib/utils/sanitize";
-import { verifyTurnstileToken } from "@/src/lib/security/turnstile";
 
 export const runtime = "nodejs";
 
@@ -43,20 +42,11 @@ export async function POST(req: NextRequest) {
             message?: string;
             honeypot?: string;
             clientRef?: string;
-            turnstileToken?: string;
         };
 
         // Honeypot tripped -> silently succeed so the bot doesn't learn it was caught.
         if (honeypot) {
             return NextResponse.json({ ok: true });
-        }
-
-        // const clientIp = req.headers.get('x-forwarded-for')?.split(',')[0]?.trim() || null;
-        // NOTE: ถ้ายึดหลัก "ไม่เก็บ IP เลย" ตามที่ comment บอกไว้ ให้ไม่ส่ง ip เข้า verify เลยก็ได้
-        // (verifyTurnstileToken รองรับ ip=null อยู่แล้ว) เพราะ verify ใช้แค่ log ประกอบ ไม่บังคับต้องมี
-        const isHuman = await verifyTurnstileToken(body.turnstileToken, null);
-        if (!isHuman) {
-            return NextResponse.json({ ok: false, error: 'Verification failed.' }, { status: 403 });
         }
 
         if (typeof message !== "string" || message.trim().length < MIN_LEN) {
