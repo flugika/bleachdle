@@ -143,7 +143,7 @@ export const QuoteSummaryGuess = ({
                     <div className="relative z-10">
                         {/* isSolved is always true here: by the time the summary shows,
                            the game is over — win or lose — so the speaker is revealed either way. */}
-                        <QuoteTestimonyDisplay target={target} isSolved={true} speakerName={answerCharacter?.name} />
+                        <QuoteTestimonyDisplay target={target} isSolved={isWin} speakerName={answerCharacter?.name} />
                     </div>
                 </div>
 
