@@ -35,7 +35,7 @@ export function AllModesButton() {
                         strokeWidth="2"
                         strokeLinecap="round"
                         strokeLinejoin="round"
-                        className="transform transition-all duration-500 ease-[cubic-bezier(0.34,1.56,0.64,1)] group-hover/btn:rotate-45 group-hover/btn:scale-105 drop-shadow-[0_0_0px_rgba(200,169,110,0)] group-hover/btn:drop-shadow-[0_0_8px_rgba(200,169,110,0.6)]"
+                        className="transform transition-all duration-500 ease-[cubic-bezier(0.34,1.56,0.64,1)] group-hover/btn:rotate-45 group-hover/btn:scale-105 drop-shadow-[0_0_0px_rgba(200,169,110,0)] group-hover/btn:drop-shadow-[0_0_10px_rgba(200,169,110,0.6)]"
                     >
                         <rect x="3" y="3" width="7" height="7" rx="1" />
                         <rect x="14" y="3" width="7" height="7" rx="1" />

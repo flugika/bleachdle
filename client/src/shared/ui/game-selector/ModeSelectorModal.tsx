@@ -24,7 +24,7 @@ const MODE_CONFIGS: Record<GameMode, ModeConfig> = {
         id: "daily",
         kanji: "日",
         label: "DAILY MISSION",
-        subText: "One Soul // One Chance // Reset Nightly",
+        subText: "One Soul // Reset Nightly",
         pathPrefix: "/daily",
         color: "#c8a96e",
         glowColor: "rgba(200, 169, 110, 0.4)",
@@ -35,7 +35,7 @@ const MODE_CONFIGS: Record<GameMode, ModeConfig> = {
         id: "unlimited",
         kanji: "無限",
         label: "UNLIMITED TRIAL",
-        subText: "Infinite Souls // No Boundaries // Endless Hunt",
+        subText: "Infinite Souls // Endless Hunt",
         pathPrefix: "/unlimited",
         color: "#a855f7",
         glowColor: "rgba(168, 85, 247, 0.4)",
@@ -81,7 +81,7 @@ export function ModeSelectorModal({
             variant="default"
         >
             <div className="flex flex-col gap-4 mt-2">
-                <p className="text-[10px] uppercase tracking-[0.25em] text-[#5a5a78] text-center mb-4 font-mono select-none">
+                <p className="text-[12px] uppercase tracking-[0.25em] text-[#777796] text-center mb-4 font-mono select-none">
                     Target: {activeSubFeature ? activeSubFeature.toUpperCase() : "AWAITING SELECTION"} // Select Destination
                 </p>
 
@@ -104,7 +104,7 @@ export function ModeSelectorModal({
                                 focus-visible:ring-1 focus-visible:ring-[var(--focus-color)] focus-visible:ring-offset-1 focus-visible:ring-offset-[#0e0e1a]`}
                             style={{
                                 "--focus-color": config.color,
-                                boxShadow: isActive ? `inset 0 0 12px ${config.glowColor}` : "none",
+                                boxShadow: isActive ? `inset 0 0 14px ${config.glowColor}` : "none",
                                 borderColor: isActive ? config.color : undefined
                             } as React.CSSProperties}
                         >
@@ -118,29 +118,29 @@ export function ModeSelectorModal({
                                             {config.label}
                                         </span>
                                         <span
-                                            className="text-[10px] font-mono transition-transform duration-300 group-hover:scale-110"
+                                            className="text-[12px] font-mono transition-transform duration-300 group-hover:scale-110"
                                             style={{ color: `${config.color}90` }}
                                         >
                                             {config.kanji}
                                         </span>
                                     </div>
-                                    <p className="text-[9px] text-[#eed9c4]/30 font-mono mt-1.5 tracking-wide uppercase select-none">
+                                    <p className="text-[11px] text-[#eed9c4]/50 font-mono mt-1.5 tracking-wide uppercase select-none">
                                         {config.subText}
                                     </p>
                                 </div>
 
                                 {isActive ? (
                                     <span
-                                        className="text-[9px] font-mono tracking-[0.15em] px-2 py-0.5 font-black uppercase text-black animate-pulse shadow-md"
+                                        className="text-[11px] font-mono tracking-[0.15em] px-2 py-0.5 font-black uppercase text-black animate-pulse shadow-md"
                                         style={{
                                             backgroundColor: config.color,
-                                            boxShadow: `0 0 10px ${config.glowColor}`
+                                            boxShadow: `0 0 14px ${config.glowColor}`
                                         }}
                                     >
                                         CURRENT
                                     </span>
                                 ) : (
-                                    <span className="text-[8px] font-mono tracking-[0.1em] px-2 py-0.5 text-[#5a5a78] opacity-0 group-hover:opacity-100 transition-opacity duration-300 uppercase">
+                                    <span className="text-[10px] font-mono tracking-[0.1em] px-2 py-0.5 text-[#777796] opacity-0 group-hover:opacity-100 transition-opacity duration-300 uppercase">
                                         {/* ถ้าหน้าปัจจุบันคือ /unlimited/character แล้วปุ่มนี้คือ Daily ให้เขียนว่า SWITCH TO DAILY */}
                                         {activeBaseMode ? "SWITCH MODE \u2192" : "CONNECT \u2192"}
                                     </span>

@@ -12,7 +12,7 @@ export const SubHeader = ({ title, subtitle, className = "my-6" }: SubHeaderProp
                 {/* Left Line */}
                 <div className="h-px w-12 bg-gradient-to-r from-transparent via-[#c8a96e]/40 to-[#c8a96e]/60" />
 
-                <p className="text-[14px] tracking-[0.4em] text-[#c8a96e] font-bold uppercase drop-shadow-[0_0_8px_rgba(200,169,110,0.4)]"
+                <p className="text-[16px] tracking-[0.4em] text-[#c8a96e] font-bold uppercase drop-shadow-[0_0_10px_rgba(200,169,110,0.4)]"
                     style={{ fontFamily: "'Cinzel', serif" }}>
                     {title}
                 </p>
@@ -22,9 +22,9 @@ export const SubHeader = ({ title, subtitle, className = "my-6" }: SubHeaderProp
             </div>
 
             {/* Subtitle / Status Code */}
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-2 pointer-events-none">
                 <span className="w-1 h-1 bg-[#c8a96e] rounded-full animate-pulse" />
-                <p className="text-[10px] text-[#d1a9a9]/60 tracking-[0.3em] uppercase">
+                <p className="text-[12px] text-[#ebc7c7]/60 tracking-[0.3em] uppercase">
                     {subtitle}
                 </p>
                 <span className="w-1 h-1 bg-[#c8a96e] rounded-full animate-pulse" />

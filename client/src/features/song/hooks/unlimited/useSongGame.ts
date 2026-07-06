@@ -7,19 +7,7 @@ import { SongGameController, SongGuessEntry } from '@/src/features/song/types';
 import { MAX_SONG_GUESSES } from '@/src/const/guess';
 import { STORAGE_KEYS } from '@/src/const/localStorage';
 import { nestedJSONStorage } from '@/src/lib/store/createNestedStorage';
-
-// 🛡️ Type guard ตรวจสอบว่า guess entry ตรง schema ปัจจุบันจริง กัน corrupted/legacy data
-function isValidGuessEntry(entry: unknown): entry is SongGuessEntry {
-    return (
-        typeof entry === 'object' &&
-        entry !== null &&
-        'status' in entry &&
-        (entry as SongGuessEntry).status !== undefined &&
-        ((entry as SongGuessEntry).status === 'correct' || (entry as SongGuessEntry).status === 'wrong') &&
-        'guess' in entry &&
-        typeof (entry as SongGuessEntry).guess === 'object'
-    );
-}
+import { isValidGuessEntry } from '../../validGuessEntry';
 
 export const useSongGame = create<SongGameController>()(
     persist(
@@ -60,26 +48,26 @@ export const useSongGame = create<SongGameController>()(
                 if (!_hasHydrated) return;
                 if (!force && target) return;
 
-                // 🧠 1. ดึงเซกเมนต์ทั้งหมดมาแทน (สมมติว่าคุณมีฟังก์ชันนี้)
                 const allSegments = getAllSongSegments();
 
                 const completedData = JSON.parse(localStorage.getItem(STORAGE_KEYS.SONG_COMPLETED) || '{}');
-                // 🧠 2. ตอนนี้ completedIds คือ "ID ของเซกเมนต์" ที่เคยทายถูกแล้ว
-                const completedSegmentIds: string[] = completedData.unlimited || [];
 
-                const remainingSegments = allSegments.filter(s => !completedSegmentIds.includes(s.id));
+                // 🧠 เปลี่ยนชื่อตัวแปรให้สื่อความหมาย: ตอนนี้เราจะเก็บเป็น "ID ของเพลงหลัก" ที่ผ่านแล้ว
+                const completedSongIds: string[] = completedData.unlimited || [];
+
+                // 🛡️ FIX: เช็ค s.song_id แทน s.id เพื่อไม่ให้เซกเมนต์อื่นของเพลงเดิมหลุดเข้ามาได้อีก
+                const remainingSegments = allSegments.filter(s => !completedSongIds.includes(s.song_id));
 
                 if (remainingSegments.length === 0) {
                     set({ target: null, targetSegmentId: null, guesses: [], hasFinalized: false });
                 } else {
-                    // 🧠 3. สุ่มเซกเมนต์ และหาเพลงแม่ของมัน
                     const randomSegment = remainingSegments[Math.floor(Math.random() * remainingSegments.length)];
                     const parentSong = getSongById(randomSegment.song_id);
 
                     if (parentSong) {
                         set({
-                            target: parentSong, // 👈 ตัวตรวจคำตอบ (UI) ยังใช้เพลงหลักเหมือนเดิม ไม่พังแน่นอน
-                            targetSegmentId: randomSegment.id, // 👈 เก็บ ID ควิซไว้
+                            target: parentSong,
+                            targetSegmentId: randomSegment.id,
                             guesses: [],
                             hasFinalized: false
                         });
@@ -89,14 +77,14 @@ export const useSongGame = create<SongGameController>()(
 
             finalizeGame: (isWin) => {
                 const { target, targetSegmentId, hasFinalized } = get();
-                if (!target || !targetSegmentId || hasFinalized) return; // เช็ค targetSegmentId ด้วย
+                if (!target || !targetSegmentId || hasFinalized) return;
 
                 const completedData = JSON.parse(localStorage.getItem(STORAGE_KEYS.SONG_COMPLETED) || '{}');
 
                 if (isWin) {
                     const currentUnlimited: string[] = completedData.unlimited || [];
-                    // 🧠 4. บันทึก ID เซกเมนต์ ว่าควิซข้อนี้ผ่านแล้ว (เพลงเดียวกันแต่คนละเซกเมนต์จะยังเล่นได้)
-                    completedData.unlimited = [...new Set([...currentUnlimited, targetSegmentId])];
+                    // 🧠 FIX: บันทึก target.id (Song ID) ลงไปแทน เพื่อบอกว่า "เพลงนี้ทั้งเพลงเล่นผ่านแล้วนะ"
+                    completedData.unlimited = [...new Set([...currentUnlimited, target.id])];
                 } else {
                     completedData.unlimited = [];
                 }

@@ -8,6 +8,7 @@ import { persist } from 'zustand/middleware';
 import { MAX_CHARACTER_GUESSES } from '@/src/const/guess';
 import { STORAGE_KEYS } from '@/src/const/localStorage'
 import { nestedJSONStorage } from '@/src/lib/store/createNestedStorage';
+import { isValidCharacterGuessEntry } from '../../validGuessEntry';
 
 interface GuessEntry {
     guess: Character;
@@ -146,7 +147,19 @@ export const useCharacterGame = create<CharacterGameState>()(
             }),
             // 👇 หัวใจของ fix: บอก store ว่า rehydrate เสร็จแล้วจริงๆ (เหมือน daily store)
             onRehydrateStorage: () => (state) => {
-                state?.setHasHydrated(true);
+                if (state) {
+                    // 🛡️ ตรวจ guesses ทุกตัว ถ้าเจอโครงสร้างไม่ตรง (legacy/corrupted) ให้ล้างรอบนั้นทิ้งทันที
+                    const hasCorruptedData = !Array.isArray(state.guesses) ||
+                        state.guesses.some(g => !isValidCharacterGuessEntry(g));
+
+                    if (hasCorruptedData) {
+                        state.guesses = [];
+                        state.target = null;
+                        state.hasFinalized = false;
+                    }
+
+                    state.setHasHydrated(true);
+                }
             },
         }
     )

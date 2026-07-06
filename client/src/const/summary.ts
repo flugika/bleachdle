@@ -42,7 +42,7 @@ export const CHARACTER_TIERS = [
         sub: "REIATSU // THE FIVE HEAVENLY PILLARS",
         flavor: "If it is by our hands that the world is weighed, then let the heavens shake beneath our robes. You step upon the marrow of ancient stars to guard the inner sanctum of the throne.",
         color: "#f76c6c", // Vermilion Silk Crimson
-        badgeStyles: "bg-gradient-to-r from-[#2d0808] to-[#0c0202] border-[#f56565]/30 shadow-[0_0_15px_rgba(245,101,101,0.15)]",
+        badgeStyles: "bg-gradient-to-r from-[#2d0808] to-[#0c0202] border-[#f56565]/30 shadow-[0_0_17px_rgba(245,101,101,0.15)]",
         kanjiStyles: "border-[#f56565]/20 bg-[#0f0303]"
     },
     {
@@ -175,7 +175,7 @@ export const SONG_TIERS = [
         sub: "REIATSU // THE FIVE HEAVENLY CADENCES",
         flavor: "If it is by our ears that the archive is weighed, then let the heavens hum beneath our chairs. You have climbed into the inner sanctum of the Reiatsu Concordance, where only five have ever been permitted to listen.",
         color: "#f76c6c", // Vermilion Silk Crimson
-        badgeStyles: "bg-gradient-to-r from-[#2d0808] to-[#0c0202] border-[#f56565]/30 shadow-[0_0_15px_rgba(245,101,101,0.15)]",
+        badgeStyles: "bg-gradient-to-r from-[#2d0808] to-[#0c0202] border-[#f56565]/30 shadow-[0_0_17px_rgba(245,101,101,0.15)]",
         kanjiStyles: "border-[#f56565]/20 bg-[#0f0303]"
     },
     {

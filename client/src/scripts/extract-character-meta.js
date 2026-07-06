@@ -1,3 +1,5 @@
+// npx tsx src/scripts/extract-character-meta.js
+
 import fs from 'fs';
 import path from 'path';
 

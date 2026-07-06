@@ -63,7 +63,7 @@ export function SenkaimonTransition() {
                     background: "linear-gradient(105deg, #050507 0%, #0d0d14 55%, #16151d 100%)",
                     borderRight: "1px solid rgba(200,169,110,0.45)",
                     animation: `senkaimon-gate-left ${CYCLE_MS}ms cubic-bezier(0.25,1,0.5,1) forwards`,
-                    boxShadow: "12px 0 50px rgba(200,169,110,0.12), inset -1px 0 0 rgba(255,255,255,0.04)",
+                    boxShadow: "14px 0 50px rgba(200,169,110,0.12), inset -1px 0 0 rgba(255,255,255,0.04)",
                     willChange: "transform",
                 }}
             >
@@ -71,7 +71,7 @@ export function SenkaimonTransition() {
                     className="absolute inset-0 opacity-[0.06]"
                     style={{
                         backgroundImage:
-                            "repeating-linear-gradient(100deg, #fff 0px, #fff 1px, transparent 1px, transparent 14px)",
+                            "repeating-linear-gradient(100deg, #fff 0px, #fff 1px, transparent 1px, transparent 16px)",
                     }}
                 />
                 <div className="w-px h-3/4 bg-gradient-to-b from-transparent via-[#c8a96e]/20 to-transparent mr-10" />
@@ -86,7 +86,7 @@ export function SenkaimonTransition() {
                     background: "linear-gradient(-105deg, #050507 0%, #0d0d14 55%, #16151d 100%)",
                     borderLeft: "1px solid rgba(200,169,110,0.45)",
                     animation: `senkaimon-gate-right ${CYCLE_MS}ms cubic-bezier(0.25,1,0.5,1) forwards`,
-                    boxShadow: "-12px 0 50px rgba(200,169,110,0.12), inset 1px 0 0 rgba(255,255,255,0.04)",
+                    boxShadow: "-14px 0 50px rgba(200,169,110,0.12), inset 1px 0 0 rgba(255,255,255,0.04)",
                     willChange: "transform",
                 }}
             >
@@ -94,7 +94,7 @@ export function SenkaimonTransition() {
                     className="absolute inset-0 opacity-[0.06]"
                     style={{
                         backgroundImage:
-                            "repeating-linear-gradient(-100deg, #fff 0px, #fff 1px, transparent 1px, transparent 14px)",
+                            "repeating-linear-gradient(-100deg, #fff 0px, #fff 1px, transparent 1px, transparent 16px)",
                     }}
                 />
                 <div className="w-px h-3/4 bg-gradient-to-b from-transparent via-[#c8a96e]/20 to-transparent ml-10" />
@@ -137,7 +137,7 @@ export function SenkaimonTransition() {
                 style={{
                     background: "radial-gradient(circle, #ffffff 0%, #eed9c4 35%, transparent 70%)",
                     animation: `reiatsu-flash ${CYCLE_MS}ms cubic-bezier(0.16,1,0.3,1) forwards`,
-                    boxShadow: "0 0 8px #c8a96e, 0 0 160px rgba(200,169,110,0.55)",
+                    boxShadow: "0 0 10px #c8a96e, 0 0 160px rgba(200,169,110,0.55)",
                 }}
             />
 
@@ -173,7 +173,7 @@ export function SenkaimonTransition() {
                     {["穿", "界", "門"].map((char, index) => (
                         <span
                             key={index}
-                            className="text-4xl md:text-5xl font-black text-transparent bg-clip-text bg-gradient-to-b from-[#ffffff] via-[#c8a96e] to-[#8c6f3d] drop-shadow-[0_4px_6px_rgba(0,0,0,0.95)] opacity-0 select-none"
+                            className="text-4xl md:text-5xl font-black text-transparent bg-clip-text bg-gradient-to-b from-[#ffffff] via-[#c8a96e] to-[#8c6f3d] drop-shadow-[0_6px_8px_rgba(0,0,0,0.95)] opacity-0 select-none"
                             style={{
                                 animation: `kanji-sharp-reveal 0.28s cubic-bezier(0.16, 1, 0.3, 1) forwards`,
                                 // ⏱️ Start exactly after impact (18% = 252ms). Sync'd frame-by-frame.
@@ -197,7 +197,7 @@ export function SenkaimonTransition() {
                 >
                     <div className="h-[1px] flex-1 bg-gradient-to-r from-transparent via-[#c8a96e]/70 to-[#c8a96e]" />
                     <div className="mx-3 flex items-center justify-center">
-                        <svg className="w-3.5 h-3.5 fill-[#ffffff] drop-shadow-[0_0_10px_#c8a96e]" viewBox="0 0 24 24">
+                        <svg className="w-3.5 h-3.5 fill-[#ffffff] drop-shadow-[0_0_14px_#c8a96e]" viewBox="0 0 24 24">
                             <path d="M12 2L15.5 8.5L22 12L15.5 15.5L12 22L8.5 15.5L2 12L8.5 8.5L12 2Z" />
                             <circle cx="12" cy="12" r="1.2" fill="#050507" />
                         </svg>
@@ -220,7 +220,7 @@ export function SenkaimonTransition() {
 
                 {/* 4. รายละเอียดรหัสกำกับมิติ */}
                 <span
-                    className="text-[7px] uppercase font-mono tracking-[0.45em] text-[#eed9c4]/40 mt-2.5 opacity-0 select-none"
+                    className="text-[10px] uppercase font-mono tracking-[0.45em] text-[#eed9c4]/40 mt-2.5 opacity-0 select-none"
                     style={{
                         animation: `text-sharp-burst 0.4s ease-out forwards`,
                         animationDelay: "480ms",
@@ -235,7 +235,7 @@ export function SenkaimonTransition() {
                 {[...Array(6)].map((_, i) => (
                     <div
                         key={`a-${i}`}
-                        className="w-[1.5px] h-12 bg-gradient-to-t from-transparent to-[#c8a96e]"
+                        className="w-[1.7px] h-12 bg-gradient-to-t from-transparent to-[#c8a96e]"
                         style={{
                             left: `${i * 16 + 10}%`,
                             animation: `reishi-float-a ${0.7 + i * 0.1}s ease-in-out infinite`,
@@ -246,7 +246,7 @@ export function SenkaimonTransition() {
                 {[...Array(4)].map((_, i) => (
                     <div
                         key={`b-${i}`}
-                        className="w-[2.5px] h-6 rounded-full blur-[1px] bg-gradient-to-t from-transparent to-[#eed9c4]"
+                        className="w-[2.7px] h-6 rounded-full blur-[1px] bg-gradient-to-t from-transparent to-[#eed9c4]"
                         style={{
                             left: `${i * 24 + 18}%`,
                             animation: `reishi-float-b ${1.1 + i * 0.15}s ease-in-out infinite`,

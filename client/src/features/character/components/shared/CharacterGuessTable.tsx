@@ -31,45 +31,41 @@ const HEADERS = [
     'WEAPON', 'ABILITY', 'RELEASE', 'FIRST ARC',
 ] as const;
 
-// ─── Cell colour tokens (Bleach dark palette) ────────────────────────────────
+// ─── Cell colour tokens (Bleach dark palette) — REVISED for readability ─────
 
-export const CELL_STYLES: Record<MatchResult, { bg: string; border: string; text: string; glow: string; textGlow: string }> = {
+export const CELL_STYLES: Record<MatchResult, { bg: string; border: string; text: string; glow: string; textGlow: string; }> = {
     correct: {
-        bg: 'bg-gradient-to-b from-[#113821] via-[#0a2515] to-[#05130b]',
-        border: 'border-[#2da157]/40 border-t-[#4de880]/60 border-b-[#144726]',
-        text: 'text-[#4de880]',
-        // ── 🌟 Premium Aura Layers: มิติยุบใน (Inset) + ออร่าแรงดันวิญญาณแผ่ออกนอก (Outer Neon Glow)
+        bg: 'bg-gradient-to-b from-[#164a2c] via-[#0f331f] to-[#081d12]',
+        border: 'border-[#3ecb73]/60',
+        text: 'text-[#7bffb0]',
         glow: 'inset 0 0 14px rgba(77, 232, 128, 0.22), 0 0 22px 3px rgba(77, 232, 128, 0.4), 0 6px 24px rgba(13, 41, 24, 0.7)',
         textGlow: 'drop-shadow-[0_0_5px_rgba(77,232,128,0.5)]',
     },
     partial: {
-        bg: 'bg-gradient-to-b from-[#5c3316] via-[#3d200d] to-[#1f0f05]',
-        border: 'border-[#cc7b3d]/40 border-t-[#e8b830]/70 border-b-[#2e1809]',
-        text: 'text-[#e8b830]',
-        // ── 🌟 Copper Fire Shimmer
+        bg: 'bg-gradient-to-b from-[#6b3c19] via-[#472510] to-[#231206]',
+        border: 'border-[#e2963f]/60',
+        text: 'text-[#ffd27a]',
         glow: 'inset 0 0 14px rgba(232, 184, 48, 0.18), 0 0 22px 3px rgba(232, 184, 48, 0.35), 0 6px 24px rgba(42, 31, 0, 0.7)',
         textGlow: 'drop-shadow-[0_0_5px_rgba(232,184,48,0.4)]',
     },
     wrong: {
-        bg: 'bg-gradient-to-b from-[#3b0b0b] via-[#240606] to-[#120202]',
-        border: 'border-[#822d2d]/30 border-t-[#a64747]/40 border-b-[#1c0404]',
-        text: 'text-[#a68b8b]',
-        // ── 🌟 Hollow Abyss: ดึงมิติจมลึกแบบหลุมดำ ไม่ฟุ้งกระจายเพื่อให้ตัดกับตัวที่ถูก
+        bg: 'bg-gradient-to-b from-[#5a1f1f] via-[#3a1414] to-[#1c0808]',
+        border: 'border-[#a64747]/60',
+        text: 'text-[#e8b4b4]',
         glow: 'inset 0 0 16px rgba(0, 0, 0, 0.85), 0 4px 12px rgba(0, 0, 0, 0.5)',
         textGlow: 'none',
     },
     higher: {
-        bg: 'bg-gradient-to-b from-[#0c0d24] via-[#060714] to-[#020208]',
-        border: 'border-[#2d3a73]/40 border-t-[#7090f0]/60 border-b-[#0b0f24]',
-        text: 'text-[#7090f0]',
-        // ── 🌟 Reishi Flux Blue
+        bg: 'bg-gradient-to-b from-[#1c2456] via-[#131a3d] to-[#080b1f]',
+        border: 'border-[#4f68c9]/60',
+        text: 'text-[#a8bcff]',
         glow: 'inset 0 0 12px rgba(112, 144, 240, 0.15), 0 0 18px 2px rgba(112, 144, 240, 0.3), 0 4px 18px rgba(10, 10, 34, 0.7)',
         textGlow: 'drop-shadow-[0_0_4px_rgba(112,144,240,0.4)]',
     },
     lower: {
-        bg: 'bg-gradient-to-b from-[#0c0d24] via-[#060714] to-[#020208]',
-        border: 'border-[#2d3a73]/40 border-t-[#7090f0]/60 border-b-[#0b0f24]',
-        text: 'text-[#7090f0]',
+        bg: 'bg-gradient-to-b from-[#1c2456] via-[#131a3d] to-[#080b1f]',
+        border: 'border-[#4f68c9]/60',
+        text: 'text-[#a8bcff]',
         glow: 'inset 0 0 12px rgba(112, 144, 240, 0.15), 0 0 18px 2px rgba(112, 144, 240, 0.3), 0 4px 18px rgba(10, 10, 34, 0.7)',
         textGlow: 'drop-shadow-[0_0_4px_rgba(112,144,240,0.4)]',
     },

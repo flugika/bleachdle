@@ -1,6 +1,22 @@
 @import "tailwindcss";
 /* @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600&family=Shippori+Mincho:wght@800&display=swap'); */
 
+body {
+  font-family: var(--font-geist-sans), Arial, Helvetica, sans-serif;
+}
+
+.font-display {
+  font-family: var(--font-cinzel), serif;
+}
+
+.font-cinzel-label {
+  font-weight: 600;
+  /* หรือ 700 ถ้ายังไม่พอ */
+  letter-spacing: 0.08em;
+  /* ลด tracking ลงจากเดิมถ้าเดิมกว้างเกิน */
+  text-shadow: 0 0 1px rgba(0,0,0,0.8), 0 1px 4px rgba(0,0,0,0.6);
+}
+
 :root {
   --background: #ffffff;
   --foreground: #171717;
@@ -56,7 +72,7 @@ body {
 
 /* Custom Scrollbar for the whole application */
 ::-webkit-scrollbar {
-  width: 8px;
+  width: 10px;
   /* w-2 */
 }
 
@@ -67,7 +83,7 @@ body {
 ::-webkit-scrollbar-thumb {
   background: rgba(200, 169, 110, 0.5);
   /* c8a96e/50 */
-  /* border-radius: 9999px; */
+  /* border-radius: 99911px; */
   /* rounded-full */
 }
 
@@ -212,8 +228,8 @@ button *:active,
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 26px;
-  padding: 16px;
+  gap: 28px;
+  padding: 18px;
 }
 
 .stage {
@@ -236,7 +252,7 @@ button *:active,
 .pulse {
   position: absolute;
   border-radius: 50%;
-  border-width: 1.5px;
+  border-width: 1.7px;
   border-style: solid;
   /* เปลี่ยนจาก 3s มาใช้ตัวแปรควบคุมความเร็วแอนิเมชัน */
   animation: pout var(--pulse-duration, 3s) ease-out infinite;
@@ -274,34 +290,34 @@ button *:active,
 }
 
 .s1 {
-  width: 110px;
+  width: 114px;
   height: 70px;
   background: rgba(60, 80, 210, 0.08);
-  filter: blur(18px);
+  filter: blur(110px);
   animation: smk 4.5s ease-out infinite 0s;
 }
 
 .s2 {
   width: 80px;
-  height: 55px;
+  height: 57px;
   background: rgba(150, 50, 230, 0.07);
-  filter: blur(15px);
+  filter: blur(17px);
   animation: smk 4.5s ease-out infinite 1.4s;
-  transform: translateX(22px);
+  transform: translateX(24px);
 }
 
 .s3 {
   width: 90px;
-  height: 48px;
+  height: 410px;
   background: rgba(40, 190, 160, 0.05);
-  filter: blur(17px);
+  filter: blur(110px);
   animation: smk 4.5s ease-out infinite 2.8s;
-  transform: translateX(-18px);
+  transform: translateX(-110px);
 }
 
 .chain {
   position: absolute;
-  width: 1.5px;
+  width: 1.7px;
   pointer-events: none;
   animation: cflk 5.5s ease-in-out infinite;
 }
@@ -338,26 +354,26 @@ button *:active,
 }
 
 .txt-sub {
-  font-size: 9px;
+  font-size: 11px;
   letter-spacing: 0.22em;
   color: rgba(140, 160, 255, 0.52);
   text-transform: uppercase;
-  margin-top: 5px;
+  margin-top: 7px;
 }
 
 .ctrl {
   display: flex;
-  gap: 10px;
+  gap: 12px;
   flex-wrap: wrap;
   justify-content: center;
 }
 
 .btn {
-  padding: 7px 18px;
+  padding: 10px 40px;
   border: 1px solid rgba(200, 169, 110, 0.3);
   background: transparent;
   color: rgba(200, 169, 110, 0.7);
-  font-size: 10px;
+  font-size: 12px;
   letter-spacing: 0.18em;
   text-transform: uppercase;
   cursor: pointer;
@@ -369,11 +385,11 @@ button *:active,
   background: rgba(200, 169, 110, 0.12);
   border-color: rgba(200, 169, 110, 0.85);
   color: #c8a96e;
-  box-shadow: 0 0 12px rgba(200, 169, 110, 0.18);
+  box-shadow: 0 0 14px rgba(200, 169, 110, 0.18);
 }
 
 .lbl {
-  font-size: 9px;
+  font-size: 11px;
   color: rgba(130, 150, 220, 0.55);
   letter-spacing: 0.12em;
   text-align: center;
@@ -435,11 +451,11 @@ button *:active,
 
 /* 1. ข้อความหลัก: ค่อยๆ หายใจเรืองแสงสไตล์แรงดันวิญญาณ */
 .soul-txt {
-  font-size: 16px;
+  font-size: 18px;
   color: #ffffff;
   font-weight: 500;
   letter-spacing: 0.06em;
-  text-shadow: 0 0 8px rgba(255, 255, 255, 0.25);
+  text-shadow: 0 0 10px rgba(255, 255, 255, 0.25);
   /* แอนิเมชันหายใจช้าๆ ล้อไปกับความเร็วของออร่าดาบ */
   animation: soulBreathe 4s ease-in-out infinite;
 }
@@ -448,7 +464,7 @@ button *:active,
 .loading-dots::after {
   content: '';
   display: inline-block;
-  width: 18px;
+  width: 20px;
   /* ล็อคความกว้างไว้ไม่ให้ข้อความขยับเยื้องขวาตอนจุดเพิ่มขึ้น */
   text-align: left;
   animation: cycleDots 2s steps(4, end) infinite;
@@ -476,14 +492,14 @@ button *:active,
 
   0%,
   100% {
-    text-shadow: 0 0 6px rgba(100, 145, 255, 0.2);
+    text-shadow: 0 0 8px rgba(100, 145, 255, 0.2);
     letter-spacing: 0.06em;
     opacity: 0.85;
   }
 
   50% {
     /* ตอนหายใจเข้า จะสว่างขึ้นและเปลี่ยนไปใช้โทนสีออร่าสีม่วง/ฟ้าบางๆ */
-    text-shadow: 0 0 14px rgba(150, 70, 255, 0.6), 0 0 22px rgba(100, 145, 255, 0.3);
+    text-shadow: 0 0 16px rgba(150, 70, 255, 0.6), 0 0 24px rgba(100, 145, 255, 0.3);
     letter-spacing: 0.09em;
     /* ตัวอักษรจะค่อยๆ ขยายห่างกันอย่างนุ่มนวล */
     opacity: 1;
@@ -492,11 +508,11 @@ button *:active,
 
 /* 3. ข้อความซับด้านล่าง: เอฟเฟกต์เปิดตัวแบบภาพยนตร์ (Cinematic Reveal) */
 .bankai-txt {
-  font-size: 10px;
+  font-size: 14px;
   /* แอบหยอดสีทองหม่น (Gold Accent) เพื่อให้ล้อไปกับหมุดปลายดาบดูพรีเมียม */
   color: rgba(200, 169, 110, 0.7);
   text-transform: uppercase;
-  margin-top: 6px;
+  margin-top: 8px;
   display: block;
   animation: bankaiReveal 2.8s cubic-bezier(0.25, 1, 0.5, 1) forwards;
 }
@@ -505,9 +521,9 @@ button *:active,
   0% {
     opacity: 0;
     letter-spacing: 0.05em;
-    filter: blur(6px);
+    filter: blur(8px);
     /* ค่อยๆ สลายตัวมาจากความเบลอ */
-    transform: translateY(3px);
+    transform: translateY(5px);
   }
 
   100% {
@@ -527,7 +543,7 @@ button *:active,
 .bleach-scanlines {
   background: linear-gradient(rgba(18, 16, 46, 0) 50%,
       rgba(0, 0, 0, 0.35) 50%);
-  background-size: 100% 4px;
+  background-size: 100% 6px;
 }
 
 /* พื้นหลังหมอกแรงดันวิญญาณแบบ High Contrast */
@@ -585,7 +601,7 @@ button *:active,
   color: transparent;
   /* เพิ่มความทึบของเส้นขอบตัวอักษรเป็น 0.08 และหยอดเงา Glow ด้านหลังให้ลอยขึ้นมาจากความมืด */
   -webkit-text-stroke: 1px rgba(255, 255, 255, 0.08);
-  text-shadow: 0 0 25px rgba(140, 90, 255, 0.06);
+  text-shadow: 0 0 27px rgba(140, 90, 255, 0.06);
   letter-spacing: -0.02em;
   animation: trackingGlance 24s ease-in-out infinite alternate;
 }
@@ -599,7 +615,7 @@ button *:active,
 
   100% {
     letter-spacing: 0.04em;
-    transform: scale(1.03) translateY(8px);
+    transform: scale(1.03) translateY(10px);
     opacity: 0.15;
   }
 }
@@ -607,7 +623,7 @@ button *:active,
 /* บังคับคุมสไตล์เส้นวงแหวนของตัวดาบให้ดู คม ดิบ ไม่ฟุ้งเละ */
 .ring {
   border-color: rgba(255, 255, 255, 0.07) !important;
-  box-shadow: inset 0 0 15px rgba(110, 140, 255, 0.04), 0 0 15px rgba(110, 140, 255, 0.04);
+  box-shadow: inset 0 0 17px rgba(110, 140, 255, 0.04), 0 0 17px rgba(110, 140, 255, 0.04);
 }
 
 /* ===================================================
@@ -644,8 +660,8 @@ button *:active,
   }
 
   100% {
-    transform: rotate(-3deg) translateY(-15px);
-    filter: blur(3px);
+    transform: rotate(-3deg) translateY(-17px);
+    filter: blur(5px);
     /* ค่อยๆ เบลอกลืนหายไปตามแรงดันวิญญาณ */
   }
 }
@@ -705,11 +721,11 @@ button *:active,
   }
 
   18% {
-    transform: translate3d(-3px, 1px, 0);
+    transform: translate3d(-5px, 1px, 0);
   }
 
   19.5% {
-    transform: translate3d(3px, -1px, 0);
+    transform: translate3d(5px, -1px, 0);
   }
 
   21% {
@@ -745,19 +761,19 @@ button *:active,
   0% {
     opacity: 0;
     transform: translate(-50%, -50%) scale(0.2);
-    filter: blur(10px);
+    filter: blur(14px);
   }
 
   18% {
     opacity: 1;
     transform: translate(-50%, -50%) scale(1);
-    filter: blur(2px);
+    filter: blur(4px);
   }
 
   46% {
     opacity: 1;
     transform: translate(-50%, -50%) scale(1.25);
-    filter: blur(18px);
+    filter: blur(110px);
   }
 
   100% {
@@ -853,7 +869,7 @@ button *:active,
   82% {
     opacity: 0;
     transform: translate(-50%, -50%) scale(1.04);
-    filter: blur(6px);
+    filter: blur(8px);
     /* ปล่อยให้ไปเบลอและสลายตัวตอนประตูเปิดออกเท่านั้น */
   }
 
@@ -933,7 +949,7 @@ button *:active,
   0% {
     opacity: 0;
     transform: scale(1.6);
-    filter: blur(3px);
+    filter: blur(5px);
   }
 
   25% {
@@ -967,7 +983,7 @@ button *:active,
   0% {
     opacity: 0;
     letter-spacing: 0.15em;
-    transform: translateY(2px);
+    transform: translateY(4px);
     clip-path: inset(0 45% 0 45%);
   }
 
@@ -1036,12 +1052,12 @@ button *:active,
   }
 
   15% {
-    transform: scale(1.02) translate(-3px, 2px) rotate(0.15deg);
+    transform: scale(1.02) translate(-5px, 4px) rotate(0.15deg);
     filter: brightness(1.3);
   }
 
   35% {
-    transform: scale(0.99) translate(2px, -2px) rotate(-0.1deg);
+    transform: scale(0.99) translate(4px, -4px) rotate(-0.1deg);
   }
 
   60% {
@@ -1077,13 +1093,13 @@ button *:active,
   15%,
   45%,
   75% {
-    transform: translateX(-5px) !important;
+    transform: translateX(-7px) !important;
   }
 
   30%,
   60%,
   90% {
-    transform: translateX(5px) !important;
+    transform: translateX(7px) !important;
   }
 }
 
@@ -1100,12 +1116,12 @@ button *:active,
 
   20%,
   60% {
-    transform: translateX(-4px);
+    transform: translateX(-6px);
   }
 
   40%,
   80% {
-    transform: translateX(4px);
+    transform: translateX(6px);
   }
 }
 
@@ -1155,7 +1171,7 @@ button *:active,
 
 @keyframes kido-drift-up {
   0% {
-    transform: translateY(6px);
+    transform: translateY(8px);
     opacity: 0;
   }
 
@@ -1261,11 +1277,11 @@ button *:active,
 
   0%,
   100% {
-    text-shadow: 0 0 4px rgba(200, 169, 110, 0.3);
+    text-shadow: 0 0 6px rgba(200, 169, 110, 0.3);
   }
 
   50% {
-    text-shadow: 0 0 10px rgba(111, 195, 232, 0.6);
+    text-shadow: 0 0 14px rgba(111, 195, 232, 0.6);
   }
 }
 
@@ -1312,7 +1328,7 @@ button *:active,
 }
 
 .premium-modal-scroll::-webkit-scrollbar {
-  width: 6px;
+  width: 8px;
 }
 
 .premium-modal-scroll::-webkit-scrollbar-track {
@@ -1321,7 +1337,7 @@ button *:active,
 
 .premium-modal-scroll::-webkit-scrollbar-thumb {
   background: linear-gradient(180deg, rgba(200, 169, 110, 0.7), rgba(200, 169, 110, 0.15));
-  border-radius: 999px;
+  border-radius: 9911px;
 }
 
 .premium-modal-scroll::-webkit-scrollbar-thumb:hover {
@@ -1446,11 +1462,11 @@ button *:active,
 
   0%,
   100% {
-    text-shadow: 0 0 8px rgba(200, 169, 110, 0.35);
+    text-shadow: 0 0 10px rgba(200, 169, 110, 0.35);
   }
 
   50% {
-    text-shadow: 0 0 22px rgba(200, 169, 110, 0.75);
+    text-shadow: 0 0 24px rgba(200, 169, 110, 0.75);
   }
 }
 
@@ -1483,7 +1499,7 @@ button *:active,
   }
 
   45% {
-    transform: translateY(55vh) translateX(55px) scale(1.05);
+    transform: translateY(55vh) translateX(57px) scale(1.05);
     opacity: 0.32;
   }
 
@@ -1493,7 +1509,7 @@ button *:active,
   }
 
   82% {
-    transform: translateY(12vh) translateX(10px) scale(0.6);
+    transform: translateY(12vh) translateX(14px) scale(0.6);
     opacity: 0.08;
   }
 
@@ -1514,7 +1530,7 @@ button *:active,
   }
 
   50% {
-    transform: translateY(48vh) translateX(-48px) scale(0.75);
+    transform: translateY(48vh) translateX(-410px) scale(0.75);
     opacity: 0.4;
   }
 
@@ -1524,19 +1540,19 @@ button *:active,
   }
 
   85% {
-    transform: translateY(10vh) translateX(5px) scale(0.4);
+    transform: translateY(10vh) translateX(7px) scale(0.4);
     opacity: 0.06;
   }
 
   100% {
-    transform: translateY(-8vh) translateX(-10px) scale(0.3);
+    transform: translateY(-8vh) translateX(-14px) scale(0.3);
     opacity: 0;
   }
 }
 
 @keyframes reishiChaosDrift-C {
   0% {
-    transform: translateY(105vh) translateX(-18px) scale(0.5);
+    transform: translateY(105vh) translateX(-110px) scale(0.5);
     opacity: 0;
   }
 
@@ -1555,12 +1571,12 @@ button *:active,
   }
 
   90% {
-    transform: translateY(6vh) translateX(10px) scale(0.4);
+    transform: translateY(6vh) translateX(14px) scale(0.4);
     opacity: 0.04;
   }
 
   100% {
-    transform: translateY(-8vh) translateX(5px) scale(0.3);
+    transform: translateY(-8vh) translateX(7px) scale(0.3);
     opacity: 0;
   }
 }

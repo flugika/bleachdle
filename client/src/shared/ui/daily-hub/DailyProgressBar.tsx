@@ -30,30 +30,30 @@ export function DailyProgressBar({ activeMode, variant = 'bar', className = '' }
             <div className="flex items-center justify-between mb-2.5">
                 <div className="flex items-center gap-1.5">
                     <span className="text-[12px] leading-none text-[#c8a96e]/60">卍</span>
-                    <span className="text-[10px] uppercase tracking-[0.3em] text-[#eed9c4]/45 font-medium">
+                    <span className="text-[12px] uppercase tracking-[0.3em] text-[#eed9c4]/45 font-medium">
                         Daily Missions
                     </span>
                 </div>
-                <div className="flex items-center gap-[3px]">
+                <div className="flex items-center gap-[5px]">
                     {Array.from({ length: totalModes }).map((_, i) => (
                         <span
                             key={i}
-                            className={`h-[3px] w-3 rounded-full transition-colors duration-300 ${i < completedModes ? 'bg-[#c8a96e]' : 'bg-white/10'
+                            className={`h-[5px] w-3 rounded-full transition-colors duration-300 ${i < completedModes ? 'bg-[#c8a96e]' : 'bg-white/10'
                                 }`}
                         />
                     ))}
-                    <span className="ml-1.5 text-[10px] font-mono tabular-nums text-[#c8a96e]">
+                    <span className="ml-1.5 text-[12px] font-mono tabular-nums text-[#c8a96e]">
                         {completedModes}/{totalModes}
                     </span>
                 </div>
             </div>
 
             {/* Progress Track */}
-            <div className="relative h-[3px] w-full bg-white/[0.06] mb-3.5 overflow-hidden rounded-full">
+            <div className="relative h-[5px] w-full bg-white/[0.06] mb-3.5 overflow-hidden rounded-full">
                 <div
                     className={`h-full rounded-full transition-all duration-700 ease-out ${isAllDone
-                            ? 'bg-gradient-to-r from-[#c8a96e] via-[#e0b980] to-[#4de880] shadow-[0_0_8px_rgba(77,232,128,0.5)]'
-                            : 'bg-gradient-to-r from-[#c8a96e] to-[#d47a2a] shadow-[0_0_8px_rgba(200,169,110,0.4)]'
+                            ? 'bg-gradient-to-r from-[#c8a96e] via-[#e0b980] to-[#4de880] shadow-[0_0_10px_rgba(77,232,128,0.5)]'
+                            : 'bg-gradient-to-r from-[#c8a96e] to-[#d47a2a] shadow-[0_0_10px_rgba(200,169,110,0.4)]'
                         }`}
                     style={{ width: `${progressPercent}%` }}
                 />
@@ -70,11 +70,11 @@ export function DailyProgressBar({ activeMode, variant = 'bar', className = '' }
                             ? 'border-[#4de880]/40 bg-[#4de880]/[0.08] text-[#4de880]'
                             : 'border-[#e84d4d]/40 bg-[#e84d4d]/[0.08] text-[#e84d4d]'
                         : isCurrent
-                            ? 'border-[#c8a96e]/70 bg-[#c8a96e]/[0.12] text-[#c8a96e] shadow-[0_0_10px_rgba(200,169,110,0.25)]'
-                            : 'border-white/10 bg-white/[0.02] text-[#eed9c4]/40 hover:border-[#c8a96e]/30 hover:text-[#eed9c4]/70';
+                            ? 'border-[#c8a96e]/70 bg-[#c8a96e]/[0.12] text-[#c8a96e] shadow-[0_0_14px_rgba(200,169,110,0.25)]'
+                            : 'border-white/10 bg-white/[0.02] text-[#eed9c4]/40 hover:border-[#c8a96e]/50 hover:text-[#eed9c4]/70';
 
                     const content = (
-                        <div className={`relative flex items-center gap-1.5 px-2.5 py-1.5 border text-[10px] font-medium tracking-wide transition-all duration-200 select-none ${pillClasses}`}>
+                        <div className={`relative flex items-center gap-1.5 px-2.5 py-1.5 border text-[12px] font-medium tracking-wide transition-all duration-200 select-none ${pillClasses}`}>
                             {isCurrent && !isDone && (
                                 <span className="absolute inset-0 border border-[#c8a96e]/40 animate-pulse pointer-events-none" />
                             )}
@@ -104,14 +104,14 @@ export function DailyProgressBar({ activeMode, variant = 'bar', className = '' }
             {/* CTA — 'bar' variant only. The modal result screen uses DailyHubModalFooter instead. */}
             {variant === 'bar' && (
                 isAllDone ? (
-                    <div className="mt-3.5 text-center text-[10px] uppercase tracking-[0.25em] text-[#4de880]/80 border border-[#4de880]/20 bg-[#4de880]/[0.05] py-2.5">
+                    <div className="mt-3.5 text-center text-[12px] uppercase tracking-[0.25em] text-[#4de880]/80 border border-[#4de880]/20 bg-[#4de880]/[0.05] py-2.5">
                         All Missions Complete 卍
                     </div>
                 ) : nextMode && nextMode.id !== activeMode ? (
                     <button
                         type="button"
                         onClick={() => navigate(nextMode.href)}
-                        className="mt-3.5 w-full flex items-center justify-center gap-2 border border-[#c8a96e]/40 bg-[#c8a96e]/[0.08] hover:bg-[#c8a96e]/[0.15] hover:shadow-[0_0_14px_rgba(200,169,110,0.25)] py-2.5 text-[10px] uppercase tracking-[0.25em] text-[#c8a96e] transition-all duration-200"
+                        className="mt-3.5 w-full flex items-center justify-center gap-2 border border-[#c8a96e]/40 bg-[#c8a96e]/[0.08] hover:bg-[#c8a96e]/[0.15] hover:shadow-[0_0_16px_rgba(200,169,110,0.25)] py-2.5 text-[12px] uppercase tracking-[0.25em] text-[#c8a96e] transition-all duration-200"
                     >
                         <span>{nextMode.icon}</span>
                         Continue: {nextMode.label}

@@ -99,10 +99,10 @@ export function SupportForm() {
         <>
             <div className="relative bg-gradient-to-b from-[#0a0a0f]/90 to-[#020205]/95 border border-[#c8a96e]/25 p-6 md:p-8 shadow-[0_30px_70px_rgba(0,0,0,0.7)] backdrop-blur-xl">
                 {/* Kido corner brackets */}
-                <div className="absolute -top-[1px] -left-[1px] w-4 h-4 border-t-2 border-l-2 border-[#c8a96e] drop-shadow-[0_0_5px_rgba(200,169,110,0.6)]" />
-                <div className="absolute -top-[1px] -right-[1px] w-4 h-4 border-t-2 border-r-2 border-[#c8a96e] drop-shadow-[0_0_5px_rgba(200,169,110,0.6)]" />
-                <div className="absolute -bottom-[1px] -left-[1px] w-4 h-4 border-b-2 border-l-2 border-[#c8a96e] drop-shadow-[0_0_5px_rgba(200,169,110,0.6)]" />
-                <div className="absolute -bottom-[1px] -right-[1px] w-4 h-4 border-b-2 border-r-2 border-[#c8a96e] drop-shadow-[0_0_5px_rgba(200,169,110,0.6)]" />
+                <div className="absolute -top-[1px] -left-[1px] w-4 h-4 border-t-2 border-l-2 border-[#c8a96e] drop-shadow-[0_0_7px_rgba(200,169,110,0.6)]" />
+                <div className="absolute -top-[1px] -right-[1px] w-4 h-4 border-t-2 border-r-2 border-[#c8a96e] drop-shadow-[0_0_7px_rgba(200,169,110,0.6)]" />
+                <div className="absolute -bottom-[1px] -left-[1px] w-4 h-4 border-b-2 border-l-2 border-[#c8a96e] drop-shadow-[0_0_7px_rgba(200,169,110,0.6)]" />
+                <div className="absolute -bottom-[1px] -right-[1px] w-4 h-4 border-b-2 border-r-2 border-[#c8a96e] drop-shadow-[0_0_7px_rgba(200,169,110,0.6)]" />
 
                 <div className="flex items-center justify-center gap-3 mb-2">
                     <div className="h-[1px] flex-1 bg-gradient-to-r from-transparent to-[#c8a96e]/60" />
@@ -111,14 +111,14 @@ export function SupportForm() {
                     </span>
                     <div className="h-[1px] flex-1 bg-gradient-to-l from-transparent to-[#c8a96e]/60" />
                 </div>
-                <p className="text-center text-[10px] uppercase tracking-[0.35em] text-[#eed9c4]/40 font-mono mb-8">
+                <p className="text-center text-[12px] uppercase tracking-[0.35em] text-[#eed9c4]/50 font-mono mb-8">
                     Mission Report // Bug &amp; Feedback
                 </p>
 
                 <form onSubmit={handleSubmit} className="flex flex-col gap-5">
                     {/* Category pills */}
                     <div>
-                        <label className="block text-[9px] uppercase tracking-[0.25em] text-[#eed9c4]/40 font-mono mb-2">
+                        <label className="block text-[11px] uppercase tracking-[0.25em] text-[#eed9c4]/40 font-mono mb-2">
                             Category
                         </label>
                         <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
@@ -129,7 +129,7 @@ export function SupportForm() {
                                         type="button"
                                         key={c.id}
                                         onClick={() => setCategory(c.id)}
-                                        className={`flex flex-col items-center gap-1 py-2.5 border text-[9px] uppercase tracking-[0.15em] font-mono transition-all duration-200 cursor-pointer
+                                        className={`flex flex-col items-center gap-1 py-2.5 border text-[10px] uppercase tracking-[0.15em] font-mono transition-all duration-200 cursor-pointer
                                             ${active
                                                 ? "border-[#c8a96e] bg-[#c8a96e]/10 text-[#c8a96e]"
                                                 : "border-[#c8a96e]/15 text-[#eed9c4]/40 hover:border-[#c8a96e]/40 hover:text-[#eed9c4]/70"
@@ -146,12 +146,12 @@ export function SupportForm() {
                     {/* Textarea */}
                     <div>
                         <div className="flex justify-between items-center mb-2">
-                            <label htmlFor="support-message" className="text-[9px] uppercase tracking-[0.25em] text-[#eed9c4]/40 font-mono">
+                            <label htmlFor="support-message" className="text-[11px] uppercase tracking-[0.25em] text-[#eed9c4]/40 font-mono">
                                 Details
                             </label>
                             <span
-                                className={`text-[9px] font-mono tracking-wider ${
-                                    trimmedLen > MAX_LEN ? "text-red-500" : "text-[#eed9c4]/30"
+                                className={`text-[11px] font-mono tracking-wider ${
+                                    trimmedLen > MAX_LEN ? "text-red-500" : "text-[#eed9c4]/50"
                                 }`}
                             >
                                 {trimmedLen}/{MAX_LEN}
@@ -167,7 +167,7 @@ export function SupportForm() {
                             className="w-full resize-none bg-[#050507] border border-[#1a1a24] focus:border-[#c8a96e]/70 focus:outline-none p-4 text-sm text-[#e2e2e5] placeholder-[#444452] font-medium tracking-wide transition-colors duration-300"
                         />
                         {isTooShort && (
-                            <p className="mt-1.5 text-[9px] font-mono text-red-500/80 tracking-wide uppercase">
+                            <p className="mt-1.5 text-[11px] font-mono text-red-500/80 tracking-wide uppercase">
                                 Minimum {MIN_LEN} characters required
                             </p>
                         )}
@@ -177,7 +177,7 @@ export function SupportForm() {
                         (some bots skip fields hidden that way, so an off-screen position is used instead) */}
                     <div
                         aria-hidden="true"
-                        style={{ position: "absolute", left: "-9999px", width: "1px", height: "1px", overflow: "hidden" }}
+                        style={{ position: "absolute", left: "-99911px", width: "1px", height: "1px", overflow: "hidden" }}
                     >
                         <label htmlFor="website">Website</label>
                         <input
@@ -196,7 +196,7 @@ export function SupportForm() {
                     </Button>
 
                     {isActive && (
-                        <p className="text-center text-[9px] font-mono text-[#eed9c4]/30 tracking-[0.2em] uppercase -mt-2">
+                        <p className="text-center text-[11px] font-mono text-[#eed9c4]/50 tracking-[0.2em] uppercase -mt-2">
                             Kido barrier recharging — next report available in {formatCountdown(remainingSec)}
                         </p>
                     )}

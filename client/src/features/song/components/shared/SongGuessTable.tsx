@@ -21,7 +21,7 @@ const THEME: Record<SongGuessStatus, {
     correct: {
         border: 'border-[#2da157]/50',
         bg: 'bg-gradient-to-b from-[#0d2918] via-[#0a2515] to-[#05130b]',
-        glow: '0 0 26px rgba(77,232,128,0.22), inset 0 0 24px rgba(77,232,128,0.06)',
+        glow: '0 0 28px rgba(77,232,128,0.22), inset 0 0 26px rgba(77,232,128,0.06)',
         text: 'text-[#4de880]',
         ring: 'ring-1 ring-[#4de880]/20',
         label: 'REISHI MATCH',
@@ -33,7 +33,7 @@ const THEME: Record<SongGuessStatus, {
     wrong: {
         border: 'border-[#822d2d]/40',
         bg: 'bg-gradient-to-b from-[#1c0808] via-[#160505] to-[#0c0303]',
-        glow: '0 0 18px rgba(0,0,0,0.5), inset 0 0 22px rgba(0,0,0,0.5)',
+        glow: '0 0 110px rgba(0,0,0,0.5), inset 0 0 24px rgba(0,0,0,0.5)',
         text: 'text-[#c47a7a]',
         ring: 'ring-1 ring-[#a64747]/15',
         label: 'SIGNAL MISMATCH',
@@ -84,7 +84,7 @@ function useVictoryBurst(ref: React.RefObject<HTMLDivElement | null>, fire: bool
                 transform: 'translate(-50%, -50%) scale(1)',
                 opacity: '1',
                 transition: `transform ${duration}s cubic-bezier(0.22,1,0.36,1), opacity ${duration}s ease-out`,
-                boxShadow: `0 0 6px 1px ${color}`,
+                boxShadow: `0 0 8px 1px ${color}`,
             });
 
             document.body.appendChild(p);
@@ -153,12 +153,12 @@ export function SongGuessCard({ guess, status, isNew, attemptNumber }: SongGuess
                 style={{ transform: 'rotate(-14deg)' }}
             >
                 <div
-                    className="px-2 py-0.5 border-2 rounded-sm text-[9px] font-black tracking-[0.25em] uppercase"
+                    className="px-2 py-0.5 border-2 rounded-sm text-[11px] font-black tracking-[0.25em] uppercase"
                     style={{
                         color: theme.stampColor,
                         borderColor: theme.inkColor,
                         opacity: 0.85,
-                        textShadow: `0 0 6px ${theme.inkColor}`,
+                        textShadow: `0 0 8px ${theme.inkColor}`,
                     }}
                 >
                     {theme.stampText}
@@ -170,12 +170,12 @@ export function SongGuessCard({ guess, status, isNew, attemptNumber }: SongGuess
                 {/* Status ribbon */}
                 <div className="flex items-center gap-1.5 mb-3">
                     <span
-                        className={`w-4 h-4 rounded-full flex items-center justify-center text-[9px] text-black font-black shrink-0 ${theme.badgeBg}`}
-                        style={{ boxShadow: `0 0 8px ${status === 'correct' ? 'rgba(77,232,128,0.6)' : 'rgba(166,71,71,0.5)'}` }}
+                        className={`w-4 h-4 rounded-full flex items-center justify-center text-[11px] text-black font-black shrink-0 ${theme.badgeBg}`}
+                        style={{ boxShadow: `0 0 10px ${status === 'correct' ? 'rgba(77,232,128,0.6)' : 'rgba(166,71,71,0.5)'}` }}
                     >
                         {status === 'correct' ? '✓' : '✕'}
                     </span>
-                    <span className={`text-[9px] font-bold uppercase tracking-[0.22em] ${theme.text}`}>
+                    <span className={`text-[11px] font-bold uppercase tracking-[0.22em] ${theme.text}`}>
                         {theme.label}
                     </span>
                 </div>
@@ -200,7 +200,7 @@ export function SongGuessCard({ guess, status, isNew, attemptNumber }: SongGuess
                                 target="_blank"
                                 rel="noopener noreferrer"
                                 onClick={(e) => e.stopPropagation()}
-                                className="flex items-center gap-1.5 px-2.5 py-1 border border-[#e83030]/30 hover:border-[#e83030]/70 bg-[#e83030]/5 hover:bg-[#e83030]/10 text-[8px] uppercase tracking-[0.15em] text-[#e8807f] hover:text-[#ff9d9d] transition-all duration-200"
+                                className="flex items-center gap-1.5 px-2.5 py-1 border border-[#e83030]/50 hover:border-[#e83030]/70 bg-[#e83030]/5 hover:bg-[#e83030]/10 text-[10px] uppercase tracking-[0.15em] text-[#e8807f] hover:text-[#ff9d9d] transition-all duration-200"
                             >
                                 <YoutubeGlyph /> YouTube
                             </a>
@@ -211,7 +211,7 @@ export function SongGuessCard({ guess, status, isNew, attemptNumber }: SongGuess
                                 target="_blank"
                                 rel="noopener noreferrer"
                                 onClick={(e) => e.stopPropagation()}
-                                className="flex items-center gap-1.5 px-2.5 py-1 border border-[#4de880]/30 hover:border-[#4de880]/70 bg-[#4de880]/5 hover:bg-[#4de880]/10 text-[8px] uppercase tracking-[0.15em] text-[#8fe8ab] hover:text-[#b5f5cb] transition-all duration-200"
+                                className="flex items-center gap-1.5 px-2.5 py-1 border border-[#4de880]/50 hover:border-[#4de880]/70 bg-[#4de880]/5 hover:bg-[#4de880]/10 text-[10px] uppercase tracking-[0.15em] text-[#8fe8ab] hover:text-[#b5f5cb] transition-all duration-200"
                             >
                                 <SpotifyGlyph /> Spotify
                             </a>
@@ -221,7 +221,7 @@ export function SongGuessCard({ guess, status, isNew, attemptNumber }: SongGuess
 
                 {/* Ticket footer meta — venue-style microcopy */}
                 <div className="mt-3 pt-2 border-t border-white/[0.06] flex items-center justify-between">
-                    <span className="text-[7px] uppercase tracking-[0.2em] text-white/25 font-mono">
+                    <span className="text-[10px] uppercase tracking-[0.2em] text-white/25 font-mono">
                         Soul Society Broadcast // Admit One
                     </span>
                 </div>
@@ -248,18 +248,18 @@ export function SongGuessCard({ guess, status, isNew, attemptNumber }: SongGuess
                 <div
                     className="w-full h-8 opacity-40"
                     style={{
-                        backgroundImage: `repeating-linear-gradient(90deg, ${theme.stampColor} 0 2px, transparent 2px 3px, ${theme.stampColor} 3px 6px, transparent 6px 7px, ${theme.stampColor} 7px 8px, transparent 8px 11px, ${theme.stampColor} 11px 12px, transparent 12px 15px)`,
+                        backgroundImage: `repeating-linear-gradient(90deg, ${theme.stampColor} 0 4px, transparent 4px 5px, ${theme.stampColor} 5px 8px, transparent 8px 10px, ${theme.stampColor} 10px 10px, transparent 10px 11px, ${theme.stampColor} 11px 14px, transparent 14px 17px)`,
                     }}
                 />
                 <span
-                    className="text-[7px] font-mono tracking-[0.3em] uppercase whitespace-nowrap opacity-50"
+                    className="text-[10px] font-mono tracking-[0.3em] uppercase whitespace-nowrap opacity-50"
                     style={{ writingMode: 'vertical-rl', color: theme.stampColor }}
                 >
                     Reishi Ticket
                 </span>
                 <span
                     className="text-lg font-black font-mono leading-none"
-                    style={{ color: theme.stampColor, textShadow: `0 0 10px ${theme.inkColor}` }}
+                    style={{ color: theme.stampColor, textShadow: `0 0 14px ${theme.inkColor}` }}
                 >
                     {ticketNo}
                 </span>

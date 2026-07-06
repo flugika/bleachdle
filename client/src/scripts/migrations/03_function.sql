@@ -39,12 +39,13 @@ END;
 $$;
 
 CREATE OR REPLACE FUNCTION build_song_segment_sequence(p_length INT)
-RETURNS song_segment_pair[] -- เปลี่ยน return type
+RETURNS song_segment_pair[]
 LANGUAGE plpgsql
 AS $$
 DECLARE
     song_pool TEXT[];
     pool_idx INT := 1;
+    pool_size INT;
     final_pairs song_segment_pair[] := ARRAY[]::song_segment_pair[];
     
     current_song_id TEXT;
@@ -54,13 +55,18 @@ DECLARE
     i INT;
     temp_swap TEXT;
 BEGIN
-    -- ดึงรายการเพลงทั้งหมดมาทำ Pool
-    SELECT array_agg(id) INTO song_pool
+    -- ดึงรายการเพลงทั้งหมดมาทำ Pool รอบแรก
+    SELECT array_agg(id), cardinality(array_agg(id)) INTO song_pool, pool_size
     FROM (SELECT id FROM songs ORDER BY random()) t;
+
+    -- 🚨 ตรวจสอบก่อนว่ามีเพลงในระบบไหม กัน Infinite Loop หรือ Error
+    IF pool_size IS NULL OR pool_size = 0 THEN
+        RAISE EXCEPTION 'ไม่มีข้อมูลเพลงในตาราง songs';
+    END IF;
 
     FOR i IN 1..p_length LOOP
         -- Reshuffle ถ้าใช้เพลงหมดสำรับ
-        IF pool_idx > cardinality(song_pool) THEN
+        IF pool_idx > pool_size THEN
             SELECT array_agg(id) INTO song_pool
             FROM (SELECT id FROM songs ORDER BY random()) t;
             pool_idx := 1;
@@ -68,22 +74,27 @@ BEGIN
 
         current_song_id := song_pool[pool_idx];
 
-        -- กันเพลงซ้ำติดกัน
-        IF current_song_id = prev_song_id AND cardinality(song_pool) > 1 THEN
+        -- 🛡️ กันเพลงซ้ำติดกันตรงรอยต่อสำรับ (เช็คด้วยว่ามีไพ่ใบถัดไปให้สลับไหม)
+        IF current_song_id = prev_song_id AND pool_size > 1 AND pool_idx < pool_size THEN
             temp_swap := song_pool[pool_idx];
             song_pool[pool_idx] := song_pool[pool_idx + 1];
             song_pool[pool_idx + 1] := temp_swap;
             current_song_id := song_pool[pool_idx];
         END IF;
 
-        -- สุ่มเลือก Segment ที่ผูกกับ Song นี้แน่นอน
+        -- สุ่มเลือก 1 Segment ที่ผูกกับ Song นี้
         SELECT id INTO selected_segment_id
         FROM song_segments
         WHERE song_id = current_song_id
         ORDER BY random()
         LIMIT 1;
 
-        -- เพิ่ม Pair เข้าใน Array
+        -- 🛡️ ในกรณีที่เพลงนั้นไม่มี segment ผูกไว้เลย (กันพัง)
+        IF selected_segment_id IS NULL THEN
+            selected_segment_id := 'no-segment'; 
+        END IF;
+
+        -- เพิ่ม Pair เข้าใน Array ผลลัพธ์
         final_pairs := final_pairs || ROW(current_song_id, selected_segment_id)::song_segment_pair;
         
         prev_song_id := current_song_id;

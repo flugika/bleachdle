@@ -8,18 +8,7 @@ import { QuoteGameController, QuoteGuessEntry } from '@/src/features/quote/types
 import { MAX_QUOTE_GUESSES } from '@/src/const/guess';
 import { STORAGE_KEYS } from '@/src/const/localStorage';
 import { nestedJSONStorage } from '@/src/lib/store/createNestedStorage';
-
-// 🛡️ Type guard กันข้อมูล legacy/corrupted เหมือน useSongGame
-function isValidGuessEntry(entry: unknown): entry is QuoteGuessEntry {
-    return (
-        typeof entry === 'object' &&
-        entry !== null &&
-        'status' in entry &&
-        ((entry as QuoteGuessEntry).status === 'correct' || (entry as QuoteGuessEntry).status === 'wrong') &&
-        'guess' in entry &&
-        typeof (entry as QuoteGuessEntry).guess === 'object'
-    );
-}
+import { isValidGuessEntry } from '../../validGuessEntry';
 
 export const useQuoteGame = create<QuoteGameController>()(
     persist(

@@ -114,7 +114,7 @@ export default function Home() {
 
             {/* ... (HERO INTRO SECTION ของคุณ คงเดิม) ... */}
             <div className="relative z-20 text-center mb-6 max-w-5xl w-full px-4 flex flex-col items-center justify-center">
-                <div className="text-[6px] md:text-xs tracking-[0.7em] text-[#c8a96e] font-mono font-bold mb-6 flex flex-col md:flex-row items-center justify-center gap-3">
+                <div className="text-[8px] md:text-xs tracking-[0.7em] text-[#c8a96e] font-mono font-bold mb-6 flex flex-col md:flex-row items-center justify-center gap-3">
                     <div className="flex items-center gap-3">
                         <span className="w-1 h-1 md:w-2 md:h-2 bg-[#c8a96e] animate-ping rounded shrink-0" />
                         <span>S.R.D.I_LINK</span>
@@ -127,9 +127,9 @@ export default function Home() {
                 </h1>
                 <HeaderDivider className="mt-6" />
                 <div className="relative mt-8 max-w-xl w-full mx-auto group/subtitle">
-                    <span className="absolute -left-[3px] top-1/2 -translate-y-1/2 w-1.5 h-1.5 rotate-45 bg-[#c8a96e]/50 group-hover/subtitle:bg-[#c8a96e] transition-colors duration-500" />
-                    <span className="absolute -right-[3px] top-1/2 -translate-y-1/2 w-1.5 h-1.5 rotate-45 bg-[#c8a96e]/50 group-hover/subtitle:bg-[#c8a96e] transition-colors duration-500" />
-                    <p className="relative overflow-hidden text-[10px] md:text-xs font-mono tracking-[0.45em] uppercase border-y border-white/10 py-4 backdrop-blur-sm bg-black/20">
+                    <span className="absolute -left-[5px] top-1/2 -translate-y-1/2 w-1.5 h-1.5 rotate-45 bg-[#c8a96e]/50 group-hover/subtitle:bg-[#c8a96e] transition-colors duration-500" />
+                    <span className="absolute -right-[5px] top-1/2 -translate-y-1/2 w-1.5 h-1.5 rotate-45 bg-[#c8a96e]/50 group-hover/subtitle:bg-[#c8a96e] transition-colors duration-500" />
+                    <p className="relative overflow-hidden text-[12px] md:text-xs font-mono tracking-[0.45em] uppercase border-y border-white/10 py-4 backdrop-blur-sm bg-black/20">
                         <span className="pointer-events-none absolute inset-y-0 left-[-45%] w-1/3 bg-gradient-to-r from-transparent via-[#c8a96e]/20 to-transparent skew-x-[-20deg] animate-[subtitle-scan_4.5s_ease-in-out_infinite]" />
                         <span className="relative text-[#c8a96e]/90">THOUSAND-YEAR BLOOD WAR</span>
                         <br />
@@ -152,10 +152,10 @@ export default function Home() {
                     <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_130%,rgba(200,169,110,0.12)_0%,transparent_60%)] opacity-0 group-hover:opacity-100 transition-opacity duration-700 pointer-events-none" />
 
                     {/* Shifting Golden Grid Edge Overlays */}
-                    <div className="absolute top-0 left-0 w-8 h-[2px] bg-white/10 group-hover:bg-[#c8a96e] transition-colors duration-500" />
-                    <div className="absolute top-0 left-0 w-[2px] h-8 bg-white/10 group-hover:bg-[#c8a96e] transition-colors duration-500" />
-                    <div className="absolute bottom-0 right-0 w-8 h-[2px] bg-white/10 group-hover:bg-[#c8a96e] transition-colors duration-500" />
-                    <div className="absolute bottom-0 right-0 w-[2px] h-8 bg-white/10 group-hover:bg-[#c8a96e] transition-colors duration-500" />
+                    <div className="absolute top-0 left-0 w-8 h-[4px] bg-white/10 group-hover:bg-[#c8a96e] transition-colors duration-500" />
+                    <div className="absolute top-0 left-0 w-[4px] h-8 bg-white/10 group-hover:bg-[#c8a96e] transition-colors duration-500" />
+                    <div className="absolute bottom-0 right-0 w-8 h-[4px] bg-white/10 group-hover:bg-[#c8a96e] transition-colors duration-500" />
+                    <div className="absolute bottom-0 right-0 w-[4px] h-8 bg-white/10 group-hover:bg-[#c8a96e] transition-colors duration-500" />
 
                     {/* Subtle Crosshair Interface Vector */}
                     <div className="absolute top-4 right-4 w-2 h-2 border-t border-r border-white/10 group-hover:border-[#c8a96e]/40 transition-colors" />
@@ -165,7 +165,7 @@ export default function Home() {
                     <div className="flex flex-col justify-between h-full min-h-[170px] relative z-10">
                         <div className="flex justify-between items-start">
                             <div>
-                                <span className="text-[9px] font-mono tracking-[0.35em] text-[#c8a96e] font-bold uppercase block mb-1">
+                                <span className="text-[10px] font-mono tracking-[0.35em] text-[#c8a96e] font-bold uppercase block mb-1">
                                     PHASE_01 // DAILY_MANIFESTATION
                                 </span>
                                 <h2 className="text-3xl font-black tracking-[0.15em] text-white group-hover:text-[#c8a96e] group-hover:tracking-[0.18em] transition-all duration-500">
@@ -182,7 +182,7 @@ export default function Home() {
                             One new character to guess every day. The same puzzle for everyone — come back tomorrow for the next one.
                         </p>
 
-                        <div className="pt-5 border-t border-white/5 flex items-center justify-between text-[8px] font-mono tracking-[0.25em] text-white/30">
+                        <div className="pt-5 border-t border-white/5 flex items-center justify-between text-[9px] font-mono tracking-[0.25em] text-white/30">
                             <span className="flex items-center gap-2">
                                 <span className="w-1 h-1 bg-[#c8a96e] rounded group-hover:animate-ping" />
                                 DATA_STREAM: REISHI_STABLE
@@ -204,10 +204,10 @@ export default function Home() {
                     <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_130%,rgba(96,165,250,0.1)_0%,transparent_60%)] opacity-0 group-hover:opacity-100 transition-opacity duration-700 pointer-events-none" />
 
                     {/* Shifting Blue Grid Edge Overlays */}
-                    <div className="absolute top-0 left-0 w-8 h-[2px] bg-white/10 group-hover:bg-blue-400 transition-colors duration-500" />
-                    <div className="absolute top-0 left-0 w-[2px] h-8 bg-white/10 group-hover:bg-blue-400 transition-colors duration-500" />
-                    <div className="absolute bottom-0 right-0 w-8 h-[2px] bg-white/10 group-hover:bg-blue-400 transition-colors duration-500" />
-                    <div className="absolute bottom-0 right-0 w-[2px] h-8 bg-white/10 group-hover:bg-blue-400 transition-colors duration-500" />
+                    <div className="absolute top-0 left-0 w-8 h-[4px] bg-white/10 group-hover:bg-blue-400 transition-colors duration-500" />
+                    <div className="absolute top-0 left-0 w-[4px] h-8 bg-white/10 group-hover:bg-blue-400 transition-colors duration-500" />
+                    <div className="absolute bottom-0 right-0 w-8 h-[4px] bg-white/10 group-hover:bg-blue-400 transition-colors duration-500" />
+                    <div className="absolute bottom-0 right-0 w-[4px] h-8 bg-white/10 group-hover:bg-blue-400 transition-colors duration-500" />
 
                     {/* Subtle Crosshair Interface Vector */}
                     <div className="absolute top-4 right-4 w-2 h-2 border-t border-r border-white/10 group-hover:border-blue-400/40 transition-colors" />
@@ -217,7 +217,7 @@ export default function Home() {
                     <div className="flex flex-col justify-between h-full min-h-[170px] relative z-10">
                         <div className="flex justify-between items-start">
                             <div>
-                                <span className="text-[9px] font-mono tracking-[0.35em] text-blue-400/80 font-bold uppercase block mb-1">
+                                <span className="text-[10px] font-mono tracking-[0.35em] text-blue-400/80 font-bold uppercase block mb-1">
                                     PHASE_02 // GARGANTA_ABYSSAL_RIFT
                                 </span>
                                 <h2 className="text-3xl font-black tracking-[0.15em] text-white group-hover:text-blue-400 group-hover:tracking-[0.18em] transition-all duration-500">
@@ -234,7 +234,7 @@ export default function Home() {
                             Unlimited practice. Guess as many random characters as you like, back to back, no daily limit.
                         </p>
 
-                        <div className="pt-5 border-t border-white/5 flex items-center justify-between text-[8px] font-mono tracking-[0.25em] text-white/30">
+                        <div className="pt-5 border-t border-white/5 flex items-center justify-between text-[9px] font-mono tracking-[0.25em] text-white/30">
                             <span className="flex items-center gap-2">
                                 <span className="w-1 h-1 bg-blue-400 rounded group-hover:animate-ping" />
                                 RIFT_STREAM: UNRESTRICTED_OVERFLOW
@@ -248,19 +248,19 @@ export default function Home() {
 
             </div>
 
-            <SoulSyncLoader hideLabel className="mt-0 mb-12" />
+            <SoulSyncLoader hideLabel className="mt-0 mb-6" />
 
             {/* ================= 📖 ABOUT / WHAT IS BLEACHDLE SECTION ================= */}
             <div className="relative z-20 w-full max-w-5xl px-4 pb-16">
                 <div className="relative border border-white/5 bg-gradient-to-b from-[#09090e] to-[#030305] p-8 md:p-12 shadow-[0_20px_50px_rgba(0,0,0,0.8),inset_0_1px_1px_rgba(255,255,255,0.02)] overflow-hidden">
 
-                    <div className="absolute top-0 left-0 w-8 h-[2px] bg-white/10" />
-                    <div className="absolute top-0 left-0 w-[2px] h-8 bg-white/10" />
-                    <div className="absolute bottom-0 right-0 w-8 h-[2px] bg-white/10" />
-                    <div className="absolute bottom-0 right-0 w-[2px] h-8 bg-white/10" />
+                    <div className="absolute top-0 left-0 w-8 h-[4px] bg-white/10" />
+                    <div className="absolute top-0 left-0 w-[4px] h-8 bg-white/10" />
+                    <div className="absolute bottom-0 right-0 w-8 h-[4px] bg-white/10" />
+                    <div className="absolute bottom-0 right-0 w-[4px] h-8 bg-white/10" />
 
                     <div className="flex items-center gap-4 mb-6">
-                        <span className="text-[9px] font-mono tracking-[0.4em] text-[#c8a96e] font-bold uppercase">
+                        <span className="text-[11px] font-mono tracking-[0.4em] text-[#c8a96e] font-bold uppercase">
                             DATABASE_ENTRY // 12TH_DIV_ARCHIVE
                         </span>
                         <div className="h-px flex-1 bg-white/10" />
@@ -270,10 +270,10 @@ export default function Home() {
                         What is Bleachdle?
                     </h3>
 
-                    <p className="text-[13px] md:text-sm text-neutral-400 font-light leading-relaxed max-w-3xl mb-2">
+                    <p className="text-[15px] md:text-sm text-neutral-400 font-light leading-relaxed max-w-3xl mb-2">
                         Bleachdle is a fan-made guessing game built by fans, for fans...
                     </p>
-                    <p className="text-[13px] md:text-sm text-neutral-400 font-light leading-relaxed max-w-3xl mb-10">
+                    <p className="text-[15px] md:text-sm text-neutral-400 font-light leading-relaxed max-w-3xl mb-10">
                         Select a target mode below to initiate Senkaimon protocol.
                     </p>
 
@@ -294,14 +294,14 @@ export default function Home() {
                                 />
 
                                 {/* 🔹 เพิ่ม Micro-interaction : ข้อความบอกสถานะให้รู้ว่ากดได้ */}
-                                <div className="absolute top-2 right-2 text-[7px] font-mono tracking-widest uppercase opacity-0 group-hover/mode:opacity-100 transition-opacity duration-300" style={{ color: mode.accent }}>
+                                <div className="absolute top-2 right-2 text-[10px] font-mono tracking-widest uppercase opacity-0 group-hover/mode:opacity-100 transition-opacity duration-300" style={{ color: mode.accent }}>
                                     [ CLICK TO INITIATE ]
                                 </div>
 
                                 <div className="relative z-10 flex items-start justify-between mb-3">
                                     <div>
                                         <span
-                                            className="text-[9px] font-mono tracking-[0.3em] font-bold uppercase block mb-1 group-hover/mode:animate-pulse"
+                                            className="text-[11px] font-mono tracking-[0.3em] font-bold uppercase block mb-1 group-hover/mode:animate-pulse"
                                             style={{ color: mode.accent }}
                                         >
                                             {mode.tagline}
@@ -317,7 +317,7 @@ export default function Home() {
                                         {mode.kanji}
                                     </span>
                                 </div>
-                                <p className="relative z-10 text-[11.5px] leading-relaxed text-neutral-500 group-hover/mode:text-neutral-300 transition-colors duration-500">
+                                <p className="relative z-10 text-[11.7px] leading-relaxed text-neutral-500 group-hover/mode:text-neutral-300 transition-colors duration-500">
                                     {mode.description}
                                 </p>
                             </button>

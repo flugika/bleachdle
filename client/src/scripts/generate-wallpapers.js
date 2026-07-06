@@ -1,3 +1,5 @@
+// npx tsx src/scripts/generate-wallpapers.js
+
 import fs from 'fs';
 import path from 'path';
 

@@ -1,14 +1,14 @@
 // src/services/character.ts
 import 'server-only'
 
-import { supabase } from '@/src/lib/supabase/supabase';
+import { supabaseServer } from '@/src/lib/supabase/supabase-server';
 import { Character } from '@/src/entities/character/schema';
 
 export async function getDailyCharacter() {
     const todayStr = new Date().toLocaleDateString('en-CA', { timeZone: 'Asia/Bangkok' });
 
     // ระบุ Type ของผลลัพธ์จาก Supabase ให้ชัดเจน
-    const { data, error } = await supabase
+    const { data, error } = await supabaseServer
         .from('daily_schedule')
         .select(`
             characters:character_id (

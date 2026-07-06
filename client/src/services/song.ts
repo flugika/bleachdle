@@ -1,7 +1,7 @@
 // src/services/song.ts
 import 'server-only'
 
-import { supabase } from '@/src/lib/supabase/supabase';
+import { supabaseServer } from '@/src/lib/supabase/supabase-server';
 import { BleachSong } from '@/src/entities/song/schema';
 import { getAllSongSegments, getSongById } from '@/src/features/song/song';
 
@@ -9,7 +9,7 @@ export async function getDailySong(): Promise<{ song: BleachSong; segmentId: str
     const todayStr = new Date().toLocaleDateString('en-CA', { timeZone: 'Asia/Bangkok' });
 
     // 1. ดึงทั้ง song_id (Parent) และ song_segment_id (Child) ตรงๆ จาก DB
-    const { data, error } = await supabase
+    const { data, error } = await supabaseServer
         .from('daily_schedule')
         .select('song_id, song_segment_id')
         .eq('date', todayStr)

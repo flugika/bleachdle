@@ -40,7 +40,7 @@ export const HowToPlayModal = ({ isOpen, onClose, mode }: HowToPlayModalProps) =
     if (!isOpen) return null;
     if (!target || !guess || !comparison) return null;
 
-    const cellClass = "h-10 flex items-center justify-center border border-[#c8a96e]/30 text-[8px] font-bold text-center";
+    const cellClass = "h-10 flex items-center justify-center border border-[#c8a96e]/50 text-[10px] font-bold text-center";
     const headers = ['guess', 'Image', 'Gender', 'Race', 'Affiliation', 'Height', 'Age', 'Eye', 'Hair', 'Weapon', 'Ability', 'Release', '1st Arc'];
 
     return (
@@ -125,19 +125,19 @@ export const HowToPlayModal = ({ isOpen, onClose, mode }: HowToPlayModalProps) =
                 <div className="space-y-4">
                     <div className="relative flex items-center gap-4">
                         <div className="relative w-16 h-16">
-                            <Image src={`/assets/characters/${target.image}`} alt={target.name} fill sizes="64px" className="object-cover border border-[#2a2a42]" />
+                            <Image src={`/assets/characters/${target.image}`} alt={target.name} fill sizes="66px" className="object-cover border border-[#2a2a42]" />
                         </div>
                         <p className="text-xs text-[#a0988e]">Target Character: <span className="font-bold text-white">{target.name}</span></p>
                     </div>
 
-                    <div className="grid grid-cols-13 gap-1 text-[8px] uppercase font-bold text-center mb-2">
+                    <div className="grid grid-cols-13 gap-1 text-[10px] uppercase font-bold text-center mb-2">
                         {headers.map(h => (
                             <div key={h} className="text-[#c8a96e] p-1">{h}</div>
                         ))}
                     </div>
 
                     {/* Target Row */}
-                    <div className="grid grid-cols-13 gap-1 text-[8px] font-bold text-center mb-2">
+                    <div className="grid grid-cols-13 gap-1 text-[10px] font-bold text-center mb-2">
                         <div className={`${cellClass} bg-[#0e0e1a]`}>Target</div>
                         <div className={`${cellClass} bg-gray-900 relative`}>
                             <Image src={`/assets/characters/${target.image}`} alt={target.name} fill sizes="40px" className="object-cover" />
@@ -156,7 +156,7 @@ export const HowToPlayModal = ({ isOpen, onClose, mode }: HowToPlayModalProps) =
                     </div>
 
                     {/* Guess Row */}
-                    <div className="grid grid-cols-13 gap-1 text-[8px] font-bold text-center">
+                    <div className="grid grid-cols-13 gap-1 text-[10px] font-bold text-center">
                         <div className={`${cellClass} bg-[#0e0e1a]`}>Guess</div>
                         <div className={`${cellClass} bg-gray-900 relative`}>
                             <Image src={`/assets/characters/${guess.image}`} alt={guess.name} fill sizes="40px" className="object-cover" />

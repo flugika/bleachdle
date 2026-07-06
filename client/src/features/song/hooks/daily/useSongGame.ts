@@ -5,25 +5,10 @@ import { BleachSong } from '@/src/entities/song/schema';
 import { getSongStatus } from '@/src/features/song/compareSong';
 import { getSongById } from '@/src/features/song/song';
 import { recordDailyStat } from '@/src/services/statsClient';
-// 👇 ใช้ type กลางจาก types.ts แทนการประกาศ interface ซ้ำในไฟล์นี้ — กัน definition
-// สองที่ drift ออกจากกันในอนาคต (เช่นถ้ามีคนแก้ shape ใน types.ts แต่ลืมแก้ที่นี่)
 import { SongGuessEntry, DailySongGameState } from '@/src/features/song/types';
 import { STORAGE_KEYS } from '@/src/const/localStorage';
 import { nestedJSONStorage } from '@/src/lib/store/createNestedStorage';
-
-// 🛡️ Type guard ตรวจสอบว่า guess entry ตรง schema ปัจจุบันจริง กัน corrupted/legacy data
-// (ก็อปมาจาก useSongGame.ts ฝั่ง unlimited เป๊ะ — daily เจอ path เดียวกันได้เหมือนกัน)
-function isValidGuessEntry(entry: unknown): entry is SongGuessEntry {
-    return (
-        typeof entry === 'object' &&
-        entry !== null &&
-        'status' in entry &&
-        (entry as SongGuessEntry).status !== undefined &&
-        ((entry as SongGuessEntry).status === 'correct' || (entry as SongGuessEntry).status === 'wrong') &&
-        'guess' in entry &&
-        typeof (entry as SongGuessEntry).guess === 'object'
-    );
-}
+import { isValidGuessEntry } from '../../validGuessEntry';
 
 export const useSongGame = create<DailySongGameState>()(
     persist(
@@ -95,7 +80,7 @@ export const useSongGame = create<DailySongGameState>()(
 
                 set({ hasFinalized: true });
 
-                recordDailyStat('song', isWin, guesses.length).catch(() => { });
+                // recordDailyStat('song', isWin, guesses.length).catch(() => { });
             },
 
             resetGame: () => {

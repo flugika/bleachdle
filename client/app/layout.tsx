@@ -1,7 +1,7 @@
 // app/layout.tsx
 import type { Metadata } from "next";
 import '../src/styles/globals.css';
-import { Cinzel } from "next/font/google";
+import { Cinzel, Geist } from "next/font/google";
 import Footer from "@/src/shared/layout/Footer";
 import { BleachReiatsuCursor } from "@/src/shared/ui/BleachReiatsuCursor";
 import { WallpaperInitializer } from "@/src/shared/ui/WallpaperInitializer";
@@ -12,7 +12,7 @@ import { ReiatsuAmbientSides } from "@/src/shared/layout/ReiatsuAmbientSides";
 
 const cinzel = Cinzel({
   subsets: ["latin"],
-  weight: ["400", "700"],
+  weight: ["400", "500", "600", "700"],
 });
 
 export const metadata: Metadata = {
@@ -21,15 +21,20 @@ export const metadata: Metadata = {
   metadataBase: new URL("https://bleachdle.app"),
   openGraph: {
     title: "Bleachdle",
-    description: "Guess Bleach characters daily",
+    description: "Guess Bleach daily",
     type: "website",
   },
 };
 
+const geist = Geist({
+  subsets: ["latin"],
+  variable: "--font-geist-sans",
+});
+
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en" className="h-full">
-      <body className={`${cinzel.className} text-white antialiased relative`}>
+      <body className={`${cinzel.className} ${geist.variable} text-white antialiased relative`}>
         {/* เลเยอร์ล่างสุด */}
         <div className="fixed inset-0 bleach-scanlines pointer-events-none z-[0] opacity-40" />
 

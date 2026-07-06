@@ -21,7 +21,7 @@ export const BleachReiatsuCursor: React.FC = () => {
             const particle = document.createElement('div');
             // สไตล์ละอองน้ำแข็ง (เล็ก-ใหญ่สลับกัน)
             const size = Math.random() * 8 + 2;
-            particle.className = "fixed pointer-events-none rounded-full blur-[2px] z-[9999]";
+            particle.className = "fixed pointer-events-none rounded-full blur-[4px] z-[9999]";
             particle.style.width = `${size}px`;
             particle.style.height = `${size}px`;
             particle.style.background = 'radial-gradient(circle, rgba(255,255,255,1) 0%, rgba(186,230,253,0.8) 50%, rgba(56,189,248,0.3) 100%)';

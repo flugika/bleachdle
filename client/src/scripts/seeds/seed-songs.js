@@ -1,6 +1,6 @@
-// npx tsx --env-file=.env src/scripts/seeds/daily/seed-songs.js
+// npx tsx --env-file=.env src/scripts/seeds/seed-songs.js
 
-import { supabase } from '@/src/lib/supabase/supabase'
+import { supabaseClient } from '@/src/lib/supabase/supabase-client'
 import fs from 'fs';
 import path from 'path';
 
@@ -38,7 +38,7 @@ async function seedSongs() {
 
         // 3. ทำการ Bulk Insert เข้าไปที่ตาราง 'songs' ก่อน
         console.log(`🎵 Uploading songs into 'songs' table...`);
-        const { data: insertedSongs, error: songsError } = await supabase
+        const { data: insertedSongs, error: songsError } = await supabaseClient
             .from('songs')
             .insert(songsToInsert)
             .select('id, title');
@@ -49,7 +49,7 @@ async function seedSongs() {
         // 4. ทำการ Bulk Insert เซกเมนต์ทั้งหมดเข้าไปที่ตาราง 'song_segments' ตามมา
         if (segmentsToInsert.length > 0) {
             console.log(`🎼 Uploading song segments into 'song_segments' table...`);
-            const { data: insertedSegments, error: segmentsError } = await supabase
+            const { data: insertedSegments, error: segmentsError } = await supabaseClient
                 .from('song_segments')
                 .insert(segmentsToInsert)
                 .select('id');

@@ -37,8 +37,8 @@ export default function Sealed() {
                 <div className="absolute bottom-0 left-0 w-6 h-6 border-b-2 border-l-2 border-solid border-white/30"></div>
                 <div className="absolute bottom-0 right-0 w-6 h-6 border-b-2 border-r-2 border-solid border-white/30"></div>
 
-                <span className="absolute bottom-2 left-8 font-mono text-[9px] tracking-[0.4em] text-white/40 uppercase">System // Absolute_Seal_Active</span>
-                <span className="absolute top-2 right-8 font-mono text-[9px] tracking-[0.4em] text-cyan-400/70 uppercase font-bold">Decree // Central_46_Law</span>
+                <span className="absolute bottom-2 left-8 font-mono text-[11px] tracking-[0.4em] text-white/40 uppercase">System // Absolute_Seal_Active</span>
+                <span className="absolute top-2 right-8 font-mono text-[11px] tracking-[0.4em] text-cyan-400/70 uppercase font-bold">Decree // Central_46_Law</span>
             </div>
 
             {/* 💎 [CORE ZONE: z-30] */}
@@ -53,10 +53,10 @@ export default function Sealed() {
                 <div className="relative w-full max-w-2xl bg-gradient-to-b from-[#0a0404]/20 to-[#020205]/30 border border-[#e83030]/20 py-5 px-6 md:py-6 md:px-8 backdrop-blur-xl shadow-[0_30px_70px_rgba(0,0,0,0.8),_0_0_50px_rgba(232,48,48,0.03)] transition-all duration-500">
 
                     {/* ⛩️ Kido Corner Brackets */}
-                    <div className="absolute -top-[1px] -left-[1px] w-4 h-4 border-t-2 border-l-2 border-[#e83030] drop-shadow-[0_0_5px_rgba(232,48,48,0.6)]"></div>
-                    <div className="absolute -top-[1px] -right-[1px] w-4 h-4 border-t-2 border-r-2 border-[#e83030] drop-shadow-[0_0_5px_rgba(232,48,48,0.6)]"></div>
-                    <div className="absolute -bottom-[1px] -left-[1px] w-4 h-4 border-b-2 border-l-2 border-[#e83030] drop-shadow-[0_0_5px_rgba(232,48,48,0.6)]"></div>
-                    <div className="absolute -bottom-[1px] -right-[1px] w-4 h-4 border-b-2 border-r-2 border-[#e83030] drop-shadow-[0_0_5px_rgba(232,48,48,0.6)]"></div>
+                    <div className="absolute -top-[1px] -left-[1px] w-4 h-4 border-t-2 border-l-2 border-[#e83030] drop-shadow-[0_0_7px_rgba(232,48,48,0.6)]"></div>
+                    <div className="absolute -top-[1px] -right-[1px] w-4 h-4 border-t-2 border-r-2 border-[#e83030] drop-shadow-[0_0_7px_rgba(232,48,48,0.6)]"></div>
+                    <div className="absolute -bottom-[1px] -left-[1px] w-4 h-4 border-b-2 border-l-2 border-[#e83030] drop-shadow-[0_0_7px_rgba(232,48,48,0.6)]"></div>
+                    <div className="absolute -bottom-[1px] -right-[1px] w-4 h-4 border-b-2 border-r-2 border-[#e83030] drop-shadow-[0_0_7px_rgba(232,48,48,0.6)]"></div>
 
                     {/* เส้นไกด์นำสายตาชั้นใน */}
                     <div className="absolute inset-1.5 border border-white/[0.02] pointer-events-none"></div>
@@ -68,7 +68,7 @@ export default function Sealed() {
                         <div className="w-full flex items-center justify-center gap-3">
                             <div className="h-[1px] flex-1 bg-gradient-to-r from-transparent via-[#e83030]/30 to-[#e83030]/70"></div>
 
-                            <h2 className="text-xl md:text-2xl font-black tracking-[0.4em] bg-gradient-to-r from-[#e83030] via-[#ff5555] to-[#e83030] bg-clip-text text-transparent drop-shadow-[0_0_12px_rgba(232,48,48,0.4)] uppercase animate-pulse select-none pl-[0.4em]">
+                            <h2 className="text-xl md:text-2xl font-black tracking-[0.4em] bg-gradient-to-r from-[#e83030] via-[#ff5555] to-[#e83030] bg-clip-text text-transparent drop-shadow-[0_0_14px_rgba(232,48,48,0.4)] uppercase animate-pulse select-none pl-[0.4em]">
                                 卍 ACCESS DENIED 卍
                             </h2>
 
@@ -76,17 +76,17 @@ export default function Sealed() {
                         </div>
 
                         {/* Subtitle / System Log */}
-                        <div className="text-[9px] uppercase tracking-[0.4em] text-[#c8a96e]/40 font-mono -mt-2">
+                        <div className="text-[11px] uppercase tracking-[0.4em] text-[#c8a96e]/40 font-mono -mt-2">
                             Central 46 Executive Order // Dimensional_Lockdown
                         </div>
 
                         {/* 🇯🇵 Romaji Section */}
-                        <blockquote className="text-xs md:text-sm font-medium tracking-wider text-[#c8a96e]/90 italic font-mono leading-relaxed max-w-xl px-4 border-x border-[#e83030]/15 drop-shadow-[0_2px_4px_rgba(0,0,0,0.5)]">
+                        <blockquote className="text-xs md:text-sm font-medium tracking-wider text-[#c8a96e]/90 italic font-mono leading-relaxed max-w-xl px-4 border-x border-[#e83030]/15 drop-shadow-[0_4px_6px_rgba(0,0,0,0.5)]">
                             "Chūō Shijūroku-shitsu no meirei ni yori, kono mōdo wa fūin sarete imasu."
                         </blockquote>
 
                         {/* 🇬🇧 English Section */}
-                        <p className="text-[11px] md:text-xs leading-relaxed text-neutral-400 uppercase tracking-widest max-w-xl font-sans px-2 drop-shadow-[0_1px_2px_rgba(0,0,0,0.6)]">
+                        <p className="text-[11px] md:text-xs leading-relaxed text-neutral-400 uppercase tracking-widest max-w-xl font-sans px-2 drop-shadow-[0_1px_4px_rgba(0,0,0,0.6)]">
                             This spiritual gateway has been strictly sealed by absolute decree of{' '}
                             <span className="text-neutral-200 font-bold underline decoration-[#e83030]/60 decoration-2 underline-offset-2 tracking-wider">
                                 Central 46
@@ -95,7 +95,7 @@ export default function Sealed() {
                         </p>
 
                         {/* Bottom System Code */}
-                        <div className="text-[8px] font-mono text-neutral-500 tracking-[0.2em] uppercase mt-0.5">
+                        <div className="text-[10px] font-mono text-neutral-500 tracking-[0.2em] uppercase mt-0.5">
                             Crypt_ID // 046-FUIN-REIATSU-GATE
                         </div>
 
@@ -104,18 +104,18 @@ export default function Sealed() {
                             <Button
                                 variant="primary"
                                 onClick={() => navigate('/')} // 👈 ใช้งาน navigate จาก Senkaimon ตรงนี้
-                                className="w-full text-[11px] tracking-[0.3em] font-black relative overflow-hidden group/shimmer shadow-[0_0_15px_rgba(200,169,110,0.05)] hover:shadow-[0_0_25px_rgba(200,169,110,0.2)] duration-300"
+                                className="w-full text-[11px] tracking-[0.3em] font-black relative overflow-hidden group/shimmer shadow-[0_0_17px_rgba(200,169,110,0.05)] hover:shadow-[0_0_27px_rgba(200,169,110,0.2)] duration-300"
                             >
                                 {/* Effect แสงวิ่งผ่าน (Reiatsu Shimmer) ตอนเมาส์ชี้ */}
                                 <span className="absolute inset-0 w-full h-full bg-gradient-to-r from-transparent via-white/[0.08] to-transparent -translate-x-full group-hover/shimmer:animate-[gateShimmer_1.5s_infinite]" />
 
-                                <span className="relative z-10 flex items-center justify-center gap-2 transition-transform duration-300 group-hover/shimmer:translate-x-[-2px]">
+                                <span className="relative z-10 flex items-center justify-center gap-2 transition-transform duration-300 group-hover/shimmer:translate-x-[-4px]">
                                     ← RETURN TO CORE GATEWAY
                                 </span>
                             </Button>
 
                             {/* Tactical Subtext ที่จะสว่างขึ้นเมื่อโฮเวอร์บริเวณปุ่ม */}
-                            <span className="text-[7px] font-mono text-neutral-300 tracking-[0.15em] uppercase opacity-40 group-hover/btn:opacity-100 transition-opacity duration-300">
+                            <span className="text-[10px] font-mono text-neutral-300 tracking-[0.15em] uppercase opacity-40 group-hover/btn:opacity-100 transition-opacity duration-300">
                                 Bypass Protocol // Redirecting to Living World Gateway
                             </span>
                         </div>

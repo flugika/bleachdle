@@ -1,4 +1,4 @@
-// src/lib/utils/quote.ts
+// src/features/quote/quote.ts
 import rawQuotes from '@/src/data/quotes.json';
 import { BleachQuote, QuoteSchema } from '@/src/entities/quote/schema';
 

@@ -40,7 +40,7 @@ export default function Footer() {
 
     return (
         <footer className="w-full border-t border-white/5 bg-[#050505] py-12 px-6 relative z-30">
-            <div className="max-w-4xl mx-auto flex flex-col md:flex-row justify-between items-center gap-8">
+            <div className="max-w-6xl mx-auto flex flex-col md:flex-row justify-between items-center gap-8">
 
                 {/* Brand Section */}
                 <div className="text-center md:text-left">
@@ -51,7 +51,7 @@ export default function Footer() {
                     >
                         BLEACHDLE
                     </Link>
-                    <p className="text-[10px] text-white/40 mt-1 uppercase tracking-widest">
+                    <p className="text-[12px] text-white/40 mt-1 uppercase tracking-widest">
                         Soul Society Guessing Engine
                     </p>
                 </div>
@@ -66,8 +66,8 @@ export default function Footer() {
                                 href={link.path}
                                 onClick={(e) => handleNavigation(e, link.path)}
                                 // เสริม UX: อิงตามสไตล์เกมคอนโซล ไฮไลท์สีทองเมื่ออยู่หน้านั้นๆ ทันที
-                                className={`text-[10px] uppercase tracking-[0.2em] transition-colors ${isActive
-                                        ? "text-[#c8a96e] font-bold drop-shadow-[0_0_8px_rgba(200,169,110,0.4)]"
+                                className={`text-[12px] uppercase tracking-[0.2em] transition-colors ${isActive
+                                        ? "text-[#c8a96e] font-bold drop-shadow-[0_0_10px_rgba(200,169,110,0.4)]"
                                         : "text-white/50 hover:text-[#c8a96e]"
                                     }`}
                             >
@@ -78,7 +78,7 @@ export default function Footer() {
                 </nav>
 
                 {/* Metadata/Copyright */}
-                <div className="text-[9px] text-white/20 tracking-wider text-center md:text-right">
+                <div className="text-[11px] text-white/20 tracking-wider text-center md:text-right">
                     © {new Date().getFullYear()} fukusana.dev <br />
                     Latest Updated: 5 July 2026, 21:24 PM. <br />
                     Thousand-Year Blood War Cour 3 (The Conflict)

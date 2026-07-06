@@ -12,4 +12,4 @@ if (!SUPABASE_URL || !SUPABASE_SERVICE_ROLE_KEY) {
 }
 
 // สร้าง client สำหรับใช้งานใน Server
-export const supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY);
+export const supabaseServer = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY);

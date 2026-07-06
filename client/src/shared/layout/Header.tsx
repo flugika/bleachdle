@@ -54,7 +54,7 @@ export const Header = ({
                             strokeWidth="2"
                             strokeLinecap="round"
                             strokeLinejoin="round"
-                            className="transform transition-all duration-500 ease-[cubic-bezier(0.34,1.56,0.64,1)] group-hover/btn:scale-105 group-hover/btn:-rotate-12 drop-shadow-[0_0_0px_rgba(111,195,232,0)] group-hover/btn:drop-shadow-[0_0_8px_rgba(111,195,232,0.6)]"
+                            className="transform transition-all duration-500 ease-[cubic-bezier(0.34,1.56,0.64,1)] group-hover/btn:scale-105 group-hover/btn:-rotate-12 drop-shadow-[0_0_0px_rgba(111,195,232,0)] group-hover/btn:drop-shadow-[0_0_10px_rgba(111,195,232,0.6)]"
                         >
                             <circle cx="12" cy="12" r="10"></circle>
                             <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path>
@@ -83,14 +83,14 @@ export const Header = ({
 
                 {/* Department Label */}
                 <div className="relative mb-3">
-                    <span className="text-[9px] tracking-[0.4em] text-[#c8a96e]/70 uppercase font-semibold">
+                    <span className="text-[11px] tracking-[0.4em] text-[#c8a96e]/70 uppercase font-semibold">
                         {subtitle}
                     </span>
                 </div>
 
                 {/* Main Title with "Scanner Brackets" */}
                 <div
-                    className={`relative px-8 py-3 transition-all duration-[900ms] ease-out ${isMounted ? "opacity-100 translate-y-0 blur-0" : "opacity-0 translate-y-3 blur-[3px]"
+                    className={`relative px-8 py-3 transition-all duration-[900ms] ease-out ${isMounted ? "opacity-100 translate-y-0 blur-0" : "opacity-0 translate-y-3 blur-[5px]"
                         }`}
                     style={{ transitionDelay: "320ms" }}
                 >
@@ -100,7 +100,7 @@ export const Header = ({
                     <div className="absolute bottom-0 right-0 w-3 h-3 border-b border-r border-[#c8a96e]/60" />
 
                     <h1
-                        className="text-4xl font-bold tracking-[0.3em] bg-clip-text text-transparent drop-shadow-[0_0_18px_rgba(200,169,110,0.25)] bg-[length:200%_100%] animate-[reiatsuSheen_6s_ease-in-out_infinite]"
+                        className="text-4xl font-bold tracking-[0.3em] bg-clip-text text-transparent drop-shadow-[0_0_110px_rgba(200,169,110,0.25)] bg-[length:200%_100%] animate-[reiatsuSheen_6s_ease-in-out_infinite]"
                         style={{
                             backgroundImage:
                                 "linear-gradient(100deg, #c8a96e 0%, #c8a96e 40%, #d9eef5 50%, #c8a96e 60%, #c8a96e 100%)"

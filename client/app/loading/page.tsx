@@ -30,13 +30,13 @@ export default function LoadingPreview() {
                 <div className="absolute bottom-0 left-0 w-6 h-6 border-b-2 border-l-2 border-solid border-white/30"></div>
                 <div className="absolute bottom-0 right-0 w-6 h-6 border-b-2 border-r-2 border-solid border-white/30"></div>
 
-                <span className="absolute bottom-2 left-8 font-mono text-[9px] tracking-[0.4em] text-white/40 uppercase">System // Reiatsu_Locked</span>
-                <span className="absolute top-2 right-8 font-mono text-[9px] tracking-[0.4em] text-cyan-400/70 uppercase font-bold">Stage_3 // Bankai_Unleashed</span>
+                <span className="absolute bottom-2 left-8 font-mono text-[11px] tracking-[0.4em] text-white/70 uppercase">System // Reiatsu_Locked</span>
+                <span className="absolute top-2 right-8 font-mono text-[11px] tracking-[0.4em] text-cyan-400/70 uppercase font-bold">Stage_3 // Bankai_Unleashed</span>
             </div>
 
 
             {/* 💎 [CORE ZONE: z-30] ตัว Loader หลักและข้อความอนิเมชัน */}
-            <div className="relative z-30 flex flex-col items-center justify-center translate-y-[-12px]">
+            <div className="relative z-30 flex flex-col items-center justify-center translate-y-[-14px]">
                 <ZangetsuLoader />
             </div>
         </div>

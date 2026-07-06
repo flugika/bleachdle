@@ -110,7 +110,7 @@ export function SongAudioPlayer({ target, attemptIndex, disabled = false }: Song
             )}
 
             {/* 🎧 CONTROL ROW LAYER — รวมปุ่มเล่นและแถบเสียงไว้ในแถวเดียวกันแบบโมเดิร์น */}
-            <div className="flex items-center gap-5 bg-[#0d0d12]/50 border border-[#c8a96e]/15 p-4 shadow-[0_8px_32px_rgba(0,0,0,0.5)] backdrop-blur-sm">
+            <div className="flex items-center gap-5 bg-[#0d0d12]/50 border border-[#c8a96e]/15 p-4 shadow-[0_10px_34px_rgba(0,0,0,0.5)] backdrop-blur-sm">
 
                 {/* ปุ่ม Play (คง Logic การสแปมรัวๆ และ EQ Animation ไว้ทั้งหมด) */}
                 <button
@@ -119,7 +119,7 @@ export function SongAudioPlayer({ target, attemptIndex, disabled = false }: Song
                     className={[
                         'relative w-16 h-16 shrink-0 rounded-full border-2 flex items-center justify-center transition-all duration-300 select-none',
                         isPlaying
-                            ? 'border-[#c8a96e] bg-[#c8a96e]/10 shadow-[0_0_25px_rgba(200,169,110,0.35)]'
+                            ? 'border-[#c8a96e] bg-[#c8a96e]/10 shadow-[0_0_27px_rgba(200,169,110,0.35)]'
                             : 'border-[#c8a96e]/40 bg-[#0a0a0f]/80 hover:border-[#c8a96e] hover:shadow-[0_0_20px_rgba(200,169,110,0.25)]',
                         (disabled || !target) ? 'opacity-30 cursor-not-allowed' : 'cursor-pointer',
                     ].join(' ')}
@@ -170,11 +170,11 @@ export function SongAudioPlayer({ target, attemptIndex, disabled = false }: Song
                             max={100}
                             value={Math.round(volume * 100)}
                             onChange={handleVolumeChange}
-                            className="w-full h-1 accent-[#c8a96e] bg-[#5a5a78]/20 rounded-lg appearance-none cursor-pointer"
+                            className="w-full h-1 accent-[#c8a96e] bg-[#777796]/20 rounded-lg appearance-none cursor-pointer"
                             aria-label="Volume"
                         />
 
-                        <span className="shrink-0 w-6 text-right text-[10px] font-mono text-[#5a5a78] tabular-nums">
+                        <span className="shrink-0 w-6 text-right text-[12px] font-mono text-[#777796] tabular-nums">
                             {Math.round(volume * 100)}%
                         </span>
                     </div>
@@ -185,7 +185,7 @@ export function SongAudioPlayer({ target, attemptIndex, disabled = false }: Song
                             {formatRevealMs(revealMs)}
                         </span>
                         {hasError && (
-                            <span className="text-[9px] uppercase tracking-[0.2em] text-[#e83030] font-mono mt-1.5 animate-pulse">
+                            <span className="text-[11px] uppercase tracking-[0.2em] text-[#e83030] font-mono mt-1.5 animate-pulse">
                                 Reiatsu signal lost — tap again to retry
                             </span>
                         )}

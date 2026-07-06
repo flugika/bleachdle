@@ -160,8 +160,23 @@ export function NavigationProvider({ children }: { children: React.ReactNode }) 
 
 export function useSenkaimon() {
     const context = useContext(NavigationContext);
+
     if (!context) {
+        // 🛡️ Senior Dev Pattern: แก้ไขปัญหา Next.js SSR Context Isolation / Dual Instance Hazard
+        // ถ้ากำลังทำงานบน Server (SSR) และหา Context ไม่เจอ ให้คืนค่า Safe Fallback เปล่ากลับไปก่อน
+        // เพื่อป้องกันไม่ให้เกิด Server Rendering Error (SSR Crash) หน้าจอจะไม่มืดค้าง 
+        // เมื่อโค้ดตัวนี้ไปรันต่อบน Client ระบบจะ Hydrate และจับคู่กับ Provider จริงได้สมบูรณ์ 100% เอง
+        if (typeof window === "undefined") {
+            return {
+                state: "idle" as SenkaimonState,
+                navigate: async (href: string) => { },
+                reportReady: () => { },
+            };
+        }
+
+        // ถ้าอยู่บน Client แล้วยังเป็น undefined แสดงว่าหลุดจาก Provider ของจริง ให้โยน Error ตามปกติ
         throw new Error("useSenkaimon must be used within a NavigationProvider");
     }
+
     return context;
 }

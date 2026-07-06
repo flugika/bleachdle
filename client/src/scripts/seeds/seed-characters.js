@@ -1,6 +1,6 @@
-// npx tsx --env-file=.env src/scripts/seeds/daily/seed-characters.js
+// npx tsx --env-file=.env src/scripts/seeds/seed-characters.js
 
-import { supabase } from '@/src/lib/supabase/supabase'
+import { supabaseClient } from '@/src/lib/supabase/supabase-client'
 import fs from 'fs';
 import path from 'path';
 
@@ -19,7 +19,7 @@ async function seedCharacters() {
         console.log(`📡 Connecting to Supabase... Preparing to upload ${characters.length} characters.`);
 
         // 3. Bulk Insert into 'characters' table
-        const { data, error } = await supabase
+        const { data, error } = await supabaseClient
             .from('characters')
             .insert(characters)
             .select('id, name');

@@ -32,8 +32,8 @@ export const DailyResetTimer = () => {
 
             {/* Header Label */}
             <div className="flex justify-center items-center gap-2 mb-4">
-                <div className="w-1.5 h-1.5 rounded-full bg-[#c8a96e] shadow-[0_0_8px_#c8a96e]" />
-                <span className="text-[10px] tracking-[0.25em] text-[#c8a96e] uppercase font-semibold">
+                <div className="w-1.5 h-1.5 rounded-full bg-[#c8a96e] shadow-[0_0_10px_#c8a96e]" />
+                <span className="text-[12px] tracking-[0.25em] text-[#c8a96e] uppercase font-semibold">
                     NEXT REIRAKU PERCEPTION RESET
                 </span>
             </div>

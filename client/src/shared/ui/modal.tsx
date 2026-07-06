@@ -39,9 +39,9 @@ const variantGlow: Record<ModalVariant, string> = {
 
 // 🎨 โทนสีของปุ่ม Confirm ที่จะแปรผันตาม Variant
 const confirmBtnStyles: Record<ModalVariant, string> = {
-    default: "bg-gradient-to-b from-[#1c1c40]/80 to-[#111122]/60 hover:from-[#25254f] hover:to-[#1a1a3a] border-[#c8a96e]/40 hover:border-[#c8a96e]/80 text-[#8b7bba] hover:text-[#eed9c4]",
-    success: "bg-gradient-to-b from-[#164a2a]/80 to-[#0d2918]/60 hover:from-[#1e5d34] hover:to-[#154226] border-[#c8a96e]/30 hover:border-[#c8a96e]/70 text-[#4de880]/90 hover:text-[#eed9c4]",
-    danger: "bg-gradient-to-b from-[#651010]/70 to-[#3d0a0a]/50 hover:from-[#7d1414] hover:to-[#590e0e] border-[#c8a96e]/30 hover:border-[#c8a96e]/70 text-[#db6767]/90 hover:text-[#eed9c4]",
+    default: "bg-gradient-to-b from-[#1c1c40]/80 to-[#111122]/60 hover:from-[#25254f] hover:to-[#1a1a3a] border-[#c8a96e]/50 hover:border-[#c8a96e]/80 text-[#8b7bba] hover:text-[#eed9c4]",
+    success: "bg-gradient-to-b from-[#164a2a]/80 to-[#0d2918]/60 hover:from-[#1e5d34] hover:to-[#154226] border-[#c8a96e]/40 hover:border-[#c8a96e]/70 text-[#4de880]/90 hover:text-[#eed9c4]",
+    danger: "bg-gradient-to-b from-[#651010]/70 to-[#3d0a0a]/50 hover:from-[#7d1414] hover:to-[#590e0e] border-[#c8a96e]/40 hover:border-[#c8a96e]/70 text-[#db6767]/90 hover:text-[#eed9c4]",
 };
 
 export const Modal = ({
@@ -89,23 +89,23 @@ export const Modal = ({
                 กันไม่ให้มุม decor ไปชนกับ native scrollbar อีก (แยกชั้นกันเด็ดขาด) */}
             <div
                 ref={modalRef}
-                className={`relative w-full ${maxWidth} border-2 shadow-[0_24px_70px_rgba(0,0,0,0.6)] animate-in zoom-in-95 fade-in duration-300 ease-out ${variantStyles[variant]} ${className}`}
+                className={`relative w-full ${maxWidth} border-2 shadow-[0_26px_70px_rgba(0,0,0,0.6)] animate-in zoom-in-95 fade-in duration-300 ease-out ${variantStyles[variant]} ${className}`}
             >
                 {/* แสง glow เบื้องหลังกล่อง สีเปลี่ยนตาม variant */}
                 <div
                     aria-hidden
                     className="pointer-events-none absolute inset-0 -z-10"
-                    style={{ background: `radial-gradient(ellipse at 50% 0%, ${variantGlow[variant]} 0%, transparent 70%)`, filter: 'blur(28px)' }}
+                    style={{ background: `radial-gradient(ellipse at 50% 0%, ${variantGlow[variant]} 0%, transparent 70%)`, filter: 'blur(210px)' }}
                 />
 
                 {/* ⬛ มุมกรอบ premium — reusable กลาง ใช้ได้ทุก <Modal>, ปิดได้ด้วย showCorners={false}
                     ทยอยเข้า (stagger) ทีละมุมตอนเปิด แทนที่จะโผล่มาพร้อมกันทื่อๆ */}
                 {showCorners && (
                     <>
-                        <span className="absolute -top-[2px] -left-[2px] w-6 h-6 border-t-[3px] border-l-[3px] border-[#e8c789] [animation:premium-corner-in_0.35s_ease-out_0.05s_both] pointer-events-none drop-shadow-[0_0_7px_rgba(200,169,110,0.65)]" />
-                        <span className="absolute -top-[2px] -right-[2px] w-6 h-6 border-t-[3px] border-r-[3px] border-[#e8c789] [animation:premium-corner-in_0.35s_ease-out_0.1s_both] pointer-events-none drop-shadow-[0_0_7px_rgba(200,169,110,0.65)]" />
-                        <span className="absolute -bottom-[2px] -left-[2px] w-6 h-6 border-b-[3px] border-l-[3px] border-[#e8c789] [animation:premium-corner-in_0.35s_ease-out_0.15s_both] pointer-events-none drop-shadow-[0_0_7px_rgba(200,169,110,0.65)]" />
-                        <span className="absolute -bottom-[2px] -right-[2px] w-6 h-6 border-b-[3px] border-r-[3px] border-[#e8c789] [animation:premium-corner-in_0.35s_ease-out_0.2s_both] pointer-events-none drop-shadow-[0_0_7px_rgba(200,169,110,0.65)]" />
+                        <span className="absolute -top-[4px] -left-[4px] w-6 h-6 border-t-[5px] border-l-[5px] border-[#e8c789] [animation:premium-corner-in_0.35s_ease-out_0.05s_both] pointer-events-none drop-shadow-[0_0_10px_rgba(200,169,110,0.65)]" />
+                        <span className="absolute -top-[4px] -right-[4px] w-6 h-6 border-t-[5px] border-r-[5px] border-[#e8c789] [animation:premium-corner-in_0.35s_ease-out_0.1s_both] pointer-events-none drop-shadow-[0_0_10px_rgba(200,169,110,0.65)]" />
+                        <span className="absolute -bottom-[4px] -left-[4px] w-6 h-6 border-b-[5px] border-l-[5px] border-[#e8c789] [animation:premium-corner-in_0.35s_ease-out_0.15s_both] pointer-events-none drop-shadow-[0_0_10px_rgba(200,169,110,0.65)]" />
+                        <span className="absolute -bottom-[4px] -right-[4px] w-6 h-6 border-b-[5px] border-r-[5px] border-[#e8c789] [animation:premium-corner-in_0.35s_ease-out_0.2s_both] pointer-events-none drop-shadow-[0_0_10px_rgba(200,169,110,0.65)]" />
                     </>
                 )}
 
@@ -116,7 +116,7 @@ export const Modal = ({
                             type="button"
                             onClick={onClose}
                             aria-label="Close"
-                            className="btn-close group absolute top-4 right-4 w-8 h-8 flex items-center justify-center rounded-full border border-white/10 bg-white/[0.03] text-[#eed9c4]/50 hover:text-[#eed9c4] hover:border-[#c8a96e]/60 hover:bg-[#c8a96e]/[0.1] hover:shadow-[0_0_16px_rgba(200,169,110,0.4)] transition-all duration-300 z-10 cursor-pointer"
+                            className="btn-close group absolute top-4 right-4 w-8 h-8 flex items-center justify-center rounded-full border border-white/10 bg-white/[0.03] text-[#eed9c4]/50 hover:text-[#eed9c4] hover:border-[#c8a96e]/60 hover:bg-[#c8a96e]/[0.1] hover:shadow-[0_0_18px_rgba(200,169,110,0.4)] transition-all duration-300 z-10 cursor-pointer"
                         >
                             <svg width="13" height="13" viewBox="0 0 14 14" fill="none" className="transition-transform duration-300 group-hover:rotate-90">
                                 <path d="M1 1L13 13M13 1L1 13" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
@@ -141,14 +141,14 @@ export const Modal = ({
                             {!hideCancel && (
                                 <button
                                     onClick={onClose}
-                                    className="flex-1 py-2.5 border border-neutral-800 hover:border-neutral-600 text-neutral-500 hover:text-neutral-300 text-[10px] tracking-[0.2em] uppercase font-mono transition-all duration-200 cursor-pointer hover:-translate-y-px"
+                                    className="flex-1 py-2.5 border border-neutral-800 hover:border-neutral-600 text-neutral-500 hover:text-neutral-300 text-[12px] tracking-[0.2em] uppercase font-mono transition-all duration-200 cursor-pointer hover:-translate-y-px"
                                 >
                                     {cancelText}
                                 </button>
                             )}
                             <button
                                 onClick={onConfirm}
-                                className={`flex-1 py-2.5 border text-[10px] tracking-[0.2em] uppercase font-mono transition-all duration-200 cursor-pointer hover:-translate-y-px ${confirmBtnStyles[variant]}`}
+                                className={`flex-1 py-2.5 border text-[12px] tracking-[0.2em] uppercase font-mono transition-all duration-200 cursor-pointer hover:-translate-y-px ${confirmBtnStyles[variant]}`}
                             >
                                 {confirmText}
                             </button>

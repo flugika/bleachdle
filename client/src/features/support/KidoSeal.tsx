@@ -48,7 +48,7 @@ export function KidoSeal({ size = 340, color = "#c8a96e", className = "" }: Kido
                 height={size}
                 viewBox="0 0 200 200"
                 className="kido-spin-slow absolute"
-                style={{ position: "absolute", filter: `drop-shadow(0 0 4px ${color}55)` }}
+                style={{ position: "absolute", filter: `drop-shadow(0 0 6px ${color}55)` }}
             >
                 <defs>
                     <linearGradient id="kido-fade" x1="0%" y1="0%" x2="100%" y2="100%">
@@ -66,7 +66,7 @@ export function KidoSeal({ size = 340, color = "#c8a96e", className = "" }: Kido
                 height={size * 0.86}
                 viewBox="0 0 200 200"
                 className="kido-spin-cw absolute"
-                style={{ position: "absolute", filter: `drop-shadow(0 0 5px ${color}70)` }}
+                style={{ position: "absolute", filter: `drop-shadow(0 0 7px ${color}70)` }}
             >
                 <circle cx="100" cy="100" r="80" fill="none" stroke={color} strokeOpacity="0.4" strokeWidth="1" strokeDasharray="2 10" />
                 {Array.from({ length: 12 }).map((_, i) => {
@@ -125,7 +125,7 @@ export function KidoSeal({ size = 340, color = "#c8a96e", className = "" }: Kido
                 height={size * 0.54}
                 viewBox="0 0 200 200"
                 className="kido-pulse absolute"
-                style={{ position: "absolute", filter: `drop-shadow(0 0 6px ${color}80)` }}
+                style={{ position: "absolute", filter: `drop-shadow(0 0 8px ${color}80)` }}
             >
                 <circle cx="100" cy="100" r="52" fill="none" stroke={color} strokeOpacity="0.35" strokeWidth="1" strokeDasharray="14 6" />
             </svg>
@@ -141,7 +141,7 @@ export function KidoSeal({ size = 340, color = "#c8a96e", className = "" }: Kido
                         width: 3,
                         height: 3,
                         background: color,
-                        boxShadow: `0 0 6px 1px ${color}`,
+                        boxShadow: `0 0 8px 1px ${color}`,
                         animationDelay: `${s.delay}s`,
                     }}
                 />

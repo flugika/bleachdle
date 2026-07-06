@@ -494,8 +494,8 @@ const ZangetsuLoader: React.FC = () => {
         <div className="pulse p2"></div>
         <div className="pulse p3"></div>
 
-        <div className="chain cv" style={{ top: '38px' }}></div>
-        <div className="chain cv2" style={{ bottom: '38px' }}></div>
+        <div className="chain cv" style={{ top: '310px' }}></div>
+        <div className="chain cv2" style={{ bottom: '310px' }}></div>
 
         <div className="tsuba-wrap">
           <div className="tsuba-spin" ref={tsubaRef}>
@@ -506,7 +506,7 @@ const ZangetsuLoader: React.FC = () => {
         </div>
       </div>
 
-      <div style={{ textAlign: 'center', marginTop: '12px' }}>
+      <div style={{ textAlign: 'center', marginTop: '14px' }}>
         <div className="txt-main soul-txt">
           Analyzing Soul<span className="loading-dots"></span>
         </div>
@@ -517,11 +517,11 @@ const ZangetsuLoader: React.FC = () => {
       </div>
 
       <div>
-        <div className="lbl" style={{ marginBottom: '8px' }}>Reiatsu Intensity</div>
+        <div className="lbl" style={{ marginBottom: '10px' }}>Reiatsu Intensity</div>
         <div className="ctrl">
           <button className="btn" onClick={(e) => { setLvl('low', e); e.currentTarget.blur(); }}>Low</button>
-          <button className="btn on" onClick={(e) => { setLvl('medium', e); e.currentTarget.blur(); }}>Medium</button>
-          <button className="btn" onClick={(e) => { setLvl('high', e); e.currentTarget.blur(); }}>High · Bankai</button>
+          <button className="btn on" onClick={(e) => { setLvl('medium', e); e.currentTarget.blur(); }}>Shikai</button>
+          <button className="btn" onClick={(e) => { setLvl('high', e); e.currentTarget.blur(); }}>Bankai</button>
         </div>
       </div>
     </div>

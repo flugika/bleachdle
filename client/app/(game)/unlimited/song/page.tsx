@@ -11,7 +11,7 @@ import { SongHowToPlayModal } from '@/src/features/song/components/shared/SongHo
 import { Header } from '@/src/shared/layout/Header';
 import { Divider } from '@/src/shared/layout/Divider';
 import { SubHeader } from '@/src/shared/layout/SubHeader';
-import Central46ConfidentialArchive from '@/src/features/character/components/unlimited/Central46ConfidentialArchive';
+import Central46ConfidentialArchive from '@/src/shared/ui/Central46ConfidentialArchive';
 import Sealed from '@/src/shared/ui/Sealed';
 import { FEATURE_FLAGS } from '@/src/config/feature.flags';
 import { ModeBadge } from '@/src/shared/ui/game-selector/ModeBadge';
@@ -232,7 +232,7 @@ export default function UnlimitedSongGame() {
                             ] as const).map(([key, bg, border, fg, label]) => (
                                 <div key={key} className="flex items-center gap-1.5">
                                     <span className="inline-block w-2.5 h-2.5 shrink-0" style={{ background: bg, border: `1px solid ${border}` }} />
-                                    <span className="text-[10px] tracking-wide text-[#d1a9a9]">{label}</span>
+                                    <span className="text-[12px] tracking-wide text-[#d1a9a9]">{label}</span>
                                 </div>
                             ))}
                         </div>
@@ -247,6 +247,7 @@ export default function UnlimitedSongGame() {
                     </div>
                 ) : isGameCompleted ? (
                     <Central46ConfidentialArchive
+                        mode="song"
                         guesses={finalRoundGuesses}
                         soulName={soulName}
                         inputName={inputName}
@@ -259,7 +260,7 @@ export default function UnlimitedSongGame() {
                     />
                 ) : (
                     <div className="mt-40 flex flex-col items-center justify-center">
-                        <p className="text-xs uppercase tracking-[0.2em] text-[#5a5a78] animate-bounce">
+                        <p className="text-xs uppercase tracking-[0.2em] text-[#777796] animate-bounce">
                             Opening Senkaimon...
                         </p>
                     </div>

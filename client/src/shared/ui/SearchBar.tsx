@@ -131,7 +131,7 @@ export const SearchBar = ({ characters, disabled = false, game }: SearchBarProps
 
                 {/* ไอคอนประดับสไตล์ดาบฟันวิญญาณ */}
                 <div className="absolute right-4 top-1/2 -translate-y-1/2 flex items-center justify-center pointer-events-none">
-                    <span className="text-[10px] text-[#444452] group-focus-within/input:text-red-500 tracking-widest transition-colors duration-300 font-mono">
+                    <span className="text-[12px] text-[#444452] group-focus-within/input:text-red-500 tracking-widest transition-colors duration-300 font-mono">
                         卍
                     </span>
                 </div>
@@ -139,7 +139,7 @@ export const SearchBar = ({ characters, disabled = false, game }: SearchBarProps
 
             {/* DROPDOWN MENU - LUXURY BLADE DESIGN */}
             {isOpen && results.length > 0 && (
-                <ul className="absolute top-[calc(100%+6px)] left-0 right-0 z-50 bg-[#050507] border border-red-900/40 max-h-[360px] overflow-y-auto shadow-[0_20px_50px_rgba(0,0,0,0.9)] backdrop-blur-md">
+                <ul className="absolute top-[calc(100%+8px)] left-0 right-0 z-50 bg-[#050507] border border-red-900/40 max-h-[360px] overflow-y-auto shadow-[0_20px_50px_rgba(0,0,0,0.9)] backdrop-blur-md">
                     {results.map(({ item }, idx) => {
                         const isGuessed = guessedIds.has(item.id);
                         const isActive = idx === activeIdx;
@@ -157,8 +157,8 @@ export const SearchBar = ({ characters, disabled = false, game }: SearchBarProps
                             >
                                 {/* เอฟเฟกต์เส้นขอบคมดาบวิ่งด้านข้างตอน Hover */}
                                 <div className={[
-                                    'absolute left-0 top-0 bottom-0 w-[2px] bg-red-600 transition-all duration-300 scale-y-0 origin-center',
-                                    isActive ? 'scale-y-100 shadow-[0_0_8px_#dc2626]' : ''
+                                    'absolute left-0 top-0 bottom-0 w-[4px] bg-red-600 transition-all duration-300 scale-y-0 origin-center',
+                                    isActive ? 'scale-y-100 shadow-[0_0_10px_#dc2626]' : ''
                                 ].join(' ')} />
 
                                 {/* AVATAR + NAME LAYOUT — คงรูปตัวละครไว้ (song ไม่มี field นี้) */}
@@ -177,7 +177,7 @@ export const SearchBar = ({ characters, disabled = false, game }: SearchBarProps
                                         isActive
                                             ? 'text-red-500'
                                             : isGuessed
-                                                ? 'text-[#444452] line-through'
+                                                ? 'text-[#916564] line-through'
                                                 : 'text-[#d1d1d6]'
                                     ].join(' ')}>
                                         {item.name}
@@ -186,14 +186,14 @@ export const SearchBar = ({ characters, disabled = false, game }: SearchBarProps
 
                                 {/* BADGE STATE */}
                                 {isGuessed ? (
-                                    <span className="ml-3 shrink-0 text-[8px] tracking-[0.2em] font-bold uppercase text-red-500/80 border border-red-900/60 bg-red-950/20 px-2 py-0.5 shadow-[inset_0_0_4px_rgba(185,28,28,0.1)]">
+                                    <span className="ml-3 shrink-0 text-[10px] tracking-[0.2em] font-bold uppercase text-[#faaea7] border border-[#faaea7]/60 bg-red-950/20 px-2 py-0.5 shadow-[inset_0_0_6px_rgba(185,28,28,0.1)]">
                                         SEALED
                                     </span>
                                 ) : (
                                     /* ดอทสีแดงสไตล์เป้าเล็งสำหรับการเลือก */
                                     <span className={[
                                         'ml-3 shrink-0 w-1 h-1 bg-red-500 transition-all duration-200 opacity-0 scale-50 rounded',
-                                        isActive ? 'opacity-100 scale-100 shadow-[0_0_6px_#dc2626]' : ''
+                                        isActive ? 'opacity-100 scale-100 shadow-[0_0_8px_#dc2626]' : ''
                                     ].join(' ')} />
                                 )}
                             </li>

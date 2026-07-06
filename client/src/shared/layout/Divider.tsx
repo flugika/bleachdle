@@ -14,7 +14,7 @@ export const Divider = ({ className = "my-8" }: DividerProps) => {
                 <div className="w-1.5 h-1.5 rotate-45 border border-[#c8a96e]/50 bg-[#c8a96e]/20" />
 
                 {/* The Symbol */}
-                <span className="text-[16px] font-bold tracking-[0.2em] drop-shadow-[0_0_5px_rgba(200,169,110,0.5)]">
+                <span className="text-[18px] font-bold tracking-[0.2em] drop-shadow-[0_0_7px_rgba(200,169,110,0.5)]">
                     卍
                 </span>
 

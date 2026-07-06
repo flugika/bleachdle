@@ -55,7 +55,7 @@ export const ThematicModeSelector: React.FC<ThematicModeSelectorProps> = ({
     };
 
     return (
-        <div className="relative w-full bleach-grid overflow-hidden flex flex-col items-center justify-start px-4 py-20 selection:bg-[#c8a96e]/30">
+        <div className="relative w-full bleach-grid overflow-hidden flex flex-col items-center justify-start px-4 py-20 selection:bg-[#c8a96e]/50">
             {/* 卍解 Huge Kanji Background Watermark */}
             <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-[28vw] font-bold text-kanji-watermark pointer-events-none select-none z-0 leading-none">
                 {modeType === "daily" ? "日常" : "無限"}
@@ -63,7 +63,7 @@ export const ThematicModeSelector: React.FC<ThematicModeSelectorProps> = ({
 
             {/* ================= HEADER HUD ================= */}
             <div className="relative z-20 text-center mb-16 max-w-3xl px-4">
-                <div className="text-[6px] md:text-xs tracking-[0.7em] text-[#c8a96e] font-mono font-bold mb-6 flex flex-col md:flex-row items-center justify-center gap-3">
+                <div className="text-[8px] md:text-xs tracking-[0.7em] text-[#c8a96e] font-mono font-bold mb-6 flex flex-col md:flex-row items-center justify-center gap-3">
                     {/* ใช้ items-center เพื่อจัดแนวตั้ง */}
                     <div className="flex items-center gap-2 md:gap-3">
                         {/* เพิ่ม shrink-0 เพื่อป้องกัน Dot ยุบตัวหากข้อความยาว */}
@@ -75,12 +75,12 @@ export const ThematicModeSelector: React.FC<ThematicModeSelectorProps> = ({
                     <span>SENKAIMON_GATE_ONLINE</span>
                 </div>
                 <h1
-                    className="text-3xl md:text-7xl font-extrabold tracking-[0.4em] bg-gradient-to-r from-[#c8a96e] via-[#f5ebd5] to-[#c8a96e] bg-clip-text text-transparent drop-shadow-[0_0_35px_rgba(255,255,255,0.2)] pl-[0.4em]"
+                    className="text-3xl md:text-7xl font-extrabold tracking-[0.4em] bg-gradient-to-r from-[#c8a96e] via-[#f5ebd5] to-[#c8a96e] bg-clip-text text-transparent drop-shadow-[0_0_37px_rgba(255,255,255,0.2)] pl-[0.4em]"
                 >
                     {modeType}
                 </h1>
                 <HeaderDivider className="mt-6" />
-                <p className="text-[10px] md:text-xs text-white/40 uppercase tracking-[0.3em] mt-6 leading-relaxed max-w-2xl mx-auto">
+                <p className="text-[12px] md:text-xs text-white/40 uppercase tracking-[0.3em] mt-6 leading-relaxed max-w-2xl mx-auto">
                     Synchronize your spiritual pressure to breach the dimensions. Only stabilized dimensional rifts are displayed.
                 </p>
             </div>
@@ -96,7 +96,7 @@ export const ThematicModeSelector: React.FC<ThematicModeSelectorProps> = ({
                             key={config.id}
                             href={targetPath}
                             onClick={(e) => handleNavigation(e, targetPath, config.id)}
-                            className="relative p-6 md:p-8 border border-white/20 bg-gradient-to-b from-[#0c0c16] to-[#040408] shadow-[0_4px_30px_rgba(0,0,0,0.5),inset_0_1px_1px_rgba(255,255,255,0.1)] transition-all duration-500 group rounded-none overflow-hidden"
+                            className="relative p-6 md:p-8 border border-white/20 bg-gradient-to-b from-[#0c0c16] to-[#040408] shadow-[0_6px_30px_rgba(0,0,0,0.5),inset_0_1px_1px_rgba(255,255,255,0.1)] transition-all duration-500 group rounded-none overflow-hidden"
                             style={{ contentVisibility: "auto" }}
                         >
                             {/* 1. Permanent Ambient Reiatsu Glow */}
@@ -111,10 +111,10 @@ export const ThematicModeSelector: React.FC<ThematicModeSelectorProps> = ({
                             <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(200,169,110,0.12)_0%,transparent_60%)] opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" />
 
                             {/* 4. Premium Matrix Bracket Borders */}
-                            <div className="absolute top-0 left-0 w-8 h-[2px] bg-white/40 group-hover:bg-[#c8a96e] transition-colors duration-500" />
-                            <div className="absolute top-0 left-0 w-[2px] h-8 bg-white/40 group-hover:bg-[#c8a96e] transition-colors duration-500" />
-                            <div className="absolute bottom-0 right-0 w-8 h-[2px] bg-white/40 group-hover:bg-[#c8a96e] transition-colors duration-500" />
-                            <div className="absolute bottom-0 right-0 w-[2px] h-8 bg-white/40 group-hover:bg-[#c8a96e] transition-colors duration-500" />
+                            <div className="absolute top-0 left-0 w-8 h-[4px] bg-white/40 group-hover:bg-[#c8a96e] transition-colors duration-500" />
+                            <div className="absolute top-0 left-0 w-[4px] h-8 bg-white/40 group-hover:bg-[#c8a96e] transition-colors duration-500" />
+                            <div className="absolute bottom-0 right-0 w-8 h-[4px] bg-white/40 group-hover:bg-[#c8a96e] transition-colors duration-500" />
+                            <div className="absolute bottom-0 right-0 w-[4px] h-8 bg-white/40 group-hover:bg-[#c8a96e] transition-colors duration-500" />
 
                             {/* 5. Hover Corner Neon Expand */}
                             <div className="absolute top-0 right-0 w-4 h-[1px] bg-[#c8a96e] scale-x-0 group-hover:scale-x-100 transition-transform duration-500 origin-right" />
@@ -123,12 +123,12 @@ export const ThematicModeSelector: React.FC<ThematicModeSelectorProps> = ({
                             {/* Core Inner Content */}
                             <div className="h-full flex flex-col justify-between relative z-10">
                                 <div className="flex items-start justify-between mb-10">
-                                    <div className="text-5xl font-serif font-black text-white/20 text-shadow-[0_0_15px_rgba(255,255,255,0.1)] group-hover:text-[#c8a96e] group-hover:scale-125 group-hover:drop-shadow-[0_0_20px_rgba(200,169,110,0.6)] transition-all duration-700">
+                                    <div className="text-5xl font-serif font-black text-white/20 text-shadow-[0_0_17px_rgba(255,255,255,0.1)] group-hover:text-[#c8a96e] group-hover:scale-125 group-hover:drop-shadow-[0_0_20px_rgba(200,169,110,0.6)] transition-all duration-700">
                                         {config.symbol}
                                     </div>
 
-                                    <div className="flex flex-col items-end font-mono text-[8px] tracking-[0.2em] text-right">
-                                        <span className="text-[#c8a96e] font-bold flex items-center gap-1.5 bg-[#c8a96e]/10 px-2 py-0.5 border border-[#c8a96e]/20 rounded-none shadow-[0_0_10px_rgba(200,169,110,0.1)]">
+                                    <div className="flex flex-col items-end font-mono text-[9px] tracking-[0.2em] text-right">
+                                        <span className="text-[#c8a96e] font-bold flex items-center gap-1.5 bg-[#c8a96e]/10 px-2 py-0.5 border border-[#c8a96e]/20 rounded-none shadow-[0_0_14px_rgba(200,169,110,0.1)]">
                                             <span className="w-1.5 h-1.5 rounded-full bg-[#c8a96e] animate-pulse" />
                                             {config.technicalTerm}
                                         </span>
@@ -139,10 +139,10 @@ export const ThematicModeSelector: React.FC<ThematicModeSelectorProps> = ({
                                 </div>
 
                                 <div>
-                                    <span className="text-[10px] font-mono tracking-[0.35em] block mb-2 font-bold text-[#c8a96e]/80 group-hover:text-white transition-colors duration-500">
+                                    <span className="text-[12px] font-mono tracking-[0.35em] block mb-2 font-bold text-[#c8a96e]/80 group-hover:text-white transition-colors duration-500">
                                         {config.id}
                                     </span>
-                                    <h2 className="text-xl font-extrabold tracking-[0.25em] text-white drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)] group-hover:text-[#c8a96e] group-hover:tracking-[0.28em] transition-all duration-500">
+                                    <h2 className="text-xl font-extrabold tracking-[0.25em] text-white drop-shadow-[0_4px_6px_rgba(0,0,0,0.8)] group-hover:text-[#c8a96e] group-hover:tracking-[0.28em] transition-all duration-500">
                                         {config.title}
                                     </h2>
                                     <p className="text-[11px] uppercase tracking-[0.18em] leading-relaxed mt-4 text-white/50 group-hover:text-white/90 transition-all duration-500">
@@ -150,7 +150,7 @@ export const ThematicModeSelector: React.FC<ThematicModeSelectorProps> = ({
                                     </p>
                                 </div>
 
-                                <div className="mt-10 pt-4 border-t border-white/10 flex justify-between items-center text-[9px] font-mono tracking-[0.25em] text-white/40 transition-colors duration-500">
+                                <div className="mt-10 pt-4 border-t border-white/10 flex justify-between items-center text-[11px] font-mono tracking-[0.25em] text-white/40 transition-colors duration-500">
                                     <span>SYS_CHAMBER: 0{index + 1}</span>
                                     <span className="opacity-40 group-hover:opacity-100 group-hover:text-[#c8a96e] transition-all duration-500 flex items-center gap-2 transform group-hover:translate-x-1">
                                         RELEASE <span className="text-xs font-sans font-bold">→</span>

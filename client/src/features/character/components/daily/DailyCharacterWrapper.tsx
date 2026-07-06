@@ -22,6 +22,8 @@ import { BL_MODES_METADATA } from '@/src/config/mode';
 // 📅 Daily Hub: แถบ progress รวมทุกโหมด daily + CTA เล่นต่อ
 import { DailyHubModalFooter } from '@/src/shared/ui/daily-hub/DailyHubModalFooter';
 import { useDailyHub } from '@/src/shared/hooks/useDailyHub';
+import { useTurnstile } from '@/src/shared/hooks/useTurnstile';
+import { recordDailyStat } from '@/src/services/statsClient';
 
 export default function DailyCharacterWrapper({ initialTarget }: { initialTarget: Character | null }) {
     if (!FEATURE_FLAGS.daily.character) {
@@ -30,6 +32,7 @@ export default function DailyCharacterWrapper({ initialTarget }: { initialTarget
         )
     }
 
+    const { containerRef, getToken } = useTurnstile();
     const router = useRouter();
     const pathname = usePathname();
     const { navigate, state, reportReady } = useSenkaimon(); // 👈 ดึง state + reportReady มาด้วย ใช้คุม modal ตอน transition และแจ้งความพร้อมกลับไปที่ Senkaimon
@@ -38,6 +41,7 @@ export default function DailyCharacterWrapper({ initialTarget }: { initialTarget
     const gameStore = useCharacterGame();
     const { target, guesses, initializeGame, finalizeGame, resetGame, hasFinalized, _hasHydrated } = gameStore;
     const characters = getCharacters();
+    const isSynced = target !== null && initialTarget !== null && target.id === initialTarget.id;
 
     // 📅 Daily Hub: markModePlayed('character', won) จะถูกเรียกตอนเกมจบจริงเท่านั้น (ดู effect ด้านล่าง)
     const { markModePlayed } = useDailyHub();
@@ -92,7 +96,7 @@ export default function DailyCharacterWrapper({ initialTarget }: { initialTarget
         };
 
         statsData.daily = newStats;
-        localStorage.setItem(STORAGE_KEYS.CHARACTER_STATS, JSON.stringify(newStats));
+        localStorage.setItem(STORAGE_KEYS.CHARACTER_STATS, JSON.stringify(statsData));
         setStats(newStats);
     };
 
@@ -128,31 +132,34 @@ export default function DailyCharacterWrapper({ initialTarget }: { initialTarget
 
     useEffect(() => {
         if (!_hasHydrated) return;
+        if (!isSynced) return; // ยังไม่ reconcile เสร็จ ห้ามตัดสินใจจาก guesses/hasFinalized ตอนนี้
 
         if (isGameOver) {
-            // 🛡️ คีย์เวิร์ดสำคัญ: หากสเตตัสถูกบันทึกถาวรลง Store เรียบร้อยแล้ว (เกิดจากการ F5)
-            // ให้สั่งเปิดเบิกมอดอลสรุปผลทันที 0ms ไร้อาการหน่วงดีเลย์ให้ผู้เล่นเห็นตารางแวบแรก
-            // (markModePlayed ไม่ต้องเรียกซ้ำตรงนี้ เพราะถูกบันทึกไปแล้วตอนจบเกมครั้งแรกก่อนหน้านี้)
             if (hasFinalized) {
                 setIsModalOpen(true);
                 return;
             }
 
-            // จังหวะปกติที่เพิ่งกดปุ่มยอมแพ้สดๆ ร้อนๆ ในหน้านั้น
             const targetDelay = isSurrendered ? 0 : 2500;
-            const timer = setTimeout(() => {
+            const timer = setTimeout(async () => {
                 if (!hasFinalized) {
-                    finalizeGame(isWin);
+                    finalizeGame(isWin);        // localStorage เขียนเหมือนเดิม ไม่มี network
                     updateStats(isWin);
-                    // 📅 Daily Hub: บันทึกว่าโหมด character ของวันนี้เล่นแล้ว + แพ้/ชนะ
-                    markModePlayed('character', isWin);
+                    markModePlayed('song', isWin);
+                    try {
+                        const turnstileToken = await getToken();
+                        await recordDailyStat('song', isWin, guesses.length, turnstileToken);
+                    } catch (err) {
+                        console.error('[stats] failed to record daily stat:', err);
+                        // ไม่ throw ต่อ — ผู้เล่นต้องเห็น modal สรุปผลเสมอ ไม่ว่าสถิติจะบันทึกสำเร็จไหม
+                    }
                 }
                 setIsModalOpen(true);
             }, targetDelay);
 
             return () => clearTimeout(timer);
         }
-    }, [isGameOver, isWin, finalizeGame, hasFinalized, _hasHydrated, isSurrendered]);
+    }, [isGameOver, isWin, finalizeGame, hasFinalized, _hasHydrated, isSurrendered, isSynced]);
 
     const handleCloseModal = () => {
         setIsModalOpen(false);
@@ -191,6 +198,7 @@ export default function DailyCharacterWrapper({ initialTarget }: { initialTarget
 
     return (
         <div className="min-h-screen text-[#d8d0c8] overflow-x-hidden">
+            <div ref={containerRef} />
             <Header onOpenHowTo={() => setIsHowToOpen(true)} />
 
             <main className="max-w-[80%] mx-auto px-4 pb-16">
@@ -224,7 +232,7 @@ export default function DailyCharacterWrapper({ initialTarget }: { initialTarget
                             ] as const).map(([key, bg, border, fg, label]) => (
                                 <div key={key} className="flex items-center gap-1.5">
                                     <span className="inline-block w-2.5 h-2.5 shrink-0" style={{ background: bg, border: `1px solid ${border}` }} />
-                                    <span className="text-[10px] tracking-wide text-[#d1a9a9]">{label}</span>
+                                    <span className="text-[12px] tracking-wide text-[#d1a9a9]">{label}</span>
                                 </div>
                             ))}
                         </div>
@@ -237,13 +245,13 @@ export default function DailyCharacterWrapper({ initialTarget }: { initialTarget
                         {/* 📅 Daily Hub: CTA "เล่นต่อ" ต่อท้ายการ์ดสรุปผล */}
                         <DailyHubModalFooter activeMode="character" />
                     </>
-                ) : target ? (
+                ) : target && isSynced ? (
                     <div className="w-full overflow-x-auto">
                         <CharacterGuessTable guesses={guesses} />
                     </div>
                 ) : (
                     <div className="mt-40 flex flex-col items-center justify-center">
-                        <p className="text-xs uppercase tracking-[0.2em] text-[#5a5a78] animate-bounce">
+                        <p className="text-xs uppercase tracking-[0.2em] text-[#777796] animate-bounce">
                             Opening Senkaimon...
                         </p>
                     </div>

@@ -18,7 +18,7 @@ export const Tooltip: React.FC<TooltipProps> = ({ children, content, className =
             {children}
 
             {/* แผง HUD Tooltip จอวิเคราะห์แรงดันวิญญาณ */}
-            <span className="absolute top-full right-0 mt-2.5 translate-y-1 opacity-0 pointer-events-none scale-95 group-hover:translate-y-0 group-hover:opacity-100 group-hover:scale-100 transition-all duration-200 ease-out bg-[#0a0a0f] border border-[#c8a96e]/40 px-2.5 py-1 text-[9px] font-mono tracking-[0.15em] text-[#c8a96e] uppercase shadow-2xl whitespace-nowrap z-50">
+            <span className="absolute top-full right-0 mt-2.5 translate-y-1 opacity-0 pointer-events-none scale-95 group-hover:translate-y-0 group-hover:opacity-100 group-hover:scale-100 transition-all duration-200 ease-out bg-[#0a0a0f] border border-[#c8a96e]/40 px-2.5 py-1 text-[11px] font-mono tracking-[0.15em] text-[#c8a96e] uppercase shadow-2xl whitespace-nowrap z-50">
                 {content}
             </span>
         </div>

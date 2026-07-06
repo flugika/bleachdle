@@ -24,19 +24,19 @@ type Particle = {
 };
 
 const leftParticles: Particle[] = [
-    { name: "reishiChaosDrift-A", duration: "14s", delay: "0s", position: { left: "6%" }, className: "w-2 h-2 rounded-full bg-sky-300 blur-[0.5px] shadow-[0_0_8px_#7dd3fc]" },
-    { name: "reishiChaosDrift-B", duration: "19s", delay: "3s", position: { left: "12%" }, className: "w-3 h-3 rounded-full bg-slate-200 blur-[1px] shadow-[0_0_10px_#e2e8f0]" },
-    { name: "reishiChaosDrift-C", duration: "16s", delay: "7s", position: { left: "8%" }, className: "w-1.5 h-1.5 rounded-full bg-indigo-300 blur-[0.5px] shadow-[0_0_6px_#a5b4fc]" },
-    { name: "reishiChaosDrift-B", duration: "23s", delay: "11s", position: { left: "3%" }, className: "w-2 h-2 rounded-full bg-blue-400 blur-[0.5px] shadow-[0_0_8px_#60a5fa]" },
-    { name: "reishiChaosDrift-A", duration: "20s", delay: "9s", position: { left: "15%" }, className: "w-1.5 h-1.5 rounded-full bg-rose-400 blur-[0.5px] shadow-[0_0_7px_#fb7185]" },
+    { name: "reishiChaosDrift-A", duration: "14s", delay: "0s", position: { left: "6%" }, className: "w-2 h-2 rounded-full bg-sky-300 blur-[0.7px] shadow-[0_0_10px_#7dd3fc]" },
+    { name: "reishiChaosDrift-B", duration: "19s", delay: "3s", position: { left: "12%" }, className: "w-3 h-3 rounded-full bg-slate-200 blur-[1px] shadow-[0_0_14px_#e2e8f0]" },
+    { name: "reishiChaosDrift-C", duration: "16s", delay: "7s", position: { left: "8%" }, className: "w-1.5 h-1.5 rounded-full bg-indigo-300 blur-[0.7px] shadow-[0_0_8px_#a5b4fc]" },
+    { name: "reishiChaosDrift-B", duration: "23s", delay: "11s", position: { left: "3%" }, className: "w-2 h-2 rounded-full bg-blue-400 blur-[0.7px] shadow-[0_0_10px_#60a5fa]" },
+    { name: "reishiChaosDrift-A", duration: "20s", delay: "9s", position: { left: "15%" }, className: "w-1.5 h-1.5 rounded-full bg-rose-400 blur-[0.7px] shadow-[0_0_10px_#fb7185]" },
 ];
 
 const rightParticles: Particle[] = [
-    { name: "reishiChaosDrift-B", duration: "16s", delay: "1s", position: { right: "8%" }, className: "w-2.5 h-2.5 rounded-full bg-indigo-300 blur-[1px] shadow-[0_0_10px_#a5b4fc]" },
-    { name: "reishiChaosDrift-A", duration: "21s", delay: "5s", position: { right: "14%" }, className: "w-1.5 h-1.5 rounded-full bg-sky-300 blur-[0.5px] shadow-[0_0_6px_#7dd3fc]" },
-    { name: "reishiChaosDrift-C", duration: "13s", delay: "9s", position: { right: "4%" }, className: "w-2 h-2 rounded-full bg-slate-200 blur-[0.5px] shadow-[0_0_8px_#e2e8f0]" },
-    { name: "reishiChaosDrift-A", duration: "18s", delay: "13s", position: { right: "10%" }, className: "w-3 h-3 rounded-full bg-blue-400 blur-[1px] shadow-[0_0_12px_#60a5fa]" },
-    { name: "reishiChaosDrift-C", duration: "22s", delay: "6s", position: { right: "16%" }, className: "w-1.5 h-1.5 rounded-full bg-rose-400 blur-[0.5px] shadow-[0_0_7px_#fb7185]" },
+    { name: "reishiChaosDrift-B", duration: "16s", delay: "1s", position: { right: "8%" }, className: "w-2.5 h-2.5 rounded-full bg-indigo-300 blur-[1px] shadow-[0_0_14px_#a5b4fc]" },
+    { name: "reishiChaosDrift-A", duration: "21s", delay: "5s", position: { right: "14%" }, className: "w-1.5 h-1.5 rounded-full bg-sky-300 blur-[0.7px] shadow-[0_0_8px_#7dd3fc]" },
+    { name: "reishiChaosDrift-C", duration: "13s", delay: "9s", position: { right: "4%" }, className: "w-2 h-2 rounded-full bg-slate-200 blur-[0.7px] shadow-[0_0_10px_#e2e8f0]" },
+    { name: "reishiChaosDrift-A", duration: "18s", delay: "13s", position: { right: "10%" }, className: "w-3 h-3 rounded-full bg-blue-400 blur-[1px] shadow-[0_0_14px_#60a5fa]" },
+    { name: "reishiChaosDrift-C", duration: "22s", delay: "6s", position: { right: "16%" }, className: "w-1.5 h-1.5 rounded-full bg-rose-400 blur-[0.7px] shadow-[0_0_10px_#fb7185]" },
 ];
 
 export function ReiatsuAmbientSides() {

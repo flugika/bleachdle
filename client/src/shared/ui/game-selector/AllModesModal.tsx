@@ -104,18 +104,18 @@ export function AllModesModal({ isOpen, onClose }: AllModesModalProps) {
                     <span className="h-px w-8 bg-gradient-to-r from-transparent to-[#c8a96e]/50" />
                     <span
                         className="text-lg leading-none transition-[color,filter] duration-500"
-                        style={{ color: `${dimAccent.base}cc`, filter: `drop-shadow(0 0 10px ${dimAccent.glow})` }}
+                        style={{ color: `${dimAccent.base}cc`, filter: `drop-shadow(0 0 14px ${dimAccent.glow})` }}
                     >
                         全
                     </span>
                     <span className="h-px w-8 bg-gradient-to-l from-transparent to-[#c8a96e]/50" />
                 </div>
                 {/* หัวเรื่องยังเป็นทอง-ขาว-ครีมเสมอ (คงเอกลักษณ์หลัก) ส่วนสีที่ขยับตาม dimension อยู่ที่ kanji และ toggle */}
-                <h2 className="text-lg md:text-xl font-black uppercase tracking-[0.2em] text-transparent bg-clip-text bg-gradient-to-b from-white via-[#eed9c4] to-[#c8a96e] drop-shadow-[0_2px_14px_rgba(200,169,110,0.3)]"
+                <h2 className="text-lg md:text-xl font-black uppercase tracking-[0.2em] text-transparent bg-clip-text bg-gradient-to-b from-white via-[#eed9c4] to-[#c8a96e] drop-shadow-[0_4px_16px_rgba(200,169,110,0.3)]"
                     style={{ fontFamily: "'Cinzel', serif" }}>
                     Select Your Path
                 </h2>
-                <p className="mt-1.5 text-[10px] uppercase tracking-[0.3em] text-[#eed9c4]/40">
+                <p className="mt-1.5 text-[12px] uppercase tracking-[0.3em] text-[#eed9c4]/40">
                     Choose Dimension &amp; Discipline
                 </p>
             </div>
@@ -124,7 +124,7 @@ export function AllModesModal({ isOpen, onClose }: AllModesModalProps) {
                 cool Quincy blue for Unlimited (無, the void) */}
             <div className="relative grid grid-cols-2 gap-0 mb-2.5 border border-white/10 bg-black/40 p-1 rounded-sm overflow-hidden">
                 <div
-                    className={`absolute inset-y-1 w-[calc(50%-4px)] rounded-[2px] border transition-all duration-300 ease-out ${dimension === 'unlimited' ? 'translate-x-[calc(100%+8px)]' : 'translate-x-0'
+                    className={`absolute inset-y-1 w-[calc(50%-6px)] rounded-[4px] border transition-all duration-300 ease-out ${dimension === 'unlimited' ? 'translate-x-[calc(100%+10px)]' : 'translate-x-0'
                         }`}
                     style={{
                         background: `linear-gradient(180deg, ${dimAccent.base}4d, ${dimAccent.base}0d)`,
@@ -150,7 +150,7 @@ export function AllModesModal({ isOpen, onClose }: AllModesModalProps) {
                         >
                             <span
                                 className="text-sm leading-none transition-all duration-300"
-                                style={isActive ? { color: meta.bright, filter: `drop-shadow(0 0 6px ${meta.glow})` } : { color: 'rgba(238,217,196,0.3)' }}
+                                style={isActive ? { color: meta.bright, filter: `drop-shadow(0 0 8px ${meta.glow})` } : { color: 'rgba(238,217,196,0.3)' }}
                             >
                                 {meta.kanji}
                             </span>
@@ -159,7 +159,7 @@ export function AllModesModal({ isOpen, onClose }: AllModesModalProps) {
                     );
                 })}
             </div>
-            <p className={`text-center text-[9px] uppercase tracking-[0.22em] mb-5 transition-colors duration-500 ${dimAccent.descTint}`}>
+            <p className={`text-center text-[11px] uppercase tracking-[0.22em] mb-5 transition-colors duration-500 ${dimAccent.descTint}`}>
                 {dimAccent.desc}
             </p>
 
@@ -168,7 +168,7 @@ export function AllModesModal({ isOpen, onClose }: AllModesModalProps) {
             <div className="relative flex flex-col gap-2">
                 {unlockedModes.length === 0 ? (
                     <div className="border border-white/10 bg-white/[0.02] py-6 text-center">
-                        <p className="text-[10px] uppercase tracking-[0.2em] text-[#eed9c4]/30">
+                        <p className="text-[12px] uppercase tracking-[0.2em] text-[#eed9c4]/50">
                             No disciplines unlocked in this dimension yet
                         </p>
                     </div>
@@ -196,13 +196,13 @@ export function AllModesModal({ isOpen, onClose }: AllModesModalProps) {
                                 <span
                                     className="absolute inset-0 border pointer-events-none transition-all duration-300"
                                     style={isLit
-                                        ? { borderColor: `${accent.base}70`, boxShadow: `0 10px 28px rgba(0,0,0,0.45), 0 0 22px ${accent.glow}` }
+                                        ? { borderColor: `${accent.base}70`, boxShadow: `0 14px 210px rgba(0,0,0,0.45), 0 0 24px ${accent.glow}` }
                                         : { borderColor: 'rgba(255,255,255,0.1)' }}
                                 />
 
                                 {/* emblem stripe ซ้ายมือ — เหมือนสี Sternritter ประจำตัวแต่ละ discipline */}
                                 <span
-                                    className="absolute left-0 top-0 bottom-0 w-[3px] transition-opacity duration-300"
+                                    className="absolute left-0 top-0 bottom-0 w-[5px] transition-opacity duration-300"
                                     style={{ background: `linear-gradient(180deg, ${accent.bright}, ${accent.base})`, opacity: isLit ? 1 : 0.35 }}
                                 />
 
@@ -212,7 +212,7 @@ export function AllModesModal({ isOpen, onClose }: AllModesModalProps) {
                                 <span
                                     className="relative flex items-center justify-center w-11 h-11 shrink-0 border text-lg transition-all duration-300 ml-1"
                                     style={isLit
-                                        ? { borderColor: `${accent.base}a6`, background: `linear-gradient(180deg, ${accent.base}33, ${accent.base}0d)`, color: accent.bright, boxShadow: `0 0 16px ${accent.glow}` }
+                                        ? { borderColor: `${accent.base}a6`, background: `linear-gradient(180deg, ${accent.base}33, ${accent.base}0d)`, color: accent.bright, boxShadow: `0 0 18px ${accent.glow}` }
                                         : { borderColor: 'rgba(255,255,255,0.1)', background: 'rgba(255,255,255,0.02)', color: `${accent.base}99` }}
                                 >
                                     {cfg.symbol}
@@ -222,19 +222,19 @@ export function AllModesModal({ isOpen, onClose }: AllModesModalProps) {
                                     <span className="text-[11px] font-bold uppercase tracking-[0.14em] text-[#eed9c4]">
                                         {cfg.title}
                                     </span>
-                                    <span className="text-[8px] uppercase tracking-[0.2em] text-[#eed9c4]/35 mt-0.5">
+                                    <span className="text-[10px] uppercase tracking-[0.2em] text-[#eed9c4]/35 mt-0.5">
                                         // {cfg.id}
                                     </span>
                                 </span>
 
                                 {isCurrent ? (
                                     <span
-                                        className="relative flex items-center gap-1.5 text-[8px] uppercase tracking-[0.2em] px-2 py-1 shrink-0 border"
+                                        className="relative flex items-center gap-1.5 text-[10px] uppercase tracking-[0.2em] px-2 py-1 shrink-0 border"
                                         style={{ color: dimAccent.bright, borderColor: `${dimAccent.base}70`, background: `${dimAccent.base}1a` }}
                                     >
                                         <span
                                             className="w-1 h-1 rounded-full animate-pulse"
-                                            style={{ background: dimAccent.bright, boxShadow: `0 0 6px ${dimAccent.glow}` }}
+                                            style={{ background: dimAccent.bright, boxShadow: `0 0 8px ${dimAccent.glow}` }}
                                         />
                                         Active
                                     </span>

@@ -207,10 +207,10 @@ function SongFilterBar({
                 />
 
                 <div className="absolute right-4 top-1/2 -translate-y-1/2 flex items-center gap-2 pointer-events-none">
-                    <span className="text-[9px] font-mono font-bold text-[#5a5a78]">
+                    <span className="text-[11px] font-mono font-bold text-[#777796]">
                         {resultCount}/{totalCount}
                     </span>
-                    <span className="text-[10px] text-[#444452] group-focus-within/input:text-red-500 tracking-widest transition-colors duration-300 font-mono">
+                    <span className="text-[12px] text-[#444452] group-focus-within/input:text-red-500 tracking-widest transition-colors duration-300 font-mono">
                         //
                     </span>
                 </div>
@@ -219,7 +219,7 @@ function SongFilterBar({
                     <button
                         type="button"
                         onClick={() => onQueryChange('')}
-                        className="absolute right-16 top-1/2 -translate-y-1/2 text-[10px] font-mono font-bold text-[#5a5a78] hover:text-red-500 transition-colors pointer-events-auto"
+                        className="absolute right-16 top-1/2 -translate-y-1/2 text-[12px] font-mono font-bold text-[#777796] hover:text-red-500 transition-colors pointer-events-auto"
                         title="Clear filter"
                     >
                         ✕
@@ -248,7 +248,7 @@ function DurationControlPanel({
             <h3 className="text-xs font-bold uppercase tracking-[0.2em] text-[#c8a96e] mb-3 text-center flex items-center justify-center gap-2">
                 // HEARDLE MECHANICS TESTING CUTOFF DURATION
                 {disabled && (
-                    <span className="text-[8px] font-mono font-bold text-amber-500 normal-case tracking-normal bg-amber-950/30 border border-amber-900/50 px-1.5 py-0.5 rounded-sm animate-pulse">
+                    <span className="text-[10px] font-mono font-bold text-amber-500 normal-case tracking-normal bg-amber-950/50 border border-amber-900/50 px-1.5 py-0.5 rounded-sm animate-pulse">
                         locked · playing
                     </span>
                 )}
@@ -259,11 +259,11 @@ function DurationControlPanel({
                         key={dur.value}
                         onClick={() => onSelect(dur.value)}
                         disabled={disabled}
-                        title={disabled ? 'หยุดเสียงที่กำลังเล่นก่อนเปลี่ยนค่านี้' : undefined}
-                        className={`py-2 px-1 text-[10px] font-mono font-bold tracking-wider uppercase border transition-all duration-200 ${disabled
+                        title={disabled ? 'Please stop playing before change this variable' : undefined}
+                        className={`py-2 px-1 text-[12px] font-mono font-bold tracking-wider uppercase border transition-all duration-200 ${disabled
                             ? 'opacity-40 cursor-not-allowed bg-[#050507] border-[#1a1a24] text-[#3a3a48]'
                             : selected === dur.value
-                                ? 'bg-red-950/40 border-red-600 text-white shadow-[0_0_10px_rgba(220,38,38,0.2)]'
+                                ? 'bg-red-950/40 border-red-600 text-white shadow-[0_0_14px_rgba(220,38,38,0.2)]'
                                 : 'bg-[#050507] border-[#222230] text-[#555566] hover:border-[#44445c] hover:text-white'
                             }`}
                     >
@@ -294,16 +294,16 @@ function StaticSegmentRow({
                 }`}
         >
             <div className="flex flex-col min-w-0 pr-2">
-                <span className="text-[10px] font-semibold text-[#b8b8c2] truncate">{seg.segment_name}</span>
-                <span className="text-[9px] font-mono text-[#5e5e7a] mt-0.5">
-                    ⚓ <span className="text-red-500 font-bold">{seg.start_time_ms} ms</span> (
-                    {formatSeconds(seg.start_time_ms)}s) |{' '}
-                    <span className="text-[#c8a96e] uppercase">{seg.difficulty_level}</span>
+                <span className="text-[12px] font-semibold text-[#b8b8c2] truncate">{seg.segment_name}</span>
+                <span className="text-[11px] font-mono text-[#5e5e7a] mt-0.5">
+                    ⚓ <span className="text-red-500 font-bold">{seg.start_time_ms} ms</span> 
+                    <span className="text-[#ccb281] font-bold"> ({formatSeconds(seg.start_time_ms)}s)</span>
+                    <span className="text-[#c8a96e] uppercase"> | {seg.difficulty_level}</span>
                 </span>
             </div>
             <button
                 onClick={onToggle}
-                className={`px-2.5 py-1 text-[9px] font-mono font-bold border transition-all shrink-0 ${isPlaying
+                className={`px-2.5 py-1 text-[11px] font-mono font-bold border transition-all shrink-0 ${isPlaying
                     ? 'bg-red-600 text-white border-red-500 animate-pulse'
                     : 'bg-[#0d0d14] text-[#c8a96e] border-[#2c2c3d] hover:border-red-600/50 hover:text-white'
                     }`}
@@ -374,29 +374,29 @@ function LiveTuningWorkbench({
     return (
         <div className="col-span-12 md:col-span-6 lg:col-span-5 p-3 bg-[#07070c] border border-[#151522] rounded-sm flex flex-col gap-3">
             <div className="flex items-center justify-between border-b border-[#1b1b30] pb-1.5">
-                <span className="text-[10px] font-mono font-bold text-[#c8a96e] tracking-wider">⚓ LIVE ANCHOR TUNER</span>
-                <span className="text-[9px] font-mono text-gray-500 uppercase">{cutoffLabel}</span>
+                <span className="text-[12px] font-mono font-bold text-[#c8a96e] tracking-wider">⚓ LIVE ANCHOR TUNER</span>
+                <span className="text-[11px] font-mono text-gray-500 uppercase">{cutoffLabel}</span>
             </div>
 
             {/* ป้อนชื่อ + เลือกระดับความยาก */}
             <div className="grid grid-cols-12 gap-2">
                 <div className="col-span-8">
-                    <label className="text-[8px] font-mono font-bold block text-gray-400 mb-1">
+                    <label className="text-[10px] font-mono font-bold block text-gray-400 mb-1">
                         SEGMENT IDENTIFIER NAME
                     </label>
                     <input
                         type="text"
                         value={name}
                         onChange={(e) => onNameChange(e.target.value)}
-                        className="w-full bg-[#030305] border border-[#1f1f33] px-2 py-1 text-[10px] font-mono text-white focus:outline-none focus:border-red-600 uppercase"
+                        className="w-full bg-[#030305] border border-[#1f1f33] px-2 py-1 text-[12px] font-mono text-white focus:outline-none focus:border-red-600 uppercase"
                     />
                 </div>
                 <div className="col-span-4">
-                    <label className="text-[8px] font-mono font-bold block text-gray-400 mb-1">DIFFICULTY</label>
+                    <label className="text-[10px] font-mono font-bold block text-gray-400 mb-1">DIFFICULTY</label>
                     <select
                         value={difficulty}
                         onChange={(e) => onDifficultyChange(e.target.value)}
-                        className="w-full bg-[#030305] border border-[#1f1f33] px-1 py-1 text-[10px] font-mono text-[#c8a96e] focus:outline-none focus:border-red-600"
+                        className="w-full bg-[#030305] border border-[#1f1f33] px-1 py-1 text-[12px] font-mono text-[#c8a96e] focus:outline-none focus:border-red-600"
                     >
                         <option value="easy">EASY</option>
                         <option value="normal">NORMAL</option>
@@ -407,7 +407,7 @@ function LiveTuningWorkbench({
 
             {/* Slider + ตัวเลข ms */}
             <div className="w-full space-y-1.5">
-                <div className="flex items-center justify-between text-[10px] font-mono font-bold">
+                <div className="flex items-center justify-between text-[12px] font-mono font-bold">
                     <span className="text-[#555577]">
                         {isPlaying ? '🛰️ Real-time Track Position:' : '⚓ Selected Point:'}
                     </span>
@@ -438,7 +438,7 @@ function LiveTuningWorkbench({
                                 const finalVal = Number.isNaN(val) ? 0 : Math.min(Math.max(0, val), maxDurationMs);
                                 onStartChange(finalVal);
                             }}
-                            className={`w-20 bg-[#030305] border py-0.5 px-1 text-[10px] font-mono font-bold text-center focus:outline-none focus:border-red-600 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none ${isPlaying ? 'text-amber-400 border-amber-900/40' : 'text-red-500 border-[#1f1f33]'
+                            className={`w-20 bg-[#030305] border py-0.5 px-1 text-[12px] font-mono font-bold text-center focus:outline-none focus:border-red-600 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none ${isPlaying ? 'text-amber-400 border-amber-900/40' : 'text-red-500 border-[#1f1f33]'
                                 }`}
                         />
 
@@ -477,8 +477,8 @@ function LiveTuningWorkbench({
                     <button
                         type="button"
                         onClick={onTogglePlay}
-                        className={`px-3 py-1 text-[9px] font-mono font-bold tracking-widest uppercase border transition-all ${isPlaying
-                            ? 'bg-amber-600 text-white border-amber-500 animate-pulse shadow-[0_0_10px_rgba(245,158,11,0.4)]'
+                        className={`px-3 py-1 text-[11px] font-mono font-bold tracking-widest uppercase border transition-all ${isPlaying
+                            ? 'bg-amber-600 text-white border-amber-500 animate-pulse shadow-[0_0_14px_rgba(245,158,11,0.4)]'
                             : 'bg-red-950/20 text-red-400 border-red-900/60 hover:bg-red-600 hover:text-white'
                             }`}
                     >
@@ -487,7 +487,7 @@ function LiveTuningWorkbench({
                 </div>
 
                 {/* Legend เล็ก ๆ อธิบายสี */}
-                <div className="flex items-center gap-3 text-[8px] font-mono text-gray-500 pt-0.5">
+                <div className="flex items-center gap-3 text-[10px] font-mono text-gray-500 pt-0.5">
                     <span className="flex items-center gap-1">
                         <span className="w-2 h-2 inline-block" style={{ background: COLOR.played }} />
                         Played
@@ -502,14 +502,14 @@ function LiveTuningWorkbench({
             {/* JSON ตัวอย่างสำหรับก็อปวาง */}
             <div>
                 <div className="flex items-center justify-between mb-1">
-                    <span className="text-[8px] font-mono font-bold text-[#5a5a78] uppercase">
+                    <span className="text-[10px] font-mono font-bold text-[#777796] uppercase">
                         // Live JSON Array Node Example
                     </span>
                     <button
                         type="button"
                         onClick={onRegenerateId}
                         title="Regenerate UUID"
-                        className="text-[8px] font-mono font-bold text-[#c8a96e] bg-[#0d0d14] border border-[#2c2c3d] px-1.5 py-0.5 hover:border-red-600/60 hover:text-white transition-colors"
+                        className="text-[10px] font-mono font-bold text-[#c8a96e] bg-[#0d0d14] border border-[#2c2c3d] px-1.5 py-0.5 hover:border-red-600/60 hover:text-white transition-colors"
                     >
                         🔄 NEW UUID
                     </button>
@@ -523,11 +523,11 @@ function LiveTuningWorkbench({
                             target.style.borderColor = "#22c55e"; // เปลี่ยนเป็นสีเขียวชั่วคราว
                             setTimeout(() => target.style.borderColor = "#141424", 500);
                         }}
-                        className="text-[9px] font-mono text-emerald-400 bg-[#030305] p-2 border border-[#141424] overflow-x-auto max-h-24 cursor-pointer hover:bg-[#0a0a0f] transition-all"
+                        className="text-[11px] font-mono text-emerald-400 bg-[#030305] p-2 border border-[#141424] overflow-x-auto max-h-24 cursor-pointer hover:bg-[#0a0a0f] transition-all"
                     >
                         {generatedJsonExample}
                     </pre>
-                    <div className="absolute top-1 right-1 text-[7px] font-mono bg-[#11111a] text-gray-400 px-1 border border-gray-800 pointer-events-none uppercase group-hover:text-white group-hover:border-emerald-700">
+                    <div className="absolute top-1 right-1 text-[10px] font-mono bg-[#11111a] text-gray-400 px-1 border border-gray-800 pointer-events-none uppercase group-hover:text-white group-hover:border-emerald-700">
                         Click to Copy
                     </div>
                 </div>
@@ -612,7 +612,7 @@ export default function MockupSongGame() {
 
                 {/* 📋 AUDIO ASSETS WORKBENCH GRID */}
                 <div className="mt-8 overflow-hidden border border-[#14141a] bg-[#030305]/40">
-                    <div className="hidden lg:grid grid-cols-12 gap-4 bg-[#0a0a0f] p-4 border-b border-[#1b1b26] text-[11px] font-bold tracking-[0.15em] text-[#5a5a78] uppercase font-mono">
+                    <div className="hidden lg:grid grid-cols-12 gap-4 bg-[#0a0a0f] p-4 border-b border-[#1b1b26] text-[11px] font-bold tracking-[0.15em] text-[#777796] uppercase font-mono">
                         <div className="col-span-3">Track Info // Metadata</div>
                         <div className="col-span-4">Static Database Segments (JSON Assets)</div>
                         <div className="col-span-5">⚓ Live Tuning Lab & Real-Time JSON Generation</div>
@@ -642,10 +642,10 @@ export default function MockupSongGame() {
                                             <span className="text-xs font-bold text-white uppercase tracking-wide truncate">
                                                 {song.title}
                                             </span>
-                                            <span className="text-[10px] text-[#c8a96e] uppercase tracking-wider font-mono">
+                                            <span className="text-[12px] text-[#c8a96e] uppercase tracking-wider font-mono">
                                                 BY {song.artist}
                                             </span>
-                                            <span className="text-[9px] text-[#3e3e52] font-mono break-all bg-black/40 p-1.5 border border-[#14141a] rounded-sm mt-1">
+                                            <span className="text-[11px] text-[#9090ad] font-mono break-all bg-black/40 p-1.5 border border-[#14141a] rounded-sm mt-1">
                                                 📁 URL: {song.audio_url}
                                             </span>
                                             <div className="flex gap-1.5 mt-2">
@@ -654,7 +654,7 @@ export default function MockupSongGame() {
                                                         href={song.youtube_url}
                                                         target="_blank"
                                                         rel="noreferrer"
-                                                        className="text-[9px] font-mono font-bold text-red-500 bg-red-950/20 px-2 py-0.5 border border-red-950/60 hover:border-red-600 transition-colors"
+                                                        className="text-[11px] font-mono font-bold text-red-500 bg-red-950/20 px-2 py-0.5 border border-red-950/60 hover:border-red-600 transition-colors"
                                                     >
                                                         YouTube
                                                     </a>
@@ -664,7 +664,7 @@ export default function MockupSongGame() {
                                                         href={song.spotify_url}
                                                         target="_blank"
                                                         rel="noreferrer"
-                                                        className="text-[9px] font-mono font-bold text-emerald-500 bg-emerald-950/20 px-2 py-0.5 border border-emerald-950/60 hover:border-emerald-600 transition-colors"
+                                                        className="text-[11px] font-mono font-bold text-emerald-500 bg-emerald-950/20 px-2 py-0.5 border border-emerald-950/60 hover:border-emerald-600 transition-colors"
                                                     >
                                                         SPOTIFY
                                                     </a>
@@ -674,7 +674,7 @@ export default function MockupSongGame() {
 
                                         {/* คอลัมน์ที่ 2: เซกเมนต์ดั้งเดิมที่มีอยู่ในไฟล์ JSON */}
                                         <div className="col-span-12 md:col-span-6 lg:col-span-4 flex flex-col gap-2">
-                                            <span className="text-[10px] font-mono font-bold text-[#5a5a78] tracking-widest uppercase mb-1">
+                                            <span className="text-[12px] font-mono font-bold text-[#777796] tracking-widest uppercase mb-1">
                                                 // Embedded DB Anchors
                                             </span>
                                             {song.segments && song.segments.length > 0 ? (
@@ -689,7 +689,7 @@ export default function MockupSongGame() {
                                                     />
                                                 ))
                                             ) : (
-                                                <span className="text-[10px] italic text-[#444452]">No baseline segments.</span>
+                                                <span className="text-[12px] italic text-[#444452]">No baseline segments.</span>
                                             )}
                                         </div>
 

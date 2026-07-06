@@ -1,7 +1,7 @@
-// proxy.ts (วางที่ root ของ client/ แทนที่ middleware.ts)
+// proxy.ts
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
-import { apiRateLimit, getRateLimitKey } from './src/lib/rateLimit';
+import { edgeRateLimit, getRateLimitKey } from './src/lib/rateLimit';
 
 export async function proxy(req: NextRequest) {
     let key: string;
@@ -11,13 +11,14 @@ export async function proxy(req: NextRequest) {
         return NextResponse.json({ error: 'Bad request' }, { status: 400 });
     }
 
-    try {
-        const { success } = await apiRateLimit.limit(key);
-        if (!success) {
-            return NextResponse.json({ error: 'Too many requests' }, { status: 429 });
-        }
-    } catch (err) {
-        console.error('[proxy] rate limit check failed, allowing request:', err);
+    // 🛡️ จำกัดไอพีละ 5 ครั้ง ต่อ 10 วินาที (คำนวณสดบน Edge ความเร็ว 0ms)
+    const isAllowed = edgeRateLimit(key, 5, 10000);
+
+    if (!isAllowed) {
+        return NextResponse.json(
+            { error: 'Too many requests, slow down.' },
+            { status: 429 }
+        );
     }
 
     return NextResponse.next();

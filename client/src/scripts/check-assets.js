@@ -1,4 +1,4 @@
-// npx tsx check-assets.js
+// npx tsx src/scripts/check-assets.js
 
 import fs from 'fs';
 import path from 'path';

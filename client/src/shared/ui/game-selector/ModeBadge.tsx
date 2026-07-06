@@ -9,19 +9,19 @@ const MODE_CONFIG = {
     daily: {
         kanji: '日',
         label: 'Daily Mission',
-        sub: 'One Soul // One Chance // Reset Nightly',
+        sub: 'One Soul // Reset Nightly',
         color: '#c8a96e',
         glow: 'rgba(200,169,110,0.35)',
-        borderColor: 'border-[#c8a96e]/30',
+        borderColor: 'border-[#c8a96e]/50',
         hoverBg: 'hover:bg-[#c8a96e]/5',
     },
     unlimited: {
         kanji: '無限',
         label: 'Unlimited Trial',
-        sub: 'Infinite Souls // No Boundaries // Endless Hunt',
+        sub: 'Infinite Souls // Endless Hunt',
         color: '#a855f7',
         glow: 'rgba(168,85,247,0.35)',
-        borderColor: 'border-[#a855f7]/30',
+        borderColor: 'border-[#a855f7]/50',
         hoverBg: 'hover:bg-[#a855f7]/5',
     },
 } as const;
@@ -45,7 +45,7 @@ export function ModeBadge({ mode, onClick }: ModeBadgeProps) {
                 onKeyDown={handleKeyDown}
                 className={`relative inline-flex items-center gap-3 px-5 py-2.5 bg-gradient-to-b from-[#0a0a0f]/90 to-[#020205]/90 border ${config.borderColor} backdrop-blur-md shadow-lg select-none outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-offset-black transition-all duration-300 group ${onClick ? `cursor-pointer ${config.hoverBg}` : ''}`}
                 style={{ 
-                    boxShadow: `0 0 24px ${config.glow}`
+                    boxShadow: `0 0 26px ${config.glow}`
                 }}
                 aria-label={`Current mode is ${config.label}. Click to change mode.`}
             >
@@ -70,7 +70,7 @@ export function ModeBadge({ mode, onClick }: ModeBadgeProps) {
                 {/* Kanji Seal */}
                 <span
                     className="text-lg font-bold leading-none shrink-0 transition-transform duration-300 group-hover:scale-110"
-                    style={{ color: config.color, textShadow: `0 0 10px ${config.glow}` }}
+                    style={{ color: config.color, textShadow: `0 0 14px ${config.glow}` }}
                 >
                     {config.kanji}
                 </span>
@@ -89,7 +89,7 @@ export function ModeBadge({ mode, onClick }: ModeBadgeProps) {
                     >
                         {config.label}
                     </span>
-                    <span className="text-[8px] uppercase tracking-[0.15em] text-[#eed9c4]/30 font-mono mt-0.5">
+                    <span className="text-[10px] uppercase tracking-[0.15em] text-[#eed9c4]/50 font-mono mt-0.5">
                         {config.sub}
                     </span>
                 </div>
@@ -97,7 +97,7 @@ export function ModeBadge({ mode, onClick }: ModeBadgeProps) {
                 {/* Pulse dot บอกสถานะ active */}
                 <span
                     className="w-1.5 h-1.5 rounded-full animate-pulse shrink-0 ml-1 transition-transform duration-300 group-hover:scale-125"
-                    style={{ background: config.color, boxShadow: `0 0 8px ${config.color}` }}
+                    style={{ background: config.color, boxShadow: `0 0 10px ${config.color}` }}
                 />
             </div>
         </div>

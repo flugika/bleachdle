@@ -43,7 +43,7 @@ export const SongSummaryGuess = ({
 
     const cardBgStyle = isWin
         ? "bg-gradient-to-b from-[#281508] via-[#0f0a07] to-[#0a0705] border-[#d47a2a]/45 shadow-[0_0_50px_rgba(212,122,42,0.25)] ring-1 ring-[#d47a2a]/10"
-        : "bg-gradient-to-b from-[#0f0e1a] via-[#090912] to-[#05050a] border-[#c8a96e]/30 shadow-[0_0_35px_rgba(200,169,110,0.1)] ring-1 ring-[#c8a96e]/10";
+        : "bg-gradient-to-b from-[#0f0e1a] via-[#090912] to-[#05050a] border-[#c8a96e]/50 shadow-[0_0_37px_rgba(200,169,110,0.1)] ring-1 ring-[#c8a96e]/10";
 
     return (
         <div className="w-full max-w-md mx-auto animate-in fade-in zoom-in-95 duration-500 flex flex-col items-center mt-6">
@@ -51,7 +51,7 @@ export const SongSummaryGuess = ({
 
                 {/* Background Kanji Watermark — ใช้ tier kanji เหมือนเดิม ไม่ต้องพึ่ง race emblem asset */}
                 <div
-                    className="absolute right-[-20px] top-[-10px] text-[12rem] font-bold opacity-[0.025] pointer-events-none select-none transition-all duration-500"
+                    className="absolute right-[-20px] top-[-14px] text-[12rem] font-bold opacity-[0.025] pointer-events-none select-none transition-all duration-500"
                     style={{ color: activeTier.color }}
                 >
                     {activeTier.kanji}
@@ -63,7 +63,7 @@ export const SongSummaryGuess = ({
                     <h2 className="text-2xl font-bold mt-2 tracking-[0.2em] uppercase" style={{ color: isWin ? '#c8a96e' : '#e84d4d' }}>
                         {isWin ? "REISHI KAKUNIN" : "KONPAKU DANZETSU"}
                     </h2>
-                    <p className="text-[9px] tracking-[0.3em] uppercase text-[#eed9c4]/30 mt-1">
+                    <p className="text-[11px] tracking-[0.3em] uppercase text-[#eed9c4]/50 mt-1">
                         {isWin ? "Melodic Reiatsu Resonance Confirmed" : "Melodic Link Severed"}
                     </p>
                 </div>
@@ -73,11 +73,11 @@ export const SongSummaryGuess = ({
                 )}
 
                 {/* Tier Badge Card */}
-                <div className="relative p-[1px] my-4 bg-gradient-to-b from-[#c8a96e]/30 to-transparent">
+                <div className="relative p-[1px] my-4 bg-gradient-to-b from-[#c8a96e]/50 to-transparent">
                     <div className="bg-[#0a0a0c] p-5 flex items-center gap-6 overflow-hidden relative shadow-2xl">
-                        <div className="absolute top-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-[#c8a96e]/30 to-transparent" />
+                        <div className="absolute top-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-[#c8a96e]/50 to-transparent" />
                         <div
-                            className="relative flex items-center justify-center shrink-0 w-16 h-16 border border-[#c8a96e]/20 bg-[#0a0a0c] shadow-[0_0_15px_rgba(0,0,0,0.5)]"
+                            className="relative flex items-center justify-center shrink-0 w-16 h-16 border border-[#c8a96e]/20 bg-[#0a0a0c] shadow-[0_0_17px_rgba(0,0,0,0.5)]"
                             style={{ borderColor: `${activeTier.color}40` }}
                         >
                             <span className="text-3xl font-light" style={{ color: activeTier.color }}>
@@ -87,7 +87,7 @@ export const SongSummaryGuess = ({
                         </div>
 
                         <div className="flex flex-col gap-1 w-full">
-                            <div className="text-[9px] uppercase tracking-[0.3em] text-[#c8a96e]/60 font-medium">
+                            <div className="text-[11px] uppercase tracking-[0.3em] text-[#c8a96e]/60 font-medium">
                                 Assigned Title
                             </div>
                             <div className="text-xl text-[#f5ebd5] tracking-wide leading-tight">
@@ -95,7 +95,7 @@ export const SongSummaryGuess = ({
                             </div>
                             <div className="flex items-center gap-2 mt-1">
                                 <div className="w-4 h-[1px] bg-[#c8a96e]/40" />
-                                <div className="text-[10px] font-mono text-[#c8a96e]/50 tracking-wider">
+                                <div className="text-[12px] font-mono text-[#c8a96e]/50 tracking-wider">
                                     {activeTier.sub}
                                 </div>
                             </div>
@@ -107,10 +107,10 @@ export const SongSummaryGuess = ({
                 {target && (
                     <div className="relative mb-6 overflow-hidden border border-[#c8a96e]/20 bg-[#06060a] shadow-[0_0_30px_rgba(0,0,0,0.5)]">
                         <div className="relative bg-[#c8a96e]/5 px-4 py-2 border-b border-[#c8a96e]/10 flex items-center justify-between backdrop-blur-[1px]">
-                            <p className="text-[10px] font-bold uppercase tracking-[0.3em] text-[#c8a96e]/70">
+                            <p className="text-[12px] font-bold uppercase tracking-[0.3em] text-[#c8a96e]/70">
                                 {isWin ? "Track Verified" : "Signal Analysis Report"}
                             </p>
-                            <div className="w-1.5 h-1.5 rounded-full bg-[#c8a96e] animate-pulse shadow-[0_0_8px_#c8a96e]" />
+                            <div className="w-1.5 h-1.5 rounded-full bg-[#c8a96e] animate-pulse shadow-[0_0_10px_#c8a96e]" />
                         </div>
 
                         <div className="relative flex flex-col gap-3 p-4">
@@ -131,7 +131,7 @@ export const SongSummaryGuess = ({
                                             href={target.youtube_url}
                                             target="_blank"
                                             rel="noopener noreferrer"
-                                            className="flex items-center gap-1.5 px-3 py-1.5 border border-[#fa5252]/30 hover:border-[#fa5252]/70 bg-[#fa5252]/5 hover:bg-[#fa5252]/10 text-[9px] uppercase tracking-[0.15em] text-[#e8807f] hover:text-[#ff9d9d] transition-all duration-200"
+                                            className="flex items-center gap-1.5 px-3 py-1.5 border border-[#fa5252]/50 hover:border-[#fa5252]/70 bg-[#fa5252]/5 hover:bg-[#fa5252]/10 text-[11px] uppercase tracking-[0.15em] text-[#e8807f] hover:text-[#ff9d9d] transition-all duration-200"
                                         >
                                             ▶ YouTube
                                         </a>
@@ -141,7 +141,7 @@ export const SongSummaryGuess = ({
                                             href={target.spotify_url}
                                             target="_blank"
                                             rel="noopener noreferrer"
-                                            className="flex items-center gap-1.5 px-3 py-1.5 border border-[#4de880]/30 hover:border-[#4de880]/70 bg-[#4de880]/5 hover:bg-[#4de880]/10 text-[9px] uppercase tracking-[0.15em] text-[#8fe8ab] hover:text-[#b5f5cb] transition-all duration-200"
+                                            className="flex items-center gap-1.5 px-3 py-1.5 border border-[#4de880]/50 hover:border-[#4de880]/70 bg-[#4de880]/5 hover:bg-[#4de880]/10 text-[11px] uppercase tracking-[0.15em] text-[#8fe8ab] hover:text-[#b5f5cb] transition-all duration-200"
                                         >
                                             ♪ Spotify
                                         </a>
@@ -154,8 +154,8 @@ export const SongSummaryGuess = ({
 
                 {/* Identification Logs Block */}
                 <div className="my-4 border-t border-white/[0.05] pt-4 flex flex-col items-center w-full">
-                    <p className="text-[10px] text-[#eed9c4]/30 uppercase tracking-widest mb-1">Identification History</p>
-                    <p className="text-2xl font-mono font-bold mb-4 text-[#f5ebd5]">{guesses.length} <span className="text-xs text-[#eed9c4]/30 font-normal">attempts</span></p>
+                    <p className="text-[12px] text-[#eed9c4]/50 uppercase tracking-widest mb-1">Identification History</p>
+                    <p className="text-2xl font-mono font-bold mb-4 text-[#f5ebd5]">{guesses.length} <span className="text-xs text-[#eed9c4]/50 font-normal">attempts</span></p>
 
                     {/* Matrix Squares — เพลงมีแค่ correct/wrong เลยเหลือ 1 สี่เหลี่ยมต่อการเดา 1 ครั้ง
                         (ต่างจาก character ที่มีหลาย field ต่อแถว เพราะไม่มี field ย่อยให้ไล่) */}
@@ -172,7 +172,7 @@ export const SongSummaryGuess = ({
                     {/* Accordion Trigger */}
                     <button
                         onClick={() => setIsHistoryExpanded(!isHistoryExpanded)}
-                        className="flex items-center justify-between w-full border border-[#c8a96e]/15 bg-[#c8a96e]/5 hover:bg-[#c8a96e]/10 px-3 py-2 text-[9px] font-mono uppercase tracking-[0.18em] text-[#c8a96e] transition-all duration-200 select-none"
+                        className="flex items-center justify-between w-full border border-[#c8a96e]/15 bg-[#c8a96e]/5 hover:bg-[#c8a96e]/10 px-3 py-2 text-[11px] font-mono uppercase tracking-[0.18em] text-[#c8a96e] transition-all duration-200 select-none"
                     >
                         <span className="flex items-center gap-1.5">
                             <span className="w-1.5 h-1.5 rounded-full bg-[#c8a96e] animate-pulse"></span>
@@ -188,26 +188,26 @@ export const SongSummaryGuess = ({
 
                     {/* Chronicle Storage Logs */}
                     <div className={`w-full overflow-hidden transition-all duration-300 ease-in-out ${isHistoryExpanded ? 'max-h-[160px] opacity-100 mt-2.5' : 'max-h-0 opacity-0'}`}>
-                        <div className="grid grid-cols-1 gap-1.5 max-h-[155px] overflow-y-auto pr-1 text-left scrollbar-thin scrollbar-thumb-white/10">
+                        <div className="grid grid-cols-1 gap-1.5 max-h-[157px] overflow-y-auto pr-1 text-left scrollbar-thin scrollbar-thumb-white/10">
                             {[...guesses]
                                 .map((entry, i) => ({ entry, originalIndex: i + 1 }))
                                 .reverse()
                                 .map(({ entry, originalIndex }, index) => (
                                     <div
                                         key={index}
-                                        className="flex items-center gap-2 border border-white/[0.03] bg-black/50 p-1.5 hover:border-[#c8a96e]/30 transition-colors"
+                                        className="flex items-center gap-2 border border-white/[0.03] bg-black/50 p-1.5 hover:border-[#c8a96e]/50 transition-colors"
                                     >
-                                        <span className="font-mono text-[9px] text-[#eed9c4]/30 shrink-0">
+                                        <span className="font-mono text-[11px] text-[#eed9c4]/50 shrink-0">
                                             #{String(originalIndex).padStart(2, '0')}
                                         </span>
                                         <span
                                             className="w-2 h-2 shrink-0 rounded-full"
                                             style={{ backgroundColor: entry.status === 'correct' ? '#4de880' : '#a64747' }}
                                         />
-                                        <span className="text-[10px] font-medium text-[#eed9c4]/80 tracking-wide truncate">
+                                        <span className="text-[12px] font-medium text-[#eed9c4]/80 tracking-wide truncate">
                                             {entry.guess.title}
                                         </span>
-                                        <span className="text-[9px] text-[#eed9c4]/30 truncate ml-auto shrink-0">
+                                        <span className="text-[11px] text-[#eed9c4]/50 truncate ml-auto shrink-0">
                                             {entry.guess.artist}
                                         </span>
                                     </div>
@@ -218,21 +218,21 @@ export const SongSummaryGuess = ({
                 </div>
 
                 {/* Narrative Flavor Text Block */}
-                <div className="text-center italic text-[#eed9c4]/70 text-xs leading-relaxed px-2 my-5 border-l-2 border-[#c8a96e]/30">
+                <div className="text-center italic text-[#eed9c4]/70 text-xs leading-relaxed px-2 my-5 border-l-2 border-[#c8a96e]/50">
                     "{activeTier.flavor}"
                 </div>
 
                 {/* Streak Analytics Grid */}
                 <div className="grid grid-cols-2 divide-x divide-white/[0.08] mb-6 border-t border-white/[0.05] pt-4">
                     <div className="flex flex-col items-center">
-                        <p className="text-[9px] uppercase text-[#eed9c4]/30 tracking-widest">Current Streaks</p>
+                        <p className="text-[11px] uppercase text-[#eed9c4]/50 tracking-widest">Current Streaks</p>
                         <p className="text-xl font-mono font-bold mt-0.5 text-[#f5ebd5]">
                             {isWin ? stats.currentStreak : 0}
                         </p>
                     </div>
 
                     <div className="flex flex-col items-center">
-                        <p className="text-[9px] uppercase text-[#eed9c4]/30 tracking-widest">Max Streaks</p>
+                        <p className="text-[11px] uppercase text-[#eed9c4]/50 tracking-widest">Max Streaks</p>
                         <p className="text-xl font-mono font-bold mt-0.5" style={{ color: activeTier.color }}>
                             {stats.maxStreak}
                         </p>

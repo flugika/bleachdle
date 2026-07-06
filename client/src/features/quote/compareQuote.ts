@@ -1,4 +1,4 @@
-// src/lib/game-engine/compareQuote.ts
+// src/features/quote/compareQuote.ts
 import { Character } from '@/src/entities/character/schema';
 import { QuoteGuessStatus } from '@/src/features/quote/types';
 

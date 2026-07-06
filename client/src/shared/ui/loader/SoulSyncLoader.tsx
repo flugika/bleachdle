@@ -14,20 +14,20 @@ interface GlyphMetric {
 }
 
 const GLYPH_REGISTRY: Record<string, GlyphMetric> = {
-    "❖": { x: "0px", y: "2px" },
-    "☸": { x: "0px", y: "4px" },
-    "✟": { x: "0px", y: "2px" },
-    "☠": { x: "0px", y: "2px" },
-    "☯": { x: "0px", y: "3px" },
-    "☽": { x: "4px", y: "2px", scale: 1.05 },
-    "♛": { x: "0px", y: "2px" },
-    "❀": { x: "0px", y: "2px" },
-    "❁": { x: "0px", y: "2px" },
-    "➴": { x: "-2px", y: "2px" },
-    "✥": { x: "0px", y: "2px" },
+    "❖": { x: "0px", y: "4px" },
+    "☸": { x: "0px", y: "6px" },
+    "✟": { x: "0px", y: "4px" },
+    "☠": { x: "0px", y: "4px" },
+    "☯": { x: "0px", y: "5px" },
+    "☽": { x: "6px", y: "4px", scale: 1.05 },
+    "♛": { x: "0px", y: "4px" },
+    "❀": { x: "0px", y: "4px" },
+    "❁": { x: "0px", y: "4px" },
+    "➴": { x: "-4px", y: "4px" },
+    "✥": { x: "0px", y: "4px" },
     "✬": { x: "0px", y: "0px" },
-    "☂": { x: "0px", y: "3px" },
-    "۞": { x: "0px", y: "6px", scale: 0.6 },
+    "☂": { x: "0px", y: "5px" },
+    "۞": { x: "0px", y: "8px", scale: 0.6 },
 };
 
 const REIATSU_PARTICLES = [
@@ -51,7 +51,7 @@ function getNextIndex(currentIndex: number, max: number): number {
 const T = {
     gold: "#c8a96e",
     goldBright: "#f5ebd5",
-    muted: "#5a5a78",
+    muted: "#777796",
     mutedDim: "#3f3f56",
 } as const;
 
@@ -160,11 +160,11 @@ export default function SoulSyncLoader({
                             style={{ width: ring1Size, height: ring1Size }}
                         />
                         <div
-                            className="absolute rounded-full border border-double border-[#c8a96e]/40 animate-[spin_10s_linear_infinite_reverse] shadow-[0_0_15px_rgba(200,169,110,0.15)]"
+                            className="absolute rounded-full border border-double border-[#c8a96e]/40 animate-[spin_10s_linear_infinite_reverse] shadow-[0_0_17px_rgba(200,169,110,0.15)]"
                             style={{ width: ring2Size, height: ring2Size }}
                         />
                         <div
-                            className="absolute rounded-full border border-[#5a5a78]/30 animate-[spin_6s_linear_infinite]"
+                            className="absolute rounded-full border border-[#777796]/30 animate-[spin_6s_linear_infinite]"
                             style={{ width: ring3Size, height: ring3Size }}
                         />
                     </>
@@ -189,7 +189,7 @@ export default function SoulSyncLoader({
                                     fontSize: pSize,
                                     color: isEven ? T.gold : T.goldBright,
                                     opacity: isEven ? 0.85 : 0.45,
-                                    filter: `drop-shadow(0 0 4px ${T.gold})`,
+                                    filter: `drop-shadow(0 0 6px ${T.gold})`,
                                     // ✨ ปรับระยะวงโคจรเฉลี่ยด้วย `particleRadius`
                                     transform: `rotate(${angle}deg) translate(${particleRadius}px) rotate(-${angle}deg)`,
                                     animationDelay: `${i * 0.18}s`,
@@ -223,8 +223,8 @@ export default function SoulSyncLoader({
                                     opacity: isActive ? 1 : 0,
                                     transform: `translate(${metric.x}, ${metric.y}) scale(${(metric.scale ?? 1) * (isActive ? 1 : 0.85)})`,
                                     filter: isActive
-                                        ? "blur(0px) drop-shadow(0 0 12px rgba(200, 169, 110, 0.85)) drop-shadow(0 0 3px rgba(245, 235, 213, 0.9))"
-                                        : "blur(5px) drop-shadow(0 0 0px rgba(200, 169, 110, 0))",
+                                        ? "blur(0px) drop-shadow(0 0 14px rgba(200, 169, 110, 0.85)) drop-shadow(0 0 5px rgba(245, 235, 213, 0.9))"
+                                        : "blur(7px) drop-shadow(0 0 0px rgba(200, 169, 110, 0))",
                                     transition: reducedMotion
                                         ? "none"
                                         : "opacity 520ms ease-out, filter 520ms ease-out, transform 520ms cubic-bezier(0.22,1,0.36,1)",
@@ -240,14 +240,14 @@ export default function SoulSyncLoader({
             {!hideLabel && (
                 <p
                     className={`text-xs uppercase tracking-[0.25em] font-medium ${reducedMotion ? "" : "animate-pulse"}`}
-                    style={{ color: T.gold, textShadow: "0 0 10px rgba(200, 169, 110, 0.3)" }}
+                    style={{ color: T.gold, textShadow: "0 0 14px rgba(200, 169, 110, 0.3)" }}
                 >
                     {label}
                 </p>
             )}
 
             {!hideLabel && subLabel && (
-                <p className="mt-2 text-[10px] uppercase tracking-[0.3em]" style={{ color: T.muted }}>
+                <p className="mt-2 text-[12px] uppercase tracking-[0.3em]" style={{ color: T.muted }}>
                     {subLabel}
                 </p>
             )}

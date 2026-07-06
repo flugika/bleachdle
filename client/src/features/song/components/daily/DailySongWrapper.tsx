@@ -23,6 +23,8 @@ import { BL_MODES_METADATA } from '@/src/config/mode';
 import { DailyProgressBar } from '@/src/shared/ui/daily-hub/DailyProgressBar';
 import { DailyHubModalFooter } from '@/src/shared/ui/daily-hub/DailyHubModalFooter';
 import { useDailyHub } from '@/src/shared/hooks/useDailyHub';
+import { useTurnstile } from '@/src/shared/hooks/useTurnstile';
+import { recordDailyStat } from '@/src/services/statsClient';
 
 interface DailySongWrapperProps {
     initialTarget: BleachSong;
@@ -35,6 +37,8 @@ export default function DailySongWrapper({ initialTarget, initialSegmentId }: Da
     if (!FEATURE_FLAGS.daily?.song) {
         return <Sealed />;
     }
+
+    const { containerRef, getToken } = useTurnstile();
 
     const { navigate, state, reportReady } = useSenkaimon(); // 👈 pattern เดียวกับ DailyCharacterWrapper เป๊ะ
 
@@ -63,6 +67,7 @@ export default function DailySongWrapper({ initialTarget, initialSegmentId }: Da
     const [timeLeft, setTimeLeft] = useState('');
     const [isSurrendered, setIsSurrendered] = useState(false);
     const [isModeSelectorOpen, setIsModeSelectorOpen] = useState(false);
+    const isSynced = target !== null && initialTarget !== null && target.id === initialTarget.id;
 
     // 🛡️ FIX (ปัญหา modal ค้าง): ปิด modal ทันทีที่ประตูเซนไกมงเริ่ม "closing"
     useEffect(() => {
@@ -116,30 +121,34 @@ export default function DailySongWrapper({ initialTarget, initialSegmentId }: Da
 
     useEffect(() => {
         if (!_hasHydrated) return;
+        if (!isSynced) return; // ยังไม่ reconcile เสร็จ ห้ามตัดสินใจจาก guesses/hasFinalized ตอนนี้
 
         if (isGameOver) {
-            // มาเจอเกมที่จบไปแล้ว (F5) → เปิด modal สรุปทันที ไม่ต้องรอ delay
-            // (markModePlayed ไม่ต้องเรียกซ้ำตรงนี้ เพราะถูกบันทึกไปแล้วตอนจบเกมครั้งแรกก่อนหน้านี้)
             if (hasFinalized) {
                 setIsModalOpen(true);
                 return;
             }
 
-            // จังหวะปกติ: ยอมแพ้สดๆ = เปิดทันที / ทายถูกสดๆ = หน่วง 2.5s ให้เห็นตารางแวบก่อน
-            const targetDelay = isSurrendered ? 0 : 2500;
-            const timer = setTimeout(() => {
+            const targetDelay = isSurrendered ? 0 : 1000;
+            const timer = setTimeout(async () => {
                 if (!hasFinalized) {
-                    finalizeGame(isWin);
+                    finalizeGame(isWin);        // localStorage เขียนเหมือนเดิม ไม่มี network
                     updateStats(isWin);
-                    // 📅 Daily Hub: บันทึกว่าโหมด song ของวันนี้เล่นแล้ว + แพ้/ชนะ
                     markModePlayed('song', isWin);
+                    try {
+                        const turnstileToken = await getToken();
+                        await recordDailyStat('song', isWin, guesses.length, turnstileToken);
+                    } catch (err) {
+                        console.error('[stats] failed to record daily stat:', err);
+                        // ไม่ throw ต่อ — ผู้เล่นต้องเห็น modal สรุปผลเสมอ ไม่ว่าสถิติจะบันทึกสำเร็จไหม
+                    }
                 }
                 setIsModalOpen(true);
             }, targetDelay);
 
             return () => clearTimeout(timer);
         }
-    }, [isGameOver, isWin, finalizeGame, hasFinalized, _hasHydrated, isSurrendered]);
+    }, [isGameOver, isWin, finalizeGame, hasFinalized, _hasHydrated, isSurrendered, isSynced]);
 
     const handleCloseModal = () => {
         setIsModalOpen(false);
@@ -175,6 +184,7 @@ export default function DailySongWrapper({ initialTarget, initialSegmentId }: Da
 
     return (
         <div className="min-h-screen text-[#d8d0c8] overflow-x-hidden">
+            <div ref={containerRef} />
             <Header onOpenHowTo={() => setIsHowToOpen(true)} />
 
             <main className="max-w-[80%] mx-auto px-4 pb-16">
@@ -182,7 +192,7 @@ export default function DailySongWrapper({ initialTarget, initialSegmentId }: Da
                 <SubHeader title={BL_MODES_METADATA.song.title} subtitle={BL_MODES_METADATA.song.statusLine} />
 
                 {/* 📅 Daily Hub: ซ่อนตอน modal สรุปผลเปิดอยู่ เพราะ DailyHubModalFooter ข้างล่างโชว์ซ้ำในโมดัลแล้ว */}
-                {!isModalOpen && (
+                {!isModalOpen && hasFinalized && (
                     <DailyProgressBar activeMode="song" className="mb-5" />
                 )}
 
@@ -215,7 +225,7 @@ export default function DailySongWrapper({ initialTarget, initialSegmentId }: Da
                             ] as const).map(([key, bg, border, fg, label]) => (
                                 <div key={key} className="flex items-center gap-1.5">
                                     <span className="inline-block w-2.5 h-2.5 shrink-0" style={{ background: bg, border: `1px solid ${border}` }} />
-                                    <span className="text-[10px] tracking-wide text-[#d1a9a9]">{label}</span>
+                                    <span className="text-[12px] tracking-wide text-[#d1a9a9]">{label}</span>
                                 </div>
                             ))}
                         </div>
@@ -228,13 +238,13 @@ export default function DailySongWrapper({ initialTarget, initialSegmentId }: Da
                         {/* 📅 Daily Hub: CTA "เล่นต่อ" ต่อท้ายการ์ดสรุปผล */}
                         <DailyHubModalFooter activeMode="song" />
                     </>
-                ) : target ? (
+                ) : target && isSynced ? (
                     <div className="w-full overflow-x-auto">
                         <SongGuessTable guesses={guesses} />
                     </div>
                 ) : (
                     <div className="mt-40 flex flex-col items-center justify-center">
-                        <p className="text-xs uppercase tracking-[0.2em] text-[#5a5a78] animate-bounce">
+                        <p className="text-xs uppercase tracking-[0.2em] text-[#777796] animate-bounce">
                             Opening Senkaimon...
                         </p>
                     </div>
