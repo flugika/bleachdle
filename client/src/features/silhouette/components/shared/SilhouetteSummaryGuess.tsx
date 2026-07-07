@@ -267,10 +267,10 @@ export const SilhouetteSummaryGuess = ({
                 {mode === 'unlimited' && (
                     <Button
                         variant="primary"
-                        className={`w-full font-mono text-xs tracking-[0.2em] font-bold ${isWin
-                            ? "hover:!bg-[#3ecb73] hover:!border-[#3ecb73] hover:!text-black"
-                            : "hover:!bg-[#e84d4d] hover:!border-[#e84d4d] hover:!text-white"
-                            } transition-all duration-300 rounded-xs py-2.5`}
+                        className={`w-full ${isWin
+                            ? "hover:!bg-[#4de880] hover:!border-[#4de880]"
+                            : "hover:!bg-[#e84d4d] hover:!border-[#e84d4d]"
+                            }`}
                         onClick={onClose}
                     >
                         OPEN SENKAIMON 卍
