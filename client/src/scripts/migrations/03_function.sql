@@ -207,9 +207,9 @@ DECLARE
     song_pair_seq song_segment_pair[];
     quote_pair_seq group_item_pair[];   -- 🆕 ใช้ generic pair แทน quote_seq เดิม
 
-    image_seq   TEXT[];
-    release_seq TEXT[];
-    emoji_seq   TEXT[];
+    silhouette_seq  TEXT[];
+    release_seq     TEXT[];
+    emoji_seq       TEXT[];
 BEGIN
     IF EXISTS (SELECT 1 FROM daily_schedule WHERE date = CURRENT_DATE) THEN
         RETURN 'Notification: Schedule for today already exists.';
@@ -228,7 +228,7 @@ BEGIN
     song_pair_seq  := build_song_segment_sequence(total_days);
     quote_pair_seq := build_grouped_no_repeat_sequence('quotes', 'character_id', total_days); -- 🆕
 
-    image_seq   := build_no_repeat_sequence('images', total_days);
+    silhouette_seq   := build_no_repeat_sequence('silhouettes', total_days);
     release_seq := build_no_repeat_sequence('releases', total_days);
     emoji_seq   := build_no_repeat_sequence('emojis', total_days);
 
@@ -236,14 +236,14 @@ BEGIN
         INSERT INTO daily_schedule (
             date, character_id,
             song_id, song_segment_id,
-            image_id, release_id, emoji_id, quote_id
+            silhouette_id, release_id, emoji_id, quote_id
         )
         VALUES (
             start_date + (i - 1),
             char_ids[i],
             (song_pair_seq[i]).song_id,
             (song_pair_seq[i]).segment_id,
-            image_seq[i],
+            silhouette_seq[i],
             release_seq[i],
             emoji_seq[i],
             (quote_pair_seq[i]).item_id     -- 🆕 ดึง quote_id จาก pair แทน quote_seq[i]
@@ -271,7 +271,7 @@ DECLARE
   dist_col   text;
   dist_key   text := COALESCE(p_guess_count::text, 'fail');
 BEGIN
-  IF p_mode NOT IN ('character', 'song', 'image', 'release', 'emoji', 'quote') THEN
+  IF p_mode NOT IN ('character', 'song', 'silhouette', 'release', 'emoji', 'quote') THEN
     RAISE EXCEPTION 'invalid mode: %', p_mode;
   END IF;
 

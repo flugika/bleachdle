@@ -2,7 +2,7 @@
 
 > A Wordle-style character guessing game for Bleach fans — unlimited mode, attribute-based feedback, Soul Society aesthetic.
 
-Lastest Updated: 7 July 2026, 5:42 AM.
+Lastest Updated: 8 July 2026, 2:08 AM.
 
 [![Next.js](https://img.shields.io/badge/Next.js-15-black?logo=next.js)](https://nextjs.org/)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5-blue?logo=typescript)](https://www.typescriptlang.org/)
@@ -148,11 +148,30 @@ Unreleased game modes are gated in `src/config/feature.flags.ts`:
 
 ```ts
 export const FEATURE_FLAGS = {
-  dailyMode: false,
-  quoteMode: false,
-  imageMode: false,
-  emojiMode: false,
-  songMode: false,
+  // ── 📅 โหมดทายรายวัน (Daily Mode)
+    daily: {
+        character: true,
+        quote: true,
+        silhouette: false,
+        emoji: false,
+        song: true,
+        release: false,
+    },
+
+    // ── ♾️ โหมดเล่นไม่จำกัด (Unlimited Mode)
+    unlimited: {
+        character: true,
+        quote: true,
+        silhouette: true,
+        emoji: false,
+        song: true,
+        release: false,
+    },
+
+    // ── config / system
+    mockupSong: false,
+    mockupSilhouette: false,
+    support: true,
 } as const;
 ```
 
@@ -163,7 +182,7 @@ Set a flag to `true` locally to develop a mode without affecting production.
 ## Roadmap
 
 - [ ] Daily Mode — seeded character, shared results, no spoilers
-- [ ] Quote Mode — identify a character from a dialogue excerpt  
+- [ ] Quote Mode — identify a character from a dialogue excerpt
 - [ ] Image Mode — identify from a cropped/obscured artwork panel
 - [ ] Emoji Mode — abstract visual puzzle
 - [ ] Supabase integration — persistent leaderboard and cross-session streaks
@@ -183,8 +202,8 @@ Set a flag to `true` locally to develop a mode without affecting production.
 
 ## Credits
 
-Built by [your name / team].  
-Bleach and all related characters © Tite Kubo / Shueisha.  
+Built by fukusana.dev team (solo developer/uxui/game designer)
+Bleach and all related characters © Tite Kubo / Shueisha.
 This is a fan project — not affiliated with or endorsed by Shueisha, Viz Media, or TV Tokyo.
 
 ---
@@ -211,9 +230,9 @@ bleachdle
 │  │  │     ├─ page.tsx
 │  │  │     ├─ quote
 │  │  │     │  └─ page.tsx
+│  │  │     ├─ silhouette
+│  │  │     │  └─ page.tsx
 │  │  │     └─ song
-│  │  │        ├─ mockup
-│  │  │        │  └─ page.tsx
 │  │  │        └─ page.tsx
 │  │  ├─ (home)
 │  │  │  └─ page.tsx
@@ -228,6 +247,11 @@ bleachdle
 │  │  ├─ loading
 │  │  │  └─ page.tsx
 │  │  ├─ loading.tsx
+│  │  ├─ mockup
+│  │  │  ├─ silhouette
+│  │  │  │  └─ page.tsx
+│  │  │  └─ song
+│  │  │     └─ page.tsx
 │  │  ├─ not-found.tsx
 │  │  ├─ support
 │  │  │  └─ page.tsx
@@ -255,6 +279,12 @@ bleachdle
 │  │  │  │  ├─ Abirama_Redder.webp
 │  │  │  │  ├─ Aisslinger_Wernarr.webp
 │  │  │  │  ├─ Akon.webp
+│  │  │  │  └─ ...
+│  │  │  ├─ character_silhouette
+│  │  │  │  ├─ Aaroniero_Arruruerie_cutout_silhouette.webp
+│  │  │  │  ├─ Abirama_Redder_cutout_silhouette.webp
+│  │  │  │  ├─ Aisslinger_Wernarr_cutout_silhouette.webp
+│  │  │  │  ├─ Akon_cutout_silhouette.webp
 │  │  │  │  └─ ...
 │  │  │  ├─ emblems
 │  │  │  │  ├─ arrancar.webp
@@ -289,17 +319,19 @@ bleachdle
 │  │  ├─ data
 │  │  │  ├─ characters.json
 │  │  │  ├─ emojis.json
-│  │  │  ├─ images.json
 │  │  │  ├─ powers.json
 │  │  │  ├─ quotes.json
+│  │  │  ├─ silhouette-cells.json
+│  │  │  ├─ silhouettes.json
 │  │  │  ├─ songs.json
 │  │  │  └─ wallpapers.json
 │  │  ├─ entities
 │  │  │  ├─ character
 │  │  │  │  └─ schema.ts
 │  │  │  ├─ emoji
-│  │  │  ├─ image
 │  │  │  ├─ quote
+│  │  │  │  └─ schema.ts
+│  │  │  ├─ silhouette
 │  │  │  │  └─ schema.ts
 │  │  │  ├─ song
 │  │  │  │  └─ schema.ts
@@ -325,7 +357,6 @@ bleachdle
 │  │  │  │  ├─ types.ts
 │  │  │  │  └─ validGuessEntry.ts
 │  │  │  ├─ emoji
-│  │  │  ├─ image
 │  │  │  ├─ quote
 │  │  │  │  ├─ compareQuote.ts
 │  │  │  │  ├─ components
@@ -344,6 +375,19 @@ bleachdle
 │  │  │  │  ├─ quote.ts
 │  │  │  │  ├─ types.ts
 │  │  │  │  └─ validGuessEntry.ts
+│  │  │  ├─ silhouette
+│  │  │  │  ├─ compareSilhouette.ts
+│  │  │  │  ├─ components
+│  │  │  │  │  └─ shared
+│  │  │  │  │     ├─ SilhouetteGuessTable.tsx
+│  │  │  │  │     ├─ SilhouetteHowToPlayModal.tsx
+│  │  │  │  │     ├─ SilhouetteImage.tsx
+│  │  │  │  │     └─ SilhouetteSummaryGuess.tsx
+│  │  │  │  ├─ hooks
+│  │  │  │  │  └─ unlimited
+│  │  │  │  │     └─ useSilhouetteGame.ts
+│  │  │  │  ├─ silhouette.ts
+│  │  │  │  └─ types.ts
 │  │  │  ├─ song
 │  │  │  │  ├─ compareSong.ts
 │  │  │  │  ├─ components
@@ -394,9 +438,12 @@ bleachdle
 │  │  │     └─ ui.ts
 │  │  ├─ scripts
 │  │  │  ├─ check-assets.js
+│  │  │  ├─ cutout_characters.py
 │  │  │  ├─ extract-character-meta.js
 │  │  │  ├─ extract-character.js
+│  │  │  ├─ fix-all-json-relations.js
 │  │  │  ├─ fix-duplicate-ids.js
+│  │  │  ├─ generate-silhouettes.js
 │  │  │  ├─ generate-wallpapers.js
 │  │  │  ├─ map-character-quote.js
 │  │  │  ├─ migrations
@@ -405,11 +452,13 @@ bleachdle
 │  │  │  │  ├─ 02_type.sql
 │  │  │  │  ├─ 03_function.sql
 │  │  │  │  └─ 04_cronjob.sql
+│  │  │  ├─ precompute-silhouette-cells.mjs
 │  │  │  └─ seeds
 │  │  │     ├─ daily
 │  │  │     │  └─ trigger-schedule.js
 │  │  │     ├─ seed-characters.js
 │  │  │     ├─ seed-quotes.js
+│  │  │     ├─ seed-silhouettes.js
 │  │  │     └─ seed-songs.js
 │  │  ├─ services
 │  │  │  ├─ character.ts
@@ -443,6 +492,7 @@ bleachdle
 │  │  │     ├─ control-panel
 │  │  │     │  ├─ CharacterControlPanel.tsx
 │  │  │     │  ├─ QuoteControlPanel.tsx
+│  │  │     │  ├─ SilhouetteControlPanel.tsx
 │  │  │     │  └─ SongControlPanel.tsx
 │  │  │     ├─ daily-hub
 │  │  │     │  ├─ DailyHubModalFooter.tsx

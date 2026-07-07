@@ -499,7 +499,7 @@
         "audio_url": "/assets/audio/songs/harukaze.mp3",
         "youtube_url": "https://www.youtube.com/watch?v=X0Zu20nbeVI",
         "spotify_url": "https://open.spotify.com/track/1GSPV6AYG8NrtpgqhWx893?si=cfca4b32e00548af",
-        "character_id": "d4e5f6a7-b8c9-0d1e-2f3a-4b5c6d7e8f9a",
+        "character_id": "d194d9a7-9077-473a-a07a-b3f66d085ccc",
         "segments": [
             {
                 "id": "1049d2b3-5c68-44e0-a0c4-777dbb9a7fa6",
@@ -583,7 +583,7 @@
         "audio_url": "/assets/audio/songs/stars.mp3",
         "youtube_url": "https://www.youtube.com/watch?v=TGTYrh-kFbA",
         "spotify_url": "https://open.spotify.com/track/0mMikRupn84z6woeMHccz1?si=8ec3a330c0f845f3",
-        "character_id": "f6f4e7g5-3b8c-9d0e-f1a2-3b4c5d6e7f8g",
+        "character_id": "7961a321-5146-430a-9e87-2f6689a4c91b",
         "segments": [
             {
                 "id": "0d9459bd-3db4-4223-8293-a378961c544d",
@@ -708,7 +708,7 @@
         ]
     },
     {
-        "id": "c3d4e5f6-a7b8-4c7d-0e1f-2a3b4c5d6e7f",
+        "id": "37f2fa5a-3ed0-4b82-a067-74e030c67fad",
         "title": "Composite",
         "artist": "Younha",
         "album": "ED-3",
@@ -738,7 +738,7 @@
         ]
     },
     {
-        "id": "d4e5f6a7-b8c9-4d8e-1f2a-3b4c5d6e7f8a",
+        "id": "771245dd-096d-40e9-a2d1-6bc60362b73a",
         "title": "Happypeople",
         "artist": "Skoop On Somebody",
         "album": "ED-4",
@@ -762,7 +762,7 @@
         ]
     },
     {
-        "id": "e5f6a7b8-c9d0-4e9f-2a3b-4c5d6e7f8a9b",
+        "id": "e47a4a17-0c1e-4da9-9788-801dded5a587",
         "title": "Life",
         "artist": "YUI",
         "album": "ED-5",
@@ -792,7 +792,7 @@
         ]
     },
     {
-        "id": "f6a7b8c9-d0e1-4f0a-3b4c-5d6e7f8a9b0c",
+        "id": "08eb2958-fea1-4118-84fe-4b59a1efe657",
         "title": "My Pace",
         "artist": "SunSet Swish",
         "album": "ED-6",
@@ -816,7 +816,7 @@
         ]
     },
     {
-        "id": "a7b8c9d0-e1f2-4a1b-4c5d-6e7f8a9b0c1d",
+        "id": "ab5d8027-edee-41c7-9811-52a1286ba924",
         "title": "Hanabi",
         "artist": "Ikimono-Gakari",
         "album": "ED-7",
@@ -840,7 +840,7 @@
         ]
     },
     {
-        "id": "b8c9d0e1-f2a3-4b2c-5d6e-7f8a9b0c1d2e",
+        "id": "cf7a707c-77ce-446b-aadd-7c0f688685ee",
         "title": "Movin!!",
         "artist": "Takacha",
         "album": "ED-8",
@@ -864,7 +864,7 @@
         ]
     },
     {
-        "id": "c9d0e1f2-a3b4-4c3d-6e7f-8a9b0c1d2e3f",
+        "id": "1ab32103-fd5e-4859-afb4-f60e08a7bb52",
         "title": "Baby It's You",
         "artist": "JUNE",
         "album": "ED-9",
@@ -888,7 +888,7 @@
         ]
     },
     {
-        "id": "d0e1f2a3-b4c5-4d4e-7f8a-9b0c1d2e3f4a",
+        "id": "add2ac59-1779-4cf9-be45-fe1d0627d5ab",
         "title": "Sakura Biyori",
         "artist": "Mai Hoshimura",
         "album": "ED-10",
@@ -1158,7 +1158,7 @@
         ]
     },
     {
-        "id": "2100e6789-089b-12d3-a456-426614174221",
+        "id": "fbddbf0d-590a-42a0-bee2-77b2d5c17f11",
         "title": "Sakurabito",
         "artist": "SunSet Swish",
         "album": "ED-21",
@@ -1182,7 +1182,7 @@
         ]
     },
     {
-        "id": "2200e6789-089b-12d3-a456-426614174222",
+        "id": "e0b5efd2-a77d-4f98-b1b3-3e2041a5a5f1",
         "title": "Tabidatsu Kimi e",
         "artist": "RSP",
         "album": "ED-22",
@@ -1206,7 +1206,7 @@
         ]
     },
     {
-        "id": "2300e6789-089b-12d3-a456-426614174223",
+        "id": "71e292c3-314e-40cc-9c51-374414681ed5",
         "title": "Stay Beautiful",
         "artist": "DIGGY-MO'",
         "album": "ED-23",
@@ -1230,7 +1230,7 @@
         ]
     },
     {
-        "id": "2400e6789-089b-12d3-a456-426614174224",
+        "id": "c199a2ab-374c-41f9-98e3-c7a9ae31f6af",
         "title": "echoes",
         "artist": "universe",
         "album": "ED-24",
@@ -1254,7 +1254,7 @@
         ]
     },
     {
-        "id": "2500e6789-089b-12d3-a456-426614174225",
+        "id": "6336a7e2-8487-481a-b39d-e38af729ff17",
         "title": "Last Moment",
         "artist": "SPYAIR",
         "album": "ED-25",
@@ -1278,7 +1278,7 @@
         ]
     },
     {
-        "id": "2600e6789-089b-12d3-a456-426614174226",
+        "id": "710bb3d4-4667-4830-b591-ffd2d03d26a6",
         "title": "Song For...",
         "artist": "ROOKiEZ is PUNK'D",
         "album": "ED-26",
@@ -1302,7 +1302,7 @@
         ]
     },
     {
-        "id": "2700e6789-089b-12d3-a456-426614174227",
+        "id": "ce578abf-a439-4f38-bc47-ce5438afdb2e",
         "title": "Blue Bird",
         "artist": "fumika",
         "album": "ED-27",
@@ -1326,7 +1326,7 @@
         ]
     },
     {
-        "id": "2800e6789-089b-12d3-a456-426614174228",
+        "id": "9d0c2559-16b1-4e2c-a7a8-da30288c09f4",
         "title": "Haruka Kanata",
         "artist": "UNLIMITS",
         "album": "ED-28",
@@ -1350,7 +1350,7 @@
         ]
     },
     {
-        "id": "2900e6789-089b-12d3-a456-426614174229",
+        "id": "78b8ec85-457d-4525-aae2-11465bc147bb",
         "title": "Re:pray",
         "artist": "Aimer",
         "album": "ED-29",
@@ -1374,7 +1374,7 @@
         ]
     },
     {
-        "id": "3000e6789-089b-12d3-a456-426614174230",
+        "id": "b043b8d9-6441-47b1-b626-af72dbc9850b",
         "title": "MASK",
         "artist": "Aqua Timez",
         "album": "ED-30",

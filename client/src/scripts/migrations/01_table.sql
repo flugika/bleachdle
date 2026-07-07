@@ -48,12 +48,12 @@ CREATE TABLE public.song_segments (
 );
 
 -- 3. ตารางโหมดรูปภาพซูม (images)
-CREATE TABLE images (
-    id TEXT PRIMARY KEY,
-    character_id TEXT NOT NULL REFERENCES characters(id) ON DELETE CASCADE,
-    zoom_urls TEXT[] NOT NULL,               
-    full_image_url TEXT NOT NULL             
-);
+-- CREATE TABLE images (
+--     id TEXT PRIMARY KEY,
+--     character_id TEXT NOT NULL REFERENCES characters(id) ON DELETE CASCADE,
+--     zoom_urls TEXT[] NOT NULL,               
+--     full_image_url TEXT NOT NULL             
+-- );
 
 -- 4. ตารางโหมดคำปลดปล่อยพลัง (releases)
 CREATE TABLE releases (
@@ -81,13 +81,19 @@ CREATE TABLE quotes (
     context TEXT
 );
 
+CREATE TABLE silhouettes (
+    id TEXT PRIMARY KEY,
+    character_id TEXT REFERENCES characters(id),
+    image TEXT NOT NULL
+);
+
 -- 6. ตารางจัดคิวรายวัน (daily_schedule)
 CREATE TABLE daily_schedule (
     date DATE PRIMARY KEY,
     character_id TEXT REFERENCES characters(id) ON DELETE SET NULL,
     song_id TEXT REFERENCES songs(id) ON DELETE SET NULL,
     song_segment_id TEXT REFERENCES song_segments(id) ON DELETE SET NULL,
-    image_id TEXT REFERENCES images(id) ON DELETE SET NULL,
+    silhouette_id TEXT REFERENCES silhouettes(id) ON DELETE SET NULL,
     release_id TEXT REFERENCES releases(id) ON DELETE SET NULL,
     emoji_id TEXT REFERENCES emojis(id) ON DELETE SET NULL,
     quote_id TEXT REFERENCES quotes(id) ON DELETE SET NULL
@@ -102,8 +108,8 @@ CREATE TABLE public.daily_stats (
     song_played_count integer NOT NULL DEFAULT 0,
     song_passed_count integer NOT NULL DEFAULT 0,
 
-    image_played_count integer NOT NULL DEFAULT 0,
-    image_passed_count integer NOT NULL DEFAULT 0,
+    silhouette_played_count integer NOT NULL DEFAULT 0,
+    silhouette_passed_count integer NOT NULL DEFAULT 0,
 
     release_played_count integer NOT NULL DEFAULT 0,
     release_passed_count integer NOT NULL DEFAULT 0,

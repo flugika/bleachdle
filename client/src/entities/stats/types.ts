@@ -1,7 +1,7 @@
 export const VALID_STAT_MODES = [
     'character',
     'song',
-    'image',
+    'silhouette',
     'release',
     'emoji',
     'quote',

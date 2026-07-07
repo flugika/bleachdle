@@ -5,7 +5,7 @@ export const FEATURE_FLAGS = {
     daily: {
         character: true,
         quote: true,
-        image: false,
+        silhouette: false,
         emoji: false,
         song: true,
         release: false,
@@ -15,13 +15,14 @@ export const FEATURE_FLAGS = {
     unlimited: {
         character: true,
         quote: true,
-        image: false,
+        silhouette: true,
         emoji: false,
         song: true,
         release: false,
     },
 
     mockupSong: false,
+    mockupSilhouette: false,
     support: true,
 } as const;
 

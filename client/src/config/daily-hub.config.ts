@@ -40,11 +40,11 @@ export const DAILY_HUB_MODES: DailyHubModeConfig[] = [
         href: '/daily/quote',
     },
     {
-        id: 'image',
-        label: 'Image',
-        shortLabel: 'IMG',
-        icon: '🖼️',
-        href: '/daily/image',
+        id: 'silhouette',
+        label: 'Silhouette',
+        shortLabel: 'SIL',
+        icon: '🌑',
+        href: '/daily/silhouette',
     },
     {
         id: 'emoji',

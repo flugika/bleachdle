@@ -32,7 +32,7 @@ export default function UnlimitedCharacterGame() {
     // 🛡️ เดิมเรียก useCharacterGame() 2 ครั้งแยกกัน (ตัวแปร game + destructure ซ้ำ)
     // ตอนนี้ subscribe ครั้งเดียว แล้วส่ง store object เดิมต่อให้ SearchBar ผ่าน prop `game`
     const gameStore = useCharacterGame();
-    const { target, guesses, initializeGame, finalizeGame, resetGame, hardReset, hasFinalized, _hasHydrated, resetStreakKeepMax } = gameStore;
+    const { target, guesses, initializeGame, finalizeGame, resetGame, hardReset, hasFinalized, _hasHydrated, resetStreakKeepMax, stats, loadStats } = gameStore;
     const characters = getCharacters();
 
     const [isModalOpen, setIsModalOpen] = useState(false);
@@ -41,8 +41,6 @@ export default function UnlimitedCharacterGame() {
     const [isGameCompleted, setIsGameCompleted] = useState(false);
     const [isModeSelectorOpen, setIsModeSelectorOpen] = useState(false);
     const [finalRoundGuesses, setFinalRoundGuesses] = useState<typeof guesses>([]);
-    const stats = useCharacterGame(s => s.stats);
-    const loadStats = useCharacterGame(s => s.loadStats);
 
     // 🛡️ FIX (ปัญหา modal ค้าง): ปิด modal ทันทีที่ประตูเซนไกมงเริ่ม "closing"
     // ผูกกับ state ตรงๆ ไม่พึ่งลำดับการเรียกจาก handleSwitchDimension เพียงจุดเดียว

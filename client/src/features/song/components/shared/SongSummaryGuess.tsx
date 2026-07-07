@@ -189,30 +189,35 @@ export const SongSummaryGuess = ({
                     {/* Chronicle Storage Logs */}
                     <div className={`w-full overflow-hidden transition-all duration-300 ease-in-out ${isHistoryExpanded ? 'max-h-[160px] opacity-100 mt-2.5' : 'max-h-0 opacity-0'}`}>
                         <div className="grid grid-cols-1 gap-1.5 max-h-[157px] overflow-y-auto pr-1 text-left scrollbar-thin scrollbar-thumb-white/10">
-                            {[...guesses]
-                                .map((entry, i) => ({ entry, originalIndex: i + 1 }))
-                                .reverse()
-                                .map(({ entry, originalIndex }, index) => (
+                            {[...guesses].map((entry, i) => {
+                                const originalIndex = guesses.length - i;
+
+                                return (
                                     <div
-                                        key={index}
-                                        className="flex items-center gap-2 border border-white/[0.03] bg-black/50 p-1.5 hover:border-[#c8a96e]/50 transition-colors"
+                                        key={i}
+                                        className="flex items-center gap-3 border border-white/[0.02] bg-black/40 p-1.5 hover:border-[#c8a96e]/40 transition-colors group/row"
                                     >
-                                        <span className="font-mono text-[11px] text-[#eed9c4]/50 shrink-0">
+                                        {/* ลำดับเลข Track บันทึกเสียงที่ถูกต้อง (#01 ถัดไปเป็น #02) */}
+                                        <span className="font-mono text-[9px] text-[#eed9c4]/40 shrink-0">
                                             #{String(originalIndex).padStart(2, '0')}
                                         </span>
+
+                                        {/* 🎼 Stacked Typography Matrix: จัดระเบียบเนื้อหาให้ Scannability สูงขึ้นตามระเบียบ UX */}
+                                        <div className="flex flex-col min-w-0 flex-1 leading-tight">
+                                            <span className="text-[12px] font-bold text-[#eed9c4]/90 tracking-wide truncate">
+                                                {entry.guess.title}
+                                            </span>
+                                            <span className="text-[10px] text-[#eed9c4]/40 tracking-wider font-mono mt-0.5 truncate">
+                                                {entry.guess.artist} <span className='text-[#c8a96e]'>// {entry.guess.album}</span>
+                                            </span>
+                                        </div>
                                         <span
-                                            className="w-2 h-2 shrink-0 rounded-full"
+                                            className="w-1.5 h-1.5 rounded-full ml-auto shrink-0 shadow-[0_0_8px_rgba(0,0,0,0.5)]"
                                             style={{ backgroundColor: entry.status === 'correct' ? '#4de880' : '#a64747' }}
                                         />
-                                        <span className="text-[12px] font-medium text-[#eed9c4]/80 tracking-wide truncate">
-                                            {entry.guess.title}
-                                        </span>
-                                        <span className="text-[11px] text-[#eed9c4]/50 truncate ml-auto shrink-0">
-                                            {entry.guess.artist}
-                                        </span>
                                     </div>
-                                ))
-                            }
+                                );
+                            })}
                         </div>
                     </div>
                 </div>

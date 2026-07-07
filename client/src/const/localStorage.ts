@@ -1,5 +1,6 @@
 export const STORAGE_KEYS = {
     DAILY_HUB_STATUS: 'bleachdle-daily-hub-status',
+    CONFIG: 'bleachdle-config',
     
     CHARACTER_PROGRESS: 'bleachdle-character-progress',
     CHARACTER_COMPLETED: 'bleachdle-character-completed',
@@ -11,10 +12,10 @@ export const STORAGE_KEYS = {
     SONG_STATS: 'bleachdle-song-stats',
     SONG_REGISTRY: 'bleachdle-song-registry',
 
-    IMAGE_PROGRESS: 'bleachdle-image-progress',
-    IMAGE_COMPLETED: 'bleachdle-image-completed',
-    IMAGE_STATS: 'bleachdle-image-stats',
-    IMAGE_REGISTRY: 'bleachdle-image-registry',
+    SILHOUETTE_PROGRESS: 'bleachdle-silhouette-progress',
+    SILHOUETTE_COMPLETED: 'bleachdle-silhouette-completed',
+    SILHOUETTE_STATS: 'bleachdle-silhouette-stats',
+    SILHOUETTE_REGISTRY: 'bleachdle-silhouette-registry',
     
     RELEASE_PROGRESS: 'bleachdle-release-progress',
     RELEASE_COMPLETED: 'bleachdle-release-completed',

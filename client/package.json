@@ -19,6 +19,7 @@
     "seed:characters": "npx tsx --env-file=.env src/scripts/seeds/daily/seed-characters.js",
     "seed:songs": "npx tsx --env-file=.env src/scripts/seeds/daily/seed-songs.js",
     "seed:trigger-schedule": "npx tsx --env-file=.env src/scripts/seeds/trigger-schedule.js",
+    "precompute:silhouette": "npx tsx src/scripts/precomputeSilhouetteCells.mjs",
     "preinstall": "npx only-allow pnpm"
   },
   "dependencies": {
@@ -45,6 +46,7 @@
     "eslint": "^9",
     "eslint-config-next": "16.2.9",
     "postcss": "^8.5.16",
+    "sharp": "^0.35.3",
     "tailwindcss": "^4.3.2",
     "typescript": "^5"
   }

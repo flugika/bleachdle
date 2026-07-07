@@ -27,12 +27,12 @@ const GAME_MODES = [
         description: "A single line of dialogue is pulled from the series. Read it, feel it out, and name the character.",
     },
     {
-        id: "image",
+        id: "silhouette",
         kanji: "像",
         accent: "#60a5fa",
-        name: "IMAGE",
-        tagline: "Zoom & reveal",
-        description: "You start with an extreme close-up crop of a character. Every wrong guess pulls the camera back a little.",
+        name: "SILHOUETTE",
+        tagline: "Shadows don't lie",
+        description: "You start with a pitch-black silhouette cropped tight on one spot. Every wrong guess brings a little more color and detail into focus — same frame, same angle.",
     },
     {
         id: "emoji",
@@ -172,7 +172,7 @@ export default function Home() {
                                     DAILY
                                 </h2>
                             </div>
-                            <span className="text-6xl font-serif text-white/[0.02] font-black group-hover:text-[#c8a96e]/10 group-hover:scale-110 transition-all duration-700 select-none">
+                            <span className="text-6xl text-white/[0.02] font-black group-hover:text-[#c8a96e]/10 group-hover:scale-110 transition-all duration-700 select-none">
                                 日
                             </span>
                         </div>
@@ -224,7 +224,7 @@ export default function Home() {
                                     UNLIMITED
                                 </h2>
                             </div>
-                            <span className="text-6xl font-serif text-white/[0.02] font-black group-hover:text-blue-400/10 group-hover:scale-110 transition-all duration-700 select-none">
+                            <span className="text-6xl text-white/[0.02] font-black group-hover:text-blue-400/10 group-hover:scale-110 transition-all duration-700 select-none">
                                 無
                             </span>
                         </div>
@@ -311,7 +311,7 @@ export default function Home() {
                                         </h4>
                                     </div>
                                     <span
-                                        className="text-3xl font-serif font-black select-none opacity-[0.08] group-hover/mode:opacity-30 group-hover/mode:scale-110 transition-all duration-500"
+                                        className="text-3xl font-black select-none opacity-[0.08] group-hover/mode:opacity-30 group-hover/mode:scale-110 transition-all duration-500"
                                         style={{ color: mode.accent }}
                                     >
                                         {mode.kanji}

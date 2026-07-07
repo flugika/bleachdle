@@ -49,14 +49,14 @@ export const BL_MODES_METADATA: Record<SubFeatureKey, ModeConfig> = {
         technicalTerm: "BAKUDŌ COMMAND: VERBAL",
         statusLine: "System // Replaying Recorded Voice Print",
     },
-    image: {
-        id: "image",
+    silhouette: {
+        id: "silhouette",
         title: "SHIKAKU VISUALIZATION",
         romaji: "SHIKAKU GENSŌ • 視覚幻想",
         symbol: "斬", // Slay / Zanpakuto
-        desc: "Guess the character from a heavily zoomed-in image that reveals more with each try.",
+        desc: "Guess the character from a fixed, cropped silhouette. Wrong guesses don't move the frame — they gradually lift the darkness, revealing color and detail in the same spot.",
         technicalTerm: "KAGE MOCKUP: ENCRYPTED",
-        statusLine: "System // Reconstructing Visual Fragment",
+        statusLine: "System // Lifting Reiatsu Veil",
     },
     emoji: {
         id: "emoji",

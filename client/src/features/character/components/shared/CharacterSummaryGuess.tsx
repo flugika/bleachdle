@@ -286,15 +286,19 @@ export const CharacterSummaryGuess = ({ isOpen, onClose, guesses, target, isWin,
                     {/* Chronicle Storage Logs */}
                     <div className={`w-full overflow-hidden transition-all duration-300 ease-in-out ${isHistoryExpanded ? 'max-h-[140px] opacity-100 mt-2.5' : 'max-h-0 opacity-0'}`}>
                         <div className="grid grid-cols-2 gap-1.5 max-h-[137px] overflow-y-auto pr-1 text-left scrollbar-thin scrollbar-thumb-white/10">
-                            {[...guesses]
-                                .map((entry, i) => ({ entry, originalIndex: i + 1 }))
-                                .reverse()
-                                .map(({ entry, originalIndex }, index) => (
+                            {[...guesses].map((entry, i) => {
+                                const originalIndex = guesses.length - i;
+                                const isCorrect = entry.result && Object.entries(entry.result).every(([key, value]) => {
+                                    if (key === 'image') return true; // ข้ามการเช็คฟิลด์รูปภาพตามเงื่อนไข
+                                    return value === 'correct';
+                                });
+
+                                return (
                                     <div
-                                        key={index}
+                                        key={i}
                                         className="flex items-center gap-2 border border-white/[0.03] bg-black/50 p-1.5 hover:border-[#c8a96e]/50 transition-colors"
                                     >
-                                        <span className="font-mono text-[11px] text-[#eed9c4]/50 shrink-0">
+                                        <span className="font-mono text-[11px] text-[#ebc7c7]/50 shrink-0">
                                             #{String(originalIndex).padStart(2, '0')}
                                         </span>
                                         <div className='relative w-7 h-7 shrink-0'>
@@ -306,12 +310,16 @@ export const CharacterSummaryGuess = ({ isOpen, onClose, guesses, target, isWin,
                                                 className="border border-white/5 object-cover bg-neutral-900"
                                             />
                                         </div>
-                                        <span className="text-[12px] font-medium text-[#eed9c4]/80 tracking-wide truncate">
+                                        <span className="text-[12px] font-medium text-[#ebc7c7]/80 tracking-wide truncate">
                                             {entry.guess.name}
                                         </span>
+                                        <span
+                                            className="w-1.5 h-1.5 rounded-full ml-auto shrink-0"
+                                            style={{ backgroundColor: isCorrect ? '#4de880' : '#a64747' }}
+                                        />
                                     </div>
-                                ))
-                            }
+                                );
+                            })}
                         </div>
                     </div>
                 </div>

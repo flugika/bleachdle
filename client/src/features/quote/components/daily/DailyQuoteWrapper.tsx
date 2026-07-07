@@ -33,12 +33,10 @@ export default function DailyQuoteWrapper({ initialTarget }: { initialTarget: Qu
     const { navigate, state, reportReady } = useSenkaimon(); // 👈 ดึง state + reportReady มาด้วย ใช้คุม modal ตอน transition และแจ้งความพร้อมกลับไปที่ Senkaimon
 
     const gameStore = useQuoteGame();
-    const { target, guesses, initializeGame, finalizeGame, resetGame, hasFinalized, _hasHydrated } = gameStore;
+    const { target, guesses, initializeGame, finalizeGame, resetGame, hasFinalized, _hasHydrated, stats, loadStats } = gameStore;
     const characters = getCharacters();
     const quotes = getQuotes();
     const isSynced = target !== null && initialTarget !== null && target.id === initialTarget.id;
-    const stats = useQuoteGame(s => s.stats);
-    const loadStats = useQuoteGame(s => s.loadStats);
 
     // 📅 Daily Hub: markModePlayed('quote', won) จะถูกเรียกตอนเกมจบจริงเท่านั้น (ดู effect ด้านล่าง)
     const { markModePlayed } = useDailyHub();

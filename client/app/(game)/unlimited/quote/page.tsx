@@ -30,7 +30,7 @@ export default function UnlimitedQuoteGame() {
     const { navigate, state, reportReady } = useSenkaimon();
 
     const gameStore = useQuoteGame();
-    const { target, guesses, initializeGame, finalizeGame, resetGame, hardReset, hasFinalized, _hasHydrated, resetStreakKeepMax } = gameStore;
+    const { target, guesses, initializeGame, finalizeGame, resetGame, hardReset, hasFinalized, _hasHydrated, resetStreakKeepMax, stats, loadStats } = gameStore;
     const quotes = getQuotes();
 
     const [manuallyClosed, setManuallyClosed] = useState(false);
@@ -40,8 +40,6 @@ export default function UnlimitedQuoteGame() {
     const [isModeSelectorOpen, setIsModeSelectorOpen] = useState(false);
     const [revealDelayDone, setRevealDelayDone] = useState(false);
     const [finalRoundGuesses, setFinalRoundGuesses] = useState<typeof guesses>([]);
-    const stats = useQuoteGame(s => s.stats);
-    const loadStats = useQuoteGame(s => s.loadStats);
 
     useEffect(() => {
         if (state === "closing") {
@@ -211,6 +209,7 @@ export default function UnlimitedQuoteGame() {
                     </div>
                 ) : isGameCompleted ? (
                     <Central46ConfidentialArchive
+                        mode='quote'
                         guesses={finalRoundGuesses}
                         soulName={soulName}
                         inputName={inputName}

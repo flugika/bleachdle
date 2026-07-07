@@ -281,12 +281,12 @@ export const QuoteSummaryGuess = ({
                     {/* Chronicle Storage Logs */}
                     <div className={`w-full overflow-hidden transition-all duration-300 ease-in-out ${isHistoryExpanded ? 'max-h-[140px] opacity-100 mt-2.5' : 'max-h-0 opacity-0'}`}>
                         <div className="grid grid-cols-2 gap-1.5 max-h-[137px] overflow-y-auto pr-1 text-left scrollbar-thin scrollbar-thumb-white/10">
-                            {[...guesses]
-                                .map((entry, i) => ({ entry, originalIndex: i + 1 }))
-                                .reverse()
-                                .map(({ entry, originalIndex }, index) => (
+                            {[...guesses].map((entry, i) => {
+                                const originalIndex = guesses.length - i;
+
+                                return (
                                     <div
-                                        key={index}
+                                        key={i}
                                         className="flex items-center gap-2 border border-white/[0.03] bg-black/50 p-1.5 hover:border-[#c8a96e]/50 transition-colors"
                                     >
                                         <span className="font-mono text-[11px] text-[#ebc7c7]/50 shrink-0">
@@ -309,8 +309,8 @@ export const QuoteSummaryGuess = ({
                                             style={{ backgroundColor: entry.status === 'correct' ? '#4de880' : '#a64747' }}
                                         />
                                     </div>
-                                ))
-                            }
+                                );
+                            })}
                         </div>
                     </div>
                 </div>

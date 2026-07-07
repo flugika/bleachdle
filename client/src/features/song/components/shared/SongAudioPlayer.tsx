@@ -4,16 +4,39 @@
 import { useEffect, useRef, useState } from 'react';
 import { BleachSong } from '@/src/entities/song/schema';
 import { getRevealMsForAttempt, formatRevealMs } from '@/src/features/song/constants';
+import { STORAGE_KEYS } from '@/src/const/localStorage';
 
-const VOLUME_STORAGE_KEY = 'bleachdle-song-volume';
 const DEFAULT_VOLUME = 0.5;
 
 function readStoredVolume(): number {
     if (typeof window === 'undefined') return DEFAULT_VOLUME;
-    const raw = window.localStorage.getItem(VOLUME_STORAGE_KEY);
-    const parsed = raw !== null ? Number(raw) : NaN;
-    if (Number.isNaN(parsed)) return DEFAULT_VOLUME;
-    return Math.min(1, Math.max(0, parsed));
+    try {
+        const raw = window.localStorage.getItem(STORAGE_KEYS.CONFIG);
+        if (!raw) return DEFAULT_VOLUME;
+
+        const configObj = JSON.parse(raw);
+        // ดึงฟิลด์ song_volume ออกมา (ถ้าไม่มีให้เป็น NaN เพื่อใช้ค่า Default)
+        const parsed = configObj.song_volume !== undefined ? Number(configObj.song_volume) : NaN;
+
+        if (Number.isNaN(parsed)) return DEFAULT_VOLUME;
+        return Math.min(1, Math.max(0, parsed));
+    } catch {
+        return DEFAULT_VOLUME;
+    }
+}
+
+function updateStoredVolume(nextVolume: number) {
+    if (typeof window === 'undefined') return;
+    try {
+        const savedConfig = window.localStorage.getItem(STORAGE_KEYS.CONFIG);
+        const configObj = savedConfig ? JSON.parse(savedConfig) : {};
+        
+        configObj.song_volume = nextVolume; // เพิ่ม/อัปเดตฟิลด์ระดับเสียงเสียง
+        
+        window.localStorage.setItem(STORAGE_KEYS.CONFIG, JSON.stringify(configObj));
+    } catch (error) {
+        console.error('Failed to save song volume to localStorage:', error);
+    }
 }
 
 interface SongAudioPlayerProps {
@@ -56,18 +79,18 @@ export function SongAudioPlayer({ target, attemptIndex, disabled = false }: Song
         const next = Number(e.target.value) / 100;
         setVolume(next);
         if (next > 0) previousVolumeRef.current = next;
-        window.localStorage.setItem(VOLUME_STORAGE_KEY, String(next));
+        updateStoredVolume(next);
     };
 
     const handleToggleMute = () => {
         if (isMuted) {
             const restored = previousVolumeRef.current || DEFAULT_VOLUME;
             setVolume(restored);
-            window.localStorage.setItem(VOLUME_STORAGE_KEY, String(restored));
+            updateStoredVolume(restored);
         } else {
             previousVolumeRef.current = volume;
             setVolume(0);
-            window.localStorage.setItem(VOLUME_STORAGE_KEY, '0');
+            updateStoredVolume(0);
         }
     };
 

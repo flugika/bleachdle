@@ -296,7 +296,7 @@ function StaticSegmentRow({
             <div className="flex flex-col min-w-0 pr-2">
                 <span className="text-[12px] font-semibold text-[#b8b8c2] truncate">{seg.segment_name}</span>
                 <span className="text-[11px] font-mono text-[#5e5e7a] mt-0.5">
-                    ⚓ <span className="text-red-500 font-bold">{seg.start_time_ms} ms</span> 
+                    ⚓ <span className="text-red-500 font-bold">{seg.start_time_ms} ms</span>
                     <span className="text-[#ccb281] font-bold"> ({formatSeconds(seg.start_time_ms)}s)</span>
                     <span className="text-[#c8a96e] uppercase"> | {seg.difficulty_level}</span>
                 </span>
@@ -511,7 +511,7 @@ function LiveTuningWorkbench({
                         title="Regenerate UUID"
                         className="text-[10px] font-mono font-bold text-[#c8a96e] bg-[#0d0d14] border border-[#2c2c3d] px-1.5 py-0.5 hover:border-red-600/60 hover:text-white transition-colors"
                     >
-                        🔄 NEW UUID
+                        🔄 REGEN ID
                     </button>
                 </div>
                 <div className="relative group">

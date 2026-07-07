@@ -5,8 +5,7 @@ import { BleachQuote } from '@/src/entities/quote/schema';
 import { QuoteGuessable } from '@/src/features/quote/types';
 import { Modal } from '../modal';
 import { QuoteTestimonyDisplay } from '@/src/features/quote/components/shared/QuoteTestimonyDisplay';
-import { Character } from '@/src/entities/character/schema';
-import { getCharacters } from '@/src/features/character/character';
+import { getQuotableCharacters } from '@/src/features/quote/quote';
 
 interface QuoteControlPanelProps {
     mode: 'daily' | 'unlimited';
@@ -36,7 +35,7 @@ export function QuoteControlPanel({
     onSurrender,
 }: QuoteControlPanelProps) {
     const [isConfirmOpen, setIsConfirmOpen] = useState(false);
-    const characters = getCharacters();
+    const characters = getQuotableCharacters();
 
     let isLimitReached = false;
     if (mode === 'unlimited') {

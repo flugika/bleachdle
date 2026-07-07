@@ -32,7 +32,7 @@ export default function UnlimitedSongGame() {
 
     // 🛡️ subscribe store ครั้งเดียว แล้วส่ง object เดิมต่อให้ SongSearchBar ผ่าน prop `game`
     const gameStore = useSongGame();
-    const { target, guesses, initializeGame, finalizeGame, resetGame, hardReset, hasFinalized, _hasHydrated, resetStreakKeepMax } = gameStore;
+    const { target, guesses, initializeGame, finalizeGame, resetGame, hardReset, hasFinalized, _hasHydrated, resetStreakKeepMax, stats, loadStats } = gameStore;
     const songs = getSongs();
 
     const [manuallyClosed, setManuallyClosed] = useState(false);
@@ -42,8 +42,6 @@ export default function UnlimitedSongGame() {
     const [isModeSelectorOpen, setIsModeSelectorOpen] = useState(false);
     const [revealDelayDone, setRevealDelayDone] = useState(false);
     const [finalRoundGuesses, setFinalRoundGuesses] = useState<typeof guesses>([]);
-    const stats = useSongGame(s => s.stats);
-    const loadStats = useSongGame(s => s.loadStats);
 
     // 🛡️ FIX (ปัญหา modal ค้าง): ปิด modal ทันทีที่ประตูเซนไกมงเริ่ม "closing"
     useEffect(() => {

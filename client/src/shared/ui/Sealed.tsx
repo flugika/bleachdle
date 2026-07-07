@@ -86,7 +86,7 @@ export default function Sealed() {
                         </blockquote>
 
                         {/* 🇬🇧 English Section */}
-                        <p className="text-[11px] md:text-xs leading-relaxed text-neutral-400 uppercase tracking-widest max-w-xl font-sans px-2 drop-shadow-[0_1px_4px_rgba(0,0,0,0.6)]">
+                        <p className="text-[11px] md:text-xs leading-relaxed text-neutral-400 uppercase tracking-widest max-w-xl px-2 drop-shadow-[0_1px_4px_rgba(0,0,0,0.6)]">
                             This spiritual gateway has been strictly sealed by absolute decree of{' '}
                             <span className="text-neutral-200 font-bold underline decoration-[#e83030]/60 decoration-2 underline-offset-2 tracking-wider">
                                 Central 46

@@ -41,3 +41,8 @@ client/.vercel
 client/next-env.d.ts
 client/*.tsbuildinfo
 client/package-lock.json
+
+# file
+client/public/assets/character_cutout
+client/public/assets/character_silhouette/_contact_sheet*
+client/src/data/silhouette-cells.debug.json

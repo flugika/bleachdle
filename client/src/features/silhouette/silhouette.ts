@@ -1,0 +1,154 @@
+// src/features/silhouette/silhouette.ts
+import { INITIAL_REVEAL_SILHOUETTE, MAX_SILHOUETTE_GUESSES } from '@/src/const/guess';
+import { getCharacterById } from '@/src/features/character/character';
+import { SilhouetteSchema, BleachSilhouette } from '@/src/entities/silhouette/schema';
+import { SilhouetteTarget } from '@/src/features/silhouette/types';
+import silhouetteCells from '@/src/data/silhouette-cells.json';
+import rawSilhouettes from '@/src/data/silhouettes.json';
+import { Character } from '@/src/entities/character/schema';
+
+const cellsMap = silhouetteCells as Record<string, number[]>;
+
+export const getOccupiedCells = (image: string): number[] | undefined => cellsMap[image];
+
+let cachedSilhouettes: BleachSilhouette[] | null = null;
+
+const loadSilhouettes = (): BleachSilhouette[] => {
+    if (cachedSilhouettes) return cachedSilhouettes;
+
+    const parsed = SilhouetteSchema.array().safeParse(rawSilhouettes);
+    if (!parsed.success) {
+        const badEntries = parsed.error.issues.map((issue) => ({
+            index: issue.path[0],
+            character_id: (rawSilhouettes as any[])[issue.path[0] as number]?.character_id,
+            message: issue.message,
+        }));
+        console.error('[silhouette.ts] entries ที่ข้อมูลผิดพลาด:', badEntries);
+        throw new Error('Invalid silhouettes.json — ดู console สำหรับค่าที่ผิดจริง');
+    }
+
+    cachedSilhouettes = parsed.data;
+    return cachedSilhouettes;
+};
+
+export const getSilhouettes = (): BleachSilhouette[] => loadSilhouettes();
+
+export const getSilhouetteSearchCharacters = (): Character[] => {
+    return loadSilhouettes()
+        .map((s) => getCharacterById(s.character_id))
+        .filter((c): c is Character => c !== undefined);
+};
+
+export const getSilhouetteImageUrl = (image: string): string =>
+    `/assets/character_silhouette/${image}`;
+
+export const attachCharacter = (silhouette: BleachSilhouette): SilhouetteTarget | undefined => {
+    const character = getCharacterById(silhouette.character_id);
+    if (!character) return undefined;
+    return { ...silhouette, character };
+};
+
+export const GRID_SIZE = 5;
+const TOTAL_CELLS = GRID_SIZE * GRID_SIZE;
+const REVEAL_PER_GUESS = 1; // เดาผิด 1 ครั้ง เปิดเพิ่ม 1 ช่อง
+const MAX_REVEAL_RATIO = 0.85;
+
+function getCurrentDateStr(): string {
+    const d = new Date();
+    const year = d.getFullYear();
+    const month = String(d.getMonth() + 1).padStart(2, '0');
+    const day = String(d.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`; // จะได้รูปแบบ "2026-07-07"
+}
+
+function hashStringToSeed(str: string): number {
+    let h = 1779033703 ^ str.length;
+    for (let i = 0; i < str.length; i++) {
+        h = Math.imul(h ^ str.charCodeAt(i), 3432918353);
+        h = (h << 13) | (h >>> 19);
+    }
+    return h >>> 0;
+}
+
+function mulberry32(seed: number) {
+    return function () {
+        seed |= 0;
+        seed = (seed + 0x6d2b79f5) | 0;
+        let t = Math.imul(seed ^ (seed >>> 15), 1 | seed);
+        t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+        return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+    };
+}
+
+function shuffleWithSeed<T>(arr: T[], seedStr: string): T[] {
+    const rand = mulberry32(hashStringToSeed(seedStr));
+    const copy = [...arr];
+    for (let i = copy.length - 1; i > 0; i--) {
+        const j = Math.floor(rand() * (i + 1));
+        [copy[i], copy[j]] = [copy[j], copy[i]];
+    }
+    return copy;
+}
+
+/**
+ * 🎯 คืนค่า Set พิกัดกล่องที่ต้องเปิดโชว์แก่ผู้เล่น
+ * @param characterId ไอดีตัวละครสำหรับใช้ทำ Seed สุ่มช่องเดาผิด
+ * @param initialRevealedTiles อาเรย์กล่องเริ่มต้นที่ดึงมาจาก JSON/Database Column
+ * @param guessCount จำนวนครั้งที่ผู้เล่นเดาผิดไปแล้ว
+ * @param occupiedCells พิกัดตารางที่ตัวละครทับอยู่จริง (ใช้สำหรับเปิดส่วนสำคัญก่อน)
+ */
+export const getRevealedCellIndices = (
+    characterId: string,
+    guessCount: number,
+    occupiedCells?: number[],
+): Set<number> => {
+    const dateStr = getCurrentDateStr(); // ดึง "2026-07-07" เป็นต้น
+    const allCells = Array.from({ length: TOTAL_CELLS }, (_, i) => i);
+
+    // 1. หาแผ่นป้ายเริ่มต้น (Initial Tiles) ประจำวันนี้แบบอัตโนมัติ
+    const occupied = occupiedCells && occupiedCells.length > 0 ? occupiedCells : allCells;
+    const occupiedSet = new Set(occupied);
+    const emptyCells = allCells.filter((cell) => !occupiedSet.has(cell));
+
+    // สุ่มหาแผ่นป้ายเปิดจุดสำคัญ (เนื้อตัวละคร) ประจำวันนี้ก่อน
+    const initialOrder = [
+        ...shuffleWithSeed(occupied, `${characterId}:${dateStr}:init:occupied`),
+        ...shuffleWithSeed(emptyCells, `${characterId}:${dateStr}:init:empty`),
+    ];
+
+    // หั่นเอาไปใช้งานตามจำนวนที่ตั้งไว้ เช่น 5 ช่องแรก
+    const initialTiles = initialOrder.slice(0, INITIAL_REVEAL_SILHOUETTE);
+    const baseRevealedSet = new Set(initialTiles);
+
+    // ถ้ายังไม่เริ่มเดา (guessCount === 0) ส่งแผ่นป้ายเริ่มต้นประจำวันนี้ออกไปแสดงผลเลย
+    if (guessCount === 0) {
+        return baseRevealedSet;
+    }
+
+    // 2. ถ้าผู้เล่นเดาผิด (guessCount > 0) นำช่องที่เหลือมาสุ่มลำดับที่จะเปิดเพิ่มต่อ
+    const remainingCells = allCells.filter((cell) => !baseRevealedSet.has(cell));
+    const remainingOccupied = remainingCells.filter((cell) => occupiedSet.has(cell));
+    const remainingEmpty = remainingCells.filter((cell) => !occupiedSet.has(cell));
+
+    const orderOfRemaining = [
+        ...shuffleWithSeed(remainingOccupied, `${characterId}:${dateStr}:guess:occupied`),
+        ...shuffleWithSeed(remainingEmpty, `${characterId}:${dateStr}:guess:empty`),
+    ];
+
+    const cappedGuessCount = Math.min(guessCount, MAX_SILHOUETTE_GUESSES);
+    const maxAllowedTotalReveal = Math.floor(TOTAL_CELLS * MAX_REVEAL_RATIO);
+
+    const extraRevealCount = Math.min(
+        orderOfRemaining.length,
+        cappedGuessCount * REVEAL_PER_GUESS,
+        maxAllowedTotalReveal - baseRevealedSet.size
+    );
+
+    // รวมแผ่นป้ายเริ่มต้นของวัน + แผ่นป้ายที่เปิดเพิ่มจากการเดาผิด
+    const finalRevealedSet = new Set(initialTiles);
+    for (let i = 0; i < extraRevealCount; i++) {
+        finalRevealedSet.add(orderOfRemaining[i]);
+    }
+
+    return finalRevealedSet;
+};

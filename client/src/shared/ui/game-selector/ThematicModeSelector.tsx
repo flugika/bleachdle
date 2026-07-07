@@ -123,7 +123,7 @@ export const ThematicModeSelector: React.FC<ThematicModeSelectorProps> = ({
                             {/* Core Inner Content */}
                             <div className="h-full flex flex-col justify-between relative z-10">
                                 <div className="flex items-start justify-between mb-10">
-                                    <div className="text-5xl font-serif font-black text-white/20 text-shadow-[0_0_17px_rgba(255,255,255,0.1)] group-hover:text-[#c8a96e] group-hover:scale-125 group-hover:drop-shadow-[0_0_20px_rgba(200,169,110,0.6)] transition-all duration-700">
+                                    <div className="text-5xl font-black text-white/20 text-shadow-[0_0_17px_rgba(255,255,255,0.1)] group-hover:text-[#c8a96e] group-hover:scale-125 group-hover:drop-shadow-[0_0_20px_rgba(200,169,110,0.6)] transition-all duration-700">
                                         {config.symbol}
                                     </div>
 
@@ -153,7 +153,7 @@ export const ThematicModeSelector: React.FC<ThematicModeSelectorProps> = ({
                                 <div className="mt-10 pt-4 border-t border-white/10 flex justify-between items-center text-[11px] font-mono tracking-[0.25em] text-white/40 transition-colors duration-500">
                                     <span>SYS_CHAMBER: 0{index + 1}</span>
                                     <span className="opacity-40 group-hover:opacity-100 group-hover:text-[#c8a96e] transition-all duration-500 flex items-center gap-2 transform group-hover:translate-x-1">
-                                        RELEASE <span className="text-xs font-sans font-bold">→</span>
+                                        RELEASE <span className="text-xs font-bold">→</span>
                                     </span>
                                 </div>
                             </div>

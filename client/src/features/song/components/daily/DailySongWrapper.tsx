@@ -39,10 +39,8 @@ export default function DailySongWrapper({ initialTarget, initialSegmentId }: Da
     const { navigate, state, reportReady } = useSenkaimon(); // 👈 pattern เดียวกับ DailyCharacterWrapper เป๊ะ
 
     const gameStore = useSongGame();
-    const { target, guesses, initializeGame, finalizeGame, resetGame, hasFinalized, _hasHydrated } = gameStore;
+    const { target, guesses, initializeGame, finalizeGame, resetGame, hasFinalized, _hasHydrated, stats, loadStats } = gameStore;
     const songs = getSongs(); // 👈 ใช้แค่ทำ autocomplete list ของ search bar เท่านั้น ไม่ใช่แหล่งสุ่ม target
-    const stats = useSongGame(s => s.stats);
-    const loadStats = useSongGame(s => s.loadStats);
 
     // 📅 Daily Hub: markModePlayed('song', won) จะถูกเรียกตอนเกมจบจริงเท่านั้น (ดู effect ด้านล่าง)
     const { markModePlayed } = useDailyHub();

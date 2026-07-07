@@ -1,0 +1,977 @@
+[
+    {
+        "id": "3ddd44c1-41e0-4d53-962f-53b6692e5896",
+        "character_id": "c7a8b9d0-1e2f-4a3b-8c5d-6e7f8a9b0c1d",
+        "image": "Ichigo_Kurosaki_cutout_silhouette.webp"
+    },
+    {
+        "id": "fd1c3dc4-4101-4ccd-b68a-e9be4b53ae4d",
+        "character_id": "a1b2c3d4-e5f6-4a5b-8c9d-0e1f2a3b4c5d",
+        "image": "Orihime_Inoue_cutout_silhouette.webp"
+    },
+    {
+        "id": "12b0764d-1e08-442a-91ca-1f8817232eac",
+        "character_id": "f8c3d2e1-b4a5-4c6d-9e7f-8a0b1c2d3e4f",
+        "image": "Yasutora_Sado_cutout_silhouette.webp"
+    },
+    {
+        "id": "7e8f687b-8121-4144-b5ce-dcc55514d416",
+        "character_id": "d194d9a7-9077-473a-a07a-b3f66d085ccc",
+        "image": "Kugo_Ginjo_cutout_silhouette.webp"
+    },
+    {
+        "id": "1dea94e7-2143-4e3c-8723-f678ae2e3177",
+        "character_id": "db68ec7a-3d58-4ca4-8dcc-98baea1e101e",
+        "image": "Shukuro_Tsukishima_cutout_silhouette.webp"
+    },
+    {
+        "id": "945619c8-440f-47a4-9038-9e98b6cb1ed8",
+        "character_id": "b147d517-5ad4-431d-97aa-46b82b207213",
+        "image": "Riruka_Dokugamine_cutout_silhouette.webp"
+    },
+    {
+        "id": "646bae7e-9075-46ad-9559-35066e22c564",
+        "character_id": "4342558f-9774-47e8-a908-f4bde248f580",
+        "image": "Don_Kanonji_cutout_silhouette.webp"
+    },
+    {
+        "id": "16353ee7-7ea8-4c63-b284-86f61a2d0fb7",
+        "character_id": "768ad835-e873-4fca-8df1-c61be9e9304a",
+        "image": "Yukio_Hans_Vorarlberna_cutout_silhouette.webp"
+    },
+    {
+        "id": "02ebb3dd-9e17-4643-a7ce-f36c5e22b020",
+        "character_id": "b01779a6-a4c2-4a03-9b3e-e41e07c94962",
+        "image": "Tatsuki_Arisawa_cutout_silhouette.webp"
+    },
+    {
+        "id": "ceadea73-91a7-45b2-9b26-e04ec28f7aba",
+        "character_id": "58b9ed5c-252f-4368-9684-1d186dfcb38d",
+        "image": "Karin_Kurosaki_cutout_silhouette.webp"
+    },
+    {
+        "id": "43ec6071-6f06-4d71-9bcb-fd3055abb542",
+        "character_id": "b1a2c3d4-e5f6-4a7b-8c9d-0e1f2a3b4c5d",
+        "image": "Keigo_Asano_cutout_silhouette.webp"
+    },
+    {
+        "id": "30023df7-b7cf-4e88-ac7e-7c57da8f1a5f",
+        "character_id": "c2b3d4e5-f6a7-4b8c-9d0e-1f2a3b4c5d6e",
+        "image": "Mizuho_Asano_cutout_silhouette.webp"
+    },
+    {
+        "id": "426e803c-477e-42d2-8380-989e16fa8996",
+        "character_id": "05675003-0ce9-4385-82f6-f13f0ad9936f",
+        "image": "Oscar_Joaquin_De_La_Rosa_cutout_silhouette.webp"
+    },
+    {
+        "id": "123c6611-0b74-4f5f-a422-06548160b0fe",
+        "character_id": "e6573cf1-e3b6-4bb0-af6a-c46877c960c5",
+        "image": "Chizuru_Honsho_cutout_silhouette.webp"
+    },
+    {
+        "id": "3210bcc3-8c74-4942-98a1-4ab407835721",
+        "character_id": "18fddac6-d9d9-4e6a-8837-ba146980b153",
+        "image": "Kagine_cutout_silhouette.webp"
+    },
+    {
+        "id": "3928aac0-8b82-44a1-8898-1eb8fffe5d1a",
+        "character_id": "a5e8c1b2-3d4f-4a6b-9c8d-7e6f5a4b3c2d",
+        "image": "Mizuiro_Kojima_cutout_silhouette.webp"
+    },
+    {
+        "id": "4a102587-6efc-4b10-ba9f-a1390b5ac4b5",
+        "character_id": "f8d9b7a6-5c4d-4e3b-9a2f-1b0c9d8e7f6a",
+        "image": "Ryo_Kunieda_cutout_silhouette.webp"
+    },
+    {
+        "id": "b54b415e-ebe8-4291-8360-d3d65f403d44",
+        "character_id": "b3c4d5e6-f7a8-49b0-9c1d-2e3f4a5b6c7d",
+        "image": "Yuzu_Kurosaki_cutout_silhouette.webp"
+    },
+    {
+        "id": "0c12e28a-56b7-4f56-b190-f8721685ff49",
+        "character_id": "e2f3a4b5-c6d7-4e8f-9a0b-1c2d3e4f5a6b",
+        "image": "Mahana_Natsui_cutout_silhouette.webp"
+    },
+    {
+        "id": "46b96f4c-101e-4cfa-80a2-bc65a0001971",
+        "character_id": "d1e2f3a4-b5c6-4d7e-8f9a-0b1c2d3e4f5a",
+        "image": "Misato_Ochi_cutout_silhouette.webp"
+    },
+    {
+        "id": "e026e563-d009-4670-833f-432b62f01918",
+        "character_id": "ac95022b-9d72-4f28-a6ae-7a0dec1a872a",
+        "image": "Michiru_Ogawa_cutout_silhouette.webp"
+    },
+    {
+        "id": "def24323-7290-45cc-af75-1cb7a2f0d460",
+        "character_id": "5eda98a5-c43b-4941-b04c-c2cddff92c7e",
+        "image": "Ikumi_Unagiya_cutout_silhouette.webp"
+    },
+    {
+        "id": "2e75a9e9-e57f-453a-b295-a8d09a138300",
+        "character_id": "53b208d0-9132-4e61-90d2-52573ed6a272",
+        "image": "Kaoru_Unagiya_cutout_silhouette.webp"
+    },
+    {
+        "id": "681da68b-23f1-4930-9fce-69bb619ead1a",
+        "character_id": "e7b1a2d3-f4c5-4a6b-9d8e-7f6a5b4c3d2e",
+        "image": "Giriko_Kutsuzawa_cutout_silhouette.webp"
+    },
+    {
+        "id": "5e484a30-7f32-4c86-ac8f-616512972df2",
+        "character_id": "f8a9b7c6-d5e4-4b3a-9c2d-1f0e9d8c7b6a",
+        "image": "Moe_Shishigawara_cutout_silhouette.webp"
+    },
+    {
+        "id": "3b75af44-9786-4a6c-9eef-9d5903ea68ee",
+        "character_id": "381be93c-b48e-48ab-bb79-e8cbe2ce51cb",
+        "image": "Jackie_Tristan_cutout_silhouette.webp"
+    },
+    {
+        "id": "bd41b12b-8aa9-468f-ae2a-e04e2a73a8ca",
+        "character_id": "e4f8b9d1-c2a3-4a6b-8d7e-9f0a1b2c3d4e",
+        "image": "Renji_Abarai_cutout_silhouette.webp"
+    },
+    {
+        "id": "906df850-1d2b-434d-9dc8-9207ecef7443",
+        "character_id": "6adb1439-598a-47aa-afde-002c4bc0cbb0",
+        "image": "Sosuke_Aizen_cutout_silhouette.webp"
+    },
+    {
+        "id": "a3a00970-eb5d-4e17-9d6c-07b77d49f810",
+        "character_id": "05177074-0809-47a8-9bad-00f04bca9fac",
+        "image": "Akon_cutout_silhouette.webp"
+    },
+    {
+        "id": "76bc144a-731f-4a6a-814e-73e24301f04b",
+        "character_id": "19eb93a9-3893-41cf-8b7f-419e150901f3",
+        "image": "Makizo_Aramaki_cutout_silhouette.webp"
+    },
+    {
+        "id": "6bcb7900-3f36-429f-b74a-3c253e33a50d",
+        "character_id": "2bbc0f70-1259-4585-a08c-b140552af192",
+        "image": "Yumichika_Ayasegawa_cutout_silhouette.webp"
+    },
+    {
+        "id": "23010bb8-a552-4453-891f-5598a1ed6f02",
+        "character_id": "1046be8f-3da9-460a-bedf-cc6f616edced",
+        "image": "Tatsufusa_Enjoji_cutout_silhouette.webp"
+    },
+    {
+        "id": "f6e4c16a-43c0-4ddd-bff0-bf1e2409d810",
+        "character_id": "df47e923-a12b-4e01-9a7d-536f9b1836d1",
+        "image": "Kirio_Hikifune_cutout_silhouette.webp"
+    },
+    {
+        "id": "8047dfed-38c5-478b-8844-15f639d9e22a",
+        "character_id": "2d8f9a1c-3b4e-47c0-a8d6-444a1763a822",
+        "image": "Momo_Hinamori_cutout_silhouette.webp"
+    },
+    {
+        "id": "ccfe94ec-ae78-4a4b-b6b4-e7e039896cf5",
+        "character_id": "5f9b4c8a-7d1e-4503-bc92-385c49d2110a",
+        "image": "Shuhei_Hisagi_cutout_silhouette.webp"
+    },
+    {
+        "id": "74002a66-8caa-4bb0-a09b-5dc68c9a28df",
+        "character_id": "9e2a3c7b-841d-4e9f-a2c1-23f4a56b7c8d",
+        "image": "Toshiro_Hitsugaya_cutout_silhouette.webp"
+    },
+    {
+        "id": "2617aa1e-8756-466d-9eca-86ef0744e777",
+        "character_id": "b7d1a2c3-e45f-460d-9b8a-12f34567890a",
+        "image": "Hiyosu_cutout_silhouette.webp"
+    },
+    {
+        "id": "4a923551-f547-44b2-b3c3-6ea43fb65031",
+        "character_id": "a5c9d8e7-f6b5-4a4c-8d3e-21f0a9b8c7d6",
+        "image": "Ichibe'e_Hyosube_cutout_silhouette.webp"
+    },
+    {
+        "id": "11a17910-e7a0-4744-b6cb-22f892f1300b",
+        "character_id": "e4c5b6a7-d8f9-4a0b-b1c2-d3e4f5a6b7c8",
+        "image": "Tetsuzaemon_Iba_cutout_silhouette.webp"
+    },
+    {
+        "id": "c94c7726-00c6-46b1-8aa9-f9ea0aa5e507",
+        "character_id": "f5d6e7f8-a9b0-4c1d-8e2f-3a4b5c6d7e8f",
+        "image": "Gin_Ichimaru_cutout_silhouette.webp"
+    },
+    {
+        "id": "3c4803d0-1978-4fd7-a8d0-cf112aa053cc",
+        "character_id": "760794a0-2546-44d3-89fb-21b64924c640",
+        "image": "Yasochika_Iemura_cutout_silhouette.webp"
+    },
+    {
+        "id": "85b9936a-1ab2-4b0e-a470-eda6de32395f",
+        "character_id": "42d9fd25-eadf-4813-b5e8-2d69117184f9",
+        "image": "Jirobo_Ikkanzaka_cutout_silhouette.webp"
+    },
+    {
+        "id": "573314d1-ceae-4491-9cfa-82afde9b092d",
+        "character_id": "18bf35c0-0109-4610-9577-2138175c84db",
+        "image": "Nanao_Ise_cutout_silhouette.webp"
+    },
+    {
+        "id": "69220887-bca9-4138-a28b-1200e463ed86",
+        "character_id": "5d2784d2-69e8-45b7-a6c3-d581ba62e5ac",
+        "image": "Hidetomo_Kajomaru_cutout_silhouette.webp"
+    },
+    {
+        "id": "07a1e692-f7a3-488d-80e6-97bc16564e2d",
+        "character_id": "b1c2d3e4-f5a6-4789-b0c1-2d3e4f5a6b7c",
+        "image": "Asuka_Katakura_cutout_silhouette.webp"
+    },
+    {
+        "id": "1a2c8bec-4028-4b90-ac5f-c4ac31ca0fe2",
+        "character_id": "943c77f1-91f9-46c8-967e-42e016b343c3",
+        "image": "Kenpachi_Kiganjo_cutout_silhouette.webp"
+    },
+    {
+        "id": "f61f5ca4-e9e6-485a-9654-71517fe146c7",
+        "character_id": "702c7628-96ff-4213-a168-248ba483b2ac",
+        "image": "Izuru_Kira_cutout_silhouette.webp"
+    },
+    {
+        "id": "97037985-fe32-41cd-aa8b-d8fdb09e96c0",
+        "character_id": "20e2ea10-ab63-4534-b2f2-f0f4c6d3ad02",
+        "image": "Tenjiro_Kirinji_cutout_silhouette.webp"
+    },
+    {
+        "id": "4c4741b9-49ce-40ee-ac53-94b5e3bf9f9d",
+        "character_id": "2c5f3195-25fe-4810-bc78-2463913b221e",
+        "image": "Sajin_Komamura_cutout_silhouette.webp"
+    },
+    {
+        "id": "139c6528-f1b8-415f-8963-88dcad3ea23f",
+        "character_id": "703d15a5-927b-402a-928d-294b41a54a77",
+        "image": "Isane_Kotetsu_cutout_silhouette.webp"
+    },
+    {
+        "id": "069a3301-3451-424d-995f-fc9088f0e5dc",
+        "character_id": "c8e235e1-512c-4731-97b7-58f00224d56f",
+        "image": "Kiyone_Kotetsu_cutout_silhouette.webp"
+    },
+    {
+        "id": "f0270d54-59fa-456d-9ea3-c0a45eece0c4",
+        "character_id": "b1b6d1e4-846f-4c57-810a-3c07246b95d1",
+        "image": "Sentaro_Kotsubaki_cutout_silhouette.webp"
+    },
+    {
+        "id": "e9ac292a-42de-4896-a73b-963e685a38f8",
+        "character_id": "e9a8f2c3-9d10-4f5a-8b2c-1d0e9f8a7b6c",
+        "image": "Byakuya_Kuchiki_cutout_silhouette.webp"
+    },
+    {
+        "id": "f44cb089-7395-4f40-b371-0ec2bbc0f3c7",
+        "character_id": "f5d4e3b2-a198-4c76-9d5a-4b3c2d1e0f9a",
+        "image": "Ginrei_Kuchiki_cutout_silhouette.webp"
+    },
+    {
+        "id": "ec57ea0d-4968-43db-9141-548888dad819",
+        "character_id": "2b215353-631f-4e96-a3f8-68f831bc0d8b",
+        "image": "Rukia_Kuchiki_cutout_silhouette.webp"
+    },
+    {
+        "id": "75e34f7b-ba4e-416c-ab33-a01b26f809d3",
+        "character_id": "e7b8c9a1-5d2f-4a3b-9e4c-1f6d7a8b9c0d",
+        "image": "Niko_Kuna_cutout_silhouette.webp"
+    },
+    {
+        "id": "ea91cf67-df01-4a26-96ed-cc200d340996",
+        "character_id": "d2c3b4a5-e6f7-4890-a1b2-c3d4e5f6a7b8",
+        "image": "Isshin_Kurosaki_cutout_silhouette.webp"
+    },
+    {
+        "id": "cefd9759-527c-4543-ad8a-cb666af30305",
+        "character_id": "d8137a31-a6f2-44a5-96d9-f0b3afac9758",
+        "image": "Mayuri_Kurotsuchi_cutout_silhouette.webp"
+    },
+    {
+        "id": "39fbcfed-7caa-434c-9e31-054d46041ba1",
+        "character_id": "7360750e-2615-4771-841c-197dae5e466c",
+        "image": "Nemu_Kurotsuchi_cutout_silhouette.webp"
+    },
+    {
+        "id": "f2ca8167-08dc-4ceb-8e90-834e63eef711",
+        "character_id": "a1b2c3d4-e5f6-4789-9a0b-1c2d3e4f5a6b",
+        "image": "Zennosuke_Kurumadani_cutout_silhouette.webp"
+    },
+    {
+        "id": "7e376066-ac48-457b-8756-7b88028829bd",
+        "character_id": "1a31da77-a955-44e4-b613-a6f8a7eb8c23",
+        "image": "Yachiru_Kusajishi_cutout_silhouette.webp"
+    },
+    {
+        "id": "44c230cc-237b-42c3-9ef3-b78979aeca1f",
+        "character_id": "d0e1f2a3-b4c5-4d6e-9f7a-8b9c0d1e2f3a",
+        "image": "Shunsui_Kyoraku_cutout_silhouette.webp"
+    },
+    {
+        "id": "1ded8afe-d6a7-42e5-b021-9273d4cec89a",
+        "character_id": "e4288acb-131a-4f7c-ad15-499ad402f4f7",
+        "image": "Shunzan_Kyoraku_cutout_silhouette.webp"
+    },
+    {
+        "id": "087b9a68-156d-4273-b12a-c71d52ce1477",
+        "character_id": "110774d4-a3d8-4c66-875c-0602ceb7e805",
+        "image": "Ikkaku_Madarame_cutout_silhouette.webp"
+    },
+    {
+        "id": "76cbbe29-8079-4aa5-9814-fee338df1ff5",
+        "character_id": "01b009eb-67f3-43d7-a86f-cc86ae70eb7b",
+        "image": "Shino_Madarame_cutout_silhouette.webp"
+    },
+    {
+        "id": "a9a396b7-e12b-4edc-af4e-80b7c33bc464",
+        "character_id": "ca71b70d-91c6-436f-8357-ea4704a8bc99",
+        "image": "Rangiku_Matsumoto_cutout_silhouette.webp"
+    },
+    {
+        "id": "bdcc2055-61ae-421d-a37d-914cc6f6c371",
+        "character_id": "4640ae0c-90e3-402f-99ee-6ece04079f55",
+        "image": "Oetsu_Nimaiya_cutout_silhouette.webp"
+    },
+    {
+        "id": "ba7a9e24-847e-41eb-8d9c-eff698f831da",
+        "character_id": "dae2fb6d-9633-4ad7-90a7-9299012cd9bd",
+        "image": "Genshiro_Okikiba_cutout_silhouette.webp"
+    },
+    {
+        "id": "8c2fda43-cc12-46f6-a9b2-cf9c4d95b52b",
+        "character_id": "f8a9b0c1-d2e3-4456-a7b8-c9d0e1f2a3b4",
+        "image": "Chojiro_Sasakibe_cutout_silhouette.webp"
+    },
+    {
+        "id": "345a6254-5da4-4f73-8f7a-ebfdd2672385",
+        "character_id": "9511ad4d-0ed2-4183-a78d-2f85b1652f96",
+        "image": "Kaien_Shiba_cutout_silhouette.webp"
+    },
+    {
+        "id": "01b73fca-54b4-4f0d-9cd5-2da6cf217951",
+        "character_id": "2f5fb687-904b-437c-b29f-7e9b8684d619",
+        "image": "Miyako_Shiba_cutout_silhouette.webp"
+    },
+    {
+        "id": "95d44f1b-3bfe-4483-93d4-633202a77b53",
+        "character_id": "c9d0e1f2-a3b4-4c5d-9e6f-7a8b9c0d1e2f",
+        "image": "Yoruichi_Shihoin_cutout_silhouette.webp"
+    },
+    {
+        "id": "02645441-e54c-4585-a65e-a4572f42a3b4",
+        "character_id": "1b480168-f5cb-42a6-8702-ed9c5ffbb226",
+        "image": "Senjumaru_Shutara_cutout_silhouette.webp"
+    },
+    {
+        "id": "9c525f4f-d6d6-4089-a1fd-b38cdf9c0e49",
+        "character_id": "4e941316-fa6f-4af6-9a90-b58cec9f49dd",
+        "image": "Sui_Feng_cutout_silhouette.webp"
+    },
+    {
+        "id": "8e4f41e2-a328-44c2-9609-cba160062a17",
+        "character_id": "2b9a7c8d-1e5f-4a90-bd7c-5f4a3b2c1d0e",
+        "image": "Marechiyo_Omaeda_cutout_silhouette.webp"
+    },
+    {
+        "id": "ed48f212-a762-484e-8c88-129379629f59",
+        "character_id": "c7514156-a344-4f1b-8f54-8653cf79b635",
+        "image": "Riku_Togakushi_cutout_silhouette.webp"
+    },
+    {
+        "id": "23695878-c382-434a-9a51-47e6bb2eec93",
+        "character_id": "7dd17627-d39b-4a1e-8e80-76b75e951576",
+        "image": "Rin_Tsubokura_cutout_silhouette.webp"
+    },
+    {
+        "id": "58b2e5eb-c99f-42b2-93f3-798f2ada8918",
+        "character_id": "b0160228-2a46-4748-81e4-3d7c048ff0df",
+        "image": "Tessai_Tsukabishi_cutout_silhouette.webp"
+    },
+    {
+        "id": "b9ce673d-2212-4dac-ace8-c78e8360bc08",
+        "character_id": "b7c8d9e0-f1a2-4b3c-9d4e-5f6a7b8c9d0e",
+        "image": "Jushiro_Ukitake_cutout_silhouette.webp"
+    },
+    {
+        "id": "463bccfd-9b57-4b4e-9341-3f10ddb59c2e",
+        "character_id": "5af150ea-d3a7-45fa-a591-2f6aec220845",
+        "image": "Retsu_Unohana_cutout_silhouette.webp"
+    },
+    {
+        "id": "4e7ab869-89b0-4b24-97d0-019029580794",
+        "character_id": "50c41038-028f-4131-b660-84a123f8510a",
+        "image": "Kisuke_Urahara_cutout_silhouette.webp"
+    },
+    {
+        "id": "ba1ef506-c5c7-4ae1-9036-76971705f98a",
+        "character_id": "e422f6d5-45dc-4c8d-8a03-75bf05471d87",
+        "image": "Hanataro_Yamada_cutout_silhouette.webp"
+    },
+    {
+        "id": "78d83cb2-3139-4148-a8fe-0704e1dd98bb",
+        "character_id": "b3e05a89-2917-48f8-86d7-c91723e9a7e4",
+        "image": "Genryusai_Shigekuni_Yamamoto_cutout_silhouette.webp"
+    },
+    {
+        "id": "6173b28e-c826-4ea0-bd50-ca8d4b9b3f49",
+        "character_id": "d134a6bc-92d5-4556-b072-4d80a91e5d7a",
+        "image": "Ryunosuke_Yuki_cutout_silhouette.webp"
+    },
+    {
+        "id": "e09ebc4d-373a-4442-b9e0-0c7b9497136b",
+        "character_id": "f5198e3d-73b2-4d56-a947-66c3a1d9b8e2",
+        "image": "Kenpachi_Zaraki_cutout_silhouette.webp"
+    },
+    {
+        "id": "78a9447e-3af3-4437-8d1d-27a83e80dd7c",
+        "character_id": "7a3c2b1d-9e8f-4d7c-b6a5-4f3e2d1c0b9a",
+        "image": "Love_Aikawa_cutout_silhouette.webp"
+    },
+    {
+        "id": "ea2f8a5e-0915-4cd1-9fe9-70adf0b52516",
+        "character_id": "d1c2b3a4-e5f6-4789-8a9b-0c1d2e3f4a5b",
+        "image": "Shinji_Hirako_cutout_silhouette.webp"
+    },
+    {
+        "id": "035a592a-1e50-4bdb-a8fe-ee51311328e9",
+        "character_id": "b2c3d4e5-f6a7-4890-9b0c-1d2e3f4a5b6c",
+        "image": "Mashiro_Kuna_cutout_silhouette.webp"
+    },
+    {
+        "id": "a4138d2f-d922-41ab-a5eb-9fa2afb3b13a",
+        "character_id": "c3d4e5f6-a7b8-4901-ac1d-2e3f4a5b6c7d",
+        "image": "Kensei_Muguruma_cutout_silhouette.webp"
+    },
+    {
+        "id": "d7f35efb-c6b6-41f8-8d14-7e18419eb484",
+        "character_id": "d4e5f6a7-b8c9-4012-bd2e-3f4a5b6c7d8e",
+        "image": "Rojuro_Otoribashi_cutout_silhouette.webp"
+    },
+    {
+        "id": "6691d0d0-bb0b-4105-8549-1abcc5639cdd",
+        "character_id": "9569cc95-a6d7-487f-98ac-c77afc5eae92",
+        "image": "Hiyori_Sarugaki_cutout_silhouette.webp"
+    },
+    {
+        "id": "f5925151-80eb-4a29-8c5b-bbbc9a2cddb1",
+        "character_id": "e2c3f8e1-3477-4cfb-aa44-3cf13ba1c0c2",
+        "image": "Hachigen_Ushoda_cutout_silhouette.webp"
+    },
+    {
+        "id": "54a0b963-ff19-4eae-9155-b1b5e198d7ef",
+        "character_id": "8aeeacb4-5811-4760-bda0-e70c9f6fe837",
+        "image": "Lisa_Yadomaru_cutout_silhouette.webp"
+    },
+    {
+        "id": "67c6fa48-83b2-416e-a0bc-8919d653211a",
+        "character_id": "87af4c9e-010f-434e-ad1f-8ff0d92997a5",
+        "image": "Kaname_Tosen_cutout_silhouette.webp"
+    },
+    {
+        "id": "a277d1dc-cdef-4c7a-87e7-b3a676d835bd",
+        "character_id": "a5d8f1e2-b3c4-4d5e-9f0a-1b2c3d4e5f6a",
+        "image": "Jidanbo_Ikkanzaka_cutout_silhouette.webp"
+    },
+    {
+        "id": "00f69233-ad20-4697-aa5a-eca604c90b88",
+        "character_id": "e4bf7c60-6ea9-4418-96fd-98774ab1d833",
+        "image": "Isuzu_Ise_cutout_silhouette.webp"
+    },
+    {
+        "id": "351dba8a-8dcb-40f9-b587-3ad2fbfa24a6",
+        "character_id": "f623d589-7e19-451e-b1cc-c074931743a3",
+        "image": "Hisana_Kuchiki_cutout_silhouette.webp"
+    },
+    {
+        "id": "a397a945-76a3-41c0-b7a9-a7b88f430431",
+        "character_id": "9c7e5eb5-680f-4e08-8c88-e7f2bf81fb82",
+        "image": "Ganju_Shiba_cutout_silhouette.webp"
+    },
+    {
+        "id": "b43201f0-405d-4d07-b56b-4fb38d6e5bce",
+        "character_id": "a8eabfee-3e6c-413d-bc06-ba7eff1b8c94",
+        "image": "Kukaku_Shiba_cutout_silhouette.webp"
+    },
+    {
+        "id": "b0bb1a1b-adcd-484b-8a46-bbc5b676e466",
+        "character_id": "3c9dd7f5-123e-44a2-b859-2f60e9e41e4b",
+        "image": "Yushiro_Shihoin_cutout_silhouette.webp"
+    },
+    {
+        "id": "e0bf367e-79cd-45c8-af24-c2b0e4f78b29",
+        "character_id": "33600e87-bb9d-498e-91ee-95888efcc86e",
+        "image": "Loly_Aivirrne_cutout_silhouette.webp"
+    },
+    {
+        "id": "c0eb123a-7e25-4d51-8fff-5d56a011a9ac",
+        "character_id": "feb5604b-a87a-4c94-accf-447f241e9407",
+        "image": "Luppi_Antenor_cutout_silhouette.webp"
+    },
+    {
+        "id": "9006ba44-d0eb-4f9b-950f-8122586e847a",
+        "character_id": "1a173eeb-4583-43a1-93b7-25d43e1a7a6e",
+        "image": "Emilou_Apacci_cutout_silhouette.webp"
+    },
+    {
+        "id": "fef5ac0d-1419-4e2a-829e-90f4fc47e12e",
+        "character_id": "f5dd64aa-d837-4108-8cba-a163fc233273",
+        "image": "Aaroniero_Arruruerie_cutout_silhouette.webp"
+    },
+    {
+        "id": "76f67c72-4e63-4bb4-a832-c44b1a095c94",
+        "character_id": "a73100a0-c62b-4bf7-9247-b1d72d9d259a",
+        "image": "Dondochakka_Bilstin_cutout_silhouette.webp"
+    },
+    {
+        "id": "f5a83d0d-7977-4e92-bfc0-ccd0ed2bc867",
+        "character_id": "77a666c5-d845-44eb-9368-4483b0906789",
+        "image": "Findorr_Calius_cutout_silhouette.webp"
+    },
+    {
+        "id": "931e5552-d469-41fd-893d-90a8065ca621",
+        "character_id": "dcb055e0-a296-44e7-a02f-d0fa9f94d24d",
+        "image": "Rudbornn_Chelute_cutout_silhouette.webp"
+    },
+    {
+        "id": "273ed8c6-4490-4e94-94ea-559d0edcbd00",
+        "character_id": "43a01629-ae26-4f31-9624-582add4a4d53",
+        "image": "Charlotte_Chuhlhourne_cutout_silhouette.webp"
+    },
+    {
+        "id": "c17019a9-dd1f-44e6-9592-c475f85a9e84",
+        "character_id": "7c8d9e0f-1a2b-4c3d-8e4f-5a6b7c8d9e0f",
+        "image": "Ulquiorra_Cifer_cutout_silhouette.webp"
+    },
+    {
+        "id": "c6d0e003-5584-44f2-baaf-07f16e9b1c86",
+        "character_id": "8d9e0f1a-2b3c-4d4e-9f5a-6b7c8d9e0f1a",
+        "image": "Dordoni_Alessandro_Del_Socaccio_cutout_silhouette.webp"
+    },
+    {
+        "id": "c2306b50-0615-4ec2-8266-11fa51650cc3",
+        "character_id": "5ca51245-74d0-442d-b26b-8f6376f9fde5",
+        "image": "Asguiaro_Ebern_cutout_silhouette.webp"
+    },
+    {
+        "id": "7627ce70-ba28-467c-a487-9233b04f7173",
+        "character_id": "1a6b41f9-eead-476f-a7b3-21c0a49b44b5",
+        "image": "Luders_Friegen_cutout_silhouette.webp"
+    },
+    {
+        "id": "d3cee4c8-46d2-401f-a672-612f225e1613",
+        "character_id": "46661d45-178c-4e51-bf32-61ded00e6ae4",
+        "image": "Nnoitra_Gilga_cutout_silhouette.webp"
+    },
+    {
+        "id": "56d1cc72-09b1-4eac-b665-b7092357a4b4",
+        "character_id": "970751a7-e5db-4343-bf1a-c1216b393a3d",
+        "image": "Lilynette_Gingerbuck_cutout_silhouette.webp"
+    },
+    {
+        "id": "01c6f94a-0417-4186-af5a-49e105e862a2",
+        "character_id": "10006071-cf34-4ac4-832d-89e284a822ab",
+        "image": "Szayelaporro_Granz_cutout_silhouette.webp"
+    },
+    {
+        "id": "10f4d3a9-5bca-422f-974a-8496c6eab889",
+        "character_id": "bde49c52-0cab-4f90-a7c5-27ac68f9c4f0",
+        "image": "Yylfordt_Granz_cutout_silhouette.webp"
+    },
+    {
+        "id": "af14cadf-e59a-4621-90fd-d85f42a942ba",
+        "character_id": "e9a2b7c4-5d6f-4a8b-9e0c-1d2f3a4b5c6d",
+        "image": "Nakeem_Grindina_cutout_silhouette.webp"
+    },
+    {
+        "id": "39e784f8-5d4f-4f67-a8e9-13d318ff006d",
+        "character_id": "1b2548a4-f9a5-48e5-b2fc-21f45bd23228",
+        "image": "Pesche_Guatiche_cutout_silhouette.webp"
+    },
+    {
+        "id": "4419f51f-5ca3-4564-9e21-3077dda4b0e5",
+        "character_id": "8b128601-fcfe-4a40-bfd7-9b09a4a75003",
+        "image": "Tier_Harribel_cutout_silhouette.webp"
+    },
+    {
+        "id": "7ba8b0a6-3f81-470f-b026-425732f51077",
+        "character_id": "ba972188-df48-4040-933a-5216a0acb9a3",
+        "image": "Grimmjow_Jaegerjaquez_cutout_silhouette.webp"
+    },
+    {
+        "id": "553d34ad-effa-4087-9e11-842db763d227",
+        "character_id": "3ddd9e5b-2be7-466c-8741-4b239a46f83b",
+        "image": "Shawlong_Koufang_cutout_silhouette.webp"
+    },
+    {
+        "id": "014d7924-53f8-4057-af3f-31ebc2b6e5c2",
+        "character_id": "06f47a90-b3e8-4dd3-a8f7-eafdfdddfa0b",
+        "image": "Kukkapuro_cutout_silhouette.webp"
+    },
+    {
+        "id": "93210078-d92f-4793-8cd4-78ae81baed2e",
+        "character_id": "c5d270dd-802e-4d32-8c5e-00c401d8047d",
+        "image": "Tesra_Lindocruz_cutout_silhouette.webp"
+    },
+    {
+        "id": "5c26cb7a-f53b-409b-ad22-f2230346be53",
+        "character_id": "4aacd6d4-62d5-43dd-88fe-e9e126cfdecd",
+        "image": "Edrad_Liones_cutout_silhouette.webp"
+    },
+    {
+        "id": "d121915f-642a-4a8f-9a1e-0019855d0a6b",
+        "character_id": "1b2c3d4e-5f6a-4b7c-8d9e-0f1a2b3c4d5e",
+        "image": "Yammy_Llargo_cutout_silhouette.webp"
+    },
+    {
+        "id": "341b63c4-0788-4469-a7f9-d2c85fdc3a40",
+        "character_id": "2c3d4e5f-6a7b-4c8d-9e0f-1a2b3c4d5e6f",
+        "image": "Baraggan_Louisenbairn_cutout_silhouette.webp"
+    },
+    {
+        "id": "24a9e953-35cd-47ea-8591-ae583959c25b",
+        "character_id": "6a3afad0-c2fd-4dff-83cf-9e0d8600d965",
+        "image": "Lumina_and_Verona_cutout_silhouette.webp"
+    },
+    {
+        "id": "5a818be7-3102-492f-b72c-74ff9ebedfaa",
+        "character_id": "b26339f6-2448-479d-b407-1609bd3a38df",
+        "image": "Gantenbainne_Mosqueda_cutout_silhouette.webp"
+    },
+    {
+        "id": "73637715-0744-4bc5-86c6-68972a56fcd2",
+        "character_id": "d135874e-e77b-490b-8c6f-b0aeb44ef81a",
+        "image": "Menoly_Mallia_cutout_silhouette.webp"
+    },
+    {
+        "id": "40cd393a-18a0-424b-9826-30fb283fc2b6",
+        "character_id": "4b501593-c76f-4d28-b18e-477064579ebe",
+        "image": "Wonderweiss_Margela_cutout_silhouette.webp"
+    },
+    {
+        "id": "e8c4ed26-ffaa-446c-8bca-d5c3888d1a45",
+        "character_id": "9ef8b2eb-13a8-4fe0-9f26-d00f1c693213",
+        "image": "Medazeppi_cutout_silhouette.webp"
+    },
+    {
+        "id": "6dc71f47-0866-4e48-b7f6-6a44dfbfc85e",
+        "character_id": "7ab835bb-5ec4-4e90-87bc-ca74c76db929",
+        "image": "Nelliel_Tu_Odelschwanck_cutout_silhouette.webp"
+    },
+    {
+        "id": "f9f69663-47f5-4127-b33f-a96f21597769",
+        "character_id": "b2c3d4e5-f6a7-4b8c-9d0e-1f2a3b4c5d6e",
+        "image": "Choe_Neng_Poww_cutout_silhouette.webp"
+    },
+    {
+        "id": "37085efe-07f5-4e7d-90cf-957db13f7a35",
+        "character_id": "6e40fdd8-e3b0-4cf4-8ee1-d2a95e7a1c24",
+        "image": "Nirgge_Parduoc_cutout_silhouette.webp"
+    },
+    {
+        "id": "0722f01b-3e54-4ec0-97c0-9f2b5d4d169c",
+        "character_id": "de70bd9b-06c2-47d7-ab29-1f14378455f6",
+        "image": "Abirama_Redder_cutout_silhouette.webp"
+    },
+    {
+        "id": "6eaa9b66-050a-4740-85a7-62813f52f1d8",
+        "character_id": "63e0f512-0775-4b7e-8e61-63bee36097e7",
+        "image": "Di_Roy_Rinker_cutout_silhouette.webp"
+    },
+    {
+        "id": "3fbeb85f-3c9f-4308-84d9-57bef667bb98",
+        "character_id": "be20a7e4-40c0-4151-8329-74a13d90f5fb",
+        "image": "Franceska_Mila_Rose_cutout_silhouette.webp"
+    },
+    {
+        "id": "cc32a2fb-2b3f-4167-bdc0-4599cb6004ad",
+        "character_id": "128a37f3-3253-46b6-b7db-765cb8449bb2",
+        "image": "Zommari_Rureaux_cutout_silhouette.webp"
+    },
+    {
+        "id": "806a9ad0-579e-468e-96e0-8732ad474375",
+        "character_id": "22792a2c-766d-43f1-8472-aba17580da4b",
+        "image": "Cirucci_Sanderwicci_cutout_silhouette.webp"
+    },
+    {
+        "id": "91e8fd3d-1ac9-4e16-beed-94c6afa9d92e",
+        "character_id": "c7a8b9d0-1e2f-4a3b-8c4d-5e6f7a8b9c0d",
+        "image": "Coyote_Starrk_cutout_silhouette.webp"
+    },
+    {
+        "id": "a0904c96-b8c8-4d7e-a425-ac2bc82a6ded",
+        "character_id": "d8b9c0e1-2f3a-4b4c-9d5e-6f7a8b9c0d1e",
+        "image": "Cyan_Sung_Sun_cutout_silhouette.webp"
+    },
+    {
+        "id": "829e2791-ea1c-4065-a8b6-e62408c15854",
+        "character_id": "29ed2ec8-f041-4018-a96f-0a7ec5095837",
+        "image": "Ggio_Vega_cutout_silhouette.webp"
+    },
+    {
+        "id": "47b4adb2-af81-4513-8ae0-aab485401a50",
+        "character_id": "8e411e82-bba3-46bf-844a-2e22b445778c",
+        "image": "Aisslinger_Wernarr_cutout_silhouette.webp"
+    },
+    {
+        "id": "406699c8-e016-4bf0-b124-463d85301971",
+        "character_id": "1226cd83-65c6-4cb5-b78c-c90bd6766860",
+        "image": "Demoura_Zodd_cutout_silhouette.webp"
+    },
+    {
+        "id": "8490e77c-3c1d-4fd8-ad7a-806f4eed45fc",
+        "character_id": "c32e5353-437b-4376-8d21-7d62b252b056",
+        "image": "Ayon_cutout_silhouette.webp"
+    },
+    {
+        "id": "1c1772fa-9d0c-4c91-8b10-bf9fadb9e6a6",
+        "character_id": "3f6bceb7-7462-41c6-bdf9-c08bf0f435d3",
+        "image": "Bawabawa_cutout_silhouette.webp"
+    },
+    {
+        "id": "d21b2ce8-42df-4d28-bd09-5dc88b4ff8aa",
+        "character_id": "dd20c358-5db2-4235-964e-4618047f0fb5",
+        "image": "Fishbone_D_cutout_silhouette.webp"
+    },
+    {
+        "id": "ef44a7ca-e434-443b-81c3-666131af0469",
+        "character_id": "b3d6767c-b9b7-4ba8-8389-ef1d8f20c09c",
+        "image": "Grand_Fisher_cutout_silhouette.webp"
+    },
+    {
+        "id": "f55b0b1a-e041-4a2d-82b9-94cedbc26c83",
+        "character_id": "067d75fa-3130-4b4b-a379-941fd9e2f6cd",
+        "image": "Hooleer_cutout_silhouette.webp"
+    },
+    {
+        "id": "d4d1d54e-04b8-4daa-bc5e-eb4af3460759",
+        "character_id": "07a93f52-148f-4819-9db9-096b160e27d0",
+        "image": "Runuganga_cutout_silhouette.webp"
+    },
+    {
+        "id": "35a48a8c-182a-47a2-83ce-2741274b591f",
+        "character_id": "e8433dd5-d1ba-43a9-8ac0-619ab64d7c7a",
+        "image": "White_cutout_silhouette.webp"
+    },
+    {
+        "id": "d2bc8c65-41d6-4a2f-9069-dcdba000c574",
+        "character_id": "81217bc3-fc23-42bb-90e5-25bd1aca73bc",
+        "image": "Shrieker_cutout_silhouette.webp"
+    },
+    {
+        "id": "6cb31b80-ad92-4204-840f-7b8526d06c4e",
+        "character_id": "1f22beab-20ec-48d0-b213-50b80ea80df1",
+        "image": "Robert_Accutrone_cutout_silhouette.webp"
+    },
+    {
+        "id": "beaf01b2-5e7c-4f8c-9c79-e9caeeb7b555",
+        "character_id": "5fcdd9cb-71ae-442d-9252-15d43af3c02d",
+        "image": "Lille_Barro_cutout_silhouette.webp"
+    },
+    {
+        "id": "7cd94587-7be1-40cc-97e1-748ac33eee4b",
+        "character_id": "1001fdb9-69ab-474f-aaee-c08f2b9cd80e",
+        "image": "Bambietta_Basterbine_cutout_silhouette.webp"
+    },
+    {
+        "id": "9f38a09e-75e5-49ca-ab8a-715ff29bc7f8",
+        "character_id": "5c092398-f7d3-4a1b-b84e-d00efd5c0be7",
+        "image": "Bazz_B_cutout_silhouette.webp"
+    },
+    {
+        "id": "b219a66b-da3c-4571-860f-2cd026888258",
+        "character_id": "75c6afb7-d836-426d-82c2-a8b1fa791420",
+        "image": "Driscoll_Berci_cutout_silhouette.webp"
+    },
+    {
+        "id": "afe16a0c-28f1-4530-8bbe-b732d2a08ef0",
+        "character_id": "050ce5a6-ef6f-4a5e-b67a-3e4a3df73f9b",
+        "image": "BG9_cutout_silhouette.webp"
+    },
+    {
+        "id": "cc62dd8e-7565-41bd-a95c-d512bdb547c6",
+        "character_id": "e4df368f-52f1-4f80-a086-2a02415e489e",
+        "image": "Candice_Catnipp_cutout_silhouette.webp"
+    },
+    {
+        "id": "4af4727e-d5fc-402d-a576-448a1392eeb6",
+        "character_id": "8f0070af-98f8-4959-ae65-57c56a71c0d2",
+        "image": "Nikita_Deslock_cutout_silhouette.webp"
+    },
+    {
+        "id": "040f924e-0b29-48a0-a94b-2d5babb88fc3",
+        "character_id": "2a44e281-bf30-41f8-9484-33531eb84994",
+        "image": "Shaz_Domino_cutout_silhouette.webp"
+    },
+    {
+        "id": "5d2e01e9-c4d1-49e9-b403-1059c878ac64",
+        "character_id": "4cd08cdd-353e-4d7b-9cdf-e514153c1002",
+        "image": "Cang_Du_cutout_silhouette.webp"
+    },
+    {
+        "id": "1a7283fc-d9cf-4273-bbc8-5873fa1e8919",
+        "character_id": "06dccd20-faee-48a1-be2a-c834ef654e27",
+        "image": "Berenice_Gabrielli_cutout_silhouette.webp"
+    },
+    {
+        "id": "1f54b29e-81b6-4f43-bdd3-0e627baf1a2a",
+        "character_id": "9b8171d5-0487-4efd-a344-eae7bde9239e",
+        "image": "Giselle_Gewelle_cutout_silhouette.webp"
+    },
+    {
+        "id": "8aa0c906-3c1d-4d5b-832a-7bf21cf6aaaf",
+        "character_id": "a1f9e2b0-8c3d-4e5f-a6b7-8d9e0f1a2b3c",
+        "image": "Jerome_Guizbatt_cutout_silhouette.webp"
+    },
+    {
+        "id": "9e9bcf70-8374-42d5-bb90-80dbb685b1b4",
+        "character_id": "b2f0e3c1-9d4e-5f6a-b7c8-9d0e1f2a3b4c",
+        "image": "Jugram_Haschwalth_cutout_silhouette.webp"
+    },
+    {
+        "id": "026ea528-919f-40cd-8074-001899fc9d5f",
+        "character_id": "dd8a40ad-0101-4ea5-9246-a1ae515548d6",
+        "image": "Izumi_Ishida_cutout_silhouette.webp"
+    },
+    {
+        "id": "e94312a1-83db-449d-a5c8-4f3f7e6bec49",
+        "character_id": "f0de1a83-82e2-4dd6-aa36-9e032614e46f",
+        "image": "Ryuken_Ishida_cutout_silhouette.webp"
+    },
+    {
+        "id": "d2360404-d3f9-474b-bbb2-6e994749deaf",
+        "character_id": "8063e80a-1879-4aa0-b015-9b690c1b7ff1",
+        "image": "Soken_Ishida_cutout_silhouette.webp"
+    },
+    {
+        "id": "19d2799f-f49f-4b90-a52c-3cd86ab1f51e",
+        "character_id": "7961a321-5146-430a-9e87-2f6689a4c91b",
+        "image": "Uryu_Ishida_cutout_silhouette.webp"
+    },
+    {
+        "id": "c70fdfba-c386-4919-941d-b60927ff6e13",
+        "character_id": "a9f6eafd-b6e9-4bbd-be11-4eadd2e47806",
+        "image": "James_cutout_silhouette.webp"
+    },
+    {
+        "id": "5d5fce9c-9471-4568-ba40-9fc7d68b133d",
+        "character_id": "10bbbe76-af3f-463e-a8a0-477bd261e564",
+        "image": "Kanae_Katagiri_cutout_silhouette.webp"
+    },
+    {
+        "id": "be8c91a1-c9bd-4f44-8c58-cfb0affbc6d4",
+        "character_id": "e3126d38-c2af-4173-a606-c62ab10f04d3",
+        "image": "Masaki_Kurosaki_cutout_silhouette.webp"
+    },
+    {
+        "id": "fea8ca93-3d16-4a99-965c-61e2dafb28cf",
+        "character_id": "1d55513b-6b19-428f-9338-ed9bb07d3252",
+        "image": "Liltotto_Lamperd_cutout_silhouette.webp"
+    },
+    {
+        "id": "77f7d5e0-ee6f-4bc2-9040-5994607bbe1a",
+        "character_id": "550e8400-e29b-41d4-a716-446655440000",
+        "image": "Loyd_Lloyd_cutout_silhouette.webp"
+    },
+    {
+        "id": "e26d14ae-20c9-40d5-aa1b-812862219196",
+        "character_id": "6ba7b810-9dad-11d1-80b4-00c04fd430c8",
+        "image": "Royd_Lloyd_cutout_silhouette.webp"
+    },
+    {
+        "id": "fb11f3aa-2139-4d0b-acdd-ba6e2fadf8cc",
+        "character_id": "7c9e6679-7425-40de-944b-e07fc1f90ae7",
+        "image": "Mask_De_Masculine_cutout_silhouette.webp"
+    },
+    {
+        "id": "7a03334f-1d3e-4957-867c-537fb29c14c1",
+        "character_id": "d1f2e3a4-b5c6-4d7e-8f9a-0b1c2d3e4f5a",
+        "image": "Meninas_McAllon_cutout_silhouette.webp"
+    },
+    {
+        "id": "783bd32c-544c-48e2-8ced-1c8b3c95b870",
+        "character_id": "5cd503b2-789f-418a-818b-e9eebd2bf1f8",
+        "image": "NaNaNa_Najahkoop_cutout_silhouette.webp"
+    },
+    {
+        "id": "9985b2eb-4652-43e4-b55b-e675b9ab9e41",
+        "character_id": "a17f5399-d2e3-43ca-abab-f0edf588e5ee",
+        "image": "Askin_Nakk_Le_Vaar_cutout_silhouette.webp"
+    },
+    {
+        "id": "46093ce1-672a-43e8-a2a6-78e8c018a981",
+        "character_id": "2746167b-2280-4e70-8b4f-41593f652861",
+        "image": "Guenael_Lee_cutout_silhouette.webp"
+    },
+    {
+        "id": "705c23ed-f3bb-4014-b336-fad28b1d03cf",
+        "character_id": "096df7f4-28c0-4040-b3d7-5e415a26737b",
+        "image": "As_Nodt_cutout_silhouette.webp"
+    },
+    {
+        "id": "71e36cbc-d2d2-44fd-bbf4-ee9ac126b836",
+        "character_id": "e0a1b2c3-d4e5-4f6a-b7c8-9d0e1f2a3b4c",
+        "image": "Quilge_Opie_cutout_silhouette.webp"
+    },
+    {
+        "id": "4bd0f6df-4de0-41e7-8443-b2a3b6484d8b",
+        "character_id": "f1b2c3d4-e5f6-4a7b-8c9d-0e1f2a3b4c5d",
+        "image": "Pernida_Parnkgjas_cutout_silhouette.webp"
+    },
+    {
+        "id": "1bf5388f-4225-4d8d-873e-ef9d854010ef",
+        "character_id": "1f727dc5-03ea-45dc-8374-79d8aa731303",
+        "image": "Gremmy_Thoumeaux_cutout_silhouette.webp"
+    },
+    {
+        "id": "0d76ded2-e8e5-40d3-ac5e-9b07cc27e029",
+        "character_id": "f37b12cb-ac4b-495f-ab39-f2b82d11b460",
+        "image": "Gerard_Valkyrie_cutout_silhouette.webp"
+    },
+    {
+        "id": "fc4b2d21-1e39-4269-81d9-278fc161b30b",
+        "character_id": "3a9ab42d-3234-49fd-a7f0-b3ed67e4d6d6",
+        "image": "PePe_Waccabrada_cutout_silhouette.webp"
+    },
+    {
+        "id": "5d68a9f6-025f-4d50-b87b-c3a15240e3cf",
+        "character_id": "43b608de-d694-4797-9ed2-8c04d10f8e94",
+        "image": "Nianzol_Weizol_cutout_silhouette.webp"
+    },
+    {
+        "id": "7639169c-b9d4-4dd5-a9a7-38df00b99a40",
+        "character_id": "85c9eeaf-3b3f-4125-843d-3dfd87baed10",
+        "image": "Yhwach_cutout_silhouette.webp"
+    },
+    {
+        "id": "4c0a8b7f-54f2-4349-92b7-3f92acce96ed",
+        "character_id": "7d34fef9-db0b-4f97-8103-a625073ea377",
+        "image": "Soul_King_cutout_silhouette.webp"
+    },
+    {
+        "id": "24dff451-ddae-4fca-9451-106d1b469133",
+        "character_id": "7fa5ae3d-5b91-4c85-b691-9dc917b17bf7",
+        "image": "Mimihagi_cutout_silhouette.webp"
+    },
+    {
+        "id": "a1af4a49-b957-47dc-a128-184358b98fe6",
+        "character_id": "ef5ac1b1-6858-4880-b62f-f4d878d1edf3",
+        "image": "Kon_cutout_silhouette.webp"
+    },
+    {
+        "id": "88e22c0a-f28d-4ab0-adf2-643e77d96382",
+        "character_id": "2a262c9b-42c0-4346-bced-ae1dd9184c90",
+        "image": "Jinta_Hanakari_cutout_silhouette.webp"
+    },
+    {
+        "id": "18b8e2ab-86ee-4872-9517-0e2e10e258f2",
+        "character_id": "e1d6a4ec-bcb3-48af-873c-b028c2653b73",
+        "image": "Ururu_Tsumugiya_cutout_silhouette.webp"
+    },
+    {
+        "id": "76d531d9-e414-450c-82e4-4fea1c99419c",
+        "character_id": "88341f58-727f-4578-b4b3-d0ee2d20a232",
+        "image": "Zangetsu_cutout_silhouette.webp"
+    }
+]

@@ -36,11 +36,9 @@ export default function DailyCharacterWrapper({ initialTarget }: { initialTarget
 
     // 🛡️ เดิมเรียก useCharacterGame() 2 ครั้งแยกกัน (ตัวแปร game + destructure ซ้ำ) รวมเป็นจุดเดียว
     const gameStore = useCharacterGame();
-    const { target, guesses, initializeGame, finalizeGame, resetGame, hasFinalized, _hasHydrated } = gameStore;
+    const { target, guesses, initializeGame, finalizeGame, resetGame, hasFinalized, _hasHydrated, stats, loadStats } = gameStore;
     const characters = getCharacters();
     const isSynced = target !== null && initialTarget !== null && target.id === initialTarget.id;
-    const stats = useCharacterGame(s => s.stats);
-    const loadStats = useCharacterGame(s => s.loadStats);
 
     // 📅 Daily Hub: markModePlayed('character', won) จะถูกเรียกตอนเกมจบจริงเท่านั้น (ดู effect ด้านล่าง)
     const { markModePlayed } = useDailyHub();
