@@ -7,9 +7,18 @@ import silhouetteCells from '@/src/data/silhouette-cells.json';
 import rawSilhouettes from '@/src/data/silhouettes.json';
 import { Character } from '@/src/entities/character/schema';
 
-const cellsMap = silhouetteCells as Record<string, number[]>;
+interface SilhouetteCellConfig {
+    occupied: number[];
+    weights: Record<string, number>;
+}
 
-export const getOccupiedCells = (image: string): number[] | undefined => cellsMap[image];
+const cellsMap = silhouetteCells as unknown as Record<string, SilhouetteCellConfig>;
+
+export const getOccupiedCells = (image: string): number[] | undefined =>
+    cellsMap[image]?.occupied;
+
+export const getCellWeights = (image: string): Record<number, number> =>
+    (cellsMap[image]?.weights as unknown as Record<number, number>) ?? {};
 
 let cachedSilhouettes: BleachSilhouette[] | null = null;
 
@@ -90,6 +99,26 @@ function shuffleWithSeed<T>(arr: T[], seedStr: string): T[] {
     return copy;
 }
 
+function weightedShuffleWithSeed(
+    cells: number[],
+    weights: Record<number, number>,
+    seedStr: string,
+): number[] {
+    const rand = mulberry32(hashStringToSeed(seedStr));
+    const MIN_WEIGHT = 0.05; // กัน weight = 0 ทำให้ cell นั้นไม่มีโอกาสถูกเลือกเลย
+
+    const keyed = cells.map((cell) => {
+        const w = Math.max(weights[cell] ?? MIN_WEIGHT, MIN_WEIGHT);
+        const r = rand();
+        const key = Math.pow(r, 1 / w); // weight สูง -> key มักจะสูงตาม -> ถูก sort มาก่อน
+        return { cell, key };
+    });
+
+    keyed.sort((a, b) => b.key - a.key);
+    return keyed.map((k) => k.cell);
+}
+
+
 /**
  * 🎯 คืนค่า Set พิกัดกล่องที่ต้องเปิดโชว์แก่ผู้เล่น
  * @param characterId ไอดีตัวละครสำหรับใช้ทำ Seed สุ่มช่องเดาผิด
@@ -101,37 +130,35 @@ export const getRevealedCellIndices = (
     characterId: string,
     guessCount: number,
     occupiedCells?: number[],
+    cellWeights?: Record<number, number>, // 🆕 รับ weight เข้ามาด้วย
 ): Set<number> => {
-    const dateStr = getCurrentDateStr(); // ดึง "2026-07-07" เป็นต้น
+    const dateStr = getCurrentDateStr();
     const allCells = Array.from({ length: TOTAL_CELLS }, (_, i) => i);
 
-    // 1. หาแผ่นป้ายเริ่มต้น (Initial Tiles) ประจำวันนี้แบบอัตโนมัติ
     const occupied = occupiedCells && occupiedCells.length > 0 ? occupiedCells : allCells;
     const occupiedSet = new Set(occupied);
     const emptyCells = allCells.filter((cell) => !occupiedSet.has(cell));
+    const weights = cellWeights ?? {};
 
-    // สุ่มหาแผ่นป้ายเปิดจุดสำคัญ (เนื้อตัวละคร) ประจำวันนี้ก่อน
+    // 🆕 occupied ใช้ weighted shuffle (มีข้อมูลให้ bias) / empty ยังใช้ shuffle ธรรมดา (ไม่มี weight ให้ bias)
     const initialOrder = [
-        ...shuffleWithSeed(occupied, `${characterId}:${dateStr}:init:occupied`),
+        ...weightedShuffleWithSeed(occupied, weights, `${characterId}:${dateStr}:init:occupied`),
         ...shuffleWithSeed(emptyCells, `${characterId}:${dateStr}:init:empty`),
     ];
 
-    // หั่นเอาไปใช้งานตามจำนวนที่ตั้งไว้ เช่น 5 ช่องแรก
     const initialTiles = initialOrder.slice(0, INITIAL_REVEAL_SILHOUETTE);
     const baseRevealedSet = new Set(initialTiles);
 
-    // ถ้ายังไม่เริ่มเดา (guessCount === 0) ส่งแผ่นป้ายเริ่มต้นประจำวันนี้ออกไปแสดงผลเลย
     if (guessCount === 0) {
         return baseRevealedSet;
     }
 
-    // 2. ถ้าผู้เล่นเดาผิด (guessCount > 0) นำช่องที่เหลือมาสุ่มลำดับที่จะเปิดเพิ่มต่อ
     const remainingCells = allCells.filter((cell) => !baseRevealedSet.has(cell));
     const remainingOccupied = remainingCells.filter((cell) => occupiedSet.has(cell));
     const remainingEmpty = remainingCells.filter((cell) => !occupiedSet.has(cell));
 
     const orderOfRemaining = [
-        ...shuffleWithSeed(remainingOccupied, `${characterId}:${dateStr}:guess:occupied`),
+        ...weightedShuffleWithSeed(remainingOccupied, weights, `${characterId}:${dateStr}:guess:occupied`),
         ...shuffleWithSeed(remainingEmpty, `${characterId}:${dateStr}:guess:empty`),
     ];
 
@@ -144,7 +171,6 @@ export const getRevealedCellIndices = (
         maxAllowedTotalReveal - baseRevealedSet.size
     );
 
-    // รวมแผ่นป้ายเริ่มต้นของวัน + แผ่นป้ายที่เปิดเพิ่มจากการเดาผิด
     const finalRevealedSet = new Set(initialTiles);
     for (let i = 0; i < extraRevealCount; i++) {
         finalRevealedSet.add(orderOfRemaining[i]);

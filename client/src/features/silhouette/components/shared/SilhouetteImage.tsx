@@ -2,7 +2,7 @@
 'use client';
 
 import { useEffect, useMemo, useState } from 'react';
-import { getOccupiedCells, getRevealedCellIndices, getSilhouetteImageUrl, GRID_SIZE } from '@/src/features/silhouette/silhouette';
+import { getCellWeights, getOccupiedCells, getRevealedCellIndices, getSilhouetteImageUrl, GRID_SIZE } from '@/src/features/silhouette/silhouette';
 import { STORAGE_KEYS } from '@/src/const/localStorage';
 import SoulSyncLoader from '@/src/shared/ui/loader/SoulSyncLoader';
 
@@ -106,7 +106,7 @@ export const SilhouetteImage = ({
     }, [fullCharacterSrc]);
 
     const revealed = useMemo(
-        () => getRevealedCellIndices(characterId, guessCount, getOccupiedCells(image)),
+        () => getRevealedCellIndices(characterId, guessCount, getOccupiedCells(image), getCellWeights(image)),
         [characterId, guessCount, image],
     );
 

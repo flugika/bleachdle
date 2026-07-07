@@ -4,7 +4,7 @@ import { useState, useRef, useMemo, useEffect } from 'react';
 import { getCharacters } from '@/src/features/character/character';
 import { Character } from '@/src/entities/character/schema';
 import { createSearchEngine } from '@/src/lib/search/fuzzy';
-import { getOccupiedCells, getRevealedCellIndices, getSilhouetteImageUrl, getSilhouettes, GRID_SIZE } from '@/src/features/silhouette/silhouette';
+import { getCellWeights, getOccupiedCells, getRevealedCellIndices, getSilhouetteImageUrl, getSilhouettes, GRID_SIZE } from '@/src/features/silhouette/silhouette';
 
 // Layout Shared Components
 import { Header } from '@/src/shared/layout/Header';
@@ -156,8 +156,9 @@ function SilhouettePreviewBox({
 
     const sil = useMemo(() => getSilhouettes().find(s => s.character_id === originalCharacterId), [originalCharacterId]);
     const occupiedCells = useMemo(() => getOccupiedCells(image), [image]);
+    const weightCells = useMemo(() => getCellWeights(image), [image]);
     const revealed = useMemo(
-        () => getRevealedCellIndices(characterId, guessCount, occupiedCells),
+        () => getRevealedCellIndices(characterId, guessCount, occupiedCells, weightCells),
         [characterId, guessCount, occupiedCells],
     );
 
