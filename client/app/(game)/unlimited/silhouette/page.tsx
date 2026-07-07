@@ -184,7 +184,7 @@ export default function UnlimitedSilhouetteGame() {
     };
 
     return (
-        <div className="min-h-screen text-[#d8d0c8] overflow-x-hidden bg-[#0a0a0e] bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-[#13131c] via-[#0a0a0e] to-[#050507]">
+        <div className="min-h-screen text-[#d8d0c8] overflow-x-hidden bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-[#13131c] via-[#0a0a0e] to-[#050507]">
             <Header onOpenHowTo={() => setIsHowToOpen(true)} />
 
             {/* 🌌 คุมระดับ Max-Width ของ Main ให้เท่ากับ Quote และเพิ่มมิติการจัดวาง */}
