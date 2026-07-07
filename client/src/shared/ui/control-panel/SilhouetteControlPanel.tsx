@@ -76,7 +76,7 @@ export function SilhouetteControlPanel({ target, characters, remainingGuesses, s
             )}
 
             {/* คอนโทรลเลอร์จานสีดีไซน์คลีน */}
-            <div className="flex flex-col items-center gap-2 min-h-[40px] transition-all">
+            <div className="flex flex-col items-center gap-2 transition-all">
                 <button
                     onClick={() => setShowPalette(!showPalette)}
                     className="text-[10px] font-semibold uppercase tracking-[0.25em] text-[#c8a96e]/70 hover:text-[#c8a96e] bg-white/[0.02] border border-white/[0.05] hover:border-[#c8a96e]/30 px-3 py-1 rounded-full transition-all flex items-center gap-2 active:scale-95"
@@ -86,26 +86,28 @@ export function SilhouetteControlPanel({ target, characters, remainingGuesses, s
                 </button>
 
                 {/* หลุมสี 4 สีพรีเมียม ไร้เงาสีมืดหรือสีม่วงกวนใจ */}
-                <div className={`flex gap-4 px-2 py-1 items-center justify-center overflow-hidden transition-all duration-300 ease-out ${showPalette ? 'max-h-10 opacity-100 scale-100 mt-1' : 'max-h-0 opacity-0 scale-95 pointer-events-none'
-                    }`}>
-                    {TYBW_PALETTE.map((color) => (
-                        <button
-                            key={color.hex}
-                            onClick={() => handleBgChange(color.hex)}
-                            title={color.name}
-                            className={`w-5 h-5 rounded-full border transition-all relative group flex items-center justify-center ${currentBg === color.hex
-                                ? 'border-[#c8a96e] scale-110 ring-2 ring-[#c8a96e]/20'
-                                : 'border-white/10 hover:border-white/40 hover:scale-105'
-                                }`}
-                            style={{ backgroundColor: color.hex }}
-                        >
-                            {/* จุดเอฟเฟกต์กะพริบตรงกลางเมื่อเลือกสีนั้นๆ */}
-                            {currentBg === color.hex && (
-                                <span className="w-1 h-1 bg-white rounded-full animate-ping absolute" />
-                            )}
-                        </button>
-                    ))}
-                </div>
+                {showPalette && (
+                    <div className={`flex gap-4 px-2 py-1 items-center justify-center overflow-hidden transition-all duration-300 ease-out ${showPalette ? 'max-h-10 opacity-100 scale-100' : 'max-h-0 opacity-0 scale-95 pointer-events-none'
+                        }`}>
+                        {TYBW_PALETTE.map((color) => (
+                            <button
+                                key={color.hex}
+                                onClick={() => handleBgChange(color.hex)}
+                                title={color.name}
+                                className={`w-5 h-5 rounded-full border transition-all relative group flex items-center justify-center ${currentBg === color.hex
+                                    ? 'border-[#c8a96e] scale-110 ring-2 ring-[#c8a96e]/20'
+                                    : 'border-white/10 hover:border-white/40 hover:scale-105'
+                                    }`}
+                                style={{ backgroundColor: color.hex }}
+                            >
+                                {/* จุดเอฟเฟกต์กะพริบตรงกลางเมื่อเลือกสีนั้นๆ */}
+                                {currentBg === color.hex && (
+                                    <span className="w-1 h-1 bg-white rounded-full animate-ping absolute" />
+                                )}
+                            </button>
+                        ))}
+                    </div>
+                )}
             </div>
 
             {/* ส่วนของช่องค้นหาเดาชื่อตัวละคร */}
