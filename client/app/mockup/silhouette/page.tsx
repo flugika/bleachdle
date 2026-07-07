@@ -13,7 +13,6 @@ import { SubHeader } from '@/src/shared/layout/SubHeader';
 import { ModeBadge } from '@/src/shared/ui/game-selector/ModeBadge';
 import Sealed from '@/src/shared/ui/Sealed';
 import { FEATURE_FLAGS } from '@/src/config/feature.flags';
-import { INITIAL_REVEAL_SILHOUETTE } from '@/src/const/guess';
 import SoulSyncLoader from '@/src/shared/ui/loader/SoulSyncLoader';
 
 // ============================================================================

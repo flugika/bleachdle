@@ -107,7 +107,7 @@ export const SilhouetteHowToPlayModal = ({ isOpen, onClose, mode }: SilhouetteHo
                                     characterId={EXAMPLE_CHARACTER.id}
                                     image={EXAMPLE_CHARACTER.image}
                                     realImage={EXAMPLE_CHARACTER.realImage}
-                                    guessCount={2} // ล็อคตายตัวที่ 2 เพื่อให้เปิดป้ายแค่บางส่วนตลอดเวลา (ส่งเข้า getRevealedCellIndices ตามปกติ)
+                                    guessCount={0} // ล็อคตายตัวที่ 2 เพื่อให้เปิดป้ายแค่บางส่วนตลอดเวลา (ส่งเข้า getRevealedCellIndices ตามปกติ)
                                     forceReveal={forceRevealDemo} // สลับ true / false 
                                 />
                             </div>
