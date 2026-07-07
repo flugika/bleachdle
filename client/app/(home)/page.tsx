@@ -32,7 +32,7 @@ const GAME_MODES = [
         accent: "#60a5fa",
         name: "SILHOUETTE",
         tagline: "Shadows don't lie",
-        description: "You start with a pitch-black silhouette cropped tight on one spot. Every wrong guess brings a little more color and detail into focus — same frame, same angle.",
+        description: "The character's silhouette is locked behind a grid of panels. Every wrong guess randomly shatters a tile, exposing another piece of the shadow.",
     },
     {
         id: "emoji",

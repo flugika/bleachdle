@@ -54,9 +54,9 @@ export const BL_MODES_METADATA: Record<SubFeatureKey, ModeConfig> = {
         title: "SHIKAKU VISUALIZATION",
         romaji: "SHIKAKU GENSŌ • 視覚幻想",
         symbol: "斬", // Slay / Zanpakuto
-        desc: "Guess the character from a fixed, cropped silhouette. Wrong guesses don't move the frame — they gradually lift the darkness, revealing color and detail in the same spot.",
+        desc: "Guess the character hidden behind a tiled grid. Incorrect guesses will randomly unlock and open another tile, gradually exposing more of the silhouette.",
         technicalTerm: "KAGE MOCKUP: ENCRYPTED",
-        statusLine: "System // Lifting Reiatsu Veil",
+        statusLine: "System // Unveiling Reiatsu Grid",
     },
     emoji: {
         id: "emoji",
