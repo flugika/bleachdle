@@ -40,8 +40,6 @@ const MOCK_GUESSES: SilhouetteGuessEntry[] = [
 ];
 
 export const SilhouetteHowToPlayModal = ({ isOpen, onClose, mode }: SilhouetteHowToPlayModalProps) => {
-    if (!isOpen) return null;
-
     // 🌟 ใช้ State ง่ายๆ เพื่อสลับแค่ โชว์เงา <-> โชว์รูปจริง
     const [forceRevealDemo, setForceRevealDemo] = useState(false);
 
@@ -73,7 +71,7 @@ export const SilhouetteHowToPlayModal = ({ isOpen, onClose, mode }: SilhouetteHo
                         </h3>
                         <p className="text-[#d8d0c8] text-xs leading-relaxed">
                             Identify the hidden <strong className="text-white">BLEACH CHARACTER</strong> by analyzing their spiritual silhouette structure
-                            {isDaily ? <> within <span className="text-[#c8a96e] font-mono font-bold">{MAX_SILHOUETTE_GUESSES} ATTEMPTS</span> to maintain your archive clearance.</> : <> using the sandbox diagnostics network.</>}
+                            {isDaily ? <span> within <span className="text-[#c8a96e] font-mono font-bold">{MAX_SILHOUETTE_GUESSES} ATTEMPTS</span> to maintain your archive clearance.</span> : <span> using the sandbox diagnostics network.</span>}
                         </p>
                         <div className="bg-[#1a0505]/80 border border-[#c85050]/40 p-2.5 text-[10px] text-[#e8b4b4] tracking-wider uppercase font-mono shadow-[inset_0_0_10px_rgba(200,80,80,0.1)]">
                             <span className="text-[#ff4d4d]">⚠ SYSTEM WARNING:</span> RADAR SHADOW ACTIVE. PHYSICAL DETAILS ARE COMPRESSED.
@@ -134,9 +132,9 @@ export const SilhouetteHowToPlayModal = ({ isOpen, onClose, mode }: SilhouetteHo
                                 <span>
                                     <strong className="text-white">Stability:</strong>
                                     {!isDaily ? (
-                                        <> Exceeding <span className="text-[#c85050] font-mono font-bold">{MAX_SILHOUETTE_GUESSES} attempts</span> results in <span className="text-[#c85050] font-bold">DEFEAT</span>.</>
+                                        <span> Exceeding <span className="text-[#c85050] font-mono font-bold">{MAX_SILHOUETTE_GUESSES} attempts</span> results in <span className="text-[#c85050] font-bold">DEFEAT</span>.</span>
                                     ) : (
-                                        <> Runs on <span className="text-[#8fd66a] font-mono font-bold">Unlimited Guesses</span>.</>
+                                        <span> Runs on <span className="text-[#8fd66a] font-mono font-bold">Unlimited Guesses</span>.</span>
                                     )}
                                 </span>
                             </div>

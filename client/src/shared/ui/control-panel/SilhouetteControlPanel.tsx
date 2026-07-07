@@ -29,8 +29,6 @@ interface Props {
 }
 
 export function SilhouetteControlPanel({ target, characters, remainingGuesses, stats, game, isGameOver }: Props) {
-    if (!target) return null;
-    // กำหนดสีเริ่มต้นเป็นสีฟ้ากวินซีดั้งเดิม
     const [currentBg, setCurrentBg] = useState('#3E77CF');
     const [showPalette, setShowPalette] = useState(false);
 
@@ -55,9 +53,9 @@ export function SilhouetteControlPanel({ target, characters, remainingGuesses, s
             const savedConfig = localStorage.getItem(STORAGE_KEYS.CONFIG);
             // ถ้าเคยมี config อยู่แล้วให้แกะออกมาอัปเดตเพิ่ม ถ้าไม่มีให้สร้างเป็นออบเจกต์ว่างเปล่าขึ้นมาใหม่
             const configObj = savedConfig ? JSON.parse(savedConfig) : {};
-            
+
             configObj.silhouette_bg = hex; // ฝังฟิลด์สีเข้าไป
-            
+
             localStorage.setItem(STORAGE_KEYS.CONFIG, JSON.stringify(configObj));
         } catch (error) {
             console.error('Failed to save silhouette background to localStorage:', error);
@@ -68,12 +66,14 @@ export function SilhouetteControlPanel({ target, characters, remainingGuesses, s
         <div className="flex flex-col items-center gap-4 w-full">
 
             {/* กล่องแสดงเงาตัวละครพร้อมสลับสีพื้นหลังตาม State */}
-            <SilhouetteImage
-                characterId={target.character_id}
-                image={target.image}
-                guessCount={game.guesses.length}
-                bgColor={currentBg}
-            />
+            {target && (
+                <SilhouetteImage
+                    characterId={target.character_id}
+                    image={target.image}
+                    guessCount={game.guesses.length}
+                    bgColor={currentBg}
+                />
+            )}
 
             {/* คอนโทรลเลอร์จานสีดีไซน์คลีน */}
             <div className="flex flex-col items-center gap-2 min-h-[40px] transition-all">

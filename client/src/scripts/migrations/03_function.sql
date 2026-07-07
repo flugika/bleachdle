@@ -12,7 +12,12 @@ DECLARE
     lap TEXT[];
     tmp TEXT;
 BEGIN
-    EXECUTE format('SELECT COALESCE(array_agg(id), ARRAY[]::TEXT[]) FROM %I', p_table) INTO pool;
+    -- 🩹 FIX 1: บังคับสุ่มตั้งแต่ตอนดึงออกจากตารางหลักครั้งแรก
+    EXECUTE format('
+        SELECT COALESCE(array_agg(id), ARRAY[]::TEXT[]) 
+        FROM (SELECT id FROM %I ORDER BY random()) t
+    ', p_table) INTO pool;
+
     pool_size := cardinality(pool);
 
     IF pool_size = 0 THEN
@@ -20,8 +25,9 @@ BEGIN
     END IF;
 
     WHILE cardinality(result) < p_length LOOP
-        SELECT COALESCE(array_agg(id), ARRAY[]::TEXT[]) INTO lap
-        FROM (SELECT unnest(pool) AS id ORDER BY random()) t;
+        -- 🩹 FIX 2: ดึง unnest ไปไว้ใน FROM clause เพื่อบังคับให้ random() ทำงานทุกๆ แถวชัวร์ๆ
+        SELECT COALESCE(array_agg(val), ARRAY[]::TEXT[]) INTO lap
+        FROM (SELECT unnest(pool) AS val ORDER BY random()) t;
 
         -- ถ้าตัวแรกของรอบใหม่ ดันซ้ำกับตัวสุดท้ายของรอบก่อน ให้สลับตำแหน่งกับตัวถัดไป
         IF cardinality(result) > 0
@@ -35,7 +41,7 @@ BEGIN
         result := result || lap;
     END LOOP;
 
-    RETURN result[1:p_length]; -- ตัดท้ายให้พอดี ถ้ารอบสุดท้ายเกิน
+    RETURN result[1:p_length];
 END;
 $$;
 
@@ -57,17 +63,15 @@ DECLARE
     i INT;
     temp_swap TEXT;
 BEGIN
-    -- ดึงรายการเพลงทั้งหมดมาทำ Pool รอบแรก
     SELECT array_agg(id), cardinality(array_agg(id)) INTO song_pool, pool_size
     FROM (SELECT id FROM songs ORDER BY random()) t;
 
-    -- 🚨 ตรวจสอบก่อนว่ามีเพลงในระบบไหม กัน Infinite Loop หรือ Error
+    -- 🩹 FIX: ถ้ายังไม่มีข้อมูลเพลง ให้คืนค่า Array(NULL, NULL) กลับไป
     IF pool_size IS NULL OR pool_size = 0 THEN
-        RAISE EXCEPTION 'ไม่มีข้อมูลเพลงในตาราง songs';
+        RETURN array_fill(ROW(NULL::TEXT, NULL::TEXT)::song_segment_pair, ARRAY[p_length]);
     END IF;
 
     FOR i IN 1..p_length LOOP
-        -- Reshuffle ถ้าใช้เพลงหมดสำรับ
         IF pool_idx > pool_size THEN
             SELECT array_agg(id) INTO song_pool
             FROM (SELECT id FROM songs ORDER BY random()) t;
@@ -76,7 +80,6 @@ BEGIN
 
         current_song_id := song_pool[pool_idx];
 
-        -- 🛡️ กันเพลงซ้ำติดกันตรงรอยต่อสำรับ (เช็คด้วยว่ามีไพ่ใบถัดไปให้สลับไหม)
         IF current_song_id = prev_song_id AND pool_size > 1 AND pool_idx < pool_size THEN
             temp_swap := song_pool[pool_idx];
             song_pool[pool_idx] := song_pool[pool_idx + 1];
@@ -84,19 +87,16 @@ BEGIN
             current_song_id := song_pool[pool_idx];
         END IF;
 
-        -- สุ่มเลือก 1 Segment ที่ผูกกับ Song นี้
         SELECT id INTO selected_segment_id
         FROM song_segments
         WHERE song_id = current_song_id
         ORDER BY random()
         LIMIT 1;
 
-        -- 🛡️ ในกรณีที่เพลงนั้นไม่มี segment ผูกไว้เลย (กันพัง)
         IF selected_segment_id IS NULL THEN
             selected_segment_id := 'no-segment'; 
         END IF;
 
-        -- เพิ่ม Pair เข้าใน Array ผลลัพธ์
         final_pairs := final_pairs || ROW(current_song_id, selected_segment_id)::song_segment_pair;
         
         prev_song_id := current_song_id;
@@ -130,8 +130,6 @@ DECLARE
     i INT;
     temp_swap TEXT;
 BEGIN
-    -- 🩹 FIX: แยก DISTINCT (ชั้นใน) กับ ORDER BY random() (ชั้นนอก) ออกจากกัน
-    -- เพราะ SELECT DISTINCT ... ORDER BY random() ทำไม่ได้ตรงๆ ใน Postgres
     EXECUTE format(
         'SELECT COALESCE(array_agg(gid), ARRAY[]::TEXT[])
          FROM (
@@ -145,13 +143,13 @@ BEGIN
 
     pool_size := cardinality(group_pool);
 
+    -- 🩹 FIX: ถ้าตารางไม่มีข้อมูล หรือไม่มีคอลัมน์นี้ ให้คืนค่า Array(NULL, NULL) กลับไปเลย (ไม่พ่น Error)
     IF pool_size IS NULL OR pool_size = 0 THEN
-        RAISE EXCEPTION 'ไม่มี distinct % ในตาราง %', p_group_column, p_item_table;
+        RETURN array_fill(ROW(NULL::TEXT, NULL::TEXT)::group_item_pair, ARRAY[p_length]);
     END IF;
 
     FOR i IN 1..p_length LOOP
         IF pool_idx > pool_size THEN
-            -- 🩹 FIX: เหมือนกันกับตอน reshuffle
             EXECUTE format(
                 'SELECT array_agg(gid)
                  FROM (
@@ -205,11 +203,11 @@ DECLARE
     start_date DATE;
 
     song_pair_seq song_segment_pair[];
-    quote_pair_seq group_item_pair[];   -- 🆕 ใช้ generic pair แทน quote_seq เดิม
 
-    silhouette_seq  TEXT[];
-    release_seq     TEXT[];
-    emoji_seq       TEXT[];
+    quote_pair_seq group_item_pair[];
+    silhouette_pair_seq group_item_pair[];
+    release_pair_seq group_item_pair[];
+    emoji_pair_seq group_item_pair[];
 BEGIN
     IF EXISTS (SELECT 1 FROM daily_schedule WHERE date = CURRENT_DATE) THEN
         RETURN 'Notification: Schedule for today already exists.';
@@ -225,28 +223,42 @@ BEGIN
         RETURN 'Error: No characters found.';
     END IF;
 
-    song_pair_seq  := build_song_segment_sequence(total_days);
-    quote_pair_seq := build_grouped_no_repeat_sequence('quotes', 'character_id', total_days); -- 🆕
+    song_pair_seq := build_song_segment_sequence(total_days);
 
-    silhouette_seq   := build_no_repeat_sequence('silhouettes', total_days);
-    release_seq := build_no_repeat_sequence('releases', total_days);
-    emoji_seq   := build_no_repeat_sequence('emojis', total_days);
+    -- Quote / Silhouette: always populate (shipped verticals)
+    quote_pair_seq      := build_grouped_no_repeat_sequence('quotes', 'character_id', total_days, 'id');
+    silhouette_pair_seq := build_grouped_no_repeat_sequence('silhouettes', 'character_id', total_days, 'id');
+
+    -- 🩹 Release / Emoji: still unshipped (FEATURE_FLAGS.release/emoji = false in both modes).
+    -- Their tables may be empty or fully NULL character_id — guard so we don't attempt a
+    -- pool build against zero rows and instead fall back to a NULL sequence directly.
+    IF EXISTS (SELECT 1 FROM releases WHERE character_id IS NOT NULL) THEN
+        release_pair_seq := build_grouped_no_repeat_sequence('releases', 'character_id', total_days, 'id');
+    ELSE
+        release_pair_seq := array_fill(ROW(NULL::TEXT, NULL::TEXT)::group_item_pair, ARRAY[total_days]);
+    END IF;
+
+    IF EXISTS (SELECT 1 FROM emojis WHERE character_id IS NOT NULL) THEN
+        emoji_pair_seq := build_grouped_no_repeat_sequence('emojis', 'character_id', total_days, 'id');
+    ELSE
+        emoji_pair_seq := array_fill(ROW(NULL::TEXT, NULL::TEXT)::group_item_pair, ARRAY[total_days]);
+    END IF;
 
     FOR i IN 1..total_days LOOP
         INSERT INTO daily_schedule (
             date, character_id,
             song_id, song_segment_id,
-            silhouette_id, release_id, emoji_id, quote_id
+            quote_id, silhouette_id, release_id, emoji_id
         )
         VALUES (
             start_date + (i - 1),
             char_ids[i],
             (song_pair_seq[i]).song_id,
             (song_pair_seq[i]).segment_id,
-            silhouette_seq[i],
-            release_seq[i],
-            emoji_seq[i],
-            (quote_pair_seq[i]).item_id     -- 🆕 ดึง quote_id จาก pair แทน quote_seq[i]
+            (quote_pair_seq[i]).item_id,
+            (silhouette_pair_seq[i]).item_id,
+            (release_pair_seq[i]).item_id,
+            (emoji_pair_seq[i]).item_id
         )
         ON CONFLICT (date) DO NOTHING;
     END LOOP;
