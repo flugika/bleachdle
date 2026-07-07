@@ -7,27 +7,33 @@ Lastest Updated: 8 July 2026, 2:08 AM.
 [![Next.js](https://img.shields.io/badge/Next.js-15-black?logo=next.js)](https://nextjs.org/)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5-blue?logo=typescript)](https://www.typescriptlang.org/)
 [![Tailwind CSS](https://img.shields.io/badge/Tailwind-4-38bdf8?logo=tailwindcss)](https://tailwindcss.com/)
+[![Supabase](https://img.shields.io/badge/Supabase-Database-3ECF8E?logo=supabase&logoColor=white)](https://supabase.com/)
 [![Deployed on Vercel](https://img.shields.io/badge/Deployed-Vercel-black?logo=vercel)](https://vercel.com/)
+[![Deployed on Supabase](https://img.shields.io/badge/Deployed-Supabase-3ECF8E?logo=supabase&logoColor=white)](https://supabase.com/)
 
 ---
 
 ## Overview
 
-BLEACHDLE is a DLE-style character identification game scoped to the Bleach universe. Players guess characters based on shared attribute feedback — Race, Affiliation, Weapon type, first-appearance Chapter, and more — with color-coded clues narrowing down the answer each round.
+BLEACHDLE is a DLE-style character identification game scoped to the Bleach universe. Each round selects a target character, and players narrow it down through attribute-based guesses — Race, Affiliation, Weapon type, first-appearance Chapter, and more — with color-coded feedback per field.
 
-The current release ships **Unlimited Mode**: randomly-selected characters with no daily lock, streak tracking, and session statistics. The architecture is structured to accommodate Daily Mode, Quote Mode, Image Mode, and Emoji Mode as future game verticals.
+The game ships four verticals: **Character**, **Quote**, **Song**, and **Silhouette**. Character, Quote, and Song are available in both **Daily** (one seeded round per day, shared across players) and **Unlimited** (random target, no daily lock, streak tracking) modes. Silhouette currently ships **Unlimited** only — a Daily route hasn't been built for it yet. **Emoji** and **Release** (guess by release state) are scaffolded behind feature flags but not released in either mode.
 
 ---
 
 ## Features
 
-- **Attribute comparison engine** — multi-field diff with exact match, partial match, and directional hint (▲/▼) for numeric fields
-- **Fuzzy search** — tolerant character name lookup, handles typos and alternate romanizations
-- **Streak & session stats** — client-side state persistence across rounds within a session
-- **Reiatsu cursor** — optional particle effect (Sode no Shirayuki ice-crystal trail) that follows the pointer; togglable
-- **Zangetsu loader** — custom SVG/CSS animated loading screen, not a spinner
-- **Feature flags** — `src/config/feature.flags.ts` gates unreleased game modes without code removal
-- **Dark-first UI** — Soul Society-themed palette, 60fps-targeted animations, responsive layout
+- **Attribute comparison engine** — one stateless compare module per vertical (`compareCharacter.ts`, `compareQuote.ts`, `compareSong.ts`, `compareSilhouette.ts`): takes a guess and a target, returns a diffed result array. Height and Age are deliberately *not* routed through a shared numeric comparator — see [Comparison Engine notes](#-character-comparison-engine-architectural--technical-notes) below.
+- **Fuzzy search** — typo- and alternate-romanization-tolerant name lookup for guesses (`src/lib/search/fuzzy.ts`)
+- **Daily Hub** — one seeded round per day for Character/Quote/Song, shared across all players, with countdown-based reset (`DailyResetTimer`, `useCountdown`, `useCooldown`, `DailyProgressBar`)
+- **Session & streak tracking** — client-side round state, finalized server-side via `app/api/stats/finalize`
+- **Support ticket system** — `SupportForm` → `app/api/support`, persisted through Supabase (`0001_support_tickets.sql`), with IP-based rate limiting (`ipRateLimit.ts`, `rateLimitCookie.ts`). Cloudflare Turnstile is wired up (`useTurnstile.ts`) but currently **disabled** — it was misflagging legitimate traffic as bot activity; re-enabling it is tracked in the Roadmap.
+- **Dynamic wallpaper rotation** — background swaps per session/day (`useDailyWallpaper`, `WallpaperInitializer`, `wallpapers.json`)
+- **Race emblem indicator** — per-character race badge (Shinigami / Hollow / Arrancar / Quincy / Visored / Mod Soul) resolved via `useRaceEmblem` from `public/assets/emblems`
+- **Custom transitions & loaders** — `ZangetsuLoader`, `SoulSyncLoader`, `SenkaimonTransition`; purpose-built animations instead of a generic spinner
+- **Reiatsu cursor** — optional particle-trail cursor effect, togglable (`BleachReiatsuCursor.tsx`)
+- **Feature flags** — `src/config/feature.flags.ts` gates verticals per mode (nested under `daily` / `unlimited`) so a mode can ship in Unlimited before Daily — e.g. Silhouette is Unlimited-only today. Emoji and Release modes are off in both.
+- **Dark-first UI** — Soul Society-themed palette, responsive layout down to mobile
 
 ---
 
@@ -41,8 +47,9 @@ The current release ships **Unlimited Mode**: randomly-selected characters with 
 | State | React Hooks | `useState`, `useEffect`, `useMemo` — no external store |
 | Search | Custom fuzzy matcher | `src/lib/search/fuzzy.ts` |
 | Game engine | Compare util | `src/lib/game-engine/compare.ts` |
+| Backend / DB | Supabase (Postgres) | `src/lib/supabase/`; seeded via `src/scripts/seeds/`, schema in `src/scripts/migrations/` |
 | Package manager | pnpm (workspace) | `pnpm-workspace.yaml` at root |
-| Deployment | Vercel | Zero-config, edge-ready |
+| Deployment | Vercel + Supabase | App on Vercel, data/auth on Supabase |
 
 ---
 
@@ -144,49 +151,74 @@ To add a character: append an entry to `characters.json` and drop the correspond
 
 ## Feature Flags
 
-Unreleased game modes are gated in `src/config/feature.flags.ts`:
+Verticals are gated per mode in `src/config/feature.flags.ts`:
 
 ```ts
 export const FEATURE_FLAGS = {
   // ── 📅 โหมดทายรายวัน (Daily Mode)
-    daily: {
-        character: true,
-        quote: true,
-        silhouette: false,
-        emoji: false,
-        song: true,
-        release: false,
-    },
+  daily: {
+    character: true,
+    quote: true,
+    silhouette: false,
+    emoji: false,
+    song: true,
+    release: false,
+  },
 
-    // ── ♾️ โหมดเล่นไม่จำกัด (Unlimited Mode)
-    unlimited: {
-        character: true,
-        quote: true,
-        silhouette: true,
-        emoji: false,
-        song: true,
-        release: false,
-    },
+  // ── ♾️ โหมดเล่นไม่จำกัด (Unlimited Mode)
+  unlimited: {
+    character: true,
+    quote: true,
+    silhouette: true,
+    emoji: false,
+    song: true,
+    release: false,
+  },
 
-    // ── config / system
-    mockupSong: false,
-    mockupSilhouette: false,
-    support: true,
+  // ── config / system
+  mockupSong: false,
+  mockupSilhouette: false,
+  support: true,
 } as const;
 ```
 
-Set a flag to `true` locally to develop a mode without affecting production.
+Flags are nested per mode rather than a flat list, since a vertical can ship in Unlimited before it ships in Daily — Silhouette is the current example (`unlimited.silhouette: true`, `daily.silhouette: false`). `emoji` and `release` are off in both modes; `release` guards an unreleased vertical (guess by release state — Shikai / Bankai / Resurrection). `mockupSong` / `mockupSilhouette` gate the standalone design-preview routes under `app/mockup/`, and `support` toggles the support ticket page/API independently of any game vertical.
 
 ---
 
 ## Roadmap
 
-- [ ] Daily Mode — seeded character, shared results, no spoilers
-- [ ] Quote Mode — identify a character from a dialogue excerpt
-- [ ] Image Mode — identify from a cropped/obscured artwork panel
+> Testing (unit/integration/UAT) is intentionally deferred — data schemas (`characters.json`, entity types) are still changing frequently, so writing tests now would mean rewriting them constantly. Will pick up once the data layer stabilizes (post Supabase migration).
+
+### Gameplay
+- [ ] Silhouette Daily — bring Silhouette to Daily Hub (currently Unlimited-only)
 - [ ] Emoji Mode — abstract visual puzzle
-- [ ] Supabase integration — persistent leaderboard and cross-session streaks
+- [ ] Release Mode — guess by release state (Shikai / Bankai / Resurrection)
 - [ ] i18n — Thai / English toggle
+
+### Stats & Social
+- [ ] **Global daily stats** — "X% of players solved it within N guesses," aggregated via Supabase on top of existing round/result tables
+- [ ] **Surface badges on `/stats`** — badge system already exists but currently only renders inside each mode's summary card, not on the dedicated stats page
+- [ ] **Shareable result as image** — skip the Wordle/Worldle-style emoji-grid text share; generate a downloadable/story-ready image (canvas or server-side OG image) instead
+- [ ] **Streak/session portability without login** — auth is deprioritized for now. Exploring:
+  - manual export/import of the localStorage blob to move a streak to another device
+  - same-network auto-detection to sync a session across devices on the same connection
+  - open problem: same-network detection breaks down for shared networks (family, roommates) where distinct players would collide onto one streak — needs a disambiguation strategy before this ships
+- [ ] **Rate limiting on game APIs** (not just `/api/support`) — starting point to research:
+  - sliding-window or token-bucket limiter (e.g. Upstash Redis + `@upstash/ratelimit`) at the edge/middleware level, keyed by IP + session id
+  - apply first to `app/api/stats/finalize` (highest abuse risk — fake streak submissions) and any future leaderboard-writing routes
+  - reuse the existing `ipRateLimit.ts` / `rateLimitCookie.ts` pattern from the support ticket system as a base, generalize it into shared middleware
+
+### Reliability & Process
+- [ ] **Error monitoring (Sentry or similar)** — high priority precisely because there's no test coverage yet; need visibility into prod failures before shipping faster
+- [ ] **Real CI pipeline** — a CI file exists but currently only validates character data; needs lint + `tsc --noEmit` + build checks gating PRs
+- [ ] Reduced-motion setting — lower priority, touches many components (loaders, transitions, cursor effect), needs a broader pass
+- [ ] Testing suite (unit + integration) — blocked on schema stabilization, see note above
+
+### Infra
+- [ ] Supabase migration — persistent leaderboard and cross-session streaks
+- [ ] Turnstile spam mitigation — currently paused; legitimate traffic was being flagged as bot activity, needs a fix before re-enabling
+- [ ] PWA + push notifications — undecided on trigger points (daily reset reminder? streak-at-risk warning?); need to land on something useful without being intrusive
 
 ---
 
@@ -205,6 +237,7 @@ Set a flag to `true` locally to develop a mode without affecting production.
 Built by fukusana.dev team (solo developer/uxui/game designer)
 Bleach and all related characters © Tite Kubo / Shueisha.
 This is a fan project — not affiliated with or endorsed by Shueisha, Viz Media, or TV Tokyo.
+This project is non-commercial: it is not monetized in any form (no ads, no paid tiers, no merchandising) and is made solely for entertainment and educational purposes by fans of the series. All rights to Bleach and its characters remain with their respective owners.
 
 ---
 
