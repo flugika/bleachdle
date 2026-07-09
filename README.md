@@ -18,7 +18,7 @@
 
 **Production:** [https://bleachdle-theta.vercel.app/](https://bleachdle-theta.vercel.app/)
 
-![Homepage](./public/assets/screenshots/homepage.png)
+![Homepage](./client/public/assets/screenshots/homepage.png)
 
 ---
 
