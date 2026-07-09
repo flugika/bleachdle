@@ -6,6 +6,7 @@ import { SilhouetteTarget } from '@/src/features/silhouette/types';
 import silhouetteCells from '@/src/data/silhouette-cells.json';
 import rawSilhouettes from '@/src/data/silhouettes.json';
 import { Character } from '@/src/entities/character/schema';
+import { getTodayStr } from '@/src/lib/utils/format';
 
 interface SilhouetteCellConfig {
     occupied: number[];
@@ -61,14 +62,6 @@ export const GRID_SIZE = 5;
 const TOTAL_CELLS = GRID_SIZE * GRID_SIZE;
 const REVEAL_PER_GUESS = 1; // เดาผิด 1 ครั้ง เปิดเพิ่ม 1 ช่อง
 const MAX_REVEAL_RATIO = 0.85;
-
-function getCurrentDateStr(): string {
-    const d = new Date();
-    const year = d.getFullYear();
-    const month = String(d.getMonth() + 1).padStart(2, '0');
-    const day = String(d.getDate()).padStart(2, '0');
-    return `${year}-${month}-${day}`; // จะได้รูปแบบ "2026-07-07"
-}
 
 function hashStringToSeed(str: string): number {
     let h = 1779033703 ^ str.length;
@@ -134,7 +127,7 @@ export const getRevealedCellIndices = (
     cellWeights?: Record<number, number>, // 🆕 รับ weight เข้ามาด้วย
 ): Set<number> => {
     const MAX_SILHOUETTE_GUESSES = mode === "daily" ? MAX_DAILY_SILHOUETTE_GUESSES : MAX_UNLIMITED_SILHOUETTE_GUESSES;
-    const dateStr = getCurrentDateStr();
+    const dateStr = getTodayStr();
     const allCells = Array.from({ length: TOTAL_CELLS }, (_, i) => i);
 
     const occupied = occupiedCells && occupiedCells.length > 0 ? occupiedCells : allCells;
