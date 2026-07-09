@@ -18,7 +18,7 @@
 
 **Production:** [https://bleachdle-theta.vercel.app/](https://bleachdle-theta.vercel.app/)
 
-![Homepage](./client/public/assets/screenshots/homepage.png)
+<img width="2892" height="4128" alt="homepage" src="https://github.com/user-attachments/assets/c5359907-16e7-4cff-8d24-a3d106e34717" />
 
 ---
 
