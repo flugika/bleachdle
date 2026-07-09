@@ -3,7 +3,7 @@
 
 import { Modal } from '@/src/shared/ui/modal';
 import { Button } from '@/src/shared/ui/button';
-import { MAX_SILHOUETTE_GUESSES } from '@/src/const/guess';
+import { MAX_DAILY_SILHOUETTE_GUESSES, MAX_UNLIMITED_SILHOUETTE_GUESSES } from '@/src/const/guess';
 import { SilhouetteImage } from './SilhouetteImage';
 import { SilhouetteGuessTable } from './SilhouetteGuessTable';
 import { useEffect, useState } from 'react';
@@ -53,6 +53,7 @@ export const SilhouetteHowToPlayModal = ({ isOpen, onClose, mode }: SilhouetteHo
     }, []);
 
     const isDaily = mode === 'daily';
+    const MAX_SILHOUETTE_GUESSES = isDaily ? MAX_DAILY_SILHOUETTE_GUESSES : MAX_UNLIMITED_SILHOUETTE_GUESSES;
 
     return (
         <Modal
@@ -71,7 +72,7 @@ export const SilhouetteHowToPlayModal = ({ isOpen, onClose, mode }: SilhouetteHo
                         </h3>
                         <p className="text-[#d8d0c8] text-xs leading-relaxed">
                             Identify the hidden <strong className="text-white">BLEACH CHARACTER</strong> by analyzing their spiritual silhouette structure
-                            {isDaily ? <span> within <span className="text-[#c8a96e] font-mono font-bold">{MAX_SILHOUETTE_GUESSES} ATTEMPTS</span> to maintain your archive clearance.</span> : <span> using the sandbox diagnostics network.</span>}
+                            <span> within <span className="text-[#c8a96e] font-mono font-bold">{MAX_SILHOUETTE_GUESSES} ATTEMPTS</span> to maintain your archive clearance.</span>
                         </p>
                         <div className="bg-[#1a0505]/80 border border-[#c85050]/40 p-2.5 text-[10px] text-[#e8b4b4] tracking-wider uppercase font-mono shadow-[inset_0_0_10px_rgba(200,80,80,0.1)]">
                             <span className="text-[#ff4d4d]">⚠ SYSTEM WARNING:</span> RADAR SHADOW ACTIVE. PHYSICAL DETAILS ARE COMPRESSED.
@@ -104,6 +105,7 @@ export const SilhouetteHowToPlayModal = ({ isOpen, onClose, mode }: SilhouetteHo
                         <div className="w-36 h-36 shrink-0 border border-[#c8a96e]/30 bg-[#010103] p-1 relative flex items-center justify-center shadow-[0_0_20px_rgba(200,169,110,0.1)]">
                             <div className="w-full h-full select-none pointer-events-none">
                                 <SilhouetteImage
+                                    mode={mode}
                                     characterId={EXAMPLE_CHARACTER.id}
                                     image={EXAMPLE_CHARACTER.image}
                                     realImage={EXAMPLE_CHARACTER.realImage}

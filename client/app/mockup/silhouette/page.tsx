@@ -158,7 +158,7 @@ function SilhouettePreviewBox({
     const occupiedCells = useMemo(() => getOccupiedCells(image), [image]);
     const weightCells = useMemo(() => getCellWeights(image), [image]);
     const revealed = useMemo(
-        () => getRevealedCellIndices(characterId, guessCount, occupiedCells, weightCells),
+        () => getRevealedCellIndices(characterId, guessCount, "unlimited", occupiedCells, weightCells),
         [characterId, guessCount, occupiedCells],
     );
 

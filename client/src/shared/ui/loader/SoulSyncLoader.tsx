@@ -14,20 +14,20 @@ interface GlyphMetric {
 }
 
 const GLYPH_REGISTRY: Record<string, GlyphMetric> = {
-    "❖": { x: "0px", y: "4px" },
-    "☸": { x: "0px", y: "6px" },
-    "✟": { x: "0px", y: "4px" },
-    "☠": { x: "0px", y: "4px" },
-    "☯": { x: "0px", y: "5px" },
-    "☽": { x: "6px", y: "4px", scale: 1.05 },
-    "♛": { x: "0px", y: "4px" },
-    "❀": { x: "0px", y: "4px" },
-    "❁": { x: "0px", y: "4px" },
-    "➴": { x: "-4px", y: "4px" },
-    "✥": { x: "0px", y: "4px" },
-    "✬": { x: "0px", y: "0px" },
+    "❖": { x: "0px", y: "2px" },
+    "☸": { x: "0px", y: "3px" },
+    "✟": { x: "0px", y: "2px" },
+    "☠": { x: "0px", y: "3px" },
+    "☯": { x: "0px", y: "2.5px" },
+    "☽": { x: "6px", y: "2px", scale: 1.05 },
+    "♛": { x: "0px", y: "3px" },
+    "❀": { x: "0px", y: "2px" },
+    "❁": { x: "0px", y: "2.5px" },
+    "➴": { x: "-2px", y: "2px" },
+    "✥": { x: "0px", y: "2.5px" },
+    "✬": { x: "0px", y: "0.5px" },
     "☂": { x: "0px", y: "5px" },
-    "۞": { x: "0px", y: "8px", scale: 0.6 },
+    "۞": { x: "0px", y: "6px", scale: 0.6 },
 };
 
 const REIATSU_PARTICLES = [

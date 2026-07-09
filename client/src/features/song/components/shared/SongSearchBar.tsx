@@ -78,6 +78,15 @@ export const SongSearchBar = ({ songs, disabled = false, game }: SongSearchBarPr
             triggerScrollAndShake(song.id);
         } else {
             addGuess(song.id);
+
+            // 🌟 ปรับเปลี่ยนตรงนี้: เลื่อนหน้าจอไปที่ Audio Player แทน
+            // ใช้ setTimeout เล็กน้อยเพื่อให้แน่ใจว่า DOM อัปเดตสถานะการเดาเสร็จสิ้นแล้ว
+            setTimeout(() => {
+                const playerEl = document.getElementById('song-audio-player');
+                if (playerEl) {
+                    playerEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }
+            }, 50);
         }
 
         setQuery('');

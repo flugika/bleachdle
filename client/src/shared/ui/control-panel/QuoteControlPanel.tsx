@@ -64,7 +64,7 @@ export function QuoteControlPanel({
 
             {/* Stats Section */}
             {stats.currentStreak !== quotes.length && (
-                <div className="flex justify-center gap-8 my-6 text-[11px] uppercase tracking-[0.2em] text-[#777796]">
+                <div className="flex justify-center gap-8 my-4 text-[11px] uppercase tracking-[0.2em] text-[#777796]">
                     {mode === 'daily' && timeLeft && (
                         <div className="flex flex-col items-center">
                             <span className="text-[#d1a9a9]">Next Reset</span>
@@ -72,14 +72,12 @@ export function QuoteControlPanel({
                         </div>
                     )}
 
-                    {mode === 'unlimited' && (
-                        <div className="flex flex-col items-center">
-                            <span className="text-[#d1a9a9]">Attempts Left</span>
-                            <span className={`${remainingGuesses === 0 ? 'text-[#e83030]' : 'text-[#4de880]'} text-lg font-bold`}>
-                                {remainingGuesses}
-                            </span>
-                        </div>
-                    )}
+                    <div className="flex flex-col items-center">
+                        <span className="text-[#d1a9a9]">Attempts Left</span>
+                        <span className={`${remainingGuesses === 0 ? 'text-[#e83030]' : 'text-[#4de880]'} text-lg font-bold`}>
+                            {remainingGuesses}
+                        </span>
+                    </div>
 
                     <div className="flex flex-col items-center">
                         <span className="text-[#d1a9a9]">Current Streaks</span>

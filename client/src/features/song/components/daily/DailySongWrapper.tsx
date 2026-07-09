@@ -19,7 +19,7 @@ import { ModeSelectorModal } from '@/src/shared/ui/game-selector/ModeSelectorMod
 import { useSenkaimon } from '@/src/shared/ui/context/NavigationContext';
 import { STORAGE_KEYS } from '@/src/const/localStorage';
 import { BL_MODES_METADATA } from '@/src/config/mode';
-// 📅 Daily Hub: แถบ progress รวมทุกโหมด daily + CTA เล่นต่อ
+import { MAX_DAILY_SONG_GUESSES } from '@/src/const/guess'; 
 import { DailyProgressBar } from '@/src/shared/ui/daily-hub/DailyProgressBar';
 import { DailyHubModalFooter } from '@/src/shared/ui/daily-hub/DailyHubModalFooter';
 import { useDailyHub } from '@/src/shared/hooks/useDailyHub';
@@ -30,19 +30,16 @@ interface DailySongWrapperProps {
 }
 
 export default function DailySongWrapper({ initialTarget, initialSegmentId }: DailySongWrapperProps) {
-    // 🛡️ TODO: เพิ่ม key `song: { daily: boolean; unlimited: boolean }` ใน feature.flags.ts
-    // ถ้ายังไม่มี ให้ลบ optional chaining (?.) ออกแล้วใส่ FEATURE_FLAGS.daily.song ตรงๆ
     if (!FEATURE_FLAGS.daily?.song) {
         return <Sealed />;
     }
 
-    const { navigate, state, reportReady } = useSenkaimon(); // 👈 pattern เดียวกับ DailyCharacterWrapper เป๊ะ
+    const { navigate, state, reportReady } = useSenkaimon();
 
     const gameStore = useSongGame();
     const { target, guesses, initializeGame, finalizeGame, resetGame, hasFinalized, _hasHydrated, stats, loadStats } = gameStore;
-    const songs = getSongs(); // 👈 ใช้แค่ทำ autocomplete list ของ search bar เท่านั้น ไม่ใช่แหล่งสุ่ม target
+    const songs = getSongs();
 
-    // 📅 Daily Hub: markModePlayed('song', won) จะถูกเรียกตอนเกมจบจริงเท่านั้น (ดู effect ด้านล่าง)
     const { markModePlayed } = useDailyHub();
 
     useEffect(() => {
@@ -56,100 +53,117 @@ export default function DailySongWrapper({ initialTarget, initialSegmentId }: Da
         }
     }, [initialTarget, _hasHydrated]);
 
-    const [isModalOpen, setIsModalOpen] = useState(false);
+    // 🆕 นำสเตตและเงื่อนไขแบบ Silhouette มาใช้งานควบคุมแทนตำแหน่งเดิม
+    const [manuallyClosed, setManuallyClosed] = useState(false);
+    const [revealDelayDone, setRevealDelayDone] = useState(false);
+
     const [isHowToOpen, setIsHowToOpen] = useState(false);
     const [isReady, setIsReady] = useState(false);
     const [timeLeft, setTimeLeft] = useState('');
-    const [isSurrendered, setIsSurrendered] = useState(false);
     const [isModeSelectorOpen, setIsModeSelectorOpen] = useState(false);
     const isSynced = target !== null && initialTarget !== null && target.id === initialTarget.id;
 
-    // 🛡️ FIX (ปัญหา modal ค้าง): ปิด modal ทันทีที่ประตูเซนไกมงเริ่ม "closing"
     useEffect(() => {
         if (state === "closing") {
             setIsModeSelectorOpen(false);
         }
     }, [state]);
 
-    // 🎵 Win condition เหมือน unlimited/song: เพลงมีคำตอบเดียว แค่มี guess ไหน
-    // status === 'correct' ก็ถือว่าชนะ (ไม่ต้องเช็คว่าเป็น guess ล่าสุดเหมือน character)
+    // 🆕 รีเซ็ตตัวแปรเมื่อเป้าหมายประจำวันเปลี่ยนกลุ่มไอดี 
+    useEffect(() => {
+        setManuallyClosed(false);
+        setRevealDelayDone(false);
+    }, [target?.id]);
+
+    const remainingGuesses = Math.max(0, MAX_DAILY_SONG_GUESSES - guesses.length);
     const isWin = guesses.some(g => g.status === 'correct');
-    const isLoss = isSurrendered || (hasFinalized && !isWin);
+    const isLoss = guesses.length >= MAX_DAILY_SONG_GUESSES && !isWin;
     const isGameOver = isWin || isLoss;
+
+    // 🆕 เปลี่ยนแปลงมาใช้ Single Source of Truth ผ่านตัวแปร showSummary ตรงๆ
+    const showSummary = _hasHydrated && isReady && isGameOver && !manuallyClosed && revealDelayDone;
+
+    const latestGuess = guesses[0];
+    const isFreshFinish = Boolean(latestGuess?.isNew && isGameOver);
+
+    // 🆕 ระบบดีเลย์เปิดเผยตั๋วสรุปผลแอนิเมชันตามรูปแบบ Silhouette (ชนะ 1600ms / แพ้ 900ms)
+    useEffect(() => {
+        if (!isGameOver) return;
+
+        if (!isFreshFinish) {
+            setRevealDelayDone(true);
+            return;
+        }
+
+        const delay = isWin ? 1600 : 900;
+        const timer = setTimeout(() => setRevealDelayDone(true), delay);
+        return () => clearTimeout(timer);
+    }, [isGameOver, isFreshFinish, isWin]);
 
     const handleSwitchDimension = (targetMode: 'daily' | 'unlimited') => {
         setIsModeSelectorOpen(false);
         navigate(targetMode);
     };
 
-    // โหลดและซิงค์ข้อมูลฝั่ง Client หลัง hydrate เสร็จ
     useEffect(() => {
         if (!_hasHydrated) return;
         loadStats();
-
         initializeGame();
         setIsReady(true);
     }, [initializeGame, songs.length, _hasHydrated, loadStats]);
 
     useEffect(() => {
-        loadStats(); // โหลด stats จาก localStorage เข้า store ครั้งเดียวตอน mount
+        loadStats();
     }, [loadStats]);
 
-    // 🚪 แจ้ง NavigationContext กลับไปตอน "isReady" เป็น true จริงๆ (หลัง hydrate + initializeGame เสร็จ)
     useEffect(() => {
         if (isReady) {
             reportReady();
         }
     }, [isReady, reportReady]);
 
+    // 🆕 บันทึกสถิติลงคลังข้อมูลทันทีเมื่อจบเกม (ไม่ต้องหน่วงเวลาฝั่ง Data เพื่อความแม่นยำ)
     useEffect(() => {
-        if (!_hasHydrated) return;
-        if (!isSynced) return; // ยังไม่ reconcile เสร็จ ห้ามตัดสินใจจาก guesses/hasFinalized ตอนนี้
-
-        if (isGameOver) {
-            if (hasFinalized) {
-                setIsModalOpen(true);
-                return;
-            }
-
-            const targetDelay = isSurrendered ? 0 : 1000;
-            const timer = setTimeout(() => {
-                if (!hasFinalized) {
-                    finalizeGame(isWin);
-                    markModePlayed('song', isWin);
-                }
-                setIsModalOpen(true);
-            }, targetDelay);
-
-            return () => clearTimeout(timer);
+        if (!_hasHydrated || !isSynced) return;
+        if (isGameOver && !hasFinalized) {
+            finalizeGame(isWin);
+            markModePlayed('song', isWin);
         }
-    }, [isGameOver, isWin, finalizeGame, hasFinalized, _hasHydrated, isSurrendered, isSynced]);
+    }, [isGameOver, hasFinalized, isWin, _hasHydrated, isSynced, finalizeGame, markModePlayed]);
 
     const handleCloseModal = () => {
-        setIsModalOpen(false);
-        setIsSurrendered(false);
+        setManuallyClosed(true);
         resetGame();
         window.scrollTo({ top: 0, behavior: 'smooth' });
     };
+
+    // 🆕 การเลื่อนหน้าจอถูกพึ่งพากับสถานะของ showSummary สมบูรณ์แบบ
+    useEffect(() => {
+        if (showSummary) {
+            const timer = setTimeout(() => {
+                const subHeaderEl = document.getElementById('game-sub-header');
+                if (subHeaderEl) {
+                    subHeaderEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }
+            }, 100);
+
+            return () => clearTimeout(timer);
+        }
+    }, [showSummary]);
 
     useEffect(() => {
         const calculateTimeLeft = () => {
             const now = new Date();
             const midnight = new Date();
             midnight.setHours(24, 0, 0, 0);
-
             const diff = midnight.getTime() - now.getTime();
-
             const hours = Math.floor(diff / (1000 * 60 * 60));
             const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
             const seconds = Math.floor((diff % (1000 * 60)) / 1000);
-
             return `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
         };
 
-        // คำนวณทันทีตอน mount ก่อน 1 ครั้ง กัน timeLeft ว่างเปล่าค้างจนกว่า setInterval จะยิงครั้งแรก
         setTimeLeft(calculateTimeLeft());
-
         const timer = setInterval(() => {
             setTimeLeft(calculateTimeLeft());
         }, 1000);
@@ -161,22 +175,17 @@ export default function DailySongWrapper({ initialTarget, initialSegmentId }: Da
         <div className="min-h-screen text-[#d8d0c8] overflow-x-hidden">
             <Header onOpenHowTo={() => setIsHowToOpen(true)} />
 
-            <main className="max-w-[80%] mx-auto px-4 pb-16">
+            <main className="max-w-[80%] mx-auto px-4 pb-24">
                 <ModeBadge mode="daily" onClick={() => setIsModeSelectorOpen(true)} />
-                <SubHeader title={BL_MODES_METADATA.song.title} subtitle={BL_MODES_METADATA.song.statusLine} />
+                <div id="game-sub-header">
+                    <SubHeader title={BL_MODES_METADATA.song.title} subtitle={BL_MODES_METADATA.song.statusLine} />
+                </div>
 
-                {/* 📅 Daily Hub: ซ่อนตอน modal สรุปผลเปิดอยู่ เพราะ DailyHubModalFooter ข้างล่างโชว์ซ้ำในโมดัลแล้ว */}
-                {!isModalOpen && hasFinalized && (
+                {!showSummary && hasFinalized && (
                     <DailyProgressBar activeMode="song" className="mb-5" />
                 )}
 
-                {!isModalOpen && (
-                    // ⚠️ ASSUMPTION: SongControlPanel ต้องรองรับ mode="daily" แล้ว "ปิด" max-guess
-                    // cap เองภายใน (ไม่โชว์ remainingGuesses, ไม่ disable search bar ตามจำนวนเดา)
-                    // เหมือนที่ CharacterControlPanel ทำให้ character daily อยู่แล้ว — ถ้า SongControlPanel
-                    // ปัจจุบันยัง hardcode ใช้ remainingGuesses/maxGuesses เสมอ ต้องเพิ่ม branch
-                    // `mode === 'daily'` ให้ข้ามการเช็คนั้นไปด้วย ไม่งั้น UI จะไปโชว์ "0 guesses left"
-                    // หรือ disable ปุ่มทายผิดจังหวะ
+                {!showSummary && (
                     <SongControlPanel
                         mode="daily"
                         target={target}
@@ -185,11 +194,11 @@ export default function DailySongWrapper({ initialTarget, initialSegmentId }: Da
                         timeLeft={timeLeft}
                         game={gameStore}
                         isGameOver={isGameOver}
-                        onSurrender={() => setIsSurrendered(true)}
+                        remainingGuesses={remainingGuesses}
                     />
                 )}
 
-                {guesses.length > 0 && (
+                {(guesses.length > 0 && !showSummary) && (
                     <>
                         <Divider />
                         <div className="flex flex-wrap justify-center gap-x-5 gap-y-1.5">
@@ -206,10 +215,9 @@ export default function DailySongWrapper({ initialTarget, initialSegmentId }: Da
                     </>
                 )}
 
-                {isModalOpen ? (
+                {showSummary ? (
                     <>
-                        <SongSummaryGuess isOpen={isModalOpen} onClose={handleCloseModal} guesses={guesses} target={target} isWin={isWin} mode="daily" stats={stats} />
-                        {/* 📅 Daily Hub: CTA "เล่นต่อ" ต่อท้ายการ์ดสรุปผล */}
+                        <SongSummaryGuess isOpen={showSummary} onClose={handleCloseModal} guesses={guesses} target={target} isWin={isWin} mode="daily" stats={stats} />
                         <DailyHubModalFooter activeMode="song" />
                     </>
                 ) : target && isSynced ? (

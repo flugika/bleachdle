@@ -3,6 +3,7 @@ import 'server-only'
 
 import { supabaseServer } from '@/src/lib/supabase/supabase-server';
 import { QuoteTarget } from '@/src/features/quote/types';
+import { getTodayStr } from '@/src/lib/utils/format';
 
 /**
  * 🗓️ Mirrors getDailyCharacter() exactly, just one join deeper: we need
@@ -18,7 +19,7 @@ import { QuoteTarget } from '@/src/features/quote/types';
  * — everything else stays the same.
  */
 export async function getDailyQuote(): Promise<QuoteTarget | null> {
-    const todayStr = new Date().toLocaleDateString('en-CA', { timeZone: 'Asia/Bangkok' });
+    const todayStr = getTodayStr();
 
     const { data, error } = await supabaseServer
         .from('daily_schedule')

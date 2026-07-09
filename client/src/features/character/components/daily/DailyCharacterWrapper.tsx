@@ -1,3 +1,4 @@
+// src/features/character/components/daily/DailyCharacterWrapper.tsx
 "use client";
 
 import { useEffect, useState } from 'react';
@@ -19,28 +20,24 @@ import { ModeSelectorModal } from '@/src/shared/ui/game-selector/ModeSelectorMod
 import { useSenkaimon } from '@/src/shared/ui/context/NavigationContext';
 import { STORAGE_KEYS } from '@/src/const/localStorage';
 import { BL_MODES_METADATA } from '@/src/config/mode';
-// 📅 Daily Hub: แถบ progress รวมทุกโหมด daily + CTA เล่นต่อ
+import { MAX_DAILY_CHARACTER_GUESSES } from '@/src/const/guess';
 import { DailyHubModalFooter } from '@/src/shared/ui/daily-hub/DailyHubModalFooter';
 import { useDailyHub } from '@/src/shared/hooks/useDailyHub';
 
 export default function DailyCharacterWrapper({ initialTarget }: { initialTarget: Character | null }) {
     if (!FEATURE_FLAGS.daily.character) {
-        return (
-            <Sealed />
-        )
+        return <Sealed />;
     }
 
     const router = useRouter();
     const pathname = usePathname();
-    const { navigate, state, reportReady } = useSenkaimon(); // 👈 ดึง state + reportReady มาด้วย ใช้คุม modal ตอน transition และแจ้งความพร้อมกลับไปที่ Senkaimon
+    const { navigate, state, reportReady } = useSenkaimon();
 
-    // 🛡️ เดิมเรียก useCharacterGame() 2 ครั้งแยกกัน (ตัวแปร game + destructure ซ้ำ) รวมเป็นจุดเดียว
     const gameStore = useCharacterGame();
     const { target, guesses, initializeGame, finalizeGame, resetGame, hasFinalized, _hasHydrated, stats, loadStats } = gameStore;
     const characters = getCharacters();
     const isSynced = target !== null && initialTarget !== null && target.id === initialTarget.id;
 
-    // 📅 Daily Hub: markModePlayed('character', won) จะถูกเรียกตอนเกมจบจริงเท่านั้น (ดู effect ด้านล่าง)
     const { markModePlayed } = useDailyHub();
 
     useEffect(() => {
@@ -48,100 +45,96 @@ export default function DailyCharacterWrapper({ initialTarget }: { initialTarget
         if (initialTarget !== null) {
             initializeGame(initialTarget);
 
-            // 🛡️ debug log แบบ deterministic — log ค่า "settled" ที่ set ไปจริงๆ ครั้งเดียว
-            // แทนที่จะ subscribe แบบ reactive กับทุก mutation ของ store (ของเดิม log ค่า target
-            // ที่ persist ค้างจากเมื่อวานแวบหนึ่งก่อนจะถูกแก้เป็นของวันนี้ เลยเห็น log ผิดสลับถูก)
             if (target && process.env.NODE_ENV !== 'production') {
                 console.log('target:', useCharacterGame.getState().target);
             }
         }
     }, [initialTarget, _hasHydrated]);
 
-    const [isModalOpen, setIsModalOpen] = useState(false);
+    // 🆕 เปลี่ยนจากสเตตเปิด/ปิดกล่องสรุปแบบเดิม มาใช้คู่สเตตควบคุมรอบสรุปผลของ Silhouette
+    const [manuallyClosed, setManuallyClosed] = useState(false);
+    const [revealDelayDone, setRevealDelayDone] = useState(false);
+
     const [isHowToOpen, setIsHowToOpen] = useState(false);
     const [isReady, setIsReady] = useState(false);
     const [timeLeft, setTimeLeft] = useState('');
-    const [isSurrendered, setIsSurrendered] = useState(false);
     const [isModeSelectorOpen, setIsModeSelectorOpen] = useState(false);
 
-    // 🛡️ FIX (ปัญหา modal ค้าง): ปิด modal ทันทีที่ประตูเซนไกมงเริ่ม "closing"
-    // ผูกกับ state ตรงๆ ไม่พึ่งลำดับการเรียกจาก handleSwitchDimension เพียงจุดเดียว
-    // ครอบคลุมทุกทางที่ modal อาจถูกเปิดค้างไว้ระหว่าง transition
     useEffect(() => {
         if (state === "closing") {
             setIsModeSelectorOpen(false);
         }
     }, [state]);
 
+    // 🆕 เคลียร์สถานะ UI ประจำวันใหม่ทันทีหาก ID ของเป้าหมายเปลี่ยนตัวไป
+    useEffect(() => {
+        setManuallyClosed(false);
+        setRevealDelayDone(false);
+    }, [target?.id]);
+
+    // 🎯 รักษาเงื่อนไขคำนวณ Remaining และสเตตัสการตรวจคำตอบคุณลักษณะ (Properties) ของโมเดลเดิมไว้ทั้งหมด
+    const remainingGuesses = Math.max(0, MAX_DAILY_CHARACTER_GUESSES - guesses.length);
     const isWin = guesses.length > 0 &&
         (Object.entries(guesses[0].result)
             .filter(([key]) => key !== 'image')
             .every(([_, status]) => status === 'correct')
         );
-    const isLoss = isSurrendered || (hasFinalized && !isWin);
+    const isLoss = guesses.length >= MAX_DAILY_CHARACTER_GUESSES && !isWin;
     const isGameOver = isWin || isLoss;
 
+    // 🆕 สลับมาควบคุมผ่าน Single Source of Truth ตัวแปรเดียว
+    const showSummary = _hasHydrated && isReady && isGameOver && !manuallyClosed && revealDelayDone;
+
+    const latestGuess = guesses[0];
+    const isFreshFinish = Boolean(latestGuess?.isNew && isGameOver);
+
+    // 🆕 ⏳ รักษาค่าหน่วงเวลาแอนิเมชันเปิดกล่องของหน้าตัวละครไว้คงเดิม (2500ms นิ่งๆ)
     useEffect(() => {
-        loadStats(); // โหลด stats จาก localStorage เข้า store ครั้งเดียวตอน mount
+        if (!isGameOver) return;
+
+        if (!isFreshFinish) {
+            setRevealDelayDone(true);
+            return;
+        }
+
+        const targetDelay = 2500;
+        const timer = setTimeout(() => setRevealDelayDone(true), targetDelay);
+        return () => clearTimeout(timer);
+    }, [isGameOver, isFreshFinish]);
+
+    useEffect(() => {
+        loadStats();
     }, [loadStats]);
 
     const handleSwitchDimension = (targetMode: 'daily' | 'unlimited') => {
-        // 1. ปิด Modal เลือกโหมด (redundant กับ effect ด้านบนโดยตั้งใจ — ปิดให้ไวที่สุดเท่าที่ทำได้
-        //    effect ที่ผูกกับ state คือ safety-net ปิดซ้ำอีกชั้นให้แน่ใจ)
         setIsModeSelectorOpen(false);
-
-        // 2. โยนเป้าหมายให้ระบบเซนไกมงจัดการคำนวณตำแหน่งและสลับมิติให้เองแบบไร้รอยต่อ
         navigate(targetMode);
     };
 
-    // โหลดและซิงค์ข้อมูลฝั่ง Client จากคีย์หลักแบบไม่มีจุดทศนิยมต่อท้าย
     useEffect(() => {
         if (!_hasHydrated) return;
-        const statsData = JSON.parse(localStorage.getItem(STORAGE_KEYS.CHARACTER_STATS) || '{}');
-        // setStats(statsData.daily || { currentStreak: 0, maxStreak: 0 });
         loadStats();
-
         initializeGame();
         setIsReady(true);
     }, [initializeGame, characters.length, _hasHydrated, loadStats]);
 
-    // 🚪 FIX (ประตูเปิดก่อนหน้าพร้อม): แจ้ง NavigationContext กลับไปตอน "isReady" เป็น true จริงๆ
-    // (คือหลัง zustand rehydrate + initializeGame() เสร็จสมบูรณ์) แทนที่จะปล่อยให้ระบบ
-    // เปิดประตูเองผ่าน READY_FALLBACK_MS (1200ms) ซึ่ง race กับความเร็วเครื่อง/เน็ตของผู้เล่นได้
-    // เดิม component นี้ไม่เคยเรียก reportReady() เลย ทำให้ประตูเปิดตามเวลา fallback เสมอ
-    // ไม่ว่าหน้าจอจะพร้อมแสดงผลจริงหรือยัง
     useEffect(() => {
         if (isReady) {
             reportReady();
         }
     }, [isReady, reportReady]);
 
+    // 🏁 บันทึกประวัติและสถิติการเล่นเข้า Store ทันทีเมื่อเกมจบจริง (ไม่ต้องโดนบล็อกจากระบบหน่วงเวลาฝั่ง UI)
     useEffect(() => {
-        if (!_hasHydrated) return;
-        if (!isSynced) return; // ยังไม่ reconcile เสร็จ ห้ามตัดสินใจจาก guesses/hasFinalized ตอนนี้
-
-        if (isGameOver) {
-            if (hasFinalized) {
-                setIsModalOpen(true);
-                return;
-            }
-
-            const targetDelay = isSurrendered ? 0 : 2500;
-            const timer = setTimeout(() => {
-                if (!hasFinalized) {
-                    finalizeGame(isWin);
-                    markModePlayed('character', isWin);
-                }
-                setIsModalOpen(true);
-            }, targetDelay);
-
-            return () => clearTimeout(timer);
+        if (!_hasHydrated || !isSynced) return;
+        if (isGameOver && !hasFinalized) {
+            finalizeGame(isWin);
+            markModePlayed('character', isWin);
         }
-    }, [isGameOver, isWin, finalizeGame, hasFinalized, _hasHydrated, isSurrendered, isSynced]);
+    }, [isGameOver, hasFinalized, isWin, _hasHydrated, isSynced, finalizeGame, markModePlayed]);
 
     const handleCloseModal = () => {
-        setIsModalOpen(false);
-        setIsSurrendered(false);
+        setManuallyClosed(true);
         resetGame();
         window.scrollTo({ top: 0, behavior: 'smooth' });
     };
@@ -150,23 +143,15 @@ export default function DailyCharacterWrapper({ initialTarget }: { initialTarget
         const calculateTimeLeft = () => {
             const now = new Date();
             const midnight = new Date();
-            midnight.setHours(24, 0, 0, 0); // ตั้งเวลาเป็นเที่ยงคืนถัดไป
-
+            midnight.setHours(24, 0, 0, 0);
             const diff = midnight.getTime() - now.getTime();
-
             const hours = Math.floor(diff / (1000 * 60 * 60));
             const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
             const seconds = Math.floor((diff % (1000 * 60)) / 1000);
-
             return `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
         };
 
-        // 🛡️ FIX: คำนวณทันทีตอน mount ก่อน 1 ครั้ง — เดิม setInterval ไม่ยิง callback แรกทันที
-        // ต้องรอครบ 1000ms ก่อนเสมอ ทำให้ timeLeft ว่างเปล่าค้าง ~1 วินาทีทุกครั้งที่หน้านี้ mount
-        // (เห็นชัดตอนสลับมิติเข้ามาใหม่ เพราะ mount ใหม่ทุกครั้ง ไม่ใช่แค่ครั้งแรกที่เข้าเว็บ)
         setTimeLeft(calculateTimeLeft());
-
-        // อัปเดตทุกวินาที
         const timer = setInterval(() => {
             setTimeLeft(calculateTimeLeft());
         }, 1000);
@@ -174,17 +159,32 @@ export default function DailyCharacterWrapper({ initialTarget }: { initialTarget
         return () => clearInterval(timer);
     }, []);
 
+    // 🆕 จัดการพิกัดเลื่อนจอ Smooth Scroll เมื่อหน้าสรุปสถิติดำเนินการวาดลง DOM เรียบร้อย
+    useEffect(() => {
+        if (showSummary) {
+            const timer = setTimeout(() => {
+                const subHeaderEl = document.getElementById('game-sub-header');
+                if (subHeaderEl) {
+                    subHeaderEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }
+            }, 100);
+
+            return () => clearTimeout(timer);
+        }
+    }, [showSummary]);
+
     return (
         <div className="min-h-screen text-[#d8d0c8] overflow-x-hidden">
             <Header onOpenHowTo={() => setIsHowToOpen(true)} />
 
-            <main className="max-w-[80%] mx-auto px-4 pb-16">
+            <main className="max-w-[80%] mx-auto px-4 pb-24">
                 <ModeBadge mode="daily" onClick={() => setIsModeSelectorOpen(true)} />
-                <SubHeader title={BL_MODES_METADATA.character.title} subtitle={BL_MODES_METADATA.character.statusLine} />
+                <div id="game-sub-header">
+                    <SubHeader title={BL_MODES_METADATA.character.title} subtitle={BL_MODES_METADATA.character.statusLine} />
+                </div>
 
-                {/* 📅 Daily Hub: ตั้งใจไม่โชว์บนหน้าเล่นเกม — ให้โผล่แค่ตอนจบเกม (DailyHubModalFooter
-                    ในโมดัลสรุปผลด้านล่าง) เพราะนั่นคือจังหวะ "จะเล่นต่อไหม" จริงๆ ไม่ใช่ตอนกำลังโฟกัสทาย */}
-                {!isModalOpen && (
+                {/* เปลี่ยนการเช็คสวิตช์ซ่อนหน้าควบคุมหลักไปอิงจาก !showSummary */}
+                {!showSummary && (
                     <CharacterControlPanel
                         mode="daily"
                         target={target}
@@ -192,12 +192,12 @@ export default function DailyCharacterWrapper({ initialTarget }: { initialTarget
                         stats={stats}
                         timeLeft={timeLeft}
                         game={gameStore}
-                        isGameOver={isGameOver}                // 👈 ส่งสถานะการจบเกมไปเช็คซ่อนปุ่ม
-                        onSurrender={() => setIsSurrendered(true)}  // 👈 ส่ง Callback ไปสั่งยอมแพ้
+                        isGameOver={isGameOver}
+                        remainingGuesses={remainingGuesses}
                     />
                 )}
 
-                {guesses.length > 0 && (
+                {(guesses.length > 0 && !showSummary) && (
                     <>
                         <Divider />
                         <div className="flex flex-wrap justify-center gap-x-5 gap-y-1.5">
@@ -216,10 +216,9 @@ export default function DailyCharacterWrapper({ initialTarget }: { initialTarget
                     </>
                 )}
 
-                {isModalOpen ? (
+                {showSummary ? (
                     <>
-                        <CharacterSummaryGuess isOpen={isModalOpen} onClose={handleCloseModal} guesses={guesses} target={target} isWin={isWin} mode="daily" stats={stats} />
-                        {/* 📅 Daily Hub: CTA "เล่นต่อ" ต่อท้ายการ์ดสรุปผล */}
+                        <CharacterSummaryGuess isOpen={showSummary} onClose={handleCloseModal} guesses={guesses} target={target} isWin={isWin} mode="daily" stats={stats} />
                         <DailyHubModalFooter activeMode="character" />
                     </>
                 ) : target && isSynced ? (

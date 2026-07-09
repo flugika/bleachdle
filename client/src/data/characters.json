@@ -296,7 +296,7 @@
     },
     {
         "id": "05675003-0ce9-4385-82f6-f13f0ad9936f",
-        "name": "Oscar Joaquin de la Rosa",
+        "name": "Oscar Joaquin De La Rosa",
         "gender": "Male",
         "race": [
             "Human"
@@ -3679,30 +3679,6 @@
             "Physical"
         ],
         "image": "Runuganga.webp"
-    },
-    {
-        "id": "e8433dd5-d1ba-43a9-8ac0-619ab64d7c7a",
-        "name": "White",
-        "gender": "Male",
-        "race": [
-            "Hollow"
-        ],
-        "affiliation": "Arrancar Army",
-        "height_cm": -1,
-        "age": 100,
-        "eye_color": "Unknown",
-        "hair_color": "Unknown",
-        "first_appearance_chapter": "Thousand-Year Blood War",
-        "weapon": [
-            "Weaponized"
-        ],
-        "release": [
-            "None"
-        ],
-        "primary_ability": [
-            "Physical"
-        ],
-        "image": "White.webp"
     },
     {
         "id": "81217bc3-fc23-42bb-90e5-25bd1aca73bc",

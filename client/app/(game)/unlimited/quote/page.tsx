@@ -17,7 +17,7 @@ import { FEATURE_FLAGS } from '@/src/config/feature.flags';
 import { ModeBadge } from '@/src/shared/ui/game-selector/ModeBadge';
 import { ModeSelectorModal } from '@/src/shared/ui/game-selector/ModeSelectorModal';
 import { useSenkaimon } from '@/src/shared/ui/context/NavigationContext';
-import { MAX_QUOTE_GUESSES } from '@/src/const/guess';
+import { MAX_UNLIMITED_QUOTE_GUESSES } from '@/src/const/guess';
 import { STORAGE_KEYS } from '@/src/const/localStorage';
 import { BL_MODES_METADATA } from '@/src/config/mode';
 
@@ -55,7 +55,7 @@ export default function UnlimitedQuoteGame() {
         setRevealDelayDone(false);
     }, [target]);
 
-    const remainingGuesses = Math.max(0, MAX_QUOTE_GUESSES - guesses.length);
+    const remainingGuesses = Math.max(0, MAX_UNLIMITED_QUOTE_GUESSES - guesses.length);
 
     const [soulName, setSoulName] = useState('');
     const [inputName, setInputName] = useState('');
@@ -63,7 +63,7 @@ export default function UnlimitedQuoteGame() {
     const canReset = soulName.trim().length > 0;
 
     const isWin = guesses.some(g => g.status === 'correct');
-    const isLoss = guesses.length >= MAX_QUOTE_GUESSES && !isWin;
+    const isLoss = guesses.length >= MAX_UNLIMITED_QUOTE_GUESSES && !isWin;
     const isGameOver = isWin || isLoss;
     const showSummary = _hasHydrated && isReady && isGameOver && !manuallyClosed && revealDelayDone;
     const latestGuess = guesses[0];
@@ -163,13 +163,28 @@ export default function UnlimitedQuoteGame() {
         navigate(targetMode);
     };
 
+    useEffect(() => {
+        if (showSummary) {
+            const timer = setTimeout(() => {
+                const subHeaderEl = document.getElementById('game-sub-header');
+                if (subHeaderEl) {
+                    subHeaderEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }
+            }, 100); // ดีเลย์ 100ms เพื่อให้ DOM จัดการ Layout สรุปผลเสร็จสิ้นก่อนเลื่อนหน้าจอ
+
+            return () => clearTimeout(timer);
+        }
+    }, [showSummary]);
+
     return (
         <div className="min-h-screen text-[#d8d0c8] overflow-x-hidden">
             <Header onOpenHowTo={() => setIsHowToOpen(true)} />
 
-            <main className="max-w-[80%] mx-auto px-4 pb-16">
+            <main className="max-w-[80%] mx-auto px-4 pb-24">
                 <ModeBadge mode="unlimited" onClick={() => setIsModeSelectorOpen(true)} />
-                <SubHeader title={BL_MODES_METADATA.quote.title} subtitle={BL_MODES_METADATA.quote.statusLine} />
+                <div id="game-sub-header">
+                    <SubHeader title={BL_MODES_METADATA.quote.title} subtitle={BL_MODES_METADATA.quote.statusLine} />
+                </div>
 
                 {!showSummary && (
                     <QuoteControlPanel
@@ -179,7 +194,7 @@ export default function UnlimitedQuoteGame() {
                         remainingGuesses={remainingGuesses}
                         stats={stats}
                         game={gameStore}
-                        maxGuesses={MAX_QUOTE_GUESSES}
+                        maxGuesses={MAX_UNLIMITED_QUOTE_GUESSES}
                         isGameOver={isGameOver}
                     />
                 )}

@@ -4,7 +4,7 @@ import { persist } from 'zustand/middleware';
 import { getSongStatus } from '@/src/features/song/compareSong';
 import { getAllSongSegments, getSongById } from '@/src/features/song/song';
 import { SongGameController, SongGuessEntry } from '@/src/features/song/types';
-import { MAX_SONG_GUESSES } from '@/src/const/guess';
+import { MAX_UNLIMITED_SONG_GUESSES } from '@/src/const/guess';
 import { STORAGE_KEYS } from '@/src/const/localStorage';
 import { nestedJSONStorage } from '@/src/lib/store/createNestedStorage';
 import { isValidGuessEntry } from '../../validGuessEntry';
@@ -31,7 +31,7 @@ export const useSongGame = create<SongGameController>()(
             },
 
             addGuess: (songId: string) => set((state) => {
-                const isGameOver = state.guesses.length >= MAX_SONG_GUESSES;
+                const isGameOver = state.guesses.length >= MAX_UNLIMITED_SONG_GUESSES;
                 if (!state.target || isGameOver) return state;
 
                 const guessedSong = getSongById(songId);

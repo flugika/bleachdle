@@ -4,6 +4,7 @@
 import { useCallback, useSyncExternalStore } from 'react';
 import { DAILY_HUB_MODES, DailyHubModeConfig, getActiveDailyHubModes } from '@/src/config/daily-hub.config';
 import { STORAGE_KEYS } from '@/src/const/localStorage';
+import { getTodayStr } from '@/src/lib/utils/format';
 
 interface DailyHubModeStatus {
     played: boolean;
@@ -30,10 +31,6 @@ export interface DailyHubSnapshot {
 
 const UPDATE_EVENT = 'bleachdle:daily-hub:update';
 
-// 🛡️ 'en-CA' ให้ format YYYY-MM-DD ตรงตัว อิงเวลาโซนเครื่อง user (ไม่ใช่ UTC)
-// สอดคล้องกับ logic countdown เดิมที่ใช้ midnight.setHours(24,0,0,0) ในทั้งสอง wrapper
-const getTodayString = () => new Date().toLocaleDateString('en-CA');
-
 /**
  * 🛡️ สำคัญ: ตั้งใจใช้คีย์ STORAGE_KEYS.DAILY_HUB_STATUS แยกต่างหากคีย์เดียว ไม่ใช้
  * STORAGE_KEYS.*_PROGRESS ของแต่ละโหมด เพราะคีย์พวกนั้นถูก zustand `persist` middleware
@@ -42,7 +39,7 @@ const getTodayString = () => new Date().toLocaleDateString('en-CA');
  * จะ overwrite save เกมจริงพังทันทีตอนจบเกมแรก
  */
 const readHubStorage = (): DailyHubStorageShape => {
-    const fallback: DailyHubStorageShape = { date: getTodayString(), modes: {} };
+    const fallback: DailyHubStorageShape = { date: getTodayStr(), modes: {} };
     if (typeof window === 'undefined') return fallback;
 
     try {
@@ -52,7 +49,7 @@ const readHubStorage = (): DailyHubStorageShape => {
         const parsed = JSON.parse(raw) as Partial<DailyHubStorageShape>;
 
         // ข้ามวันแล้ว = ทั้งก้อนถือว่ายังไม่เล่นของ "วันนี้" — ไม่ต้องลบของเก่าทิ้งจริง แค่ไม่นับ
-        if (parsed.date !== getTodayString()) return fallback;
+        if (parsed.date !== getTodayStr()) return fallback;
 
         return { date: parsed.date, modes: parsed.modes ?? {} };
     } catch {
@@ -99,11 +96,11 @@ let cachedDate: string | null = null;
 
 const invalidate = () => {
     cachedSnapshot = computeSnapshot();
-    cachedDate = getTodayString();
+    cachedDate = getTodayStr();
 };
 
 const getSnapshot = (): DailyHubSnapshot => {
-    const today = getTodayString();
+    const today = getTodayStr();
     // recompute เฉพาะตอนยังไม่เคย cache หรือข้ามวันแล้ว (เผื่อ tab เปิดค้างข้ามคืน)
     if (!cachedSnapshot || cachedDate !== today) {
         invalidate();

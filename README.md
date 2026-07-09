@@ -2,7 +2,7 @@
 
 > A Wordle-style character guessing game for Bleach fans — unlimited mode, attribute-based feedback, Soul Society aesthetic.
 
-Lastest Updated: 8 July 2026, 2:08 AM.
+**Last Updated:** 9 July 2026, 9:00 AM.
 
 [![Next.js](https://img.shields.io/badge/Next.js-15-black?logo=next.js)](https://nextjs.org/)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5-blue?logo=typescript)](https://www.typescriptlang.org/)
@@ -10,6 +10,16 @@ Lastest Updated: 8 July 2026, 2:08 AM.
 [![Supabase](https://img.shields.io/badge/Supabase-Database-3ECF8E?logo=supabase&logoColor=white)](https://supabase.com/)
 [![Deployed on Vercel](https://img.shields.io/badge/Deployed-Vercel-black?logo=vercel)](https://vercel.com/)
 [![Deployed on Supabase](https://img.shields.io/badge/Deployed-Supabase-3ECF8E?logo=supabase&logoColor=white)](https://supabase.com/)
+[![Live Demo](https://img.shields.io/badge/Live%20Demo-bleachdle--theta.vercel.app-black?logo=vercel)](https://bleachdle-theta.vercel.app/)
+
+---
+
+## Live
+
+**Production:** [https://bleachdle-theta.vercel.app/](https://bleachdle-theta.vercel.app/)
+
+<!-- TODO: add homepage screenshot here, e.g. -->
+<!-- ![Homepage](./public/assets/screenshots/homepage.png) -->
 
 ---
 
@@ -17,22 +27,22 @@ Lastest Updated: 8 July 2026, 2:08 AM.
 
 BLEACHDLE is a DLE-style character identification game scoped to the Bleach universe. Each round selects a target character, and players narrow it down through attribute-based guesses — Race, Affiliation, Weapon type, first-appearance Chapter, and more — with color-coded feedback per field.
 
-The game ships four verticals: **Character**, **Quote**, **Song**, and **Silhouette**. Character, Quote, and Song are available in both **Daily** (one seeded round per day, shared across players) and **Unlimited** (random target, no daily lock, streak tracking) modes. Silhouette currently ships **Unlimited** only — a Daily route hasn't been built for it yet. **Emoji** and **Release** (guess by release state) are scaffolded behind feature flags but not released in either mode.
+The game ships five verticals: **Character**, **Quote**, **Song**, **Silhouette**, and **Emoji**. All five are available in both **Daily** (one seeded round per day, shared across players) and **Unlimited** (random target, no daily lock, streak tracking) modes. **Release** (guess by release state) is scaffolded behind a feature flag but not released in either mode yet.
 
 ---
 
 ## Features
 
-- **Attribute comparison engine** — one stateless compare module per vertical (`compareCharacter.ts`, `compareQuote.ts`, `compareSong.ts`, `compareSilhouette.ts`): takes a guess and a target, returns a diffed result array. Height and Age are deliberately *not* routed through a shared numeric comparator — see [Comparison Engine notes](#-character-comparison-engine-architectural--technical-notes) below.
+- **Attribute comparison engine** — one stateless compare module per vertical (`compareCharacter.ts`, `compareQuote.ts`, `compareSong.ts`, `compareSilhouette.ts`, `compareEmoji.ts`): takes a guess and a target, returns a diffed result array. Height and Age are deliberately *not* routed through a shared numeric comparator — see [Comparison Engine notes](#-character-comparison-engine-architectural--technical-notes) below.
 - **Fuzzy search** — typo- and alternate-romanization-tolerant name lookup for guesses (`src/lib/search/fuzzy.ts`)
-- **Daily Hub** — one seeded round per day for Character/Quote/Song, shared across all players, with countdown-based reset (`DailyResetTimer`, `useCountdown`, `useCooldown`, `DailyProgressBar`)
+- **Daily Hub** — one seeded round per day across all five verticals, shared across all players, with countdown-based reset (`DailyResetTimer`, `useCountdown`, `useCooldown`, `DailyProgressBar`)
 - **Session & streak tracking** — client-side round state, finalized server-side via `app/api/stats/finalize`
 - **Support ticket system** — `SupportForm` → `app/api/support`, persisted through Supabase (`0001_support_tickets.sql`), with IP-based rate limiting (`ipRateLimit.ts`, `rateLimitCookie.ts`). Cloudflare Turnstile is wired up (`useTurnstile.ts`) but currently **disabled** — it was misflagging legitimate traffic as bot activity; re-enabling it is tracked in the Roadmap.
 - **Dynamic wallpaper rotation** — background swaps per session/day (`useDailyWallpaper`, `WallpaperInitializer`, `wallpapers.json`)
 - **Race emblem indicator** — per-character race badge (Shinigami / Hollow / Arrancar / Quincy / Visored / Mod Soul) resolved via `useRaceEmblem` from `public/assets/emblems`
 - **Custom transitions & loaders** — `ZangetsuLoader`, `SoulSyncLoader`, `SenkaimonTransition`; purpose-built animations instead of a generic spinner
 - **Reiatsu cursor** — optional particle-trail cursor effect, togglable (`BleachReiatsuCursor.tsx`)
-- **Feature flags** — `src/config/feature.flags.ts` gates verticals per mode (nested under `daily` / `unlimited`) so a mode can ship in Unlimited before Daily — e.g. Silhouette is Unlimited-only today. Emoji and Release modes are off in both.
+- **Feature flags** — `src/config/feature.flags.ts` gates verticals per mode (nested under `daily` / `unlimited`) so a mode can ship in Unlimited before Daily. Character, Quote, Song, Silhouette, and Emoji are now live in both modes; `release` remains off in both.
 - **Dark-first UI** — Soul Society-themed palette, responsive layout down to mobile
 
 ---
@@ -155,22 +165,22 @@ Verticals are gated per mode in `src/config/feature.flags.ts`:
 
 ```ts
 export const FEATURE_FLAGS = {
-  // ── 📅 โหมดทายรายวัน (Daily Mode)
+  // ── 📅 Daily Mode
   daily: {
     character: true,
     quote: true,
-    silhouette: false,
-    emoji: false,
+    silhouette: true,
+    emoji: true,
     song: true,
     release: false,
   },
 
-  // ── ♾️ โหมดเล่นไม่จำกัด (Unlimited Mode)
+  // ── ♾️ Unlimited Mode
   unlimited: {
     character: true,
     quote: true,
     silhouette: true,
-    emoji: false,
+    emoji: true,
     song: true,
     release: false,
   },
@@ -182,7 +192,7 @@ export const FEATURE_FLAGS = {
 } as const;
 ```
 
-Flags are nested per mode rather than a flat list, since a vertical can ship in Unlimited before it ships in Daily — Silhouette is the current example (`unlimited.silhouette: true`, `daily.silhouette: false`). `emoji` and `release` are off in both modes; `release` guards an unreleased vertical (guess by release state — Shikai / Bankai / Resurrection). `mockupSong` / `mockupSilhouette` gate the standalone design-preview routes under `app/mockup/`, and `support` toggles the support ticket page/API independently of any game vertical.
+Flags are nested per mode rather than a flat list, since a vertical can ship in Unlimited before it ships in Daily — Silhouette and Emoji both followed that path before landing in Daily as well. `release` is the only vertical still off in both modes; it guards an unreleased vertical (guess by release state — Shikai / Bankai / Resurrection). `mockupSong` / `mockupSilhouette` gate the standalone design-preview routes under `app/mockup/`, and `support` toggles the support ticket page/API independently of any game vertical.
 
 ---
 
@@ -191,8 +201,8 @@ Flags are nested per mode rather than a flat list, since a vertical can ship in 
 > Testing (unit/integration/UAT) is intentionally deferred — data schemas (`characters.json`, entity types) are still changing frequently, so writing tests now would mean rewriting them constantly. Will pick up once the data layer stabilizes (post Supabase migration).
 
 ### Gameplay
-- [ ] Silhouette Daily — bring Silhouette to Daily Hub (currently Unlimited-only)
-- [ ] Emoji Mode — abstract visual puzzle
+- [x] Silhouette Daily — bring Silhouette to Daily Hub
+- [x] Emoji Mode — abstract visual puzzle, shipped in both Daily and Unlimited
 - [ ] Release Mode — guess by release state (Shikai / Bankai / Resurrection)
 - [ ] i18n — Thai / English toggle
 
@@ -252,13 +262,19 @@ bleachdle
 │  │  │  ├─ daily
 │  │  │  │  ├─ character
 │  │  │  │  │  └─ page.tsx
+│  │  │  │  ├─ emoji
+│  │  │  │  │  └─ page.tsx
 │  │  │  │  ├─ page.tsx
 │  │  │  │  ├─ quote
+│  │  │  │  │  └─ page.tsx
+│  │  │  │  ├─ silhouette
 │  │  │  │  │  └─ page.tsx
 │  │  │  │  └─ song
 │  │  │  │     └─ page.tsx
 │  │  │  └─ unlimited
 │  │  │     ├─ character
+│  │  │     │  └─ page.tsx
+│  │  │     ├─ emoji
 │  │  │     │  └─ page.tsx
 │  │  │     ├─ page.tsx
 │  │  │     ├─ quote
@@ -268,9 +284,12 @@ bleachdle
 │  │  │     └─ song
 │  │  │        └─ page.tsx
 │  │  ├─ (home)
+│  │  │  ├─ HomePageClient.tsx
 │  │  │  └─ page.tsx
 │  │  ├─ api
 │  │  │  ├─ stats
+│  │  │  │  ├─ daily
+│  │  │  │  │  └─ route.ts
 │  │  │  │  └─ finalize
 │  │  │  │     └─ route.ts
 │  │  │  └─ support
@@ -351,6 +370,7 @@ bleachdle
 │  │  │  └─ summary.ts
 │  │  ├─ data
 │  │  │  ├─ characters.json
+│  │  │  ├─ emoji-list.json
 │  │  │  ├─ emojis.json
 │  │  │  ├─ powers.json
 │  │  │  ├─ quotes.json
@@ -362,6 +382,7 @@ bleachdle
 │  │  │  ├─ character
 │  │  │  │  └─ schema.ts
 │  │  │  ├─ emoji
+│  │  │  │  └─ schema.ts
 │  │  │  ├─ quote
 │  │  │  │  └─ schema.ts
 │  │  │  ├─ silhouette
@@ -390,6 +411,23 @@ bleachdle
 │  │  │  │  ├─ types.ts
 │  │  │  │  └─ validGuessEntry.ts
 │  │  │  ├─ emoji
+│  │  │  │  ├─ compareEmoji.ts
+│  │  │  │  ├─ components
+│  │  │  │  │  ├─ daily
+│  │  │  │  │  │  └─ DailyEmojiWrapper.tsx
+│  │  │  │  │  └─ shared
+│  │  │  │  │     ├─ EmojiGuessTable.tsx
+│  │  │  │  │     ├─ EmojiHowToPlayModal.tsx
+│  │  │  │  │     ├─ EmojiSummaryGuess.tsx
+│  │  │  │  │     └─ EmojiTestimonyDisplay.tsx
+│  │  │  │  ├─ emoji.ts
+│  │  │  │  ├─ hooks
+│  │  │  │  │  ├─ daily
+│  │  │  │  │  │  └─ useEmojiGame.ts
+│  │  │  │  │  └─ unlimited
+│  │  │  │  │     └─ useEmojiGame.ts
+│  │  │  │  ├─ types.ts
+│  │  │  │  └─ validGuessEntry.ts
 │  │  │  ├─ quote
 │  │  │  │  ├─ compareQuote.ts
 │  │  │  │  ├─ components
@@ -411,12 +449,16 @@ bleachdle
 │  │  │  ├─ silhouette
 │  │  │  │  ├─ compareSilhouette.ts
 │  │  │  │  ├─ components
+│  │  │  │  │  ├─ daily
+│  │  │  │  │  │  └─ DailySilhouetteWrapper.tsx
 │  │  │  │  │  └─ shared
 │  │  │  │  │     ├─ SilhouetteGuessTable.tsx
 │  │  │  │  │     ├─ SilhouetteHowToPlayModal.tsx
 │  │  │  │  │     ├─ SilhouetteImage.tsx
 │  │  │  │  │     └─ SilhouetteSummaryGuess.tsx
 │  │  │  │  ├─ hooks
+│  │  │  │  │  ├─ daily
+│  │  │  │  │  │  └─ useSilhouetteGame.ts
 │  │  │  │  │  └─ unlimited
 │  │  │  │  │     └─ useSilhouetteGame.ts
 │  │  │  │  ├─ silhouette.ts
@@ -459,6 +501,7 @@ bleachdle
 │  │  │  │  ├─ supabase-client.ts
 │  │  │  │  └─ supabase-server.ts
 │  │  │  ├─ support
+│  │  │  │  ├─ constantsExtractor.ts
 │  │  │  │  ├─ ipRateLimit.ts
 │  │  │  │  └─ rateLimitCookie.ts
 │  │  │  └─ utils
@@ -476,6 +519,7 @@ bleachdle
 │  │  │  ├─ extract-character.js
 │  │  │  ├─ fix-all-json-relations.js
 │  │  │  ├─ fix-duplicate-ids.js
+│  │  │  ├─ generate-emojis.js
 │  │  │  ├─ generate-silhouettes.js
 │  │  │  ├─ generate-wallpapers.js
 │  │  │  ├─ map-character-quote.js
@@ -490,12 +534,15 @@ bleachdle
 │  │  │     ├─ daily
 │  │  │     │  └─ trigger-schedule.js
 │  │  │     ├─ seed-characters.js
+│  │  │     ├─ seed-emojis.js
 │  │  │     ├─ seed-quotes.js
 │  │  │     ├─ seed-silhouettes.js
 │  │  │     └─ seed-songs.js
 │  │  ├─ services
 │  │  │  ├─ character.ts
+│  │  │  ├─ emoji.ts
 │  │  │  ├─ quote.ts
+│  │  │  ├─ silhouette.ts
 │  │  │  ├─ song.ts
 │  │  │  └─ statsClient.ts
 │  │  ├─ shared
@@ -524,12 +571,16 @@ bleachdle
 │  │  │     │  └─ NavigationContext.tsx
 │  │  │     ├─ control-panel
 │  │  │     │  ├─ CharacterControlPanel.tsx
+│  │  │     │  ├─ EmojiControlPanel.tsx
 │  │  │     │  ├─ QuoteControlPanel.tsx
 │  │  │     │  ├─ SilhouetteControlPanel.tsx
 │  │  │     │  └─ SongControlPanel.tsx
 │  │  │     ├─ daily-hub
+│  │  │     │  ├─ DailyCountdownBadge.tsx
 │  │  │     │  ├─ DailyHubModalFooter.tsx
-│  │  │     │  └─ DailyProgressBar.tsx
+│  │  │     │  ├─ DailyProgressBar.tsx
+│  │  │     │  ├─ DailyStatsBar.tsx
+│  │  │     │  └─ HeroDailyCTA.tsx
 │  │  │     ├─ DailyResetTimer.tsx
 │  │  │     ├─ game-selector
 │  │  │     │  ├─ AllModesButton.tsx

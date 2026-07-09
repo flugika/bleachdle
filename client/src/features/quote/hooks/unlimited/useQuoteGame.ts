@@ -5,7 +5,7 @@ import { getQuoteStatus } from '@/src/features/quote/compareQuote';
 import { getCharacterById } from '@/src/features/character/character'; // ⚠️ ปรับ path ให้ตรงของจริงถ้าไม่ตรงนี้
 import { getQuotes, attachCharacter } from '@/src/features/quote/quote';
 import { QuoteGameController, QuoteGuessEntry, QuoteTarget } from '@/src/features/quote/types';
-import { MAX_QUOTE_GUESSES } from '@/src/const/guess';
+import { MAX_UNLIMITED_QUOTE_GUESSES } from '@/src/const/guess';
 import { STORAGE_KEYS } from '@/src/const/localStorage';
 import { nestedJSONStorage } from '@/src/lib/store/createNestedStorage';
 import { isValidGuessEntry } from '../../validGuessEntry';
@@ -31,7 +31,7 @@ export const useQuoteGame = create<QuoteGameController>()(
             },
 
             addGuess: (characterId: string) => set((state) => {
-                const isGameOver = state.guesses.length >= MAX_QUOTE_GUESSES;
+                const isGameOver = state.guesses.length >= MAX_UNLIMITED_QUOTE_GUESSES;
                 if (!state.target || isGameOver) return state;
 
                 const guessedCharacter = getCharacterById(characterId);

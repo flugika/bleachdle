@@ -12,10 +12,6 @@ const DATA_DIR = path.join(__dirname, '../data');
 const CHARACTERS_FILE = path.join(DATA_DIR, 'characters.json');
 const SILHOUETTES_FILE = path.join(DATA_DIR, 'silhouettes.json');
 
-const DEFAULT_FOCUS_X = 50;
-const DEFAULT_FOCUS_Y = 50;
-const DEFAULT_SCALE = 1;
-
 // 🖼️ รูป silhouette อยู่ที่ /assets/character_silhouette/ ทั้งหมด
 // ชื่อไฟล์จริง = {ชื่อ}_cutout_silhouette.webp เช่น Aisslinger_Wernarr_cutout_silhouette.webp
 // char.image ใช้ร่วมกับ /assets/characters/ (คนละโฟลเดอร์) เผื่อมีนามสกุลติดมาแล้วต้องตัดทิ้งก่อน กัน double extension
@@ -60,9 +56,6 @@ function run() {
                 id: randomUUID(),                          // 🆕 primary key ของ entry
                 character_id: char.id,
                 image: toSilhouetteFilename(char.image),    // 🆕 baked-in filename เต็ม พร้อม suffix จริง
-                focus_x: DEFAULT_FOCUS_X,
-                focus_y: DEFAULT_FOCUS_Y,
-                scale: DEFAULT_SCALE,
             };
         });
 

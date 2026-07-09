@@ -96,6 +96,11 @@ export const SearchBar = ({
             triggerScrollAndShake(char.id);
         } else {
             addGuess(char.id);
+
+            // 🌟 เลื่อนหน้าจอกลับไปด้านบนสุด (หรือที่ตัว Search Bar) เพื่อดู Row Animation
+            // ใช้ window.scrollTo เลื่อนไปบนสุด หรือ wrapRef เพื่อเลื่อนให้อยู่ตรงกลางจอ
+            // window.scrollTo({ top: 0, behavior: 'smooth' }); 
+            wrapRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
         }
 
         setQuery('');
@@ -131,7 +136,7 @@ export const SearchBar = ({
     }, [query]);
 
     return (
-        <div ref={wrapRef} className="relative w-full max-w-md mx-auto">
+        <div ref={wrapRef} className="relative w-full max-w-md mx-auto pt-4">
             {/* INPUT BOX - TYBW STYLING */}
             <div className="relative group/input">
                 <div className="absolute -inset-px bg-gradient-to-r from-red-900/0 via-red-600/0 to-red-900/0 group-focus-within/input:via-red-600/40 transition-all duration-500" />

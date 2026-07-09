@@ -12,3 +12,5 @@ BEGIN
         );
     END IF;
 END $$;
+
+CREATE TYPE release_type AS ENUM ('Shikai', 'Bankai', 'Resurreccion', 'Vollstandig');

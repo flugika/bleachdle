@@ -3,7 +3,9 @@ import { NextRequest, NextResponse } from 'next/server';
 import { supabaseServer } from '@/src/lib/supabase/supabase-server';
 import { packCookie, unpackCookie } from '@/src/lib/support/rateLimitCookie';
 import { VALID_STAT_MODES, type StatMode } from '@/src/entities/stats/types';
-import { checkIpRateLimit } from '@/src/lib/support/ipRateLimit'; // 💡 นำเข้าตัวตรวจ IP
+import { checkIpRateLimit } from '@/src/lib/support/ipRateLimit';
+import { getMaxGuessLimit } from '@/src/lib/support/constantsExtractor'; // 🆕 นำเข้า Lib ตัวกรองไดนามิก
+import { getTodayStr } from '@/src/lib/utils/format';
 
 interface FinalizeStatBody {
     mode: StatMode;
@@ -32,11 +34,17 @@ export async function POST(req: NextRequest) {
     if (typeof isWin !== 'boolean') {
         return NextResponse.json({ error: 'isWin must be boolean' }, { status: 400 });
     }
-    if (!Number.isInteger(guessCount) || guessCount < 1 || guessCount > 10) {
+
+    // 🎯 ใช้ Lib ค้นหาเพดานสูงสุดที่กรองจาก MAX_..._GUESSES ของโหมดนั้นๆ
+    // เนื่องจาก API นี้เป็นสถิติประจำเป็นวัน (increment_daily_stat) จึงกำหนดเป็น 'DAILY'
+    const dynamicMaxGuesses = getMaxGuessLimit(mode, 'DAILY');
+
+    // 🛡️ ตรวจสอบความถูกต้องโดยอิงจากค่าเพดานที่สแกนได้จริง
+    if (!Number.isInteger(guessCount) || guessCount < 1 || guessCount > dynamicMaxGuesses) {
         return NextResponse.json({ error: 'Invalid guessCount' }, { status: 400 });
     }
 
-    // ── ด่าน 2: Cooldown check ด้วย Browser Cookie (กรองผู้ใช้ธรรมดาที่กดรัวๆ ได้เร็วสุด)
+    // ── ด่าน 2: Cooldown check ด้วย Browser Cookie
     const cookieName = `${COOLDOWN_COOKIE_PREFIX}${mode}`;
     const cooldownPayload = unpackCookie(req.cookies.get(cookieName)?.value);
     if (cooldownPayload) {
@@ -50,8 +58,7 @@ export async function POST(req: NextRequest) {
         }
     }
 
-    // ── ด่าน 3: สกัดกั้นสคริปต์ล้างคุกกี้ ด้วยการเช็คความถี่เน็ตบ้าน (In-Memory IP Hash) 🛡️
-    // ยิงได้สูงสุด 1 ครั้ง ทุกๆ 5 วินาที ต่อ 1 IP Hash
+    // ── ด่าน 3: สกัดกั้นด้วย IP Rate Limit
     const ipCheck = checkIpRateLimit(req, 1, COOLDOWN_SECONDS);
     if (!ipCheck.success) {
         return NextResponse.json(
@@ -60,8 +67,8 @@ export async function POST(req: NextRequest) {
         );
     }
 
-    // ผ่านทุกด่าน -> บันทึกข้อมูลลง Supabase แบบสบายใจ
-    const todayStr = new Date().toLocaleDateString('en-CA');
+    // ผ่านทุกด่าน -> บันทึกข้อมูลลง Supabase
+    const todayStr = getTodayStr();
     const { error } = await supabaseServer.rpc('increment_daily_stat', {
         p_date: todayStr,
         p_mode: mode,

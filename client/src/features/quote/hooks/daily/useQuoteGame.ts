@@ -4,7 +4,7 @@ import { persist } from 'zustand/middleware';
 import { getQuoteStatus } from '@/src/features/quote/compareQuote';
 import { getCharacterById } from '@/src/features/character/character';
 import { QuoteGuessEntry, QuoteTarget } from '@/src/features/quote/types';
-import { MAX_QUOTE_GUESSES } from '@/src/const/guess';
+import { MAX_DAILY_QUOTE_GUESSES } from '@/src/const/guess';
 import { STORAGE_KEYS } from '@/src/const/localStorage';
 import { nestedJSONStorage } from '@/src/lib/store/createNestedStorage';
 import { recordDailyStat } from '@/src/services/statsClient';
@@ -47,7 +47,7 @@ export const useQuoteGame = create<QuoteDailyGameState>()(
             },
 
             addGuess: (characterId: string) => set((state) => {
-                const isGameOver = state.guesses.length >= MAX_QUOTE_GUESSES;
+                const isGameOver = state.guesses.length >= MAX_DAILY_QUOTE_GUESSES;
                 if (!state.target || isGameOver) return state;
 
                 const guessedCharacter = getCharacterById(characterId);

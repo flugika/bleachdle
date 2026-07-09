@@ -26,9 +26,11 @@ interface Props {
     stats: { currentStreak: number; maxStreak: number };
     game: SilhouetteGameController;
     isGameOver: boolean;
+    mode: "daily" | "unlimited";
+    timeLeft?: string;
 }
 
-export function SilhouetteControlPanel({ target, characters, remainingGuesses, stats, game, isGameOver }: Props) {
+export function SilhouetteControlPanel({ target, characters, remainingGuesses, stats, game, isGameOver, mode, timeLeft }: Props) {
     const [currentBg, setCurrentBg] = useState('#3E77CF');
     const [showPalette, setShowPalette] = useState(false);
 
@@ -68,6 +70,7 @@ export function SilhouetteControlPanel({ target, characters, remainingGuesses, s
             {/* กล่องแสดงเงาตัวละครพร้อมสลับสีพื้นหลังตาม State */}
             {target && (
                 <SilhouetteImage
+                    mode={mode}
                     characterId={target.character_id}
                     image={target.image}
                     guessCount={game.guesses.length}
@@ -122,12 +125,20 @@ export function SilhouetteControlPanel({ target, characters, remainingGuesses, s
 
             {/* บอร์ดสถิติผู้เล่น */}
             <div className="flex gap-8 text-[11px] uppercase tracking-[0.2em] text-[#777796] mt-2">
+                {mode === 'daily' && timeLeft && (
+                    <div className="flex flex-col items-center">
+                        <span className="text-[#d1a9a9]">Next Reset</span>
+                        <span className="text-[#4de880] text-lg font-bold font-mono">{timeLeft}</span>
+                    </div>
+                )}
+
                 <div className="flex flex-col items-center">
                     <span className="text-[#d1a9a9]">Attempts Left</span>
                     <span className={`${remainingGuesses === 0 ? 'text-[#e83030]' : 'text-[#4de880]'} text-lg font-bold`}>
                         {remainingGuesses}
                     </span>
                 </div>
+                
                 <div className="flex flex-col items-center">
                     <span className="text-[#d1a9a9]">Current Streak</span>
                     <span className="text-[#c8a96e] text-lg font-bold">{stats.currentStreak}</span>

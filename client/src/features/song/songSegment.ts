@@ -70,7 +70,6 @@ export function getDeterministicSegmentForDaily(
 
 /** 🎵 Clip duration progression แบบ Heardle — single source of truth ผูกกับ MAX_GUESSES */
 export const SONG_CLIP_DURATIONS_SEC = [0.2, 1, 3, 5, 10, 15] as const;
-export const MAX_SONG_GUESSES = SONG_CLIP_DURATIONS_SEC.length;
 
 /** guessCount = จำนวนที่ทายไปแล้ว (ยังไม่นับครั้งที่กำลังจะทาย) */
 export function getClipDurationForGuessCount(guessCount: number): number {

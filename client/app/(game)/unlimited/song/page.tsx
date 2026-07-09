@@ -17,7 +17,7 @@ import { FEATURE_FLAGS } from '@/src/config/feature.flags';
 import { ModeBadge } from '@/src/shared/ui/game-selector/ModeBadge';
 import { ModeSelectorModal } from '@/src/shared/ui/game-selector/ModeSelectorModal';
 import { useSenkaimon } from '@/src/shared/ui/context/NavigationContext';
-import { MAX_SONG_GUESSES } from '@/src/const/guess';
+import { MAX_UNLIMITED_SONG_GUESSES } from '@/src/const/guess';
 import { STORAGE_KEYS } from '@/src/const/localStorage';
 import { BL_MODES_METADATA } from '@/src/config/mode';
 
@@ -58,7 +58,7 @@ export default function UnlimitedSongGame() {
         setRevealDelayDone(false);
     }, [target]);
 
-    const remainingGuesses = Math.max(0, MAX_SONG_GUESSES - guesses.length);
+    const remainingGuesses = Math.max(0, MAX_UNLIMITED_SONG_GUESSES - guesses.length);
 
     const [soulName, setSoulName] = useState('');
     const [inputName, setInputName] = useState('');
@@ -68,7 +68,7 @@ export default function UnlimitedSongGame() {
     // 🎵 Win condition ต่างจาก character: เพลงมีคำตอบเดียว ไม่ต้องเช็คทุก field == correct
     // แค่ guess ล่าสุด (index 0) ตรงเพลงเป้าหมายเป๊ะก็พอ
     const isWin = guesses.some(g => g.status === 'correct');
-    const isLoss = guesses.length >= MAX_SONG_GUESSES && !isWin;
+    const isLoss = guesses.length >= MAX_UNLIMITED_SONG_GUESSES && !isWin;
     const isGameOver = isWin || isLoss;
     const showSummary = _hasHydrated && isReady && isGameOver && !manuallyClosed && revealDelayDone;
     const latestGuess = guesses[0];
@@ -174,14 +174,29 @@ export default function UnlimitedSongGame() {
         navigate(targetMode);
     };
 
+    useEffect(() => {
+        if (showSummary) {
+            const timer = setTimeout(() => {
+                const subHeaderEl = document.getElementById('game-sub-header');
+                if (subHeaderEl) {
+                    subHeaderEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }
+            }, 100); // ดีเลย์ 100ms เพื่อให้ DOM จัดการ Layout สรุปผลเสร็จสิ้นก่อนเลื่อนหน้าจอ
+
+            return () => clearTimeout(timer);
+        }
+    }, [showSummary]);
+
     return (
         <div className="min-h-screen text-[#d8d0c8] overflow-x-hidden">
             <Header onOpenHowTo={() => setIsHowToOpen(true)} />
 
-            <main className="max-w-[80%] mx-auto px-4 pb-16">
+            <main className="max-w-[80%] mx-auto px-4 pb-24">
                 {/* mode ยังคง "unlimited" เพราะ /song อยู่ใต้มิติ unlimited เดิม แค่คนละประเภทเกม */}
                 <ModeBadge mode="unlimited" onClick={() => setIsModeSelectorOpen(true)} />
-                <SubHeader title={BL_MODES_METADATA.song.title} subtitle={BL_MODES_METADATA.song.statusLine} />
+                <div id="game-sub-header">
+                    <SubHeader title={BL_MODES_METADATA.song.title} subtitle={BL_MODES_METADATA.song.statusLine} />
+                </div>
 
                 {/* 🛡️ รวม SongAudioPlayer + SongSearchBar + stats เข้า SongControlPanel เดียว
                     (เดิมแยกเรนเดอร์ 3 บล็อกซ้ำ pattern กับ character page) sync กับ isLimitReached
@@ -194,7 +209,7 @@ export default function UnlimitedSongGame() {
                         remainingGuesses={remainingGuesses}
                         stats={stats}
                         game={gameStore}
-                        maxGuesses={MAX_SONG_GUESSES}
+                        maxGuesses={MAX_UNLIMITED_SONG_GUESSES}
                         isGameOver={isGameOver}
                     />
                 )}

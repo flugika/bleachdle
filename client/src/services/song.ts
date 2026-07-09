@@ -4,9 +4,10 @@ import 'server-only'
 import { supabaseServer } from '@/src/lib/supabase/supabase-server';
 import { BleachSong } from '@/src/entities/song/schema';
 import { getAllSongSegments, getSongById } from '@/src/features/song/song';
+import { getTodayStr } from '@/src/lib/utils/format';
 
 export async function getDailySong(): Promise<{ song: BleachSong; segmentId: string } | null> {
-    const todayStr = new Date().toLocaleDateString('en-CA', { timeZone: 'Asia/Bangkok' });
+    const todayStr = getTodayStr();
 
     // 1. ดึงทั้ง song_id (Parent) และ song_segment_id (Child) ตรงๆ จาก DB
     const { data, error } = await supabaseServer

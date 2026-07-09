@@ -2,7 +2,7 @@ interface DividerProps {
     className?: string; // ไว้ใช้ปรับระยะห่างหรือ layout เพิ่มเติม
 }
 
-export const Divider = ({ className = "my-8" }: DividerProps) => {
+export const Divider = ({ className = "my-2" }: DividerProps) => {
     return (
         <div className={`flex items-center justify-center gap-4 w-full opacity-80 ${className}`}>
             {/* Left Gradient Line */}

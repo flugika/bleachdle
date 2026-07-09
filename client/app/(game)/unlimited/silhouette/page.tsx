@@ -28,7 +28,7 @@ import { FEATURE_FLAGS } from '@/src/config/feature.flags';
 import { ModeBadge } from '@/src/shared/ui/game-selector/ModeBadge';
 import { ModeSelectorModal } from '@/src/shared/ui/game-selector/ModeSelectorModal';
 import { useSenkaimon } from '@/src/shared/ui/context/NavigationContext';
-import { MAX_SILHOUETTE_GUESSES } from '@/src/const/guess';
+import { MAX_UNLIMITED_SILHOUETTE_GUESSES } from '@/src/const/guess';
 import { STORAGE_KEYS } from '@/src/const/localStorage';
 import { BL_MODES_METADATA } from '@/src/config/mode';
 
@@ -67,7 +67,7 @@ export default function UnlimitedSilhouetteGame() {
         setRevealDelayDone(false);
     }, [target]);
 
-    const remainingGuesses = Math.max(0, MAX_SILHOUETTE_GUESSES - guesses.length);
+    const remainingGuesses = Math.max(0, MAX_UNLIMITED_SILHOUETTE_GUESSES - guesses.length);
 
     // ⚠️ ระบบ soul-name / reincarnation ก็อปมาจาก quote เพื่อ reuse Central46ConfidentialArchive
     // ต้องเพิ่ม STORAGE_KEYS.SILHOUETTE_REGISTRY ก่อนถึงจะทำงานได้จริง
@@ -77,7 +77,7 @@ export default function UnlimitedSilhouetteGame() {
     const canReset = soulName.trim().length > 0;
 
     const isWin = guesses.some(g => g.status === 'correct');
-    const isLoss = guesses.length >= MAX_SILHOUETTE_GUESSES && !isWin;
+    const isLoss = guesses.length >= MAX_UNLIMITED_SILHOUETTE_GUESSES && !isWin;
     const isGameOver = isWin || isLoss;
     const showSummary = _hasHydrated && isReady && isGameOver && !manuallyClosed && revealDelayDone;
     const latestGuess = guesses[0];
@@ -183,23 +183,36 @@ export default function UnlimitedSilhouetteGame() {
         navigate(targetMode);
     };
 
+    useEffect(() => {
+        if (showSummary) {
+            const timer = setTimeout(() => {
+                const subHeaderEl = document.getElementById('game-sub-header');
+                if (subHeaderEl) {
+                    subHeaderEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }
+            }, 100); // ดีเลย์ 100ms เพื่อให้ DOM จัดการ Layout สรุปผลเสร็จสิ้นก่อนเลื่อนหน้าจอ
+
+            return () => clearTimeout(timer);
+        }
+    }, [showSummary]);
+
     return (
         <div className="min-h-screen text-[#d8d0c8] overflow-x-hidden bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-[#13131c] via-[#0a0a0e] to-[#050507]">
             <Header onOpenHowTo={() => setIsHowToOpen(true)} />
 
             {/* 🌌 คุมระดับ Max-Width ของ Main ให้เท่ากับ Quote และเพิ่มมิติการจัดวาง */}
-            <main className="max-w-[85%] lg:max-w-[70%] xl:max-w-[60%] mx-auto px-4 pb-16 transition-all duration-300">
-                <div className="flex flex-col items-center mb-2">
-                    <ModeBadge mode="unlimited" onClick={() => setIsModeSelectorOpen(true)} />
+            <main className="max-w-[80%] mx-auto px-4 pb-24">
+                <ModeBadge mode="unlimited" onClick={() => setIsModeSelectorOpen(true)} />
+                <div id="game-sub-header">
+                    <SubHeader title={BL_MODES_METADATA.silhouette.title} subtitle={BL_MODES_METADATA.silhouette.statusLine} />
                 </div>
-
-                <SubHeader title={BL_MODES_METADATA.silhouette.title} subtitle={BL_MODES_METADATA.silhouette.statusLine} />
 
                 {/* 🎮 โซนแกนกลางคอมโพเนนต์หลัก */}
                 <div className="w-full flex flex-col items-center justify-center mt-6">
                     {!showSummary && (
                         <div className="w-full max-w-xl mx-auto">
                             <SilhouetteControlPanel
+                                mode="unlimited"
                                 target={target}
                                 characters={characters}
                                 remainingGuesses={remainingGuesses}

@@ -315,3 +315,64 @@ BEGIN
   USING p_date, p_passed, dist_key;
 END;
 $$;
+
+CREATE OR REPLACE FUNCTION _stat_summary(p_played int, p_passed int, p_dist jsonb)
+RETURNS jsonb
+LANGUAGE sql
+STABLE
+AS $$
+  SELECT jsonb_build_object(
+    'played', p_played,
+    'passed', p_passed,
+    'win_rate', CASE WHEN p_played > 0
+      THEN ROUND((p_passed::numeric / p_played) * 100, 1)
+      ELSE 0 END,
+    'avg_guesses', (
+      SELECT CASE WHEN SUM(value::numeric) > 0
+        THEN ROUND(SUM(key::numeric * value::numeric) / SUM(value::numeric), 2)
+        ELSE NULL END
+      FROM jsonb_each_text(p_dist)
+    )
+  );
+$$;
+
+CREATE OR REPLACE FUNCTION get_daily_stats(p_date date DEFAULT CURRENT_DATE)
+RETURNS jsonb
+LANGUAGE sql
+STABLE
+AS $$
+  SELECT jsonb_build_object(
+    'character', _stat_summary(
+      COALESCE(ds.character_played_count, 0),
+      COALESCE(ds.character_passed_count, 0),
+      COALESCE(ds.character_guess_distribution, '{}'::jsonb)
+    ),
+    'song', _stat_summary(
+      COALESCE(ds.song_played_count, 0),
+      COALESCE(ds.song_passed_count, 0),
+      COALESCE(ds.song_guess_distribution, '{}'::jsonb)
+    ),
+    'silhouette', _stat_summary(
+      COALESCE(ds.silhouette_played_count, 0),
+      COALESCE(ds.silhouette_passed_count, 0),
+      COALESCE(ds.silhouette_guess_distribution, '{}'::jsonb)
+    ),
+    'release', _stat_summary(
+      COALESCE(ds.release_played_count, 0),
+      COALESCE(ds.release_passed_count, 0),
+      COALESCE(ds.release_guess_distribution, '{}'::jsonb)
+    ),
+    'emoji', _stat_summary(
+      COALESCE(ds.emoji_played_count, 0),
+      COALESCE(ds.emoji_passed_count, 0),
+      COALESCE(ds.emoji_guess_distribution, '{}'::jsonb)
+    ),
+    'quote', _stat_summary(
+      COALESCE(ds.quote_played_count, 0),
+      COALESCE(ds.quote_passed_count, 0),
+      COALESCE(ds.quote_guess_distribution, '{}'::jsonb)
+    )
+  )
+  FROM (SELECT p_date AS date) d
+  LEFT JOIN daily_stats ds ON ds.date = d.date;
+$$;

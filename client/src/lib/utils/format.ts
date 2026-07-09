@@ -14,3 +14,7 @@ export const formatHeight = (height: number): string => {
     if (height === -1) return "Unknow";
     return `${height} cm`;
 };
+
+export function getTodayStr(): string {
+    return new Date().toLocaleDateString('en-CA', { timeZone: 'Asia/Bangkok' });
+}

@@ -1,5 +1,5 @@
 // src/features/silhouette/silhouette.ts
-import { INITIAL_REVEAL_SILHOUETTE, MAX_SILHOUETTE_GUESSES } from '@/src/const/guess';
+import { INITIAL_REVEAL_SILHOUETTE, MAX_DAILY_SILHOUETTE_GUESSES, MAX_UNLIMITED_SILHOUETTE_GUESSES } from '@/src/const/guess';
 import { getCharacterById } from '@/src/features/character/character';
 import { SilhouetteSchema, BleachSilhouette } from '@/src/entities/silhouette/schema';
 import { SilhouetteTarget } from '@/src/features/silhouette/types';
@@ -129,9 +129,11 @@ function weightedShuffleWithSeed(
 export const getRevealedCellIndices = (
     characterId: string,
     guessCount: number,
+    mode: "daily" | "unlimited",
     occupiedCells?: number[],
     cellWeights?: Record<number, number>, // 🆕 รับ weight เข้ามาด้วย
 ): Set<number> => {
+    const MAX_SILHOUETTE_GUESSES = mode === "daily" ? MAX_DAILY_SILHOUETTE_GUESSES : MAX_UNLIMITED_SILHOUETTE_GUESSES;
     const dateStr = getCurrentDateStr();
     const allCells = Array.from({ length: TOTAL_CELLS }, (_, i) => i);
 

@@ -3,7 +3,7 @@ import { persist } from 'zustand/middleware';
 import { getCharacterById } from '@/src/features/character/character';
 import { getSilhouettes, attachCharacter } from '@/src/features/silhouette/silhouette';
 import { SilhouetteGameController, SilhouetteGuessEntry, SilhouetteTarget } from '@/src/features/silhouette/types';
-import { MAX_SILHOUETTE_GUESSES } from '@/src/const/guess';
+import { MAX_UNLIMITED_SILHOUETTE_GUESSES } from '@/src/const/guess';
 import { STORAGE_KEYS } from '@/src/const/localStorage';
 import { nestedJSONStorage } from '@/src/lib/store/createNestedStorage';
 import { isValidGuessEntry } from '@/src/features/quote/validGuessEntry'; // reuse guard เดิม (guess/status shape เหมือน quote เป๊ะ)
@@ -28,7 +28,7 @@ export const useSilhouetteGame = create<SilhouetteGameController>()(
             },
 
             addGuess: (characterId: string) => set((state) => {
-                const isGameOver = state.guesses.length >= MAX_SILHOUETTE_GUESSES;
+                const isGameOver = state.guesses.length >= MAX_UNLIMITED_SILHOUETTE_GUESSES;
                 if (!state.target || isGameOver) return state;
 
                 const guessedCharacter = getCharacterById(characterId);

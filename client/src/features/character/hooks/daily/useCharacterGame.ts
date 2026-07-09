@@ -8,7 +8,7 @@ import { persist } from 'zustand/middleware';
 import { recordDailyStat } from '@/src/services/statsClient';
 import { STORAGE_KEYS } from '@/src/const/localStorage'
 import { nestedJSONStorage } from '@/src/lib/store/createNestedStorage';
-import { MAX_CHARACTER_GUESSES } from '@/src/const/guess';
+import { MAX_DAILY_CHARACTER_GUESSES } from '@/src/const/guess';
 import { isValidCharacterGuessEntry } from '../../validGuessEntry';
 import { Stats } from '@/src/shared/types/guessGame';
 
@@ -54,7 +54,7 @@ export const useCharacterGame = create<CharacterGameState>()(
             },
 
             addGuess: (guessId: string) => set((state) => {
-                const isGameOver = state.guesses.length >= MAX_CHARACTER_GUESSES;
+                const isGameOver = state.guesses.length >= MAX_DAILY_CHARACTER_GUESSES;
                 if (!state.target || isGameOver) return state;
 
                 const guessedCharacter = getCharacterById(guessId);

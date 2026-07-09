@@ -10,6 +10,7 @@ import { STORAGE_KEYS } from '@/src/const/localStorage';
 import { nestedJSONStorage } from '@/src/lib/store/createNestedStorage';
 import { isValidGuessEntry } from '../../validGuessEntry';
 import { Stats } from '@/src/shared/types/guessGame';
+import { MAX_DAILY_SONG_GUESSES } from '@/src/const/guess';
 
 export const useSongGame = create<DailySongGameState>()(
     persist(
@@ -35,7 +36,8 @@ export const useSongGame = create<DailySongGameState>()(
             // ทายได้ไม่จำกัดจนกว่าจะถูก หรือกดยอมแพ้ — ปุ่มยอมแพ้คุมจาก UI (isSurrendered ใน
             // wrapper component) ไม่ใช่จาก store ตรงนี้ ยังคงกันเดาเพลงซ้ำไว้เหมือนเดิม
             addGuess: (songId: string) => set((state) => {
-                if (!state.target) return state;
+                const isGameOver = state.guesses.length >= MAX_DAILY_SONG_GUESSES;
+                if (!state.target || isGameOver) return state;
 
                 const guessedSong = getSongById(songId);
                 if (!guessedSong) return state;

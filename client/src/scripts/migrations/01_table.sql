@@ -56,12 +56,21 @@ CREATE TABLE public.song_segments (
 -- );
 
 -- 4. ตารางโหมดคำปลดปล่อยพลัง (releases)
+DROP TABLE IF EXISTS releases;
+
 CREATE TABLE releases (
     id TEXT PRIMARY KEY,
-    character_id TEXT REFERENCES characters(id) ON DELETE CASCADE,
-    image_url TEXT NOT NULL,                 
-    correct_answer TEXT NOT NULL,            
-    acceptable_answers TEXT[] NOT NULL        
+    character_id TEXT NOT NULL REFERENCES characters(id) ON DELETE CASCADE,
+
+    release_type release_type NOT NULL,
+    trigger_phrase TEXT NOT NULL,        -- คำสั่งที่พูดก่อนชื่อ เช่น 'Bankai'
+    technique_name TEXT NOT NULL,        -- คำตอบเดียวที่ใช้ทาย (romanized, normalized แล้วตอน seed)
+    technique_translation TEXT,          -- ความหมายอังกฤษ โชว์ตอนเฉลยเท่านั้น ไม่ใช้ compare
+
+    audio_url TEXT NOT NULL,
+    clip_end_ms INT4 NOT NULL,
+
+    source_episode INT4
 );
 
 -- 5. ตารางโหมดเอโมจิคำใบ้ (emojis)
@@ -117,12 +126,12 @@ CREATE TABLE public.daily_stats (
     emoji_played_count integer NOT NULL DEFAULT 0,
     emoji_passed_count integer NOT NULL DEFAULT 0,
 
-    qoute_played_count integer NOT NULL DEFAULT 0,
-    qoute_passed_count integer NOT NULL DEFAULT 0,
+    quote_played_count integer NOT NULL DEFAULT 0,
+    quote_passed_count integer NOT NULL DEFAULT 0,
 
     character_guess_distribution jsonb NOT NULL DEFAULT '{}'::jsonb,
     song_guess_distribution jsonb NOT NULL DEFAULT '{}'::jsonb,
-    image_guess_distribution jsonb NOT NULL DEFAULT '{}'::jsonb,
+    silhouette_guess_distribution jsonb NOT NULL DEFAULT '{}'::jsonb,
     release_guess_distribution jsonb NOT NULL DEFAULT '{}'::jsonb,
     emoji_guess_distribution jsonb NOT NULL DEFAULT '{}'::jsonb,
     quote_guess_distribution jsonb NOT NULL DEFAULT '{}'::jsonb

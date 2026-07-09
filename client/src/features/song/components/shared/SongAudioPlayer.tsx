@@ -122,7 +122,7 @@ export function SongAudioPlayer({ target, attemptIndex, disabled = false }: Song
     };
 
     return (
-        <div className="flex flex-col items-center gap-3.5 w-full max-w-sm mx-auto">
+        <div id="song-audio-player" className="flex flex-col items-center gap-3.5 w-full max-w-sm mx-auto pt-4">
             {target?.audio_url && (
                 <audio
                     ref={audioRef}

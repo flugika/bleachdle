@@ -96,15 +96,20 @@ export const ThematicModeSelector: React.FC<ThematicModeSelectorProps> = ({
                             key={config.id}
                             href={targetPath}
                             onClick={(e) => handleNavigation(e, targetPath, config.id)}
-                            className="relative p-6 md:p-8 border border-white/20 bg-gradient-to-b from-[#0c0c16] to-[#040408] shadow-[0_6px_30px_rgba(0,0,0,0.5),inset_0_1px_1px_rgba(255,255,255,0.1)] transition-all duration-500 group rounded-none overflow-hidden"
-                            style={{ contentVisibility: "auto" }}
+                            className="relative p-6 md:p-8 border border-white/20 bg-gradient-to-b from-[#0c0c16] to-[#040408] shadow-[0_6px_30px_rgba(0,0,0,0.5),inset_0_1px_1px_rgba(255,255,255,0.1)] transition-all duration-500 group rounded-none overflow-hidden h-full flex flex-col" style={{ contentVisibility: "auto" }}
                         >
                             {/* 1. Permanent Ambient Reiatsu Glow */}
                             <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_120%,rgba(200,169,110,0.06)_0%,transparent_70%)] pointer-events-none" />
 
-                            {/* 2. Hover Laser Spirit Slash Effect */}
-                            <div className="absolute inset-0 opacity-0 group-hover:opacity-100 pointer-events-none z-0 transition-opacity duration-300">
-                                <div className="absolute -inset-full bg-gradient-to-r from-transparent via-white/20 to-transparent rotate-45 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000 ease-out" />
+                            {/* 2. Hover Laser Spirit Slash Effect (Triple Reiatsu Burst: Gold, Red, Blue) */}
+                            <div className="absolute inset-0 opacity-0 group-hover:opacity-100 pointer-events-none z-0 transition-opacity duration-300 mix-blend-screen">
+                                <div
+                                    className="absolute -inset-full rotate-45 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000 ease-out"
+                                    style={{
+                                        // การไล่สี: ใส -> ฟ้า Reishi -> แดง Getsuga -> ทองธีมหลัก -> ใส
+                                        background: "linear-gradient(90deg, transparent 15%, rgba(56,182,199,0.25) 35%, rgba(239,68,68,0.35) 50%, rgba(200,169,110,0.45) 65%, transparent 85%)"
+                                    }}
+                                />
                             </div>
 
                             {/* 3. Hover Radical Pressure Ignite */}
@@ -138,8 +143,8 @@ export const ThematicModeSelector: React.FC<ThematicModeSelectorProps> = ({
                                     </div>
                                 </div>
 
-                                <div>
-                                    <span className="text-[12px] font-mono tracking-[0.35em] block mb-2 font-bold text-[#c8a96e]/80 group-hover:text-white transition-colors duration-500">
+                                <div className="relative z-10 flex-grow flex flex-col justify-start">
+                                    <span className="text-[10px] font-mono tracking-[0.3em] uppercase text-white/50 mb-4 block">
                                         {config.id}
                                     </span>
                                     <h2 className="text-xl font-extrabold tracking-[0.25em] text-white drop-shadow-[0_4px_6px_rgba(0,0,0,0.8)] group-hover:text-[#c8a96e] group-hover:tracking-[0.28em] transition-all duration-500">
@@ -150,7 +155,7 @@ export const ThematicModeSelector: React.FC<ThematicModeSelectorProps> = ({
                                     </p>
                                 </div>
 
-                                <div className="mt-10 pt-4 border-t border-white/10 flex justify-between items-center text-[11px] font-mono tracking-[0.25em] text-white/40 transition-colors duration-500">
+                                <div className="mt-8 pt-4 border-t border-white/10 flex justify-between items-center text-[11px] font-mono tracking-[0.25em] text-white/40 transition-colors duration-500 relative z-10 shrink-0">
                                     <span>SYS_CHAMBER: 0{index + 1}</span>
                                     <span className="opacity-40 group-hover:opacity-100 group-hover:text-[#c8a96e] transition-all duration-500 flex items-center gap-2 transform group-hover:translate-x-1">
                                         RELEASE <span className="text-xs font-bold">→</span>

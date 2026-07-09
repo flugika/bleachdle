@@ -1,3 +1,4 @@
+// src/features/quote/components/daily/DailyQuoteWrapper.tsx
 "use client";
 
 import { useEffect, useState } from 'react';
@@ -18,19 +19,17 @@ import { ModeSelectorModal } from '@/src/shared/ui/game-selector/ModeSelectorMod
 import { useSenkaimon } from '@/src/shared/ui/context/NavigationContext';
 import { STORAGE_KEYS } from '@/src/const/localStorage';
 import { BL_MODES_METADATA } from '@/src/config/mode';
-// 📅 Daily Hub: แถบ progress รวมทุกโหมด daily + CTA เล่นต่อ
+import { MAX_DAILY_QUOTE_GUESSES } from '@/src/const/guess';
 import { DailyHubModalFooter } from '@/src/shared/ui/daily-hub/DailyHubModalFooter';
 import { useDailyHub } from '@/src/shared/hooks/useDailyHub';
 import { getQuotes } from '../../quote';
 
 export default function DailyQuoteWrapper({ initialTarget }: { initialTarget: QuoteTarget | null }) {
     if (!FEATURE_FLAGS.daily.quote) {
-        return (
-            <Sealed />
-        )
+        return <Sealed />;
     }
 
-    const { navigate, state, reportReady } = useSenkaimon(); // 👈 ดึง state + reportReady มาด้วย ใช้คุม modal ตอน transition และแจ้งความพร้อมกลับไปที่ Senkaimon
+    const { navigate, state, reportReady } = useSenkaimon();
 
     const gameStore = useQuoteGame();
     const { target, guesses, initializeGame, finalizeGame, resetGame, hasFinalized, _hasHydrated, stats, loadStats } = gameStore;
@@ -38,7 +37,6 @@ export default function DailyQuoteWrapper({ initialTarget }: { initialTarget: Qu
     const quotes = getQuotes();
     const isSynced = target !== null && initialTarget !== null && target.id === initialTarget.id;
 
-    // 📅 Daily Hub: markModePlayed('quote', won) จะถูกเรียกตอนเกมจบจริงเท่านั้น (ดู effect ด้านล่าง)
     const { markModePlayed } = useDailyHub();
 
     useEffect(() => {
@@ -52,77 +50,86 @@ export default function DailyQuoteWrapper({ initialTarget }: { initialTarget: Qu
         }
     }, [initialTarget, _hasHydrated]);
 
-    const [isModalOpen, setIsModalOpen] = useState(false);
+    // 🆕 นำสเตตควบคุม UI แบบระบุเงื่อนไขรอบของ Silhouette มาแทนที่ตำแหน่งเดิม
+    const [manuallyClosed, setManuallyClosed] = useState(false);
+    const [revealDelayDone, setRevealDelayDone] = useState(false);
+
     const [isHowToOpen, setIsHowToOpen] = useState(false);
     const [isReady, setIsReady] = useState(false);
     const [timeLeft, setTimeLeft] = useState('');
-    const [isSurrendered, setIsSurrendered] = useState(false);
     const [isModeSelectorOpen, setIsModeSelectorOpen] = useState(false);
 
-    // 🛡️ FIX (ปัญหา modal ค้าง): ปิด modal ทันทีที่ประตูเซนไกมงเริ่ม "closing"
     useEffect(() => {
         if (state === "closing") {
             setIsModeSelectorOpen(false);
         }
     }, [state]);
 
-    // 🗨️ Quote mode is binary (correct/wrong), not a multi-field comparison like
-    // character mode — a win is just "the most recent guess is correct".
+    // 🆕 เคลียร์สเตตฝั่ง UI ทันทีเมื่อวันใหม่มาถึงหรือ Target ID สลับตัว
+    useEffect(() => {
+        setManuallyClosed(false);
+        setRevealDelayDone(false);
+    }, [target?.id]);
+
+    // 🎯 คำนวณสถิติตามเงื่อนไขเดิม
+    const remainingGuesses = Math.max(0, MAX_DAILY_QUOTE_GUESSES - guesses.length);
     const isWin = guesses.length > 0 && guesses[0].status === 'correct';
-    const isLoss = isSurrendered || (hasFinalized && !isWin);
+    const isLoss = guesses.length >= MAX_DAILY_QUOTE_GUESSES && !isWin;
     const isGameOver = isWin || isLoss;
+
+    // 🆕 ประกาศสถานะแสดงกล่องสรุปผลอิงตามสถานะจริงของเกมตัวแปรเดียว
+    const showSummary = _hasHydrated && isReady && isGameOver && !manuallyClosed && revealDelayDone;
+
+    const latestGuess = guesses[0];
+    const isFreshFinish = Boolean(latestGuess?.isNew && isGameOver);
+
+    // 🆕 ⏳ รักษา Logic ดีเลย์ของ Quote ไว้คงเดิมเด๊ะๆ (2500ms นิ่งๆ เท่ากันทุกกรณี)
+    useEffect(() => {
+        if (!isGameOver) return;
+
+        if (!isFreshFinish) {
+            setRevealDelayDone(true);
+            return;
+        }
+
+        const targetDelay = 2500;
+        const timer = setTimeout(() => setRevealDelayDone(true), targetDelay);
+        return () => clearTimeout(timer);
+    }, [isGameOver, isFreshFinish]);
 
     const handleSwitchDimension = (targetMode: 'daily' | 'unlimited') => {
         setIsModeSelectorOpen(false);
         navigate(targetMode);
     };
 
-    // โหลดและซิงค์ข้อมูลฝั่ง Client จากคีย์หลักแบบไม่มีจุดทศนิยมต่อท้าย
     useEffect(() => {
         if (!_hasHydrated) return;
         loadStats();
-
         initializeGame();
         setIsReady(true);
     }, [initializeGame, characters.length, _hasHydrated, loadStats]);
 
     useEffect(() => {
-        loadStats(); // โหลด stats จาก localStorage เข้า store ครั้งเดียวตอน mount
+        loadStats();
     }, [loadStats]);
 
-    // 🚪 แจ้ง NavigationContext กลับไปตอน "isReady" เป็น true จริงๆ (หลัง rehydrate + initializeGame เสร็จ)
     useEffect(() => {
         if (isReady) {
             reportReady();
         }
     }, [isReady, reportReady]);
 
+    // 🏁 บันทึกสถานะการเล่น/สถิติประจำวันทันทีแบบไม่ต้องรอดีเลย์ UI หน่วงเวลา (Pattern สำคัญของ Silhouette)
     useEffect(() => {
-        if (!_hasHydrated) return;
-        if (!isSynced) return; // ยังไม่ reconcile เสร็จ ห้ามตัดสินใจจาก guesses/hasFinalized ตอนนี้
-
-        if (isGameOver) {
-            if (hasFinalized) {
-                setIsModalOpen(true);
-                return;
-            }
-
-            const targetDelay = isSurrendered ? 0 : 2500;
-            const timer = setTimeout(() => {
-                if (!hasFinalized) {
-                    finalizeGame(isWin);
-                    markModePlayed('quote', isWin);
-                }
-                setIsModalOpen(true);
-            }, targetDelay);
-
-            return () => clearTimeout(timer);
+        if (!_hasHydrated || !isSynced) return;
+        if (isGameOver && !hasFinalized) {
+            finalizeGame(isWin);
+            markModePlayed('quote', isWin);
         }
-    }, [isGameOver, isWin, finalizeGame, hasFinalized, _hasHydrated, isSurrendered, isSynced]);
+    }, [isGameOver, hasFinalized, isWin, _hasHydrated, isSynced, finalizeGame, markModePlayed]);
 
     const handleCloseModal = () => {
-        setIsModalOpen(false);
-        setIsSurrendered(false);
+        setManuallyClosed(true);
         resetGame();
         window.scrollTo({ top: 0, behavior: 'smooth' });
     };
@@ -132,35 +139,46 @@ export default function DailyQuoteWrapper({ initialTarget }: { initialTarget: Qu
             const now = new Date();
             const midnight = new Date();
             midnight.setHours(24, 0, 0, 0);
-
             const diff = midnight.getTime() - now.getTime();
-
             const hours = Math.floor(diff / (1000 * 60 * 60));
             const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
             const seconds = Math.floor((diff % (1000 * 60)) / 1000);
-
             return `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
         };
 
         setTimeLeft(calculateTimeLeft());
-
         const timer = setInterval(() => {
             setTimeLeft(calculateTimeLeft());
         }, 1000);
-
         return () => clearInterval(timer);
     }, []);
+
+    // 🆕 ตัวจับการเลื่อนจอสมูทสลับมาผูกพิกัดตามตัวแปร showSummary
+    useEffect(() => {
+        if (showSummary) {
+            const timer = setTimeout(() => {
+                const subHeaderEl = document.getElementById('game-sub-header');
+                if (subHeaderEl) {
+                    subHeaderEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }
+            }, 100);
+
+            return () => clearTimeout(timer);
+        }
+    }, [showSummary]);
 
     return (
         <div className="min-h-screen text-[#d8d0c8] overflow-x-hidden">
             <Header onOpenHowTo={() => setIsHowToOpen(true)} />
 
-            <main className="max-w-[80%] mx-auto px-4 pb-16">
+            <main className="max-w-[80%] mx-auto px-4 pb-24">
                 <ModeBadge mode="daily" onClick={() => setIsModeSelectorOpen(true)} />
-                <SubHeader title={BL_MODES_METADATA.quote.title} subtitle={BL_MODES_METADATA.quote.statusLine} />
+                <div id="game-sub-header">
+                    <SubHeader title={BL_MODES_METADATA.quote.title} subtitle={BL_MODES_METADATA.quote.statusLine} />
+                </div>
 
-                {/* 📅 Daily Hub: ตั้งใจไม่โชว์บนหน้าเล่นเกม — ให้โผล่แค่ตอนจบเกม */}
-                {!isModalOpen && (
+                {/* เปลี่ยนสเตตัสสวิตช์ UI จาก !isModalOpen เป็น !showSummary ทั่วทั่งคอมโพเนนต์ */}
+                {!showSummary && (
                     <QuoteControlPanel
                         mode="daily"
                         target={target}
@@ -169,15 +187,13 @@ export default function DailyQuoteWrapper({ initialTarget }: { initialTarget: Qu
                         timeLeft={timeLeft}
                         game={gameStore}
                         isGameOver={isGameOver}
-                        onSurrender={() => setIsSurrendered(true)}
+                        remainingGuesses={remainingGuesses}
                     />
                 )}
 
-                {guesses.length > 0 && (
+                {(guesses.length > 0 && !showSummary) && (
                     <>
                         <Divider />
-                        {/* 🗨️ Legend เหลือแค่ correct/wrong ตามธรรมชาติของ quote mode
-                            (ไม่มี partial/higher-lower เหมือน character ที่เทียบทีละ field) */}
                         <div className="flex flex-wrap justify-center gap-x-5 gap-y-1.5">
                             {([
                                 ['correct', '#0d2918', '#1a5530', '#4de880', 'Verified'],
@@ -192,10 +208,9 @@ export default function DailyQuoteWrapper({ initialTarget }: { initialTarget: Qu
                     </>
                 )}
 
-                {isModalOpen ? (
+                {showSummary ? (
                     <>
-                        <QuoteSummaryGuess isOpen={isModalOpen} onClose={handleCloseModal} guesses={guesses} target={target} isWin={isWin} mode="daily" stats={stats} />
-                        {/* 📅 Daily Hub: CTA "เล่นต่อ" ต่อท้ายการ์ดสรุปผล */}
+                        <QuoteSummaryGuess isOpen={showSummary} onClose={handleCloseModal} guesses={guesses} target={target} isWin={isWin} mode="daily" stats={stats} />
                         <DailyHubModalFooter activeMode="quote" />
                     </>
                 ) : target && isSynced ? (

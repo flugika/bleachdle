@@ -5,7 +5,7 @@ import { compareCharacter } from '@/src/features/character/compareCharacter';
 import { ComparisonOutcome } from '@/src/features/character/types';
 import { getCharacterById, getCharacters } from '@/src/features/character/character';
 import { persist } from 'zustand/middleware';
-import { MAX_CHARACTER_GUESSES } from '@/src/const/guess';
+import { MAX_UNLIMITED_CHARACTER_GUESSES } from '@/src/const/guess';
 import { STORAGE_KEYS } from '@/src/const/localStorage'
 import { nestedJSONStorage } from '@/src/lib/store/createNestedStorage';
 import { isValidCharacterGuessEntry } from '../../validGuessEntry';
@@ -55,7 +55,7 @@ export const useCharacterGame = create<CharacterGameState>()(
             },
 
             addGuess: (guessId: string) => set((state) => {
-                const isGameOver = state.guesses.length >= MAX_CHARACTER_GUESSES; // หรือ 10 ในกรณี daily
+                const isGameOver = state.guesses.length >= MAX_UNLIMITED_CHARACTER_GUESSES; // หรือ 10 ในกรณี daily
                 if (!state.target || isGameOver) return state;
 
                 const guessedCharacter = getCharacterById(guessId);

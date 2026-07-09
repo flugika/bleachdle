@@ -77,3 +77,36 @@ export const BL_MODES_METADATA: Record<SubFeatureKey, ModeConfig> = {
         statusLine: "System // Awaiting Release Command",
     },
 };
+
+export type Dimension = 'daily' | 'unlimited';
+
+// 🎨 โทนสี Bleach TYBW ไม่ได้มีแค่ทอง — แบ่งเป็น 2 ชั้น:
+//   1) DIMENSION_ACCENT: โทนรวมของทั้ง modal เปลี่ยนตาม dimension ที่เลือก
+//      Daily (日/พระอาทิตย์) → ทอง-เหลือง อุ่นๆ แบบ Quincy gold / Getsuga ember
+//      Unlimited (無/ความไม่มีที่สิ้นสุด) → น้ำเงิน-ฟ้าเย็น แบบ Reiatsu / Quincy Blut
+//   2) MODE_ACCENT: แต่ละ discipline มีสีประจำตัวของตัวเอง (เหมือน Sternritter แต่ละคนมีสีต่างกัน)
+//      เพื่อให้เห็นความหลากหลายของสี Bleach พร้อมกันในลิสต์เดียว ไม่ใช่ทองล้วนทั้งแถว
+export const DIMENSION_ACCENT: Record<Dimension, { label: string; kanji: string; desc: string; base: string; bright: string; glow: string; descTint: string }> = {
+    daily: {
+        label: 'Daily', kanji: '日', desc: 'One attempt. Resets every night.',
+        base: '#c8a96e', bright: '#f2c879', glow: 'rgba(226,140,58,0.35)', descTint: 'text-[#e2a86e]/50',
+    },
+    unlimited: {
+        label: 'Unlimited', kanji: '無', desc: 'Unlimited replays. No reset.',
+        base: '#4a90d9', bright: '#7ec8ff', glow: 'rgba(74,144,217,0.35)', descTint: 'text-[#7ec8ff]/50',
+    },
+};
+
+// 🗺️ ลำดับอ้างอิง — กรองผ่าน FEATURE_FLAGS[dimension] ก่อนเข้า .map() เสมอ
+// โหมดที่ flag = false จะไม่ถูก render ออกมาเลย ไม่ใช่แค่ disabled ค้างไว้ให้เห็น
+export const MODE_ORDER: SubFeatureKey[] = ['character', 'song', 'quote', 'silhouette', 'emoji', 'release'];
+
+// 🎨 สีประจำตัวของแต่ละ discipline — ดึงจากโทนที่มีจริงใน TYBW (น้ำเงิน/ฟ้า/ส้ม/แดง/ทอง)
+export const MODE_ACCENT: Record<SubFeatureKey, { base: string; bright: string; glow: string }> = {
+    character: { base: '#4a90d9', bright: '#7ec8ff', glow: 'rgba(74,144,217,0.45)' },  // Quincy reiatsu — น้ำเงิน
+    song: { base: '#c8a96e', bright: '#f2cf8a', glow: 'rgba(200,169,110,0.45)' },      // Royal gold — ทอง
+    quote: { base: '#e2683a', bright: '#ff9a68', glow: 'rgba(226,104,58,0.45)' },      // Getsuga ember — ส้ม
+    silhouette: { base: '#38b6c7', bright: '#7fe3f0', glow: 'rgba(56,182,199,0.45)' },      // Blut ice-cyan — ฟ้า
+    emoji: { base: '#d94f4f', bright: '#ff7a7a', glow: 'rgba(217,79,79,0.45)' },       // Hollow crimson — แดง
+    release: { base: '#6a6fd9', bright: '#a3a8ff', glow: 'rgba(106,111,217,0.45)' },   // Bankai indigo — น้ำเงินม่วง
+};

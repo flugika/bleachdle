@@ -16,59 +16,93 @@ import { FEATURE_FLAGS } from '@/src/config/feature.flags';
 import { ModeBadge } from '@/src/shared/ui/game-selector/ModeBadge';
 import { ModeSelectorModal } from '@/src/shared/ui/game-selector/ModeSelectorModal';
 import { useSenkaimon } from '@/src/shared/ui/context/NavigationContext';
-import { MAX_CHARACTER_GUESSES } from '@/src/const/guess';
+import { MAX_UNLIMITED_CHARACTER_GUESSES } from '@/src/const/guess';
 import { STORAGE_KEYS } from '@/src/const/localStorage';
 import { BL_MODES_METADATA } from '@/src/config/mode';
 
 export default function UnlimitedCharacterGame() {
     if (!FEATURE_FLAGS.unlimited.character) {
-        return (
-            <Sealed />
-        )
+        return <Sealed />;
     }
 
-    const { navigate, state, reportReady } = useSenkaimon(); // 👈 ดึง state + reportReady มาด้วย ใช้คุม modal ตอน transition และแจ้งความพร้อมกลับไปที่ Senkaimon
+    const { navigate, state, reportReady } = useSenkaimon();
 
-    // 🛡️ เดิมเรียก useCharacterGame() 2 ครั้งแยกกัน (ตัวแปร game + destructure ซ้ำ)
-    // ตอนนี้ subscribe ครั้งเดียว แล้วส่ง store object เดิมต่อให้ SearchBar ผ่าน prop `game`
+    // 🛡️ Subscribe Store เพียงครั้งเดียวเพื่อป้องกันปัญหา Re-render ซ้ำซ้อน
     const gameStore = useCharacterGame();
-    const { target, guesses, initializeGame, finalizeGame, resetGame, hardReset, hasFinalized, _hasHydrated, resetStreakKeepMax, stats, loadStats } = gameStore;
+    const {
+        target, guesses, initializeGame, finalizeGame, resetGame, hardReset,
+        hasFinalized, _hasHydrated, resetStreakKeepMax, stats, loadStats
+    } = gameStore;
     const characters = getCharacters();
 
-    const [isModalOpen, setIsModalOpen] = useState(false);
     const [isHowToOpen, setIsHowToOpen] = useState(false);
     const [isReady, setIsReady] = useState(false);
     const [isGameCompleted, setIsGameCompleted] = useState(false);
     const [isModeSelectorOpen, setIsModeSelectorOpen] = useState(false);
+    const [revealDelayDone, setRevealDelayDone] = useState(false);
+    const [manuallyClosed, setManuallyClosed] = useState(false);
     const [finalRoundGuesses, setFinalRoundGuesses] = useState<typeof guesses>([]);
-
-    // 🛡️ FIX (ปัญหา modal ค้าง): ปิด modal ทันทีที่ประตูเซนไกมงเริ่ม "closing"
-    // ผูกกับ state ตรงๆ ไม่พึ่งลำดับการเรียกจาก handleSwitchDimension เพียงจุดเดียว
-    useEffect(() => {
-        if (state === "closing") {
-            setIsModeSelectorOpen(false);
-        }
-    }, [state]);
-
-    const remainingGuesses = Math.max(0, MAX_CHARACTER_GUESSES - guesses.length);
 
     const [soulName, setSoulName] = useState('');
     const [inputName, setInputName] = useState('');
     const [reincarnationCount, setReincarnationCount] = useState(0);
     const canReset = soulName.trim().length > 0;
 
+    const remainingGuesses = Math.max(0, MAX_UNLIMITED_CHARACTER_GUESSES - guesses.length);
+
+    // 🎯 คำนวณสถานะการแพ้/ชนะ (คงคุณลักษณะเฉพาะของระบบเปรียบเทียบฟิลด์ตัวละครไว้)
+    const latestGuess = guesses[0];
     const isWin = guesses.length > 0 &&
-        (Object.entries(guesses[0].result)
+        Object.entries(latestGuess.result)
             .filter(([key]) => key !== 'image')
-            .every(([_, status]) => status === 'correct')
-        );
-    const isLoss = guesses.length >= 10 && !isWin;
+            .every(([_, status]) => status === 'correct');
+
+    const isLoss = guesses.length >= MAX_UNLIMITED_CHARACTER_GUESSES && !isWin;
     const isGameOver = isWin || isLoss;
 
-    // 🛡️ FIX: เพิ่ม _hasHydrated เข้า dependency + เงื่อนไข guard
-    // effect นี้จะรอจน zustand persist rehydrate จาก localStorage เสร็จจริงก่อน ค่อยยิง initializeGame()
-    // ต่อให้ effect ถูกยิงซ้ำ (StrictMode dev double-invoke / remount ตอนสลับหน้าผ่าน Senkaimon)
-    // initializeGame() ที่ store ก็ idempotent อยู่แล้ว (เช็ค target ก่อนสุ่มใหม่) เลยไม่มีทางเบิ้ล target อีก
+    // ควบคุมการแสดงผลหน้าสรุปสถิติด้วยสถาปัตยกรรมแบบ Single Source of Truth
+    const showSummary = _hasHydrated && isReady && isGameOver && !manuallyClosed && revealDelayDone;
+    const isFreshFinish = Boolean(latestGuess?.isNew && isGameOver);
+
+    // 🚪 ปิด Modal เลือกโหมดเมื่อระบบประตูเซนไกมงเริ่มเปลี่ยนสถานะ
+    useEffect(() => {
+        if (state === "closing") {
+            setIsModeSelectorOpen(false);
+        }
+    }, [state]);
+
+    // รีเซ็ตสถานะหน้าต่างสรุปผลเมื่อเป้าหมายเกม (Target) มีการเปลี่ยนแปลง
+    useEffect(() => {
+        setManuallyClosed(false);
+        if (target && process.env.NODE_ENV !== 'production') {
+            console.log('target:', useCharacterGame.getState().target);
+        }
+        setRevealDelayDone(false);
+    }, [target]);
+
+    // ⏳ จัดการเอฟเฟกต์ความล่าช้าก่อนแสดงผลตั๋วสรุป (สดใหม่ vs รีเฟรชหน้าเก่า)
+    useEffect(() => {
+        if (!isGameOver) return;
+
+        if (!isFreshFinish) {
+            setRevealDelayDone(true);
+            return;
+        }
+
+        const delay = 2500;
+        const timer = setTimeout(() => setRevealDelayDone(true), delay);
+        return () => clearTimeout(timer);
+    }, [isGameOver, isFreshFinish, isWin]);
+
+    // บันทึกและสรุปผลข้อมูลสถิติลงคลังระบบ
+    useEffect(() => {
+        if (_hasHydrated && isGameOver && !hasFinalized) {
+            setFinalRoundGuesses(guesses);
+            finalizeGame(isWin);
+        }
+    }, [isGameOver, hasFinalized, isWin, _hasHydrated, finalizeGame, guesses]);
+
+    // 🛡️ รอกระบวนการ Hydration เสร็จสิ้นก่อนดึงประวัติมาใช้งานจากหน่วยความจำ
     useEffect(() => {
         if (!_hasHydrated) return;
 
@@ -89,9 +123,7 @@ export default function UnlimitedCharacterGame() {
         setIsReady(true);
     }, [initializeGame, characters.length, _hasHydrated, loadStats]);
 
-    // 🚪 FIX (ประตูเปิดก่อนหน้าพร้อม): แจ้ง NavigationContext กลับไปตอน "isReady" เป็น true จริงๆ
-    // (คือหลัง zustand rehydrate + initializeGame() เสร็จสมบูรณ์) แทนที่จะปล่อยให้ระบบ
-    // เปิดประตูเองผ่าน READY_FALLBACK_MS (1200ms) เท่านั้น — sync กับ pattern เดียวกับ DailyCharacterWrapper
+    // แจ้งการเชื่อมต่อระบบเซนไกมงเมื่อความพร้อมตัวแปรสมบูรณ์
     useEffect(() => {
         if (isReady) {
             reportReady();
@@ -106,38 +138,27 @@ export default function UnlimitedCharacterGame() {
         }
     }, [target, characters.length, isReady]);
 
+    // 📜 เอฟเฟกต์เลื่อนหน้าจอกลับมาจุดบนสุดของ SubHeader เมื่อแสดงผลสรุป
     useEffect(() => {
-        if (target && process.env.NODE_ENV !== 'production') {
-            console.log('target:', useCharacterGame.getState().target);
-        }
-    }, [target]);
-
-    useEffect(() => {
-        if (isGameOver) {
+        if (showSummary) {
             const timer = setTimeout(() => {
-                // 1. ทำ Logic: บันทึกข้อมูลเฉพาะถ้ายังไม่เคยบันทึกมาก่อน (ป้องกัน Streak พุ่ง)
-                if (!hasFinalized) {
-                    setFinalRoundGuesses(guesses);
-                    finalizeGame(isWin);
+                const subHeaderEl = document.getElementById('game-sub-header');
+                if (subHeaderEl) {
+                    subHeaderEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
                 }
-
-                // 2. ทำ UI: เปิด Modal ทุกครั้งที่โหลดหน้าเว็บหากเกมจบแล้ว
-                setIsModalOpen(true);
-            }, 2500); // ลดเวลาลงนิดหน่อยให้ UX ดูฉับไวขึ้นตอน Refresh
+            }, 100);
 
             return () => clearTimeout(timer);
         }
-        // เราไม่ต้องกังวลเรื่อง hasFinalized ใน dependency เท่าไหร่ เพราะเงื่อนไขด้านในเช็คให้แล้ว
-    }, [isGameOver, isWin, finalizeGame, hasFinalized]);
+    }, [showSummary]);
 
     const handleCloseModal = () => {
-        setIsModalOpen(false);
+        setManuallyClosed(true);
         resetGame();
         initializeGame(true);
         window.scrollTo({ top: 0, behavior: 'smooth' });
     };
 
-    // ── 🛡️ ทะเบียนวิญญาณแบบจารึกรวมศูนย์
     const handleRegisterSoul = (e: React.FormEvent) => {
         e.preventDefault();
         if (!inputName.trim()) return;
@@ -151,7 +172,6 @@ export default function UnlimitedCharacterGame() {
         setSoulName(inputName.trim());
     };
 
-    // ── 🛡️ คอมโบ Reset ข้อมูลโดยการเจาะทำลายเฉพาะกิ่งก้านของโหมดตัวเอง
     const handleHardReset = () => {
         resetStreakKeepMax();
 
@@ -168,10 +188,7 @@ export default function UnlimitedCharacterGame() {
     };
 
     const handleSwitchDimension = (targetMode: 'daily' | 'unlimited') => {
-        // 1. ปิด Modal เลือกโหมด
         setIsModeSelectorOpen(false);
-
-        // 2. โยนเป้าหมายให้ระบบเซนไกมงจัดการคำนวณตำแหน่งและสลับมิติให้เองแบบไร้รอยต่อ
         navigate(targetMode);
     };
 
@@ -179,14 +196,15 @@ export default function UnlimitedCharacterGame() {
         <div className="min-h-screen text-[#d8d0c8] overflow-x-hidden">
             <Header onOpenHowTo={() => setIsHowToOpen(true)} />
 
-            <main className="max-w-[80%] mx-auto px-4 pb-16">
+            <main className="max-w-[80%] mx-auto px-4 pb-24">
                 <ModeBadge mode="unlimited" onClick={() => setIsModeSelectorOpen(true)} />
-                <SubHeader title={BL_MODES_METADATA.character.title} subtitle={BL_MODES_METADATA.character.statusLine} />
 
-                {/* 🛡️ เปลี่ยนจาก SearchBar + stats block แบบ manual (ซ้ำโค้ดกับ daily) มาใช้
-                    CharacterControlPanel ตัวเดียวกับ daily — sync กับ isLimitReached fix ที่แก้ไปด้วย
-                    (เดิม unlimited mode ไม่เคยผ่าน component นี้เลยบั๊กเลยไม่เคยโผล่) */}
-                {!isModalOpen && (
+                {/* 🆕 ใส่ ID ครอบคอมโพเนนต์ส่วนหัวเรื่องสำหรับการทำ Smooth Scrolling */}
+                <div id="game-sub-header">
+                    <SubHeader title={BL_MODES_METADATA.character.title} subtitle={BL_MODES_METADATA.character.statusLine} />
+                </div>
+
+                {!showSummary && (
                     <CharacterControlPanel
                         mode="unlimited"
                         target={target}
@@ -194,12 +212,12 @@ export default function UnlimitedCharacterGame() {
                         remainingGuesses={remainingGuesses}
                         stats={stats}
                         game={gameStore}
-                        maxGuesses={MAX_CHARACTER_GUESSES}
+                        maxGuesses={MAX_UNLIMITED_CHARACTER_GUESSES}
                         isGameOver={isGameOver}
                     />
                 )}
 
-                {guesses.length > 0 && (
+                {(guesses.length > 0 && !showSummary) && (
                     <>
                         <Divider />
                         <div className="flex flex-wrap justify-center gap-x-5 gap-y-1.5">
@@ -218,8 +236,8 @@ export default function UnlimitedCharacterGame() {
                     </>
                 )}
 
-                {isModalOpen ? (
-                    <CharacterSummaryGuess isOpen={isModalOpen} onClose={handleCloseModal} guesses={guesses} target={target} isWin={isWin} mode="unlimited" stats={stats} />
+                {showSummary ? (
+                    <CharacterSummaryGuess isOpen={showSummary} onClose={handleCloseModal} guesses={guesses} target={target} isWin={isWin} mode="unlimited" stats={stats} />
                 ) : target ? (
                     <div className="w-full overflow-x-auto">
                         <CharacterGuessTable guesses={guesses} />
@@ -245,6 +263,7 @@ export default function UnlimitedCharacterGame() {
                     </div>
                 )}
             </main>
+
             <CharacterHowToPlayModal isOpen={isHowToOpen} onClose={() => setIsHowToOpen(false)} mode="unlimited" />
             <ModeSelectorModal
                 isOpen={isModeSelectorOpen}

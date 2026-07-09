@@ -134,6 +134,7 @@ export const SilhouetteSummaryGuess = ({
                         {/* กล่องบรรจุตัวภาพ SilhouetteImage */}
                         <div className="relative w-full overflow-hidden bg-gradient-to-b from-neutral-900 to-black rounded-xs">
                             <SilhouetteImage
+                                mode={mode}
                                 characterId={target.character_id}
                                 image={target.image}
                                 realImage={answerCharacter?.image}

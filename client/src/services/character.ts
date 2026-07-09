@@ -3,9 +3,10 @@ import 'server-only'
 
 import { supabaseServer } from '@/src/lib/supabase/supabase-server';
 import { Character } from '@/src/entities/character/schema';
+import { getTodayStr } from '@/src/lib/utils/format';
 
 export async function getDailyCharacter() {
-    const todayStr = new Date().toLocaleDateString('en-CA', { timeZone: 'Asia/Bangkok' });
+    const todayStr = getTodayStr();
 
     // ระบุ Type ของผลลัพธ์จาก Supabase ให้ชัดเจน
     const { data, error } = await supabaseServer

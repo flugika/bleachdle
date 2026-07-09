@@ -5,10 +5,12 @@ import { useEffect, useMemo, useState } from 'react';
 import { getCellWeights, getOccupiedCells, getRevealedCellIndices, getSilhouetteImageUrl, GRID_SIZE } from '@/src/features/silhouette/silhouette';
 import { STORAGE_KEYS } from '@/src/const/localStorage';
 import SoulSyncLoader from '@/src/shared/ui/loader/SoulSyncLoader';
+import { MAX_DAILY_SILHOUETTE_GUESSES, MAX_UNLIMITED_SILHOUETTE_GUESSES } from '@/src/const/guess';
 
 interface Props {
     characterId: string;
     image: string;
+    mode: "daily" | "unlimited";
     realImage?: string;
     guessCount?: number;
     forceReveal?: boolean;
@@ -20,10 +22,11 @@ const DEFAULT_BG = '#3E77CF';
 export const SilhouetteImage = ({
     characterId,
     image,
+    mode,
     realImage,
     guessCount = 0,
     forceReveal = false,
-    bgColor
+    bgColor,
 }: Props) => {
     const [internalBg, setInternalBg] = useState(bgColor || DEFAULT_BG);
     const [configReady, setConfigReady] = useState(false);
@@ -106,7 +109,7 @@ export const SilhouetteImage = ({
     }, [fullCharacterSrc]);
 
     const revealed = useMemo(
-        () => getRevealedCellIndices(characterId, guessCount, getOccupiedCells(image), getCellWeights(image)),
+        () => getRevealedCellIndices(characterId, guessCount, mode, getOccupiedCells(image), getCellWeights(image)),
         [characterId, guessCount, image],
     );
 
