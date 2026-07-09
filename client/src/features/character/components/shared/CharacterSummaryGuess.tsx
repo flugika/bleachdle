@@ -6,6 +6,7 @@ import { CHARACTER_TIERS, STATUS_COLORS, RESULT_KEYS } from '@/src/const/summary
 import { formatAge, formatHeight } from '@/src/lib/utils/format';
 import { useCountdown } from '@/src/shared/hooks/useCountdown';
 import { DailyResetTimer } from '@/src/shared/ui/DailyResetTimer';
+import { useCharacterTier } from '@/src/shared/hooks/useBadgeTier';
 
 // 🗺️ 1. TYBW LORE LOOKUP DICTIONARY (ทำหน้าที่เป็น Whitelist & อัปเดตชื่อไฟล์จริง)
 const EMBLEM_DATA: Record<string, { file: string; color: string }> = {
@@ -51,9 +52,7 @@ export const CharacterSummaryGuess = ({ isOpen, onClose, guesses, target, isWin,
 
     if (!isOpen) return null;
 
-    const activeTier = useMemo(() => {
-        return CHARACTER_TIERS.find(t => stats.maxStreak >= t.min) || CHARACTER_TIERS[CHARACTER_TIERS.length - 1];
-    }, [stats.maxStreak]);
+    const activeTier = useCharacterTier(stats.maxStreak);
 
     // 🗺️ เพิ่ม whitelist ตัวละครที่เป็น Substitute Shinigami โดยตำแหน่งจริงตาม Lore
     // (ไม่ใช้ race มาตัดสิน เพราะ race data ของทั้งคู่จะโอเวอร์แลปกับ Human/Shinigami/Hollow ปกติ)

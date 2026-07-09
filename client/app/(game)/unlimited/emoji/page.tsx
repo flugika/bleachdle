@@ -8,9 +8,9 @@ import { useEmojiGame } from '@/src/features/emoji/hooks/unlimited/useEmojiGame'
 import { getEmojiSets } from '@/src/features/emoji/emoji';
 import { EmojiSummaryGuess } from '@/src/features/emoji/components/shared/EmojiSummaryGuess';
 import { EmojiHowToPlayModal } from '@/src/features/emoji/components/shared/EmojiHowToPlayModal';
-import { Header } from '@/src/shared/layout/Header';
-import { Divider } from '@/src/shared/layout/Divider';
-import { SubHeader } from '@/src/shared/layout/SubHeader';
+import { Header } from '@/src/shared/ui/layout/Header';
+import { Divider } from '@/src/shared/ui/layout/Divider';
+import { SubHeader } from '@/src/shared/ui/layout/SubHeader';
 import Central46ConfidentialArchive from '@/src/shared/ui/Central46ConfidentialArchive';
 import Sealed from '@/src/shared/ui/Sealed';
 import { FEATURE_FLAGS } from '@/src/config/feature.flags';
@@ -97,8 +97,8 @@ export default function UnlimitedEmojiGame() {
         const completed = completedData.unlimited || [];
         setIsGameCompleted(emojiSets.length > 0 && completed.length >= emojiSets.length);
 
-        const registryData = JSON.parse(localStorage.getItem(STORAGE_KEYS.EMOJI_REGISTRY) || '{}');
-        const registry = registryData.unlimited || { name: "", count: 0 };
+        const registryData = JSON.parse(localStorage.getItem(STORAGE_KEYS.SOUL_REGISTRY) || '{}');
+        const registry = registryData.emoji || { name: "", count: 0 };
         if (registry.name) {
             setSoulName(registry.name);
         }
@@ -133,26 +133,26 @@ export default function UnlimitedEmojiGame() {
         e.preventDefault();
         if (!inputName.trim()) return;
 
-        const registryData = JSON.parse(localStorage.getItem(STORAGE_KEYS.EMOJI_REGISTRY) || '{}');
-        const currentRegistry = registryData.unlimited || { name: "", count: 0 };
+        const registryData = JSON.parse(localStorage.getItem(STORAGE_KEYS.SOUL_REGISTRY) || '{}');
+        const currentRegistry = registryData.emoji || { name: "", count: 0 };
         const updated = { ...currentRegistry, name: inputName.trim() };
 
-        registryData.unlimited = updated;
-        localStorage.setItem(STORAGE_KEYS.EMOJI_REGISTRY, JSON.stringify(registryData));
+        registryData.emoji = updated;
+        localStorage.setItem(STORAGE_KEYS.SOUL_REGISTRY, JSON.stringify(registryData));
         setSoulName(inputName.trim());
     };
 
     const handleHardReset = () => {
         resetStreakKeepMax();
 
-        const registryData = JSON.parse(localStorage.getItem(STORAGE_KEYS.EMOJI_REGISTRY) || '{}');
-        const currentRegistry = registryData.unlimited || { name: "", count: 0 };
-        registryData.unlimited = {
+        const registryData = JSON.parse(localStorage.getItem(STORAGE_KEYS.SOUL_REGISTRY) || '{}');
+        const currentRegistry = registryData.emoji || { name: "", count: 0 };
+        registryData.emoji = {
             ...currentRegistry,
             count: (currentRegistry.count || 0) + 1
         };
-        localStorage.setItem(STORAGE_KEYS.EMOJI_REGISTRY, JSON.stringify(registryData));
-        setReincarnationCount(registryData.unlimited.count);
+        localStorage.setItem(STORAGE_KEYS.SOUL_REGISTRY, JSON.stringify(registryData));
+        setReincarnationCount(registryData.emoji.count);
 
         hardReset();
     };

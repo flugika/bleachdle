@@ -7,9 +7,9 @@ import { QuoteSummaryGuess } from '@/src/features/quote/components/shared/QuoteS
 import { useQuoteGame } from '@/src/features/quote/hooks/daily/useQuoteGame';
 import { getCharacters } from '@/src/features/character/character';
 import { QuoteHowToPlayModal } from '../shared/QuoteHowToPlayModal';
-import { Header } from '@/src/shared/layout/Header';
-import { Divider } from '@/src/shared/layout/Divider';
-import { SubHeader } from '@/src/shared/layout/SubHeader';
+import { Header } from '@/src/shared/ui/layout/Header';
+import { Divider } from '@/src/shared/ui/layout/Divider';
+import { SubHeader } from '@/src/shared/ui/layout/SubHeader';
 import Sealed from '@/src/shared/ui/Sealed';
 import { FEATURE_FLAGS } from '@/src/config/feature.flags';
 import { QuoteTarget } from '@/src/features/quote/types';

@@ -7,9 +7,9 @@ import { createSearchEngine } from '@/src/lib/search/fuzzy';
 import { getCellWeights, getOccupiedCells, getRevealedCellIndices, getSilhouetteImageUrl, getSilhouettes, GRID_SIZE } from '@/src/features/silhouette/silhouette';
 
 // Layout Shared Components
-import { Header } from '@/src/shared/layout/Header';
-import { Divider } from '@/src/shared/layout/Divider';
-import { SubHeader } from '@/src/shared/layout/SubHeader';
+import { Header } from '@/src/shared/ui/layout/Header';
+import { Divider } from '@/src/shared/ui/layout/Divider';
+import { SubHeader } from '@/src/shared/ui/layout/SubHeader';
 import { ModeBadge } from '@/src/shared/ui/game-selector/ModeBadge';
 import Sealed from '@/src/shared/ui/Sealed';
 import { FEATURE_FLAGS } from '@/src/config/feature.flags';

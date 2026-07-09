@@ -7,9 +7,9 @@ import { useCharacterGame } from '@/src/features/character/hooks/unlimited/useCh
 import { getCharacters } from '@/src/features/character/character';
 import { CharacterSummaryGuess } from '@/src/features/character/components/shared/CharacterSummaryGuess';
 import { CharacterHowToPlayModal } from '@/src/features/character/components/shared/CharacterHowToPlayModal';
-import { Header } from '@/src/shared/layout/Header';
-import { Divider } from '@/src/shared/layout/Divider';
-import { SubHeader } from '@/src/shared/layout/SubHeader';
+import { Header } from '@/src/shared/ui/layout/Header';
+import { Divider } from '@/src/shared/ui/layout/Divider';
+import { SubHeader } from '@/src/shared/ui/layout/SubHeader';
 import Central46ConfidentialArchive from '@/src/shared/ui/Central46ConfidentialArchive';
 import Sealed from '@/src/shared/ui/Sealed';
 import { FEATURE_FLAGS } from '@/src/config/feature.flags';
@@ -112,8 +112,8 @@ export default function UnlimitedCharacterGame() {
         const completed = completedData.unlimited || [];
         setIsGameCompleted(characters.length > 0 && completed.length >= characters.length);
 
-        const registryData = JSON.parse(localStorage.getItem(STORAGE_KEYS.CHARACTER_REGISTRY) || '{}');
-        const registry = registryData.unlimited || { name: "", count: 0 };
+        const registryData = JSON.parse(localStorage.getItem(STORAGE_KEYS.SOUL_REGISTRY) || '{}');
+        const registry = registryData.character || { name: "", count: 0 };
         if (registry.name) {
             setSoulName(registry.name);
         }
@@ -163,26 +163,26 @@ export default function UnlimitedCharacterGame() {
         e.preventDefault();
         if (!inputName.trim()) return;
 
-        const registryData = JSON.parse(localStorage.getItem(STORAGE_KEYS.CHARACTER_REGISTRY) || '{}');
-        const currentRegistry = registryData.unlimited || { name: "", count: 0 };
+        const registryData = JSON.parse(localStorage.getItem(STORAGE_KEYS.SOUL_REGISTRY) || '{}');
+        const currentRegistry = registryData.character || { name: "", count: 0 };
         const updated = { ...currentRegistry, name: inputName.trim() };
 
-        registryData.unlimited = updated;
-        localStorage.setItem(STORAGE_KEYS.CHARACTER_REGISTRY, JSON.stringify(registryData));
+        registryData.character = updated;
+        localStorage.setItem(STORAGE_KEYS.SOUL_REGISTRY, JSON.stringify(registryData));
         setSoulName(inputName.trim());
     };
 
     const handleHardReset = () => {
         resetStreakKeepMax();
 
-        const registryData = JSON.parse(localStorage.getItem(STORAGE_KEYS.CHARACTER_REGISTRY) || '{}');
-        const currentRegistry = registryData.unlimited || { name: "", count: 0 };
-        registryData.unlimited = {
+        const registryData = JSON.parse(localStorage.getItem(STORAGE_KEYS.SOUL_REGISTRY) || '{}');
+        const currentRegistry = registryData.character || { name: "", count: 0 };
+        registryData.character = {
             ...currentRegistry,
             count: (currentRegistry.count || 0) + 1
         };
-        localStorage.setItem(STORAGE_KEYS.CHARACTER_REGISTRY, JSON.stringify(registryData));
-        setReincarnationCount(registryData.unlimited.count);
+        localStorage.setItem(STORAGE_KEYS.SOUL_REGISTRY, JSON.stringify(registryData));
+        setReincarnationCount(registryData.character.count);
 
         hardReset();
     };

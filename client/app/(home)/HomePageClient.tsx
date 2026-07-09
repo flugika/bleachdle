@@ -4,7 +4,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { useSenkaimon } from "@/src/shared/ui/context/NavigationContext";
-import { HeaderDivider } from "@/src/shared/layout/HeaderDivider";
+import { HeaderDivider } from "@/src/shared/ui/layout/HeaderDivider";
 import SoulSyncLoader from "@/src/shared/ui/loader/SoulSyncLoader";
 import { ModeSelectorModal, GameMode } from "@/src/shared/ui/game-selector/ModeSelectorModal";
 import { MODE_ACCENT } from "@/src/config/mode";
@@ -160,72 +160,6 @@ export default function HomePageClient({ initialStats }: HomePageClientProps) {
 
     return (
         <div className="relative w-full min-h-[100vh] flex flex-col items-center justify-center overflow-hidden px-4 md:px-8 select-none pt-16">
-
-            {/* ================= 🎬 CUSTOM KEYFRAMES (namespaced bd-*, reduced-motion aware) ================= */}
-            <style>{`
-                @keyframes bd-float {
-                    0% { transform: translateY(0); opacity: 0; }
-                    8% { opacity: 0.7; }
-                    92% { opacity: 0.25; }
-                    100% { transform: translateY(-115vh); opacity: 0; }
-                }
-                @keyframes bd-ring { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
-                @keyframes bd-ring-rev { from { transform: rotate(360deg); } to { transform: rotate(0deg); } }
-                @keyframes bd-scan {
-                    0% { transform: translateY(-100%); opacity: 0; }
-                    15% { opacity: 0.5; }
-                    55% { opacity: 0.25; }
-                    100% { transform: translateY(650%); opacity: 0; }
-                }
-                @keyframes bd-flicker {
-                    0% { opacity: 0; filter: blur(10px); }
-                    8% { opacity: 0.25; }
-                    11% { opacity: 0; }
-                    22% { opacity: 0.6; filter: blur(6px); }
-                    26% { opacity: 0.05; }
-                    38% { opacity: 1; filter: blur(0px); }
-                    100% { opacity: 1; filter: blur(0px); }
-                }
-                @keyframes bd-shimmer {
-                    0% { transform: translateX(-160%) skewX(-20deg); }
-                    28% { transform: translateX(260%) skewX(-20deg); }
-                    100% { transform: translateX(260%) skewX(-20deg); }
-                }
-                @keyframes bd-aura {
-                    0%, 100% { opacity: 0.55; transform: scale(1); }
-                    50% { opacity: 0.9; transform: scale(1.045); }
-                }
-                @keyframes bd-seal-breathe {
-                    0%, 100% {
-                        box-shadow: 0 10px 40px rgba(200,169,110,0.35), 0 0 0 0 rgba(200,169,110,0);
-                    }
-                    50% {
-                        box-shadow: 0 18px 65px rgba(200,169,110,0.55), 0 0 40px 8px rgba(200,169,110,0.18);
-                    }
-                }
-                @keyframes bd-seal-spin {
-                    from { transform: rotate(0deg); }
-                    to { transform: rotate(360deg); }
-                }
-                @keyframes bd-seal-spin-rev {
-                    from { transform: rotate(360deg); }
-                    to { transform: rotate(0deg); }
-                }
-                @keyframes bd-ember-rise {
-                    0% { transform: translateY(0) scale(0.8); opacity: 0; }
-                    12% { opacity: 0.9; }
-                    85% { opacity: 0.35; }
-                    100% { transform: translateY(-140px) scale(0.4); opacity: 0; }
-                }
-                @keyframes bd-rune-fade {
-                    0%, 100% { opacity: 0.5; }
-                    50% { opacity: 1; }
-                }
-                @media (prefers-reduced-motion: reduce) {
-                    .bd-anim { animation: none !important; }
-                }
-            `}</style>
-
             {/* ================= 🛰️ FIXED HUD FRAME (desktop only, ambient chrome) ================= */}
             {/* Incantation rings — tighter + independently paced vs. the ambient background rings */}
             <svg
@@ -252,16 +186,16 @@ export default function HomePageClient({ initialStats }: HomePageClientProps) {
                     );
                 })}
             </svg>
-            <div className="fixed top-5 left-5 z-30 hidden lg:flex items-center gap-2 text-[9px] font-mono tracking-[0.3em] text-[#c8a96e]/50 pointer-events-none">
+            <div className="fixed top-3.5 left-7 z-30 hidden lg:flex items-center gap-2 text-[9px] font-mono tracking-[0.3em] text-[#c8a96e]/50 pointer-events-none">
                 <span className="w-6 h-px bg-[#c8a96e]/50" /> SYS.ONLINE
             </div>
-            <div className="fixed top-5 right-5 z-30 hidden lg:flex items-center gap-2 text-[9px] font-mono tracking-[0.3em] text-[#c8a96e]/50 pointer-events-none">
+            <div className="fixed top-3.5 right-7 z-30 hidden lg:flex items-center gap-2 text-[9px] font-mono tracking-[0.3em] text-[#c8a96e]/50 pointer-events-none">
                 SENKAIMON.GATE <span className="w-6 h-px bg-[#c8a96e]/50" />
             </div>
-            <div className="fixed bottom-5 left-5 z-30 hidden lg:block text-[9px] font-mono tracking-[0.3em] text-white/30 pointer-events-none">
+            <div className="fixed bottom-3.5 left-7 z-30 hidden lg:block text-[9px] font-mono tracking-[0.3em] text-white/30 pointer-events-none">
                 LAT_35.68 // LON_139.69
             </div>
-            <div className="fixed bottom-5 right-5 z-30 hidden lg:block text-[9px] font-mono tracking-[0.3em] text-white/30 pointer-events-none">
+            <div className="fixed bottom-3.5 right-7 z-30 hidden lg:block text-[9px] font-mono tracking-[0.3em] text-white/30 pointer-events-none">
                 REIATSU.LINK // STABLE
             </div>
 
@@ -318,7 +252,7 @@ export default function HomePageClient({ initialStats }: HomePageClientProps) {
                 <div className="relative w-full">
                     {/* glow duplicate sits behind the real title for depth */}
                     <h1
-                        className="relative text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-black tracking-[0.2em] pl-[0.2em] text-transparent bg-gradient-to-r from-[#c8a96e] via-[#f5ebd5] to-[#c8a96e] bg-clip-text drop-shadow-[0_0_60px_rgba(255,255,255,0.2)] select-text whitespace-nowrap text-center block w-full"
+                        className="relative text-3xl min-[400px]:text-4xl sm:text-6xl md:text-7xl lg:text-8xl font-black tracking-[0.2em] pl-[0.2em] text-transparent bg-gradient-to-r from-[#c8a96e] via-[#f5ebd5] to-[#c8a96e] bg-clip-text drop-shadow-[0_0_60px_rgba(255,255,255,0.2)] select-text whitespace-nowrap text-center block w-full"
                         style={{ animation: "bd-flicker 1.7s ease-out" }}
                     >
                         BLEACHDLE
@@ -330,7 +264,7 @@ export default function HomePageClient({ initialStats }: HomePageClientProps) {
                 <div className="relative mt-8 max-w-xl w-full mx-auto group/subtitle">
                     <span className="absolute -left-[5px] top-1/2 -translate-y-1/2 w-1.5 h-1.5 rotate-45 bg-[#c8a96e]/50 group-hover/subtitle:bg-[#c8a96e] transition-colors duration-500" />
                     <span className="absolute -right-[5px] top-1/2 -translate-y-1/2 w-1.5 h-1.5 rotate-45 bg-[#c8a96e]/50 group-hover/subtitle:bg-[#c8a96e] transition-colors duration-500" />
-                    <p className="relative overflow-hidden text-[13px] md:text-sm font-mono tracking-[0.45em] uppercase border-y border-white/10 py-5 backdrop-blur-sm bg-black/20">
+                    <p className="relative overflow-hidden text-[10px] sm:text-[13px] md:text-sm font-mono tracking-[0.45em] uppercase border-y border-white/10 py-5 backdrop-blur-sm bg-black/20">
                         <span className="pointer-events-none absolute inset-y-0 left-[-45%] w-1/3 bg-gradient-to-r from-transparent via-[#c8a96e]/20 to-transparent skew-x-[-20deg] animate-[subtitle-scan_4.5s_ease-in-out_infinite]" />
                         <span className="relative text-[#c8a96e]/90">THOUSAND-YEAR BLOOD WAR</span>
                         <br />
@@ -344,7 +278,7 @@ export default function HomePageClient({ initialStats }: HomePageClientProps) {
                 rising embers, a breathing gold aura and a double-bordered "sealed blade"
                 button. Everything reuses the page's existing bd-* animation vocabulary
                 so it reads as part of the same world instead of a bolted-on widget. */}
-            <div className="relative z-20 flex flex-col items-center gap-4 w-full max-w-md px-4 mb-4 group/seal">
+            <div className="relative z-20 flex flex-col items-center gap-4 w-full max-w-md px-4 mb-10 md:mb-12 group/seal">
                 {/* Faint bankai kanji, glowing softly at the seal's core */}
                 <div
                     className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-8xl md:text-9xl font-black text-[#c8a96e]/[0.05] select-none pointer-events-none z-0 bd-anim"
@@ -468,22 +402,57 @@ export default function HomePageClient({ initialStats }: HomePageClientProps) {
 
             </div> */}
 
-            {/* Rotating dimensional-gate rings behind the hero */}
-            <svg
-                className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-111 w-[600px] h-[600px] max-w-[95vw] max-h-[95vw] pointer-events-none z-0 opacity-[0.3]"
-                viewBox="0 0 200 200"
-                aria-hidden="true"
-            >
-                <circle cx="100" cy="100" r="92" fill="none" stroke="#c8a96e" strokeWidth="0.5" strokeDasharray="2 6" className="origin-center bd-anim" style={{ animation: "bd-ring 70s linear infinite", transformBox: "fill-box" }} />
-                <circle cx="100" cy="100" r="76" fill="none" stroke="#c8a96e" strokeWidth="0.4" strokeDasharray="1 5" className="origin-center bd-anim" style={{ animation: "bd-ring-rev 46s linear infinite", transformBox: "fill-box" }} />
-            </svg>
+            {/* ================= 🔄 SYNC STATUS STRIP =================
+                Reuses the HeaderDivider vocabulary (gradient line + diamond
+                node) but the flanking lines are pinned to the circle's own
+                vertical center, so the ring reads as the divider's centerpiece
+                — a sightline running through it — rather than a spinner
+                floating alone in empty space between two sections. */}
+            <div className="relative z-10 flex flex-col items-center w-full max-w-2xl px-4 mb-10 md:mb-12">
+                <span
+                    className="text-[8px] md:text-[9px] font-mono tracking-[0.4em] uppercase text-[#c8a96e]/40 mb-4"
+                    aria-hidden="true"
+                >
+                    霊魂同期 // soul sync
+                </span>
 
-            <SoulSyncLoader hideLabel className="mt-0 mb-6" />
+                <div className="relative w-full flex items-center justify-center">
+                    {/* Decorative gate rings — centered exactly on the circle below,
+                        not on some distant ancestor, so the two ring motifs read as
+                        one deliberate emblem instead of two unrelated overlays. */}
+                    <svg
+                        className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-[320px] max-h-[320px] md:max-w-[400px] md:max-h-[400px] pointer-events-none z-0 opacity-[0.35]"
+                        viewBox="0 0 200 200"
+                        aria-hidden="true"
+                    >
+                        <circle cx="100" cy="100" r="92" fill="none" stroke="#c8a96e" strokeWidth="0.5" strokeDasharray="2 6" className="origin-center bd-anim" style={{ animation: "bd-ring 70s linear infinite", transformBox: "fill-box" }} />
+                        <circle cx="100" cy="100" r="76" fill="none" stroke="#c8a96e" strokeWidth="0.4" strokeDasharray="1 5" className="origin-center bd-anim" style={{ animation: "bd-ring-rev 46s linear infinite", transformBox: "fill-box" }} />
+                    </svg>
+
+                    {/* Sightline running through the circle's vertical center */}
+                    <div className="absolute inset-x-0 top-1/2 -translate-y-1/2 flex items-center gap-3 px-2" aria-hidden="true">
+                        <div className="flex-1 h-px bg-gradient-to-r from-transparent via-[#c8a96e]/50 to-[#c8a96e]/25" />
+                        <div className="w-1.5 h-1.5 rotate-45 border border-[#c8a96e]/60 bg-[#c8a96e]/20 flex-shrink-0" />
+                        <div className="w-28 flex-shrink-0" />
+                        <div className="w-1.5 h-1.5 rotate-45 border border-[#c8a96e]/60 bg-[#c8a96e]/20 flex-shrink-0" />
+                        <div className="flex-1 h-px bg-gradient-to-l from-transparent via-[#c8a96e]/50 to-[#c8a96e]/25" />
+                    </div>
+
+                    <SoulSyncLoader hideLabel className="relative z-10 mt-0" />
+                </div>
+
+                <span
+                    className="text-[8px] md:text-[9px] font-mono tracking-[0.35em] uppercase text-[#c8a96e]/25 mt-4"
+                    aria-hidden="true"
+                >
+                    卍　central46 // reiatsu link stable　卍
+                </span>
+            </div>
 
             {/* ================= 📖 ABOUT / WHAT IS BLEACHDLE SECTION ================= */}
             <div className="relative z-20 w-full max-w-5xl px-4 pb-16 group/main">
                 {/* 📦 Main Outer Container Panel — (ถอด overflow-hidden ออกเพื่อให้ Badge ล้นได้อิสระ) */}
-                <div className="relative border border-[#c8a96e]/20 bg-gradient-to-b from-[#0d0b06] to-[#030305] p-8 md:p-12 shadow-[0_25px_70px_rgba(0,0,0,0.85),inset_0_1px_1px_rgba(255,255,255,0.03)] transition-all duration-500 hover:border-[#c8a96e]/40">
+                <div className="relative border border-[#c8a96e]/20 bg-gradient-to-b from-[#0d0b06] to-[#030305] p-6 sm:p-8 md:p-12 shadow-[0_25px_70px_rgba(0,0,0,0.85),inset_0_1px_1px_rgba(255,255,255,0.03)] transition-all duration-500 hover:border-[#c8a96e]/40">
 
                     {/* ✨ Isolate Background Aura Layer — ย้าย overflow-hidden มาไว้ตรงนี้เพื่อคุมเฉพาะแสงฟลักซ์ไม่ให้ทะลักออกนอกจอ */}
                     <div className="absolute inset-0 overflow-hidden pointer-events-none z-0">
@@ -494,7 +463,7 @@ export default function HomePageClient({ initialStats }: HomePageClientProps) {
                     </div>
 
                     {/* 🔖 Floating Header Badge — ปลดปล่อยขีดจำกัด! ลอยพ้นขอบบนได้เต็มตัวแล้ว */}
-                    <div className="absolute top-0 left-8 -translate-y-1/2 z-20">
+                    <div className="absolute top-0 left-4 md:left-8 -translate-y-1/2 z-20">
                         <span className="inline-flex items-center gap-1.5 bg-[#c8a96e] text-black text-[9px] font-mono font-bold tracking-[0.25em] uppercase px-3 py-1 shadow-[0_4px_20px_rgba(200,169,110,0.4)]">
                             <span className="w-1.5 h-1.5 bg-black rounded-full animate-pulse" /> CORE_DATABASE
                         </span>
@@ -522,18 +491,14 @@ export default function HomePageClient({ initialStats }: HomePageClientProps) {
                         What is Bleachdle?
                     </h3>
 
-                    <p className="relative z-10 text-[14.5px] md:text-sm text-neutral-400 font-light leading-relaxed max-w-4xl mb-4">
-                        Welcome to <span className="font-bold text-white tracking-wide">Bleachdle</span>, the ultimate <span className="text-neutral-200 font-medium">daily trivia challenge</span> crafted for the Bleach community.
-                        Test your <em className="italic text-neutral-300">spiritual pressure</em> and lore knowledge against a vast archive of
-                        {" "}<span className="text-[#c8a96e] font-medium">Soul Reapers</span>, <span className="text-[#c8a96e] font-medium">Arrancars</span>, and <span className="text-[#c8a96e] font-medium">Quincy</span>.
-                        Whether you are analyzing <span className="text-white font-medium">character attributes</span>, decoding <span className="text-white font-medium">visual silhouettes</span>,
-                        tracking <span className="text-white font-medium">iconic quotes</span>, or listening closely to distinct <span className="text-white font-medium">Zanpakuto release commands</span>
-                        {" "}and <span className="text-white font-medium">soundtracks</span>—each mode brings a unique way to prove your expertise.
+                    <p className="relative z-10 text-[13px] sm:text-sm text-neutral-400 font-light leading-relaxed max-w-4xl mb-4">
+                        Welcome to <span className="font-bold text-white tracking-wide">Bleachdle</span>, the daily trivia challenge for the Bleach community.
+                        Test your knowledge of <span className="text-[#c8a96e] font-medium">Soul Reapers</span>, <span className="text-[#c8a96e] font-medium">Arrancars</span>, and <span className="text-[#c8a96e] font-medium">Quincy</span> across
+                        {" "}six modes: <span className="text-white font-medium">character</span>, <span className="text-white font-medium">quote</span>, <span className="text-white font-medium">silhouette</span>, <span className="text-white font-medium">emoji</span>, <span className="text-white font-medium">song</span>, and <span className="text-white font-medium">release</span>.
                     </p>
 
-                    <p className="relative z-10 text-[14.5px] md:text-sm text-neutral-400 font-light leading-relaxed max-w-4xl mb-10">
-                        <span className="font-semibold text-white">New data entries synchronize daily.</span> Sharpen your senses,
-                        check your <em className="italic text-neutral-300">reishi alignment</em>, and select an operational sector below to
+                    <p className="relative z-10 text-[13px] sm:text-sm text-neutral-400 font-light leading-relaxed max-w-4xl mb-10">
+                        <span className="font-semibold text-white">New puzzles every day.</span> Pick a mode below to
                         {" "}<span className="text-[#c8a96e] font-semibold tracking-wide">initiate the Senkaimon protocol</span>.
                     </p>
 

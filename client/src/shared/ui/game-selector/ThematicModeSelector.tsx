@@ -7,7 +7,7 @@ import { FEATURE_FLAGS } from "@/src/config/feature.flags";
 import { ModeType, SubFeatureKey } from "@/src/config/mode";
 import { useSenkaimon } from "@/src/shared/ui/context/NavigationContext";
 import { BL_MODES_METADATA } from "@/src/config/mode";
-import { HeaderDivider } from "../../layout/HeaderDivider";
+import { HeaderDivider } from "../layout/HeaderDivider";
 
 interface ThematicModeSelectorProps {
     modeType: ModeType;

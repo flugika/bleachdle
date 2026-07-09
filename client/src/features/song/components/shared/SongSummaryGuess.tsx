@@ -7,6 +7,7 @@ import { CHARACTER_TIERS } from '@/src/const/summary';
 import { DailyResetTimer } from '@/src/shared/ui/DailyResetTimer';
 import { SongGuessEntry } from '@/src/features/song/types';
 import { BleachSong } from '@/src/entities/song/schema';
+import { useSongTier } from '@/src/shared/hooks/useBadgeTier';
 
 interface SongSummaryGuessProps {
     isOpen: boolean;
@@ -37,9 +38,7 @@ export const SongSummaryGuess = ({
 
     if (!isOpen) return null;
 
-    const activeTier = useMemo(() => {
-        return CHARACTER_TIERS.find(t => stats.maxStreak >= t.min) || CHARACTER_TIERS[CHARACTER_TIERS.length - 1];
-    }, [stats.maxStreak]);
+    const activeTier = useSongTier(stats.maxStreak);
 
     const cardBgStyle = isWin
         ? "bg-gradient-to-b from-[#281508] via-[#0f0a07] to-[#0a0705] border-[#d47a2a]/45 shadow-[0_0_50px_rgba(212,122,42,0.25)] ring-1 ring-[#d47a2a]/10"

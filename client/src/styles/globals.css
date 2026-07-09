@@ -1,10 +1,6 @@
 @import "tailwindcss";
 /* @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600&family=Shippori+Mincho:wght@800&display=swap'); */
 
-body {
-  font-family: var(--font-geist-sans), Arial, Helvetica, sans-serif;
-}
-
 .font-display {
   font-family: var(--font-cinzel), serif;
 }
@@ -14,7 +10,20 @@ body {
   /* หรือ 700 ถ้ายังไม่พอ */
   letter-spacing: 0.08em;
   /* ลด tracking ลงจากเดิมถ้าเดิมกว้างเกิน */
-  text-shadow: 0 0 1px rgba(0,0,0,0.8), 0 1px 4px rgba(0,0,0,0.6);
+  text-shadow: 0 0 1px rgba(0, 0, 0, 0.8), 0 1px 4px rgba(0, 0, 0, 0.6);
+}
+
+body {
+  font-family: var(--font-geist-sans), Arial, Helvetica, sans-serif;
+  background-color: #050507 !important;
+  /* รวมมาจากด้านบน */
+  color: var(--foreground);
+  background-image: var(--bg-image);
+  background-size: cover;
+  background-position: center;
+  background-attachment: fixed;
+  background-repeat: no-repeat;
+  transition: background-image 1s ease-in-out;
 }
 
 :root {
@@ -22,8 +31,7 @@ body {
   --foreground: #171717;
 }
 
-html,
-body {
+html {
   background-color: #050507;
   /* หรือสีดำเข้มที่สุดที่คุณใช้ในธีม */
   color: #ffffff;
@@ -31,8 +39,7 @@ body {
 
 /* ป้องกันจังหวะขาววาบจากตัว Browser Default */
 #root,
-#__next,
-body {
+#__next {
   background-color: #050507 !important;
 }
 
@@ -48,19 +55,6 @@ body {
     --background: #0a0a0a;
     --foreground: #ededed;
   }
-}
-
-body {
-  /* background: var(--background); */
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
-  background-image: var(--bg-image);
-  background-size: cover;
-  background-position: center;
-  background-attachment: fixed;
-  background-repeat: no-repeat;
-  transition: background-image 1s ease-in-out;
-  /* เพิ่มลูกเล่นให้เปลี่ยนภาพนุ่มนวลขึ้น */
 }
 
 /* สร้าง Overlay เพื่อให้ตัวหนังสืออ่านง่ายขึ้น */
@@ -1071,18 +1065,6 @@ button *:active,
   }
 }
 
-@keyframes song-eq {
-
-  0%,
-  100% {
-    transform: scaleY(0.4);
-  }
-
-  50% {
-    transform: scaleY(1);
-  }
-}
-
 @keyframes reiatsuShake {
 
   0%,
@@ -1442,18 +1424,6 @@ button *:active,
   }
 }
 
-@media (prefers-reduced-motion: reduce) {
-
-  .kido-aura,
-  .kido-spin-slow,
-  .kido-spin-cw,
-  .kido-spin-ccw,
-  .kido-pulse,
-  .kido-sparkle {
-    animation: none;
-  }
-}
-
 .kido-emblem {
   animation: kido-emblem-glow 3s ease-in-out infinite;
 }
@@ -1467,12 +1437,6 @@ button *:active,
 
   50% {
     text-shadow: 0 0 24px rgba(200, 169, 110, 0.75);
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .kido-emblem {
-    animation: none;
   }
 }
 
@@ -1579,4 +1543,640 @@ button *:active,
     transform: translateY(-8vh) translateX(7px) scale(0.3);
     opacity: 0;
   }
+}
+
+/* ── FIXED & OPTIMIZED AUDIO EQUALIZER ── */
+@keyframes song-eq {
+  0% {
+    transform: scaleY(0.2);
+  }
+
+  100% {
+    transform: scaleY(1.1);
+  }
+}
+
+@keyframes reiatsu-float {
+  0% {
+    transform: translateY(0) scale(1);
+    opacity: 0;
+  }
+
+  15% {
+    opacity: 0.45;
+  }
+
+  85% {
+    opacity: 0.25;
+  }
+
+  100% {
+    transform: translateY(-50px) scale(0.5);
+    opacity: 0;
+  }
+}
+
+.reiatsu-particle {
+  animation-name: reiatsu-float;
+  animation-timing-function: ease-in-out;
+  animation-iteration-count: infinite;
+  box-shadow: 0 0 5px 1px rgba(200, 169, 110, 0.4);
+}
+
+@keyframes seal-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.seal-ring-loading {
+  background: conic-gradient(from 0deg, rgba(200, 169, 110, 0.85), rgba(200, 169, 110, 0) 70%);
+  -webkit-mask: radial-gradient(farthest-side, transparent calc(100% - 2px), #000 calc(100% - 2px));
+  mask: radial-gradient(farthest-side, transparent calc(100% - 2px), #000 calc(100% - 2px));
+  animation: seal-spin 0.9s linear infinite;
+}
+
+@keyframes seal-glow-pulse {
+
+  0%,
+  100% {
+    box-shadow: 0 0 0 1px rgba(200, 169, 110, 0.25);
+    opacity: 0.7;
+  }
+
+  50% {
+    box-shadow: 0 0 0 1px rgba(200, 169, 110, 0.5), 0 0 10px rgba(200, 169, 110, 0.2);
+    opacity: 1;
+  }
+}
+
+.seal-ring-ready {
+  animation: seal-glow-pulse 2s ease-in-out infinite;
+}
+
+/* 💥 NEW EFFECT: คลื่นวงแหวนวิญญาณระเบิดฟุ้งออกตอนกระแทกนิ้วลงไป */
+@keyframes shockwave-burst {
+  0% {
+    transform: scale(0.9);
+    opacity: 1;
+    box-shadow: 0 0 0 0px rgba(200, 169, 110, 0.8), inset 0 0 0 0px rgba(200, 169, 110, 0.5);
+  }
+
+  100% {
+    transform: scale(1.6);
+    opacity: 0;
+    box-shadow: 0 0 20px 4px rgba(200, 169, 110, 0), inset 0 0 10px 2px rgba(200, 169, 110, 0);
+  }
+}
+
+.seal-ring-burst {
+  border: 2px solid rgba(200, 169, 110, 0.6);
+  animation: shockwave-burst 0.55s cubic-bezier(0.1, 0.8, 0.15, 1) forwards;
+  pointer-events: none;
+}
+
+@keyframes seal-active-loop {
+
+  0%,
+  100% {
+    box-shadow: 0 0 10px 1px rgba(200, 169, 110, 0.25);
+    transform: rotate(0deg);
+  }
+
+  50% {
+    box-shadow: 0 0 18px 3px rgba(200, 169, 110, 0.45);
+  }
+
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+.seal-ring-active {
+  border: 1px dashed rgba(200, 169, 110, 0.4);
+  animation: seal-active-loop 8s linear infinite;
+}
+
+@keyframes flat-blink {
+
+  0%,
+  100% {
+    opacity: 1;
+  }
+
+  50% {
+    opacity: 0.5;
+  }
+}
+
+.reiatsu-slider {
+  -webkit-appearance: none;
+  appearance: none;
+  outline: none;
+}
+
+.reiatsu-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 10px;
+  height: 10px;
+  border-radius: 9999px;
+  background: #c8a96e;
+  border: 1px solid #0d0d12;
+  cursor: pointer;
+  transition: transform 0.15s, background-color 0.15s;
+}
+
+.reiatsu-slider::-webkit-slider-thumb:hover {
+  transform: scale(1.3);
+  background: #ffffff;
+  box-shadow: 0 0 8px rgba(200, 169, 110, 0.8);
+}
+
+.reiatsu-slider::-moz-range-thumb {
+  width: 10px;
+  height: 10px;
+  border-radius: 9999px;
+  background: #c8a96e;
+  border: 1px solid #0d0d12;
+  cursor: pointer;
+  transition: transform 0.15s, background-color 0.15s;
+}
+
+.reiatsu-slider::-moz-range-thumb:hover {
+  transform: scale(1.3);
+  background: #ffffff;
+  box-shadow: 0 0 8px rgba(200, 169, 110, 0.8);
+}
+
+
+@keyframes bd-countdown-flicker {
+
+  0%,
+  100% {
+    opacity: 1;
+  }
+
+  42% {
+    opacity: 0.55;
+  }
+
+  46% {
+    opacity: 1;
+  }
+
+  58% {
+    opacity: 0.7;
+  }
+
+  62% {
+    opacity: 1;
+  }
+}
+
+.bd-countdown-flicker {
+  animation: bd-countdown-flicker 2.4s ease-in-out infinite;
+}
+
+@keyframes bd-float {
+  0% {
+    transform: translateY(0);
+    opacity: 0;
+  }
+
+  8% {
+    opacity: 0.7;
+  }
+
+  92% {
+    opacity: 0.25;
+  }
+
+  100% {
+    transform: translateY(-115vh);
+    opacity: 0;
+  }
+}
+
+@keyframes bd-ring {
+  from {
+    transform: rotate(0deg);
+  }
+
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes bd-ring-rev {
+  from {
+    transform: rotate(360deg);
+  }
+
+  to {
+    transform: rotate(0deg);
+  }
+}
+
+@keyframes bd-scan {
+  0% {
+    transform: translateY(-100%);
+    opacity: 0;
+  }
+
+  15% {
+    opacity: 0.5;
+  }
+
+  55% {
+    opacity: 0.25;
+  }
+
+  100% {
+    transform: translateY(650%);
+    opacity: 0;
+  }
+}
+
+@keyframes bd-flicker {
+  0% {
+    opacity: 0;
+    filter: blur(10px);
+  }
+
+  8% {
+    opacity: 0.25;
+  }
+
+  11% {
+    opacity: 0;
+  }
+
+  22% {
+    opacity: 0.6;
+    filter: blur(6px);
+  }
+
+  26% {
+    opacity: 0.05;
+  }
+
+  38% {
+    opacity: 1;
+    filter: blur(0px);
+  }
+
+  100% {
+    opacity: 1;
+    filter: blur(0px);
+  }
+}
+
+@keyframes bd-shimmer {
+  0% {
+    transform: translateX(-160%) skewX(-20deg);
+  }
+
+  28% {
+    transform: translateX(260%) skewX(-20deg);
+  }
+
+  100% {
+    transform: translateX(260%) skewX(-20deg);
+  }
+}
+
+@keyframes bd-aura {
+
+  0%,
+  100% {
+    opacity: 0.55;
+    transform: scale(1);
+  }
+
+  50% {
+    opacity: 0.9;
+    transform: scale(1.045);
+  }
+}
+
+@keyframes bd-seal-breathe {
+
+  0%,
+  100% {
+    box-shadow: 0 10px 40px rgba(200, 169, 110, 0.35), 0 0 0 0 rgba(200, 169, 110, 0);
+  }
+
+  50% {
+    box-shadow: 0 18px 65px rgba(200, 169, 110, 0.55), 0 0 40px 8px rgba(200, 169, 110, 0.18);
+  }
+}
+
+@keyframes bd-seal-spin {
+  from {
+    transform: rotate(0deg);
+  }
+
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes bd-seal-spin-rev {
+  from {
+    transform: rotate(360deg);
+  }
+
+  to {
+    transform: rotate(0deg);
+  }
+}
+
+@keyframes bd-ember-rise {
+  0% {
+    transform: translateY(0) scale(0.8);
+    opacity: 0;
+  }
+
+  12% {
+    opacity: 0.9;
+  }
+
+  85% {
+    opacity: 0.35;
+  }
+
+  100% {
+    transform: translateY(-140px) scale(0.4);
+    opacity: 0;
+  }
+}
+
+@keyframes bd-rune-fade {
+
+  0%,
+  100% {
+    opacity: 0.5;
+  }
+
+  50% {
+    opacity: 1;
+  }
+}
+
+@keyframes bd-scan-sweep {
+  0% {
+    transform: translateX(-600%);
+    opacity: 0;
+  }
+
+  8% {
+    opacity: 1;
+  }
+
+  50% {
+    opacity: 1;
+  }
+
+  92% {
+    opacity: 0;
+  }
+
+  100% {
+    transform: translateX(600%);
+    opacity: 0;
+  }
+}
+
+@keyframes bd-empty-breathe {
+
+  0%,
+  100% {
+    opacity: 0.35;
+    transform: scale(1);
+  }
+
+  50% {
+    opacity: 0.7;
+    transform: scale(1.04);
+  }
+}
+
+@keyframes bd-empty-flicker {
+
+  0%,
+  100% {
+    opacity: 1;
+  }
+
+  88% {
+    opacity: 1;
+  }
+
+  90% {
+    opacity: 0.4;
+  }
+
+  92% {
+    opacity: 1;
+  }
+
+  95% {
+    opacity: 0.6;
+  }
+
+  97% {
+    opacity: 1;
+  }
+}
+
+.bd-empty-flicker {
+  animation: bd-empty-flicker 5s ease-in-out infinite;
+}
+
+@keyframes bd-panel-breathe {
+
+  0%,
+  100% {
+    opacity: 0.4;
+    transform: scale(1);
+  }
+
+  50% {
+    opacity: 0.62;
+    transform: scale(1.03);
+  }
+}
+
+@keyframes bd-hanko-approach {
+  0% {
+    transform: translateY(-40px) scale(0.6) rotate(-18deg);
+    opacity: 0;
+  }
+
+  100% {
+    transform: translateY(0) scale(1.22) rotate(-14deg);
+    opacity: 0.9;
+  }
+}
+
+@keyframes bd-hanko-impact {
+  0% {
+    transform: scale(1.22) rotate(-14deg);
+  }
+
+  45% {
+    transform: scale(0.88) rotate(-6deg);
+  }
+
+  70% {
+    transform: scale(1.05) rotate(-9deg);
+  }
+
+  100% {
+    transform: scale(1) rotate(-7deg);
+  }
+}
+
+@keyframes bd-hanko-shock {
+  0% {
+    transform: scale(0.4);
+    opacity: 0.55;
+  }
+
+  100% {
+    transform: scale(2.4);
+    opacity: 0;
+  }
+}
+
+@keyframes bd-halo-spin {
+  0% {
+    transform: rotate(0deg);
+  }
+
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes bd-sheen-sweep {
+  0% {
+    transform: translateX(-140%) skewX(-18deg);
+  }
+
+  45% {
+    transform: translateX(220%) skewX(-18deg);
+  }
+
+  100% {
+    transform: translateX(220%) skewX(-18deg);
+  }
+}
+
+@keyframes bd-glow-pulse {
+
+  0%,
+  100% {
+    opacity: 0.55;
+  }
+
+  50% {
+    opacity: 0.9;
+  }
+}
+
+@keyframes bd-orbit-warm {
+  0% {
+    transform: translate(-10%, -6%) scale(1);
+  }
+
+  50% {
+    transform: translate(10%, 8%) scale(1.08);
+  }
+
+  100% {
+    transform: translate(-10%, -6%) scale(1);
+  }
+}
+
+@keyframes bd-orbit-cool {
+  0% {
+    transform: translate(10%, 8%) scale(1.04);
+  }
+
+  50% {
+    transform: translate(-10%, -6%) scale(0.96);
+  }
+
+  100% {
+    transform: translate(10%, 8%) scale(1.04);
+  }
+}
+
+.bd-duel-warm,
+.bd-duel-cool {
+  opacity: 0;
+  animation-play-state: paused;
+  transition: opacity 0.4s ease-out;
+}
+
+.group-btn:hover .bd-duel-warm {
+  opacity: 0.85;
+  animation: bd-orbit-warm 5s ease-in-out infinite;
+  animation-play-state: running;
+}
+
+.group-btn:hover .bd-duel-cool {
+  opacity: 0.85;
+  animation: bd-orbit-cool 5.5s ease-in-out infinite;
+  animation-play-state: running;
+}
+
+.bd-cta-sheen {
+  animation: bd-sheen-sweep 4.5s ease-in-out infinite;
+  animation-delay: 1.2s;
+}
+
+.bd-cta-glow {
+  animation: bd-glow-pulse 3.2s ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+
+  /* กลุ่มที่ 1: ปิดแอนิเมชันแบบปกติ (ไม่มี !important) */
+  .kido-aura,
+  .kido-spin-slow,
+  .kido-spin-cw,
+  .kido-spin-ccw,
+  .kido-pulse,
+  .kido-sparkle,
+  .kido-emblem {
+    animation: none;
+  }
+
+  /* กลุ่มที่ 2: บังคับปิดแอนิเมชันขั้นเด็ดขาด (มี !important) */
+  .reiatsu-particle,
+  .seal-ring-loading,
+  .seal-ring-ready,
+  .seal-ring-burst,
+  .seal-ring-active,
+  .bd-anim {
+    animation: none !important;
+  }
+
+  /* กลุ่มที่ 3: บังคับปิดแอนิเมชัน + บังคับให้แสดงผลชัดเจน (opacity: 1) */
+  .bd-countdown-flicker,
+  .bd-empty-scan,
+  .bd-empty-glow,
+  .bd-empty-flicker,
+  .bd-hanko-stamp,
+  .bd-panel-breathe-el,
+  .bd-cta-sheen,
+  .bd-cta-glow,
+  .bd-halo-ring {
+    animation: none !important;
+    opacity: 1 !important;
+  }
+
 }

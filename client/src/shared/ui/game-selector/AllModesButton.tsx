@@ -14,11 +14,11 @@ export function AllModesButton() {
                 <button
                     type="button"
                     onClick={() => setIsOpen(true)}
-                    // 🔮 เพิ่ม group/btn เพื่อสั่งงานลูกๆ ข้างใน และทำกล่อง w-10 h-10 ให้กดง่าย
+                    /* 🎯 FIX: เปลี่ยนจาก group-btn เป็น group/btn เพื่อให้ผูกกับ group-hover/btn ด้านล่างได้สมบูรณ์ */
                     className="group/btn relative w-10 h-10 flex items-center justify-center text-[#c8a96e] hover:text-[#f5ebd5] transition-colors duration-300 hover:cursor-pointer"
                     aria-label="Select game mode"
                 >
-                    {/* ✨ PREMIUM EFFECT: Tech Target Brackets (คลี่ออกเมื่อ Hover) */}
+                    {/* ✨ PREMIUM EFFECT: Tech Target Brackets (คลี่ออกเมื่อ Hover - ธีมสีทอง) */}
                     <div className="absolute inset-0 opacity-0 scale-75 group-hover/btn:opacity-100 group-hover/btn:scale-100 transition-all duration-300 pointer-events-none">
                         <div className="absolute top-0 left-0 w-1.5 h-1.5 border-t border-l border-[#c8a96e]" />
                         <div className="absolute bottom-0 right-0 w-1.5 h-1.5 border-b border-r border-[#c8a96e]" />

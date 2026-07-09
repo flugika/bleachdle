@@ -15,6 +15,15 @@ interface Props {
     guessCount?: number;
     forceReveal?: boolean;
     bgColor?: string;
+    /**
+     * 🆕 When true (and a realImage is available), the component owns its own
+     * reveal state and cross-fades between silhouette ⇄ real image on a timer —
+     * no external toggle button needed. Intended for answer/archive views.
+     * Ignored while a manual `forceReveal` prop is also supplied (that still wins).
+     */
+    autoToggle?: boolean;
+    /** Interval between auto swaps, in ms. Default 3200ms. */
+    autoToggleIntervalMs?: number;
 }
 
 const DEFAULT_BG = '#3E77CF';
@@ -27,11 +36,14 @@ export const SilhouetteImage = ({
     guessCount = 0,
     forceReveal = false,
     bgColor,
+    autoToggle = false,
+    autoToggleIntervalMs = 3200,
 }: Props) => {
     const [internalBg, setInternalBg] = useState(bgColor || DEFAULT_BG);
     const [configReady, setConfigReady] = useState(false);
     const [silhouetteLoaded, setSilhouetteLoaded] = useState(false);
     const [realImageLoaded, setRealImageLoaded] = useState(false);
+    const [autoRevealed, setAutoRevealed] = useState(false); // 🆕 drives the automatic swap
 
     useEffect(() => {
         if (bgColor) {
@@ -115,6 +127,24 @@ export const SilhouetteImage = ({
 
     const isReady = configReady && silhouetteLoaded;
 
+    // 🆕 Auto-toggle loop: once everything needed is loaded, alternate the
+    // "revealed" state on an interval. A manual forceReveal prop still takes
+    // full priority (e.g. gameplay's own explicit reveal-on-win moment).
+    useEffect(() => {
+        if (!autoToggle || forceReveal || !fullCharacterSrc || !isReady || !realImageLoaded) {
+            setAutoRevealed(false);
+            return;
+        }
+
+        const id = setInterval(() => {
+            setAutoRevealed((prev) => !prev);
+        }, autoToggleIntervalMs);
+
+        return () => clearInterval(id);
+    }, [autoToggle, forceReveal, fullCharacterSrc, isReady, realImageLoaded, autoToggleIntervalMs]);
+
+    const effectiveReveal = forceReveal || (autoToggle && autoRevealed);
+
     return (
         <div className="relative w-full max-w-sm aspect-square mx-auto">
 
@@ -176,7 +206,7 @@ export const SilhouetteImage = ({
                 <img
                     src={silhouetteSrc}
                     alt="Target Silhouette Signature"
-                    className={`absolute inset-0 w-full h-full object-cover pointer-events-none select-none filter drop-shadow-[0_0_15px_rgba(0,0,0,0.9)] transition-all duration-700 ease-in-out z-20 ${forceReveal ? 'opacity-0 scale-95 blur-sm' : 'opacity-100 scale-100'
+                    className={`absolute inset-0 w-full h-full object-cover pointer-events-none select-none filter drop-shadow-[0_0_15px_rgba(0,0,0,0.9)] transition-all duration-700 ease-in-out z-20 ${effectiveReveal ? 'opacity-0 scale-95 blur-sm' : 'opacity-100 scale-100'
                         }`}
                     draggable={false}
                 />
@@ -186,7 +216,7 @@ export const SilhouetteImage = ({
                     <img
                         src={fullCharacterSrc}
                         alt="Character Reality Decrypted"
-                        className={`absolute inset-0 w-full h-full object-cover pointer-events-none select-none filter drop-shadow-[0_0_20px_rgba(200,169,110,0.3)] transition-all duration-1000 cubic-bezier(0.16, 1, 0.3, 1) z-30 ${forceReveal && realImageLoaded ? 'opacity-100 scale-100 rotate-0' : 'opacity-0 scale-105 rotate-1'
+                        className={`absolute inset-0 w-full h-full object-cover pointer-events-none select-none filter drop-shadow-[0_0_20px_rgba(200,169,110,0.3)] transition-all duration-1000 cubic-bezier(0.16, 1, 0.3, 1) z-30 ${effectiveReveal && realImageLoaded ? 'opacity-100 scale-100 rotate-0' : 'opacity-0 scale-105 rotate-1'
                             }`}
                         draggable={false}
                     />
@@ -201,7 +231,7 @@ export const SilhouetteImage = ({
                     }}
                 >
                     {Array.from({ length: GRID_SIZE * GRID_SIZE }).map((_, i) => {
-                        const isRevealed = forceReveal || revealed.has(i);
+                        const isRevealed = effectiveReveal || revealed.has(i);
 
                         return (
                             <div

@@ -19,9 +19,9 @@ import { SilhouetteSummaryGuess } from '@/src/features/silhouette/components/sha
 // (copy โครงจาก QuoteHowToPlayModal.tsx แล้วเปลี่ยน example card เป็น SilhouetteImage แทน QuoteGuessCard)
 import { SilhouetteHowToPlayModal } from '@/src/features/silhouette/components/shared/SilhouetteHowToPlayModal';
 
-import { Header } from '@/src/shared/layout/Header';
-import { Divider } from '@/src/shared/layout/Divider';
-import { SubHeader } from '@/src/shared/layout/SubHeader';
+import { Header } from '@/src/shared/ui/layout/Header';
+import { Divider } from '@/src/shared/ui/layout/Divider';
+import { SubHeader } from '@/src/shared/ui/layout/SubHeader';
 import Central46ConfidentialArchive from '@/src/shared/ui/Central46ConfidentialArchive';
 import Sealed from '@/src/shared/ui/Sealed';
 import { FEATURE_FLAGS } from '@/src/config/feature.flags';
@@ -70,7 +70,7 @@ export default function UnlimitedSilhouetteGame() {
     const remainingGuesses = Math.max(0, MAX_UNLIMITED_SILHOUETTE_GUESSES - guesses.length);
 
     // ⚠️ ระบบ soul-name / reincarnation ก็อปมาจาก quote เพื่อ reuse Central46ConfidentialArchive
-    // ต้องเพิ่ม STORAGE_KEYS.SILHOUETTE_REGISTRY ก่อนถึงจะทำงานได้จริง
+    // ต้องเพิ่ม STORAGE_KEYS.SOUL_REGISTRY ก่อนถึงจะทำงานได้จริง
     const [soulName, setSoulName] = useState('');
     const [inputName, setInputName] = useState('');
     const [reincarnationCount, setReincarnationCount] = useState(0);
@@ -116,9 +116,8 @@ export default function UnlimitedSilhouetteGame() {
         const uniqueCharacterIds = new Set(silhouettes.map(s => s.character_id));
         setIsGameCompleted(uniqueCharacterIds.size > 0 && completed.length >= uniqueCharacterIds.size);
 
-        // ⚠️ TODO: ต้องเพิ่ม STORAGE_KEYS.SILHOUETTE_REGISTRY ใน const/localStorage.ts
-        const registryData = JSON.parse(localStorage.getItem(STORAGE_KEYS.SILHOUETTE_REGISTRY) || '{}');
-        const registry = registryData.unlimited || { name: "", count: 0 };
+        const registryData = JSON.parse(localStorage.getItem(STORAGE_KEYS.SOUL_REGISTRY) || '{}');
+        const registry = registryData.silhouette || { name: "", count: 0 };
         if (registry.name) {
             setSoulName(registry.name);
         }
@@ -154,26 +153,26 @@ export default function UnlimitedSilhouetteGame() {
         e.preventDefault();
         if (!inputName.trim()) return;
 
-        const registryData = JSON.parse(localStorage.getItem(STORAGE_KEYS.SILHOUETTE_REGISTRY) || '{}');
-        const currentRegistry = registryData.unlimited || { name: "", count: 0 };
+        const registryData = JSON.parse(localStorage.getItem(STORAGE_KEYS.SOUL_REGISTRY) || '{}');
+        const currentRegistry = registryData.silhouette || { name: "", count: 0 };
         const updated = { ...currentRegistry, name: inputName.trim() };
 
-        registryData.unlimited = updated;
-        localStorage.setItem(STORAGE_KEYS.SILHOUETTE_REGISTRY, JSON.stringify(registryData));
+        registryData.silhouette = updated;
+        localStorage.setItem(STORAGE_KEYS.SOUL_REGISTRY, JSON.stringify(registryData));
         setSoulName(inputName.trim());
     };
 
     const handleHardReset = () => {
         resetStreakKeepMax();
 
-        const registryData = JSON.parse(localStorage.getItem(STORAGE_KEYS.SILHOUETTE_REGISTRY) || '{}');
-        const currentRegistry = registryData.unlimited || { name: "", count: 0 };
-        registryData.unlimited = {
+        const registryData = JSON.parse(localStorage.getItem(STORAGE_KEYS.SOUL_REGISTRY) || '{}');
+        const currentRegistry = registryData.silhouette || { name: "", count: 0 };
+        registryData.silhouette = {
             ...currentRegistry,
             count: (currentRegistry.count || 0) + 1
         };
-        localStorage.setItem(STORAGE_KEYS.SILHOUETTE_REGISTRY, JSON.stringify(registryData));
-        setReincarnationCount(registryData.unlimited.count);
+        localStorage.setItem(STORAGE_KEYS.SOUL_REGISTRY, JSON.stringify(registryData));
+        setReincarnationCount(registryData.silhouette.count);
 
         hardReset();
     };

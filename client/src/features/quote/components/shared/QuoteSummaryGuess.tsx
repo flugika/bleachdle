@@ -9,6 +9,7 @@ import { DailyResetTimer } from '@/src/shared/ui/DailyResetTimer';
 import { QuoteGuessEntry, QuoteTarget } from '@/src/features/quote/types';
 import { QuoteTestimonyDisplay } from './QuoteTestimonyDisplay';
 import { useRaceEmblem } from '@/src/shared/hooks/useRaceEmblem';
+import { useCharacterTier } from '@/src/shared/hooks/useBadgeTier';
 
 interface QuoteSummaryGuessProps {
     isOpen: boolean;
@@ -47,9 +48,7 @@ export const QuoteSummaryGuess = ({
     const answerCharacter = target.character;
     const divider = '━'.repeat(20);
 
-    const activeTier = useMemo(() => {
-        return CHARACTER_TIERS.find(t => stats.maxStreak >= t.min) || CHARACTER_TIERS[CHARACTER_TIERS.length - 1];
-    }, [stats.maxStreak]);
+    const activeTier = useCharacterTier(stats.maxStreak);
 
     // 🔮 Same watermark effect as CharacterSummaryGuess, driven by the
     // revealed speaker's race instead of the guessed target directly.

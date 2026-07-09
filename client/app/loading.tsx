@@ -4,7 +4,7 @@ import ZangetsuLoader from '@/src/shared/ui/loader/ZangetsuLoader';
 
 export default function LoadingPreview() {
     return (
-        <div className="fixed inset-0 z-50 flex flex-col items-center justify-center w-screen h-screen bg-[#020205] text-white overflow-hidden select-none">
+        <div className="fixed inset-0 z-[60] flex flex-col items-center justify-center w-screen h-screen bg-[#020205] text-white overflow-hidden select-none">
 
             {/* 🌌 [BOTTOM ZONE: z-0] เลเยอร์พื้นหลังและแสงเงา (ต้องอยู่ใต้สุดเพื่อไม่ให้บังตัวอักษร) */}
             <div className="absolute inset-0 bg-ambient-void pointer-events-none z-0"></div>

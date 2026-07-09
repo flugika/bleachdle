@@ -2,13 +2,14 @@
 import type { Metadata } from "next";
 import '../src/styles/globals.css';
 import { Cinzel, Geist } from "next/font/google";
-import Footer from "@/src/shared/layout/Footer";
+import Footer from "@/src/shared/ui/layout/Footer";
 import { BleachReiatsuCursor } from "@/src/shared/ui/BleachReiatsuCursor";
 import { WallpaperInitializer } from "@/src/shared/ui/WallpaperInitializer";
 import { SenkaimonTransition } from "@/src/shared/ui/loader/SenkaimonTransition";
 import { NavigationProvider } from "@/src/shared/ui/context/NavigationContext";
 // 💡 นำเข้าตัว Ambient พรีเมียมตัวใหม่ที่เราเพิ่งสร้าง
-import { ReiatsuAmbientSides } from "@/src/shared/layout/ReiatsuAmbientSides"; 
+import { ReiatsuAmbientSides } from "@/src/shared/ui/layout/ReiatsuAmbientSides"; 
+import { GlobalGameNav } from "@/src/shared/ui/layout/GlobalGameNav";
 
 const cinzel = Cinzel({
   subsets: ["latin"],
@@ -45,6 +46,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
 
           {/* 🚪 เสียบเลเยอร์แรงดันวิญญาณด้านข้างตรงนี้ (z-[1]) */}
           <ReiatsuAmbientSides />
+          <GlobalGameNav />
 
           <div className="bg-overlay flex flex-col min-h-screen relative z-10">
             <main className="flex-grow w-full relative">

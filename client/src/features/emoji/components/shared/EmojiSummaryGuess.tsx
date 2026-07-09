@@ -9,6 +9,7 @@ import { DailyResetTimer } from '@/src/shared/ui/DailyResetTimer';
 import { EmojiGuessEntry, EmojiTarget } from '@/src/features/emoji/types';
 import { EmojiTestimonyDisplay } from './EmojiTestimonyDisplay';
 import { useRaceEmblem } from '@/src/shared/hooks/useRaceEmblem';
+import { useCharacterTier } from '@/src/shared/hooks/useBadgeTier';
 
 interface EmojiSummaryGuessProps {
     isOpen: boolean;
@@ -42,9 +43,7 @@ export const EmojiSummaryGuess = ({
 
     const answerCharacter = target.character;
 
-    const activeTier = useMemo(() => {
-        return CHARACTER_TIERS.find(t => stats.maxStreak >= t.min) || CHARACTER_TIERS[CHARACTER_TIERS.length - 1];
-    }, [stats.maxStreak]);
+    const activeTier = useCharacterTier(stats.maxStreak);
 
     // 🔮 Same watermark effect as QuoteSummaryGuess, driven by the revealed
     // speaker's race instead of the guessed target directly.

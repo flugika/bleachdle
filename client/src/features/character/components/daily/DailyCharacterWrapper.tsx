@@ -7,9 +7,9 @@ import { useCharacterGame } from '@/src/features/character/hooks/daily/useCharac
 import { getCharacters } from '@/src/features/character/character';
 import { CharacterSummaryGuess } from '@/src/features/character/components/shared/CharacterSummaryGuess';
 import { CharacterHowToPlayModal } from '@/src/features/character/components/shared/CharacterHowToPlayModal';
-import { Header } from '@/src/shared/layout/Header';
-import { Divider } from '@/src/shared/layout/Divider';
-import { SubHeader } from '@/src/shared/layout/SubHeader';
+import { Header } from '@/src/shared/ui/layout/Header';
+import { Divider } from '@/src/shared/ui/layout/Divider';
+import { SubHeader } from '@/src/shared/ui/layout/SubHeader';
 import Sealed from '@/src/shared/ui/Sealed';
 import { FEATURE_FLAGS } from '@/src/config/feature.flags';
 import { Character } from '@/src/entities/character/schema';

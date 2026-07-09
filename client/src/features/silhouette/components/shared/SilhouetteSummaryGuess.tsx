@@ -7,6 +7,7 @@ import { CHARACTER_TIERS } from '@/src/const/summary';
 import { DailyResetTimer } from '@/src/shared/ui/DailyResetTimer';
 import { SilhouetteGuessEntry, SilhouetteTarget } from '@/src/features/silhouette/types';
 import { SilhouetteImage } from './SilhouetteImage';
+import { useCharacterTier } from '@/src/shared/hooks/useBadgeTier';
 
 interface SilhouetteSummaryGuessProps {
     isOpen: boolean;
@@ -43,9 +44,7 @@ export const SilhouetteSummaryGuess = ({
     }, [isOpen]);
 
     // 🎯 คำนวณ Active Tier ประจำยศของผู้เล่น
-    const activeTier = useMemo(() => {
-        return CHARACTER_TIERS.find(t => stats.maxStreak >= t.min) || CHARACTER_TIERS[CHARACTER_TIERS.length - 1];
-    }, [stats.maxStreak]);
+    const activeTier = useCharacterTier(stats.maxStreak);
 
     if (!isOpen || !target) return null;
 
@@ -139,7 +138,8 @@ export const SilhouetteSummaryGuess = ({
                                 image={target.image}
                                 realImage={answerCharacter?.image}
                                 guessCount={guesses.length}
-                                forceReveal={isRadarRevealed}
+                                autoToggle={true}
+                                autoToggleIntervalMs={2500}
                             />
                         </div>
                     </div>
