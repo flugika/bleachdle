@@ -13,17 +13,16 @@ interface Props {
     mode: "daily" | "unlimited";
     realImage?: string;
     guessCount?: number;
-    forceReveal?: boolean;
     bgColor?: string;
     /**
-     * 🆕 When true (and a realImage is available), the component owns its own
-     * reveal state and cross-fades between silhouette ⇄ real image on a timer —
-     * no external toggle button needed. Intended for answer/archive views.
-     * Ignored while a manual `forceReveal` prop is also supplied (that still wins).
+     * 🎯 ควบคุมสถานะการแสดงผลของคอมโพเนนต์
+     * 'guessing' = โหมดเล่นเกม (default) มีตารางดำปิดบังภาพ
+     * 'revealed' = เฉลยแล้ว โชว์รูปจริง 100% ตลอดเวลา
+     * 'crossfade' = สลับไปมาระหว่างเงากับรูปจริงอัตโนมัติ (ตารางดำเปิดหมด)
      */
-    autoToggle?: boolean;
-    /** Interval between auto swaps, in ms. Default 3200ms. */
-    autoToggleIntervalMs?: number;
+    revealMode?: 'guessing' | 'revealed' | 'crossfade';
+    /** ระยะเวลา (ms) สำหรับการสลับภาพในโหมด crossfade (Default 3200ms) */
+    crossfadeIntervalMs?: number;
 }
 
 const DEFAULT_BG = '#3E77CF';
@@ -34,16 +33,15 @@ export const SilhouetteImage = ({
     mode,
     realImage,
     guessCount = 0,
-    forceReveal = false,
     bgColor,
-    autoToggle = false,
-    autoToggleIntervalMs = 3200,
+    revealMode = 'guessing', // ค่าเริ่มต้นคือโหมดทายผล
+    crossfadeIntervalMs = 3200,
 }: Props) => {
     const [internalBg, setInternalBg] = useState(bgColor || DEFAULT_BG);
     const [configReady, setConfigReady] = useState(false);
     const [silhouetteLoaded, setSilhouetteLoaded] = useState(false);
     const [realImageLoaded, setRealImageLoaded] = useState(false);
-    const [autoRevealed, setAutoRevealed] = useState(false); // 🆕 drives the automatic swap
+    const [isCrossfadeRevealed, setIsCrossfadeRevealed] = useState(false);
 
     useEffect(() => {
         if (bgColor) {
@@ -127,58 +125,46 @@ export const SilhouetteImage = ({
 
     const isReady = configReady && silhouetteLoaded;
 
-    // 🆕 Auto-toggle loop: once everything needed is loaded, alternate the
-    // "revealed" state on an interval. A manual forceReveal prop still takes
-    // full priority (e.g. gameplay's own explicit reveal-on-win moment).
+    // 🎯 Timer สลับภาพ จะทำงานก็ต่อเมื่ออยู่ในโหมด 'crossfade' เท่านั้น
     useEffect(() => {
-        if (!autoToggle || forceReveal || !fullCharacterSrc || !isReady || !realImageLoaded) {
-            setAutoRevealed(false);
+        if (revealMode !== 'crossfade' || !fullCharacterSrc || !isReady || !realImageLoaded) {
+            setIsCrossfadeRevealed(false);
             return;
         }
 
         const id = setInterval(() => {
-            setAutoRevealed((prev) => !prev);
-        }, autoToggleIntervalMs);
+            setIsCrossfadeRevealed((prev) => !prev);
+        }, crossfadeIntervalMs);
 
         return () => clearInterval(id);
-    }, [autoToggle, forceReveal, fullCharacterSrc, isReady, realImageLoaded, autoToggleIntervalMs]);
+    }, [revealMode, fullCharacterSrc, isReady, realImageLoaded, crossfadeIntervalMs]);
 
-    const effectiveReveal = forceReveal || (autoToggle && autoRevealed);
+    // 🎯 คำนวณว่าตอนนี้ต้องโชว์รูปจริงหรือไม่
+    const effectiveReveal = revealMode === 'revealed' || (revealMode === 'crossfade' && isCrossfadeRevealed);
 
     return (
         <div className="relative w-full max-w-sm aspect-square mx-auto">
 
-            {/* 🔄 LOADING LAYER — Central 46 / Kido premium plate */}
+            {/* 🔄 LOADING LAYER */}
             <div
                 aria-hidden={isReady}
                 className={`absolute inset-0 overflow-hidden rounded-sm border border-[#c8a96e]/20 bg-[radial-gradient(ellipse_at_center,#0d0d14_0%,#020205_90%)] transition-all duration-500 ease-out ${isReady ? 'opacity-0 scale-[1.02] pointer-events-none' : 'opacity-100 scale-100'
                     }`}
             >
-                {/* scanline texture */}
                 <div className="absolute inset-0 bleach-scanlines pointer-events-none opacity-30" />
-
-                {/* ambient reiatsu glow, breathing */}
                 <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(200,169,110,0.08),transparent_65%)] animate-pulse pointer-events-none" />
-
-                {/* rotating diagonal blade-light, faint */}
                 <div className="absolute inset-0 flex items-center justify-center pointer-events-none opacity-40">
                     <div className="w-[160%] h-[1px] bg-gradient-to-r from-transparent via-[#c8a96e]/50 to-transparent rotate-[-35deg] blur-[0.5px]" />
                 </div>
-
-                {/* Kido corner brackets */}
                 <div className="absolute inset-3 pointer-events-none">
                     <div className="absolute top-0 left-0 w-4 h-4 border-t-2 border-l-2 border-[#c8a96e]/70 drop-shadow-[0_0_6px_rgba(200,169,110,0.5)]" />
                     <div className="absolute top-0 right-0 w-4 h-4 border-t-2 border-r-2 border-[#c8a96e]/70 drop-shadow-[0_0_6px_rgba(200,169,110,0.5)]" />
                     <div className="absolute bottom-0 left-0 w-4 h-4 border-b-2 border-l-2 border-[#c8a96e]/70 drop-shadow-[0_0_6px_rgba(200,169,110,0.5)]" />
                     <div className="absolute bottom-0 right-0 w-4 h-4 border-b-2 border-r-2 border-[#c8a96e]/70 drop-shadow-[0_0_6px_rgba(200,169,110,0.5)]" />
                 </div>
-
-                {/* system tag, top */}
                 <span className="absolute top-4 left-1/2 -translate-x-1/2 text-[9px] font-mono tracking-[0.35em] text-[#c8a96e]/50 uppercase">
                     Reishi // Decrypting
                 </span>
-
-                {/* center: loader + kanji */}
                 <div className="absolute inset-0 flex flex-col items-center justify-center gap-3">
                     <span className="text-2xl font-black text-[#c8a96e]/25 tracking-widest select-none animate-pulse">
                         卍
@@ -188,8 +174,6 @@ export const SilhouetteImage = ({
                         Analyzing Spiritual Signature
                     </span>
                 </div>
-
-                {/* bottom system code */}
                 <span className="absolute bottom-4 left-1/2 -translate-x-1/2 text-[8px] font-mono tracking-[0.25em] text-neutral-600 uppercase">
                     Central_46 // Archive_Sync
                 </span>
@@ -231,7 +215,8 @@ export const SilhouetteImage = ({
                     }}
                 >
                     {Array.from({ length: GRID_SIZE * GRID_SIZE }).map((_, i) => {
-                        const isRevealed = effectiveReveal || revealed.has(i) || autoToggle;
+                        // 🎯 ปรับลอจิกให้เปิดแผ่นป้าย 100% ทันทีถ้าไม่ใช่โหมด guessing
+                        const isBoxRevealed = effectiveReveal || revealed.has(i);
 
                         return (
                             <div
@@ -239,8 +224,8 @@ export const SilhouetteImage = ({
                                 className="transition-all duration-700 ease-out border border-[#c8a96e]/15 shadow-[inset_0_0_12px_rgba(0,0,0,0.9)]"
                                 style={{
                                     backgroundColor: '#010103',
-                                    opacity: isRevealed ? 0 : 1,
-                                    transform: isRevealed ? 'scale(0.85)' : 'scale(1)',
+                                    opacity: isBoxRevealed ? 0 : 1,
+                                    transform: isBoxRevealed ? 'scale(0.85)' : 'scale(1)',
                                     pointerEvents: 'none',
                                 }}
                             />

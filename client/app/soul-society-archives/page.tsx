@@ -197,7 +197,7 @@ export default async function ArchivePage() {
                                 image={silhouette.image}
                                 mode="daily"
                                 realImage={silhouette.character.image}
-                                autoToggle
+                                revealMode="crossfade"
                             />
                         </ScaleFit>
                     ) : (

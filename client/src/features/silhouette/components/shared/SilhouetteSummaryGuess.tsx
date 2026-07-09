@@ -138,8 +138,8 @@ export const SilhouetteSummaryGuess = ({
                                 image={target.image}
                                 realImage={answerCharacter?.image}
                                 guessCount={guesses.length}
-                                autoToggle={true}
-                                autoToggleIntervalMs={2500}
+                                revealMode="crossfade"
+                                crossfadeIntervalMs={2500}
                             />
                         </div>
                     </div>

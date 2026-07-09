@@ -110,7 +110,7 @@ export const SilhouetteHowToPlayModal = ({ isOpen, onClose, mode }: SilhouetteHo
                                     image={EXAMPLE_CHARACTER.image}
                                     realImage={EXAMPLE_CHARACTER.realImage}
                                     guessCount={0} // ล็อคตายตัวที่ 2 เพื่อให้เปิดป้ายแค่บางส่วนตลอดเวลา (ส่งเข้า getRevealedCellIndices ตามปกติ)
-                                    forceReveal={forceRevealDemo} // สลับ true / false 
+                                    revealMode="crossfade"
                                 />
                             </div>
                             <div className="absolute inset-x-0 -bottom-2 bg-black/90 border border-[#c8a96e]/40 text-center py-1 z-50">
