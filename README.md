@@ -347,8 +347,8 @@ bleachdle
 │  │  │  │  ├─ visored.webp
 │  │  │  │  └─ Xcution.webp
 │  │  │  ├─ screenshots
-│  │  │     ├─ homepage.png
-│  │  │     └─ homepage_old.png
+│  │  │  │  ├─ homepage.png
+│  │  │  │  └─ homepage_old.png
 │  │  │  ├─ tensazangetsu.png
 │  │  │  └─ wallpapers
 │  │  │     ├─ bg_wallpaper_1.jpg
