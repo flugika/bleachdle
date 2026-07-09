@@ -2,7 +2,7 @@
 
 > A Wordle-style character guessing game for Bleach fans — unlimited mode, attribute-based feedback, Soul Society aesthetic.
 
-**Last Updated:** 9 July 2026, 9:00 AM.
+**Last Updated:** 10 July 2026, 5:19 AM.
 
 [![Next.js](https://img.shields.io/badge/Next.js-15-black?logo=next.js)](https://nextjs.org/)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5-blue?logo=typescript)](https://www.typescriptlang.org/)
@@ -304,6 +304,8 @@ bleachdle
 │  │  │  └─ song
 │  │  │     └─ page.tsx
 │  │  ├─ not-found.tsx
+│  │  ├─ soul-society-archives
+│  │  │  └─ page.tsx
 │  │  ├─ support
 │  │  │  └─ page.tsx
 │  │  └─ [...catchAll]
@@ -486,6 +488,10 @@ bleachdle
 │  │  │  │  ├─ songSegment.ts
 │  │  │  │  ├─ types.ts
 │  │  │  │  └─ validGuessEntry.ts
+│  │  │  ├─ soul-society-archives
+│  │  │  │  └─ components
+│  │  │  │     ├─ ArchiveCharacterCard.tsx
+│  │  │  │     └─ ArchiveReleaseCard.tsx
 │  │  │  └─ support
 │  │  │     ├─ KidoSeal.tsx
 │  │  │     ├─ PortfolioCard.tsx
@@ -544,11 +550,13 @@ bleachdle
 │  │  │  ├─ character.ts
 │  │  │  ├─ emoji.ts
 │  │  │  ├─ quote.ts
+│  │  │  ├─ release.ts
 │  │  │  ├─ silhouette.ts
 │  │  │  ├─ song.ts
 │  │  │  └─ statsClient.ts
 │  │  ├─ shared
 │  │  │  ├─ hooks
+│  │  │  │  ├─ useBadgeTier.ts
 │  │  │  │  ├─ useCooldown.ts
 │  │  │  │  ├─ useCountdown.ts
 │  │  │  │  ├─ useDailyHub.ts
@@ -556,13 +564,6 @@ bleachdle
 │  │  │  │  ├─ useRaceEmblem.ts
 │  │  │  │  ├─ useTestWallpaper.ts
 │  │  │  │  └─ useTurnstile.ts
-│  │  │  ├─ layout
-│  │  │  │  ├─ Divider.tsx
-│  │  │  │  ├─ Footer.tsx
-│  │  │  │  ├─ Header.tsx
-│  │  │  │  ├─ HeaderDivider.tsx
-│  │  │  │  ├─ ReiatsuAmbientSides.tsx
-│  │  │  │  └─ SubHeader.tsx
 │  │  │  ├─ types
 │  │  │  │  └─ guessGame.ts
 │  │  │  └─ ui
@@ -590,12 +591,22 @@ bleachdle
 │  │  │     │  ├─ ModeBadge.tsx
 │  │  │     │  ├─ ModeSelectorModal.tsx
 │  │  │     │  └─ ThematicModeSelector.tsx
+│  │  │     ├─ HowToPlayButton.tsx
 │  │  │     ├─ input.tsx
+│  │  │     ├─ layout
+│  │  │     │  ├─ Divider.tsx
+│  │  │     │  ├─ Footer.tsx
+│  │  │     │  ├─ GlobalGameNav.tsx
+│  │  │     │  ├─ Header.tsx
+│  │  │     │  ├─ HeaderDivider.tsx
+│  │  │     │  ├─ ReiatsuAmbientSides.tsx
+│  │  │     │  └─ SubHeader.tsx
 │  │  │     ├─ loader
 │  │  │     │  ├─ SenkaimonTransition.tsx
 │  │  │     │  ├─ SoulSyncLoader.tsx
 │  │  │     │  └─ ZangetsuLoader.tsx
 │  │  │     ├─ modal.tsx
+│  │  │     ├─ ScaleFit.tsx
 │  │  │     ├─ Sealed.tsx
 │  │  │     ├─ SearchBar.tsx
 │  │  │     ├─ tooltip.tsx
