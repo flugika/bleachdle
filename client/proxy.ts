@@ -1,4 +1,7 @@
 // proxy.ts
+
+// /soul-society-archives?secret=
+
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 import { edgeRateLimit, getRateLimitKey } from './src/lib/rateLimit';

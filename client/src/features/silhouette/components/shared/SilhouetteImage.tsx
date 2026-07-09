@@ -231,7 +231,7 @@ export const SilhouetteImage = ({
                     }}
                 >
                     {Array.from({ length: GRID_SIZE * GRID_SIZE }).map((_, i) => {
-                        const isRevealed = effectiveReveal || revealed.has(i);
+                        const isRevealed = effectiveReveal || revealed.has(i) || autoToggle;
 
                         return (
                             <div
