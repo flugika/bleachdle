@@ -18,8 +18,7 @@
 
 **Production:** [https://bleachdle-theta.vercel.app/](https://bleachdle-theta.vercel.app/)
 
-<!-- TODO: add homepage screenshot here, e.g. -->
-<!-- ![Homepage](./public/assets/screenshots/homepage.png) -->
+![Homepage](./public/assets/screenshots/homepage.png)
 
 ---
 
@@ -347,6 +346,9 @@ bleachdle
 │  │  │  │  ├─ soul.webp
 │  │  │  │  ├─ visored.webp
 │  │  │  │  └─ Xcution.webp
+│  │  │  ├─ screenshots
+│  │  │     ├─ homepage.png
+│  │  │     └─ homepage_old.png
 │  │  │  ├─ tensazangetsu.png
 │  │  │  └─ wallpapers
 │  │  │     ├─ bg_wallpaper_1.jpg
