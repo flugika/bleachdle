@@ -75,14 +75,23 @@ export const Modal = ({
         if (isOpen) {
             setShouldRender(true);
             setIsClosing(false);
+            // 🔒 ล็อก Scroll Page ทันทีที่เปิด Modal ตัวไหนก็ตาม
+            document.body.style.overflow = 'hidden';
         } else if (shouldRender) {
             setIsClosing(true);
             const timer = setTimeout(() => {
                 setShouldRender(false);
                 setIsClosing(false);
+                // 🔓 ปลดล็อก Scroll Page *หลังจาก* เล่น Exit Animation จบแล้ว (320ms) ไม่กระตุกแน่นอน
+                document.body.style.overflow = '';
             }, CLOSE_ANIMATION_MS);
             return () => clearTimeout(timer);
         }
+
+        // กันเหนียว: คืนค่าปกติให้ body เผื่อ Component โดนสลับหน้าหรือ Unmount กะทันหัน
+        return () => {
+            document.body.style.overflow = '';
+        };
     }, [isOpen]);
 
     useEffect(() => {

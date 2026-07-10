@@ -28,12 +28,64 @@ const EXAMPLE_CHARACTER = {
 
 const MOCK_GUESSES: SilhouetteGuessEntry[] = [
     {
-        guess: { id: 'wrong-1', name: 'Renji Abarai' } as Character,
+        guess: {
+            id: "e4f8b9d1-c2a3-4a6b-8d7e-9f0a1b2c3d4e",
+            name: "Renji Abarai",
+            gender: "Male",
+            race: [
+                "Shinigami"
+            ],
+            affiliation: "Gotei 13",
+            height_cm: 188,
+            age: 100,
+            eye_color: "Brown",
+            hair_color: "Red",
+            first_appearance_chapter: "Soul Society",
+            weapon: [
+                "Weaponized"
+            ],
+            release: [
+                "Shikai",
+                "Bankai"
+            ],
+            primary_ability: [
+                "Physical"
+            ],
+            "image": "Renji_Abarai.webp"
+        } as Character,
         status: 'wrong',
         isNew: false
     },
     {
-        guess: { id: 'correct-1', name: 'Ichigo Kurosaki' } as Character,
+        guess: {
+            id: "c7a8b9d0-1e2f-4a3b-8c5d-6e7f8a9b0c1d",
+            name: "Ichigo Kurosaki",
+            gender: "Male",
+            race: [
+                "Shinigami",
+                "Quincy",
+                "Hollow",
+                "Human",
+                "Fullbringer"
+            ],
+            affiliation: "Independent",
+            height_cm: 181,
+            age: 19,
+            eye_color: "Brown",
+            hair_color: "Orange",
+            first_appearance_chapter: "Agent of the Shinigami",
+            weapon: [
+                "Weaponized"
+            ],
+            release: [
+                "Shikai",
+                "Bankai"
+            ],
+            primary_ability: [
+                "Physical"
+            ],
+            image: "Ichigo_Kurosaki.webp"
+        } as Character,
         status: 'correct',
         isNew: true
     }
@@ -113,9 +165,6 @@ export const SilhouetteHowToPlayModal = ({ isOpen, onClose, mode }: SilhouetteHo
                                     revealMode="crossfade"
                                 />
                             </div>
-                            <div className="absolute inset-x-0 -bottom-2 bg-black/90 border border-[#c8a96e]/40 text-center py-1 z-50">
-                                <span className="text-[9px] font-mono tracking-widest text-[#c8a96e] animate-pulse">REISHI OVERLOAD SCAN</span>
-                            </div>
                         </div>
 
                         {/* Rules Breakdown Explanations */}
@@ -154,7 +203,7 @@ export const SilhouetteHowToPlayModal = ({ isOpen, onClose, mode }: SilhouetteHo
                         <div className="h-px bg-gradient-to-r from-transparent via-[#c8a96e]/30 to-transparent flex-1" />
                     </div>
 
-                    <div className="max-w-md mx-auto pointer-events-none">
+                    <div className="max-w-lg mx-auto pointer-events-none">
                         <SilhouetteGuessTable guesses={MOCK_GUESSES} />
                     </div>
                 </div>

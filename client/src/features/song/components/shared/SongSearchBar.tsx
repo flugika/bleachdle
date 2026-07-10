@@ -136,12 +136,11 @@ export const SongSearchBar = ({ songs, disabled = false, game }: SongSearchBarPr
                     onKeyDown={handleKeyDown}
                     placeholder="ENTER TRACK, ARTIST, OR OP/ED..."
                     autoComplete="off"
-                    className="relative w-full py-3.5 pl-5 pr-12 bg-[#050507] text-[#e2e2e5] text-xs font-medium tracking-[0.15em] uppercase border border-[#1a1a24] focus:outline-none focus:border-red-600/80 focus:text-white transition-all duration-300 placeholder-[#444452]"
+                    className="relative w-full py-3.5 pl-5 pr-12 bg-[#050507] text-[#e2e2e5] text-xs font-medium tracking-[0.15em] uppercase border border-[#3d3d54] focus:outline-none focus:border-red-600/80 focus:text-white transition-all duration-300 placeholder-[#9898b3]"
                 />
 
-                {/* ไอคอนประดับสไตล์ดาบฟันวิญญาณ */}
                 <div className="absolute right-4 top-1/2 -translate-y-1/2 flex items-center justify-center pointer-events-none">
-                    <span className="text-[12px] text-[#444452] group-focus-within/input:text-red-500 tracking-widest transition-colors duration-300 font-mono">
+                    <span className="text-[12px] text-[#9898b3] group-focus-within/input:text-red-500 tracking-widest transition-colors duration-300 font-mono">
                         卍
                     </span>
                 </div>

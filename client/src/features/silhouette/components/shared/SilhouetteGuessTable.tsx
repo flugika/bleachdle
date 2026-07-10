@@ -237,7 +237,7 @@ export const SilhouetteGuessTable = ({ guesses }: { guesses: SilhouetteGuessEntr
 
                                     <div className="mt-3 flex flex-wrap gap-1">
                                         <AttrChip label="Gender" value={sheet.gender} status={attrs.gender} />
-                                        <AttrChip label="Race" value={sheet.race?.join(' / ')} status={attrs.race} />
+                                        <AttrChip label="Race" value={(sheet.race?.length ?? 0) > 1 ? "Hybrid" : sheet.race?.[0]} status={attrs.race} />
                                         <AttrChip label="Height" value={formatHeight(Number(sheet.height_cm || -1))} status={attrs.height} />
                                         <AttrChip label="Age" value={formatAge(Number(sheet.age) || -1)} status={attrs.age} />
                                     </div>

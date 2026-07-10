@@ -94,7 +94,7 @@ export const SongHowToPlayModal = ({ isOpen, onClose, mode }: SongHowToPlayModal
             </div>
 
             {/* Example Gameplay — ใช้ SongGuessCard ตัวจริง ให้ตรงกับของในเกม 100% */}
-            <div className="border-t border-[#c8a96e]/20 pt-6">
+            <div className="border-t border-[#c8a96e]/20 pt-4">
                 <h3 className="text-[#c8a96e] font-bold uppercase tracking-wider text-xs mb-4">Example Tickets</h3>
 
                 <div className="max-w-md mx-auto">
