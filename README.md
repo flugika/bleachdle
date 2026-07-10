@@ -2,7 +2,7 @@
 
 > A Wordle-style character guessing game for Bleach fans — unlimited mode, attribute-based feedback, Soul Society aesthetic.
 
-**Last Updated:** 10 July 2026, 5:19 AM.
+**Last Updated:** 10 July 2026, 8:40 AM.
 
 [![Next.js](https://img.shields.io/badge/Next.js-15-black?logo=next.js)](https://nextjs.org/)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5-blue?logo=typescript)](https://www.typescriptlang.org/)
@@ -367,6 +367,7 @@ bleachdle
 │  │  ├─ config
 │  │  │  ├─ daily-hub.config.ts
 │  │  │  ├─ feature.flags.ts
+│  │  │  ├─ howToPlayModals.ts
 │  │  │  └─ mode.ts
 │  │  ├─ const
 │  │  │  ├─ guess.ts
@@ -415,7 +416,6 @@ bleachdle
 │  │  │  │  ├─ types.ts
 │  │  │  │  └─ validGuessEntry.ts
 │  │  │  ├─ emoji
-│  │  │  │  ├─ compareEmoji.ts
 │  │  │  │  ├─ components
 │  │  │  │  │  ├─ daily
 │  │  │  │  │  │  └─ DailyEmojiWrapper.tsx
@@ -425,15 +425,14 @@ bleachdle
 │  │  │  │  │     ├─ EmojiSummaryGuess.tsx
 │  │  │  │  │     └─ EmojiTestimonyDisplay.tsx
 │  │  │  │  ├─ emoji.ts
+│  │  │  │  ├─ emojiRevealedCounter.ts
 │  │  │  │  ├─ hooks
 │  │  │  │  │  ├─ daily
 │  │  │  │  │  │  └─ useEmojiGame.ts
 │  │  │  │  │  └─ unlimited
 │  │  │  │  │     └─ useEmojiGame.ts
-│  │  │  │  ├─ types.ts
-│  │  │  │  └─ validGuessEntry.ts
+│  │  │  │  └─ types.ts
 │  │  │  ├─ quote
-│  │  │  │  ├─ compareQuote.ts
 │  │  │  │  ├─ components
 │  │  │  │  │  ├─ daily
 │  │  │  │  │  │  └─ DailyQuoteWrapper.tsx
@@ -448,10 +447,8 @@ bleachdle
 │  │  │  │  │  └─ unlimited
 │  │  │  │  │     └─ useQuoteGame.ts
 │  │  │  │  ├─ quote.ts
-│  │  │  │  ├─ types.ts
-│  │  │  │  └─ validGuessEntry.ts
+│  │  │  │  └─ types.ts
 │  │  │  ├─ silhouette
-│  │  │  │  ├─ compareSilhouette.ts
 │  │  │  │  ├─ components
 │  │  │  │  │  ├─ daily
 │  │  │  │  │  │  └─ DailySilhouetteWrapper.tsx
@@ -468,7 +465,6 @@ bleachdle
 │  │  │  │  ├─ silhouette.ts
 │  │  │  │  └─ types.ts
 │  │  │  ├─ song
-│  │  │  │  ├─ compareSong.ts
 │  │  │  │  ├─ components
 │  │  │  │  │  ├─ daily
 │  │  │  │  │  │  └─ DailySongWrapper.tsx
@@ -485,9 +481,7 @@ bleachdle
 │  │  │  │  │  └─ unlimited
 │  │  │  │  │     └─ useSongGame.ts
 │  │  │  │  ├─ song.ts
-│  │  │  │  ├─ songSegment.ts
-│  │  │  │  ├─ types.ts
-│  │  │  │  └─ validGuessEntry.ts
+│  │  │  │  └─ types.ts
 │  │  │  ├─ soul-society-archives
 │  │  │  │  └─ components
 │  │  │  │     ├─ ArchiveCharacterCard.tsx
@@ -498,6 +492,11 @@ bleachdle
 │  │  │     ├─ SupportForm.tsx
 │  │  │     └─ SupportPageClient.tsx
 │  │  ├─ lib
+│  │  │  ├─ guessGame
+│  │  │  │  ├─ compareBinaryGuess.ts
+│  │  │  │  ├─ createDailyGuessGameStore.ts
+│  │  │  │  ├─ createUnlimitedGuessGameStore.ts
+│  │  │  │  └─ types.ts
 │  │  │  ├─ rateLimit.ts
 │  │  │  ├─ search
 │  │  │  │  └─ fuzzy.ts
@@ -562,6 +561,7 @@ bleachdle
 │  │  │  │  ├─ useDailyHub.ts
 │  │  │  │  ├─ useDailyWallpaper.ts
 │  │  │  │  ├─ useRaceEmblem.ts
+│  │  │  │  ├─ useRouteLoadingStore.ts
 │  │  │  │  ├─ useTestWallpaper.ts
 │  │  │  │  └─ useTurnstile.ts
 │  │  │  ├─ types
