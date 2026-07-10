@@ -1,14 +1,18 @@
 // src/features/song/hooks/unlimited/useSongGame.ts
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
-import { getSongStatus } from '@/src/features/song/compareSong';
+import { compareBinaryGuess } from '@/src/lib/guessGame/compareBinaryGuess';
+import { defaultIsValidGuessEntry } from '@/src/lib/guessGame/types';
 import { getAllSongSegments, getSongById } from '@/src/features/song/song';
 import { SongGameController, SongGuessEntry } from '@/src/features/song/types';
 import { MAX_UNLIMITED_SONG_GUESSES } from '@/src/const/guess';
 import { STORAGE_KEYS } from '@/src/const/localStorage';
 import { nestedJSONStorage } from '@/src/lib/store/createNestedStorage';
-import { isValidGuessEntry } from '../../validGuessEntry';
 import { Stats } from '@/src/shared/types/guessGame';
+import { BleachSong } from '@/src/entities/song/schema';
+
+// 🔁 ใช้ shared validator แทน validGuessEntry.ts ของ song เอง — ไฟล์เดิมลบทิ้งได้
+const isValidGuessEntry = defaultIsValidGuessEntry<BleachSong>;
 
 export const useSongGame = create<SongGameController>()(
     persist(
@@ -22,7 +26,7 @@ export const useSongGame = create<SongGameController>()(
 
             setTarget: (target) => set({ target }),
 
-            stats: { currentStreak: 0, maxStreak: 0 }, // 🆕
+            stats: { currentStreak: 0, maxStreak: 0 },
             loadStats: () => {
                 if (typeof window === 'undefined') return;
                 const statsData = JSON.parse(localStorage.getItem(STORAGE_KEYS.SONG_STATS) || '{}');
@@ -41,7 +45,8 @@ export const useSongGame = create<SongGameController>()(
                 const alreadyGuessed = state.guesses.some(g => g.guess.id === guessedSong.id);
                 if (alreadyGuessed) return state;
 
-                const status = getSongStatus(guessedSong, state.target);
+                // 🔁 ใช้ shared compareBinaryGuess แทน getSongStatus — compareSong.ts ลบทิ้งได้
+                const status = compareBinaryGuess(guessedSong, state.target.id);
                 const newEntry: SongGuessEntry = { guess: guessedSong, status, isNew: true };
                 const prevGuesses = state.guesses.map(g => ({ ...g, isNew: false }));
 
@@ -60,11 +65,9 @@ export const useSongGame = create<SongGameController>()(
                 const allSegments = getAllSongSegments();
 
                 const completedData = JSON.parse(localStorage.getItem(STORAGE_KEYS.SONG_COMPLETED) || '{}');
-
-                // 🧠 เปลี่ยนชื่อตัวแปรให้สื่อความหมาย: ตอนนี้เราจะเก็บเป็น "ID ของเพลงหลัก" ที่ผ่านแล้ว
                 const completedSongIds: string[] = completedData.unlimited || [];
 
-                // 🛡️ FIX: เช็ค s.song_id แทน s.id เพื่อไม่ให้เซกเมนต์อื่นของเพลงเดิมหลุดเข้ามาได้อีก
+                // 🛡️ เช็ค s.song_id แทน s.id เพื่อไม่ให้เซกเมนต์อื่นของเพลงเดิมหลุดเข้ามาได้อีก
                 const remainingSegments = allSegments.filter(s => !completedSongIds.includes(s.song_id));
 
                 if (remainingSegments.length === 0) {
@@ -92,14 +95,14 @@ export const useSongGame = create<SongGameController>()(
 
                 if (isWin) {
                     const currentUnlimited: string[] = completedData.unlimited || [];
-                    // 🧠 FIX: บันทึก target.id (Song ID) ลงไปแทน เพื่อบอกว่า "เพลงนี้ทั้งเพลงเล่นผ่านแล้วนะ"
+                    // 🧠 บันทึก target.id (Song ID) ลงไป เพื่อบอกว่า "เพลงนี้ทั้งเพลงเล่นผ่านแล้วนะ"
                     completedData.unlimited = [...new Set([...currentUnlimited, target.id])];
                 } else {
                     completedData.unlimited = [];
                 }
 
                 localStorage.setItem(STORAGE_KEYS.SONG_COMPLETED, JSON.stringify(completedData));
-                // 🆕 ย้าย logic ของ updateStats เดิม (ที่เคยอยู่ในคอมโพเนนต์) เข้ามาตรงนี้
+
                 const statsData = JSON.parse(localStorage.getItem(STORAGE_KEYS.SONG_STATS) || '{}');
                 const savedStats: Stats = statsData.unlimited || { currentStreak: 0, maxStreak: 0 };
 
@@ -115,7 +118,7 @@ export const useSongGame = create<SongGameController>()(
 
                 set({
                     hasFinalized: true,
-                    stats: newStats, // 🆕
+                    stats: newStats,
                 });
             },
 
@@ -152,22 +155,15 @@ export const useSongGame = create<SongGameController>()(
         }),
         {
             name: 'unlimited',
-            // 🗄️ เก็บใน key ของตัวเอง STORAGE_KEYS.SONG_PROGRESS แยกจาก character โดยสิ้นเชิง
-            // แต่ยังคง nest 'unlimited' / (ต่อไป) 'daily' ไว้ข้างในแบบเดียวกับ character-progress
             storage: nestedJSONStorage(STORAGE_KEYS.SONG_PROGRESS),
-            // ✅ ใหม่ — isNew เป็น ephemeral UI flag เท่านั้น ไม่ควรมีค่าจริงข้าม session
-            // force false เสมอตอน persist กัน "ทายสดๆ" false-positive หลัง F5
             partialize: (state) => ({
                 guesses: state.guesses.map(({ guess, status }) => ({ guess, status, isNew: false })),
                 target: state.target,
                 targetSegmentId: state.targetSegmentId,
                 hasFinalized: state.hasFinalized,
             }),
-            // 👇 หัวใจของ fix: บอก store ว่า rehydrate เสร็จแล้วจริงๆ (เหมือน character store)
             onRehydrateStorage: () => (state) => {
                 if (state) {
-                    // 🛡️ ตรวจ guesses ทุกตัว ถ้าเจอ shape ไม่ตรง schema ปัจจุบัน (จากข้อมูล legacy)
-                    // ให้ล้างทิ้งทั้งรอบแทนที่จะปล่อยให้ isWin คำนวณผิดแบบเงียบๆ
                     const hasCorruptedData = !Array.isArray(state.guesses) ||
                         state.guesses.some(g => !isValidGuessEntry(g));
 

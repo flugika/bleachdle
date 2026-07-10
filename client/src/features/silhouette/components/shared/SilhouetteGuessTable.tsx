@@ -5,6 +5,7 @@ import { SilhouetteGuessEntry } from '@/src/features/silhouette/types';
 import { formatAge, formatHeight } from '@/src/lib/utils/format';
 import { motion, AnimatePresence } from 'framer-motion';
 import { CheckCircle2, XCircle, ArrowUp, ArrowDown } from 'lucide-react';
+import Image from 'next/image';
 
 /**
  * 🩸 Central 46 Case File — dossier card, not a thin row.
@@ -200,7 +201,7 @@ export const SilhouetteGuessTable = ({ guesses }: { guesses: SilhouetteGuessEntr
                                     <span className="absolute -bottom-1 -left-1 w-3 h-3 border-b border-l" style={{ borderColor: `${accent}80` }} />
                                     <span className="absolute -bottom-1 -right-1 w-3 h-3 border-b border-r" style={{ borderColor: `${accent}80` }} />
                                     <div className="w-full h-full overflow-hidden rounded-[2px] bg-[#0e0e12] border border-white/5">
-                                        <img
+                                        <Image
                                             src={characterThumbSrc}
                                             alt={entry.guess.name}
                                             className={`w-full h-full object-cover object-top transition-transform duration-500 hover:scale-110 ${isCorrect ? 'brightness-110' : 'grayscale-[55%] brightness-75'
@@ -208,6 +209,8 @@ export const SilhouetteGuessTable = ({ guesses }: { guesses: SilhouetteGuessEntr
                                             onError={(e) => {
                                                 (e.currentTarget as HTMLImageElement).style.display = 'none';
                                             }}
+                                            fill
+                                            sizes="w-20 h-24"
                                         />
                                     </div>
                                 </div>

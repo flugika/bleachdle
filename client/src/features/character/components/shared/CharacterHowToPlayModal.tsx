@@ -2,7 +2,7 @@
 'use client';
 
 import { compareCharacter } from "@/src/features/character/compareCharacter";
-import { getCharacterById } from "@/src/features/character/character"; 
+import { getCharacterById } from "@/src/features/character/character";
 import { formatAge, formatHeight } from "@/src/lib/utils/format";
 import { useMemo } from "react";
 import { CELL_STYLES, ResultCell } from "./CharacterGuessTable";
@@ -36,10 +36,6 @@ export const CharacterHowToPlayModal = ({ isOpen, onClose, mode }: CharacterHowT
         return null;
     }, [target, guess]);
 
-    // ── 🎯 2. Early Return (หลังกติกา Hooks ทำงานครบถ้วน) ──────────────────
-    if (!isOpen) return null;
-    if (!target || !guess || !comparison) return null;
-
     const cellClass = "h-10 flex items-center justify-center border border-[#c8a96e]/50 text-[10px] font-bold text-center";
     const headers = ['guess', 'Image', 'Gender', 'Race', 'Affiliation', 'Height', 'Age', 'Eye', 'Hair', 'Weapon', 'Ability', 'Release', '1st Arc'];
 
@@ -52,7 +48,7 @@ export const CharacterHowToPlayModal = ({ isOpen, onClose, mode }: CharacterHowT
                     <h3 className="text-[#c8a96e] font-bold uppercase tracking-wider text-xs flex items-center gap-1.5">
                         <span>卍</span> The Objective
                     </h3>
-                    
+
                     <div className="space-y-2">
                         {/* ── 🎯 EXPERT UX/UI: คัดแยก Copywriting ตามโหมดที่ส่งมาทาง Props */}
                         {mode === 'unlimited' ? (
@@ -64,7 +60,7 @@ export const CharacterHowToPlayModal = ({ isOpen, onClose, mode }: CharacterHowT
                                 Guess today's mystery <span className="text-white font-medium">Bleach character</span>. You have <span className="text-[#4de880] font-semibold">unlimited attempts</span> until the soul signature is successfully identified.
                             </p>
                         )}
-                        
+
                         {/* 🚫 แจ้งเตือนเรื่องไม่มีคำใบ้ (No Hint) สไตล์โซลโซไซตี้ */}
                         <div className="text-[11px] font-semibold tracking-wider text-[#e83030]/90 uppercase bg-[#200b0b]/60 border border-[#401515]/60 px-2.5 py-1 inline-block">
                             ⚠️ System Warning: No spiritual hints provided.
@@ -123,12 +119,14 @@ export const CharacterHowToPlayModal = ({ isOpen, onClose, mode }: CharacterHowT
                 <h3 className="text-[#c8a96e] font-bold uppercase tracking-wider text-xs mb-4">Example Gameplay</h3>
 
                 <div className="space-y-4">
-                    <div className="relative flex items-center gap-4">
-                        <div className="relative w-16 h-16">
-                            <Image src={`/assets/characters/${target.image}`} alt={target.name} fill sizes="66px" className="object-cover border border-[#2a2a42]" />
+                    {target && (
+                        <div className="relative flex items-center gap-4">
+                            <div className="relative w-16 h-16">
+                                <Image src={`/assets/characters/${target.image}`} alt={target.name} fill sizes="66px" className="object-cover border border-[#2a2a42]" />
+                            </div>
+                            <p className="text-xs text-[#a0988e]">Target Character: <span className="font-bold text-white">{target.name}</span></p>
                         </div>
-                        <p className="text-xs text-[#a0988e]">Target Character: <span className="font-bold text-white">{target.name}</span></p>
-                    </div>
+                    )}
 
                     <div className="grid grid-cols-13 gap-1 text-[10px] uppercase font-bold text-center mb-2">
                         {headers.map(h => (
@@ -137,43 +135,47 @@ export const CharacterHowToPlayModal = ({ isOpen, onClose, mode }: CharacterHowT
                     </div>
 
                     {/* Target Row */}
-                    <div className="grid grid-cols-13 gap-1 text-[10px] font-bold text-center mb-2">
-                        <div className={`${cellClass} bg-[#0e0e1a]`}>Target</div>
-                        <div className={`${cellClass} bg-gray-900 relative`}>
-                            <Image src={`/assets/characters/${target.image}`} alt={target.name} fill sizes="40px" className="object-cover" />
+                    {target && (
+                        <div className="grid grid-cols-13 gap-1 text-[10px] font-bold text-center mb-2">
+                            <div className={`${cellClass} bg-[#0e0e1a]`}>Target</div>
+                            <div className={`${cellClass} bg-gray-900 relative`}>
+                                <Image src={`/assets/characters/${target.image}`} alt={target.name} fill sizes="40px" className="object-cover" />
+                            </div>
+                            <div className={`${cellClass} bg-[#0e0e1a]`}>{target.gender}</div>
+                            <div className={`${cellClass} bg-[#0e0e1a]`}>{target.race.length > 1 ? "Hybrid" : target.race[0]}</div>
+                            <div className={`${cellClass} bg-[#0e0e1a]`}>{target.affiliation}</div>
+                            <div className={`${cellClass} bg-[#0e0e1a]`}>{formatHeight(target.height_cm)}</div>
+                            <div className={`${cellClass} bg-[#0e0e1a]`}>{formatAge(target.age)}</div>
+                            <div className={`${cellClass} bg-[#0e0e1a]`}>{target.eye_color}</div>
+                            <div className={`${cellClass} bg-[#0e0e1a]`}>{target.hair_color}</div>
+                            <div className={`${cellClass} bg-[#0e0e1a]`}>{target.weapon.join(', ')}</div>
+                            <div className={`${cellClass} bg-[#0e0e1a]`}>{target.primary_ability.join(', ')}</div>
+                            <div className={`${cellClass} bg-[#0e0e1a]`}>{target.release.join(', ')}</div>
+                            <div className={`${cellClass} bg-[#0e0e1a]`}>{target.first_appearance_chapter}</div>
                         </div>
-                        <div className={`${cellClass} bg-[#0e0e1a]`}>{target.gender}</div>
-                        <div className={`${cellClass} bg-[#0e0e1a]`}>{target.race.length > 1 ? "Hybrid" : target.race[0]}</div>
-                        <div className={`${cellClass} bg-[#0e0e1a]`}>{target.affiliation}</div>
-                        <div className={`${cellClass} bg-[#0e0e1a]`}>{formatHeight(target.height_cm)}</div>
-                        <div className={`${cellClass} bg-[#0e0e1a]`}>{formatAge(target.age)}</div>
-                        <div className={`${cellClass} bg-[#0e0e1a]`}>{target.eye_color}</div>
-                        <div className={`${cellClass} bg-[#0e0e1a]`}>{target.hair_color}</div>
-                        <div className={`${cellClass} bg-[#0e0e1a]`}>{target.weapon.join(', ')}</div>
-                        <div className={`${cellClass} bg-[#0e0e1a]`}>{target.primary_ability.join(', ')}</div>
-                        <div className={`${cellClass} bg-[#0e0e1a]`}>{target.release.join(', ')}</div>
-                        <div className={`${cellClass} bg-[#0e0e1a]`}>{target.first_appearance_chapter}</div>
-                    </div>
+                    )}
 
                     {/* Guess Row */}
-                    <div className="grid grid-cols-13 gap-1 text-[10px] font-bold text-center">
-                        <div className={`${cellClass} bg-[#0e0e1a]`}>Guess</div>
-                        <div className={`${cellClass} bg-gray-900 relative`}>
-                            <Image src={`/assets/characters/${guess.image}`} alt={guess.name} fill sizes="40px" className="object-cover" />
-                        </div>
+                    {guess && comparison && (
+                        <div className="grid grid-cols-13 gap-1 text-[10px] font-bold text-center">
+                            <div className={`${cellClass} bg-[#0e0e1a]`}>Guess</div>
+                            <div className={`${cellClass} bg-gray-900 relative`}>
+                                <Image src={`/assets/characters/${guess.image}`} alt={guess.name} fill sizes="40px" className="object-cover" />
+                            </div>
 
-                        <ResultCell size="sm" value={guess.gender} status={comparison.gender} colIndex={0} animate={false} />
-                        <ResultCell size="sm" value={guess.race.length > 1 ? "Hybrid" : guess.race[0]} status={comparison.race} colIndex={1} animate={false} />
-                        <ResultCell size="sm" value={guess.affiliation} status={comparison.affiliation} colIndex={2} animate={false} />
-                        <ResultCell size="sm" value={formatHeight(guess.height_cm)} status={comparison.height} colIndex={3} animate={false} />
-                        <ResultCell size="sm" value={formatAge(guess.age)} status={comparison.age} colIndex={4} animate={false} />
-                        <ResultCell size="sm" value={guess.eye_color} status={comparison.eye_color} colIndex={5} animate={false} />
-                        <ResultCell size="sm" value={guess.hair_color} status={comparison.hair_color} colIndex={6} animate={false} />
-                        <ResultCell size="sm" value={guess.weapon.join(', ')} status={comparison.weapon} colIndex={7} animate={false} />
-                        <ResultCell size="sm" value={guess.primary_ability.join(', ')} status={comparison.primary_ability} colIndex={8} animate={false} />
-                        <ResultCell size="sm" value={guess.release.join(', ')} status={comparison.release} colIndex={9} animate={false} />
-                        <ResultCell size="sm" value={guess.first_appearance_chapter} status={comparison.first_appearance_chapter} colIndex={10} animate={false} />
-                    </div>
+                            <ResultCell size="sm" value={guess.gender} status={comparison.gender} colIndex={0} animate={false} />
+                            <ResultCell size="sm" value={guess.race.length > 1 ? "Hybrid" : guess.race[0]} status={comparison.race} colIndex={1} animate={false} />
+                            <ResultCell size="sm" value={guess.affiliation} status={comparison.affiliation} colIndex={2} animate={false} />
+                            <ResultCell size="sm" value={formatHeight(guess.height_cm)} status={comparison.height} colIndex={3} animate={false} />
+                            <ResultCell size="sm" value={formatAge(guess.age)} status={comparison.age} colIndex={4} animate={false} />
+                            <ResultCell size="sm" value={guess.eye_color} status={comparison.eye_color} colIndex={5} animate={false} />
+                            <ResultCell size="sm" value={guess.hair_color} status={comparison.hair_color} colIndex={6} animate={false} />
+                            <ResultCell size="sm" value={guess.weapon.join(', ')} status={comparison.weapon} colIndex={7} animate={false} />
+                            <ResultCell size="sm" value={guess.primary_ability.join(', ')} status={comparison.primary_ability} colIndex={8} animate={false} />
+                            <ResultCell size="sm" value={guess.release.join(', ')} status={comparison.release} colIndex={9} animate={false} />
+                            <ResultCell size="sm" value={guess.first_appearance_chapter} status={comparison.first_appearance_chapter} colIndex={10} animate={false} />
+                        </div>
+                    )}
                 </div>
             </div>
 

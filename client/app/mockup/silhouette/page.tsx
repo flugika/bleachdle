@@ -5,6 +5,7 @@ import { getCharacters } from '@/src/features/character/character';
 import { Character } from '@/src/entities/character/schema';
 import { createSearchEngine } from '@/src/lib/search/fuzzy';
 import { getCellWeights, getOccupiedCells, getRevealedCellIndices, getSilhouetteImageUrl, getSilhouettes, GRID_SIZE } from '@/src/features/silhouette/silhouette';
+import Image from 'next/image';
 
 // Layout Shared Components
 import { Header } from '@/src/shared/ui/layout/Header';
@@ -178,10 +179,12 @@ function SilhouettePreviewBox({
                     <div className="absolute inset-0 bg-[linear-gradient(to_right,rgba(0,0,0,0.4),transparent_20%,transparent_80%,rgba(0,0,0,0.4))]" />
 
                     {/* Image Base Layer */}
-                    <img
+                    <Image
                         src={getSilhouetteImageUrl(image)}
                         alt="preview"
-                        className="absolute inset-0 w-full h-full object-cover pointer-events-none select-none"
+                        fill // ✨ ใส่ fill เพื่อรองรับ Next.js Image Optimization ร่วมกับ relative parent
+                        sizes="(max-w-sm) 100vw, 384px" // ⚡ ช่วยบอก Browser ให้โหลดขนาดรูปที่เหมาะสม ประหยัดเน็ต
+                        className="object-cover pointer-events-none select-none" // เอา absolute inset-0 w-full h-full ออกได้เพราะ fill ใส่ให้แล้ว
                         draggable={false}
                     />
 
@@ -474,11 +477,13 @@ export default function MockupSilhouetteGame() {
                                     >
                                         {/* คอลัมน์ที่ 1: ข้อมูลทั่วไปของตัวละคร */}
                                         <div className="col-span-12 lg:col-span-3 flex flex-col gap-1">
-                                            <div className="w-16 h-16 border border-[#1a1a24] bg-[#111120] overflow-hidden mb-1">
-                                                <img
+                                            <div className="relative w-16 h-16 border border-[#1a1a24] bg-[#111120] overflow-hidden mb-1">
+                                                <Image
                                                     src={`/assets/characters/${character.image}`}
                                                     alt={character.name}
                                                     className="w-full h-full object-cover"
+                                                    fill
+                                                    sizes="w-16 h-16"
                                                 />
                                             </div>
                                             <span className="text-xs font-bold text-white uppercase tracking-wide truncate">

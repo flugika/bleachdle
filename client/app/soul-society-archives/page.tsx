@@ -13,6 +13,7 @@ import { SongAudioPlayer } from '@/src/features/song/components/shared/SongAudio
 import { ScaleFit } from '@/src/shared/ui/ScaleFit';
 import { ArchiveCharacterCard } from '@/src/features/soul-society-archives/components/ArchiveCharacterCard';
 import { ArchiveReleaseCard } from '@/src/features/soul-society-archives/components/ArchiveReleaseCard';
+import Image from 'next/image';
 
 // 🏛️ Same Central 46 confidential-archive palette used across
 // QuoteTestimonyDisplay / EmojiTestimonyDisplay — the whole page reads as one
@@ -71,12 +72,12 @@ function AnswerHeader({ name, imageUrl }: { name?: string | null; imageUrl?: str
             style={{ background: 'rgba(200,169,110,0.06)', border: `1px solid ${T.border}` }}
         >
             <div
-                className="w-12 h-12 rounded-full overflow-hidden shrink-0 ring-2 ring-[#c8a96e]/50 shadow-[0_0_14px_rgba(200,169,110,0.25)]"
+                className="relative w-12 h-12 rounded-full overflow-hidden shrink-0 ring-2 ring-[#c8a96e]/50 shadow-[0_0_14px_rgba(200,169,110,0.25)]"
                 style={{ background: '#111' }}
             >
                 {imageUrl ? (
                     // eslint-disable-next-line @next/next/no-img-element
-                    <img src={imageUrl} alt={name} className="w-full h-full object-cover" draggable={false} />
+                    <Image src={imageUrl} alt={name} className="w-full h-full object-cover" fill sizes="w-12 h-12" draggable={false} />
                 ) : (
                     <p className='flex w-full h-full justify-center items-center text-xl font-black' style={{ color: T.gold, opacity: 0.5 }}>
                         卍

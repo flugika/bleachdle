@@ -5,7 +5,9 @@ import { useEffect, useState } from 'react';
 import { SearchBar } from '@/src/shared/ui/SearchBar';
 import { Character } from '@/src/entities/character/schema';
 import { SilhouetteImage } from '@/src/features/silhouette/components/shared/SilhouetteImage';
-import { SilhouetteGameController, SilhouetteTarget } from '@/src/features/silhouette/types';
+// 🆕 game: SilhouetteGuessable แทน SilhouetteGameController — panel นี้แค่โชว์รูป + ส่งเดา
+// ไม่เคยเรียก hardReset/initializeGame/resetStreakKeepMax เลย ไม่มีเหตุผลต้องบังคับรับ type เต็ม
+import { SilhouetteGuessable, SilhouetteTarget } from '@/src/features/silhouette/types';
 import { STORAGE_KEYS } from '@/src/const/localStorage';
 
 // 🎨 ปรับปรุงพาเลทสีใหม่: เน้นสีสว่าง/สดใส ที่ไม่ปนม่วงหรือดำ เพื่อให้ตัดกับเงาตัวละครสีดำได้คมชัดที่สุด
@@ -24,7 +26,7 @@ interface Props {
     characters: Character[];
     remainingGuesses: number;
     stats: { currentStreak: number; maxStreak: number };
-    game: SilhouetteGameController;
+    game: SilhouetteGuessable;
     isGameOver: boolean;
     mode: "daily" | "unlimited";
     timeLeft?: string;
@@ -138,7 +140,7 @@ export function SilhouetteControlPanel({ target, characters, remainingGuesses, s
                         {remainingGuesses}
                     </span>
                 </div>
-                
+
                 <div className="flex flex-col items-center">
                     <span className="text-[#d1a9a9]">Current Streak</span>
                     <span className="text-[#c8a96e] text-lg font-bold">{stats.currentStreak}</span>

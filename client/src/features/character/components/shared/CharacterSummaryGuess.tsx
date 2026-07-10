@@ -284,7 +284,7 @@ export const CharacterSummaryGuess = ({ isOpen, onClose, guesses, target, isWin,
 
                     {/* Chronicle Storage Logs */}
                     <div className={`w-full overflow-hidden transition-all duration-300 ease-in-out ${isHistoryExpanded ? 'max-h-[140px] opacity-100 mt-2.5' : 'max-h-0 opacity-0'}`}>
-                        <div className="grid grid-cols-2 gap-1.5 max-h-[137px] overflow-y-auto pr-1 text-left scrollbar-thin scrollbar-thumb-white/10">
+                        <div className="grid grid-cols-1 gap-1.5 max-h-[137px] overflow-y-auto pr-1 text-left scrollbar-thin scrollbar-thumb-white/10">
                             {[...guesses].map((entry, i) => {
                                 const originalIndex = guesses.length - i;
                                 const isCorrect = entry.result && Object.entries(entry.result).every(([key, value]) => {

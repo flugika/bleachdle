@@ -29,8 +29,6 @@ const EXAMPLE_CORRECT_SONG = {
 } as unknown as BleachSong;
 
 export const SongHowToPlayModal = ({ isOpen, onClose, mode }: SongHowToPlayModalProps) => {
-    if (!isOpen) return null;
-
     return (
         <Modal isOpen={isOpen} onClose={onClose} title="How to Play" titleAlign="center">
             {/* Instructions */}

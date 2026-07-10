@@ -8,6 +8,7 @@ import { DailyResetTimer } from '@/src/shared/ui/DailyResetTimer';
 import { SilhouetteGuessEntry, SilhouetteTarget } from '@/src/features/silhouette/types';
 import { SilhouetteImage } from './SilhouetteImage';
 import { useCharacterTier } from '@/src/shared/hooks/useBadgeTier';
+import Image from 'next/image';
 
 interface SilhouetteSummaryGuessProps {
     isOpen: boolean;
@@ -217,11 +218,13 @@ export const SilhouetteSummaryGuess = ({
 
                                         {/* 🖼️ Premium Character Avatar Thumbnail (พอร์ตมาตรฐานมาจากคำคมโหมด) */}
                                         <div className="relative w-7 h-7 shrink-0 border border-white/5 bg-neutral-900 overflow-hidden rounded-xs shadow-sm">
-                                            <img
+                                            <Image
                                                 src={`/assets/characters/${entry.guess.image}`}
                                                 alt={entry.guess.name}
                                                 className="w-full h-full object-cover filter brightness-[90%] contrast-[105%]"
                                                 draggable={false}
+                                                fill
+                                                sizes="w-full h-full"
                                             />
                                         </div>
 

@@ -31,3 +31,12 @@ export interface SilhouetteGameController extends GuessGameController {
     setHasHydrated: (state: boolean) => void;
     resetStreakKeepMax: () => void;
 }
+
+/**
+ * 🆕 เหมือน QuoteGuessable เป๊ะ — component ที่แค่ "โชว์ + รับเดา" (ControlPanel, SearchBar)
+ * ควรรับ type แคบตัวนี้ ไม่ใช่ SilhouetteGameController เต็ม เพราะ daily store ไม่มี
+ * hardReset/initializeGame/resetStreakKeepMax (ไม่มี concept นั้นใน daily) — ถ้า panel
+ * บังคับรับ type เต็ม จะบังคับให้ daily store ต้อง implement method ที่ไม่มีความหมายทิ้งไว้
+ * เฉยๆ แค่เพื่อให้ type ผ่าน ซึ่งไม่ตรงกับหลัก Interface Segregation
+ */
+export type SilhouetteGuessable = Pick<SilhouetteGameController, 'addGuess' | 'guesses'>;

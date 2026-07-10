@@ -11,8 +11,6 @@ export default function SupportPageClient() {
 
     return (
         <div className="relative min-h-screen w-full text-white overflow-hidden">
-            <BleachReiatsuCursor />
-
             <div className="relative z-10 max-w-5xl mx-auto px-4 py-16 md:py-24">
                 {/* Header */}
                 <div className="text-center mb-6">

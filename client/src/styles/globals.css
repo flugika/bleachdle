@@ -2180,3 +2180,47 @@ button *:active,
   }
 
 }
+
+/* ⚡ REIATSU SUMMON — เอา filter brightness/blur ออกทั้งหมด เหลือแค่ opacity+transform
+   ซึ่งเป็น 2 property เดียวที่ browser compositor animate ได้ลื่นจริงๆ ไม่ repaint ทุกเฟรม
+   (ของเดิม filter brightness(1.8→1) ทำให้กล่องกระพริบสว่าง-มืดแบบกระตุกเพราะ filter หนัก) */
+@keyframes reiatsu-summon-in {
+  0% {
+    opacity: 0;
+    transform: scale(0.9) translateY(6px);
+  }
+
+  100% {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+/* 💥 แสงวาบตอนเปิด — คงไว้แต่ทำให้ "นุ่ม" ขึ้น ลด peak opacity ลงและยืด duration
+   เพื่อไม่ให้ปะทะสายตากับ summon-in ที่ fade เข้าพร้อมกัน */
+@keyframes reiatsu-flash-out {
+  0% {
+    opacity: 0.6;
+    transform: scale(0.7);
+  }
+
+  100% {
+    opacity: 0;
+    transform: scale(1.6);
+  }
+}
+
+/* 🌫️ SOUL DISSOLVE — วิญญาณลอยขึ้นแล้วจางหาย (สื่อถึงการ "กลับสู่โซล โซไซตี้") ตอนปิด */
+@keyframes soul-dissolve-out {
+  0% {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+    filter: blur(0);
+  }
+
+  100% {
+    opacity: 0;
+    transform: scale(0.96) translateY(-14px);
+    filter: blur(6px);
+  }
+}

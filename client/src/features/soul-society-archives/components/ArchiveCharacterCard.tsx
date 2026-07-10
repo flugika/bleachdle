@@ -2,6 +2,7 @@
 'use client';
 
 import { generateCaseFileId } from '@/src/lib/utils/generateCaseFileId';
+import Image from 'next/image';
 
 interface ArchiveCharacterCardProps {
     characterId: string;
@@ -40,11 +41,13 @@ export function ArchiveCharacterCard({ characterId, name, imageUrl, affiliation,
                     style={{ background: '#0d0d10', border: `1px solid ${T.borderDim}` }}
                 >
                     {imageUrl ? (
-                        <img
+                        <Image
                             src={imageUrl}
                             alt={name}
                             className="absolute inset-0 w-full h-full object-cover"
                             draggable={false}
+                            fill
+                            sizes='w-full h-full'
                         />
                     ) : (
                         <div className="absolute inset-0 flex items-center justify-center text-[10px] font-mono uppercase tracking-[0.2em]" style={{ color: T.muted }}>

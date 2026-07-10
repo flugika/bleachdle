@@ -4,6 +4,7 @@
 import { useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { QuoteGuessEntry, QuoteGuessStatus } from '@/src/features/quote/types';
+import Image from 'next/image';
 
 // ─────────────────────────────────────────────────────────────
 // THEME — the two verdicts are now opposite visual systems, not
@@ -227,11 +228,13 @@ export function QuoteGuessCard({ guess, status, isNew, attemptNumber }: QuoteGue
                 className="relative w-16 h-16 m-3 shrink-0 z-10"
                 style={{ border: `1px solid ${isCorrect ? theme.ink + '99' : '#2a2620'}` }}
             >
-                <img
+                <Image
                     src={`/assets/characters/${guess.image}`}
                     alt={guess.name}
                     className="w-full h-full object-cover"
                     style={{ filter: theme.photoFilter }}
+                    fill
+                    sizes="w-16 h-16"
                 />
                 {/* corner brackets */}
                 {['top-0 left-0 border-t border-l', 'top-0 right-0 border-t border-r', 'bottom-0 left-0 border-b border-l', 'bottom-0 right-0 border-b border-r'].map((pos, i) => (

@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 
 type ModalVariant = 'default' | 'success' | 'danger';
 
@@ -11,38 +11,41 @@ interface ModalProps {
     maxWidth?: string;
     variant?: ModalVariant;
     className?: string;
-    // ⚙️ เพิ่ม Props สำหรับจัดการปุ่ม Action
     onConfirm?: () => void;
     confirmText?: string;
     cancelText?: string;
     hideCancel?: boolean;
-    // ✨ ใหม่ — มุมกรอบ "เหลี่ยมๆ" premium ยกเข้ามาไว้ใน Modal กลาง ใช้ได้ทุกที่ที่เรียก <Modal>
-    // แทนที่จะให้ลูกแต่ละตัว copy span 4 อันไปวางเองซ้ำๆ (แบบที่ AllModesModal เคยทำ)
     showCorners?: boolean;
-    // ✨ ใหม่ — ปุ่มปิดกลาง สไตล์เดียวกันทั้งแอป ปิดได้ด้วย showClose={false} ถ้า modal ไหนอยากคุมเอง
     showClose?: boolean;
 }
 
-// 🎨 พื้นหลังกล่อง — จากสีเรียบแบน เปลี่ยนเป็น gradient บางๆ ให้มีมิติ ไม่ flat
 const variantStyles: Record<ModalVariant, string> = {
-    default: "bg-gradient-to-b from-[#13131f] to-[#09090f] border-[#c8a96e]/50", // สีม่วงน้ำเงิน Casual Reiatsu
-    success: "bg-gradient-to-b from-[#0f2c1b] to-[#08160e] border-[#c8a96e]/50", // สีเขียว Kido
-    danger: "bg-gradient-to-b from-[#230b0b] to-[#130505] border-[#c8a96e]/50",  // สีแดง Hollow
+    default: "bg-gradient-to-b from-[#13131f] to-[#09090f] border-[#c8a96e]/50",
+    success: "bg-gradient-to-b from-[#0f2c1b] to-[#08160e] border-[#c8a96e]/50",
+    danger: "bg-gradient-to-b from-[#230b0b] to-[#130505] border-[#c8a96e]/50",
 };
 
-// 🎨 แสง glow เบื้องหลังกล่อง แยกสีตาม variant เพื่อให้กล่องดูมีมิติ ไม่ลอยเป็นกรอบเปล่าๆ
 const variantGlow: Record<ModalVariant, string> = {
     default: 'rgba(139,123,186,0.14)',
     success: 'rgba(77,232,128,0.12)',
     danger: 'rgba(219,103,103,0.14)',
 };
 
-// 🎨 โทนสีของปุ่ม Confirm ที่จะแปรผันตาม Variant
+// 🌟 สีของ reiatsu burst ตอนเปิด — แยกตาม variant ให้เข้ากับโทนกล่อง
+const variantReiatsu: Record<ModalVariant, string> = {
+    default: 'rgba(200,169,110,0.55)',
+    success: 'rgba(77,232,128,0.5)',
+    danger: 'rgba(219,103,103,0.55)',
+};
+
 const confirmBtnStyles: Record<ModalVariant, string> = {
     default: "bg-gradient-to-b from-[#1c1c40]/80 to-[#111122]/60 hover:from-[#25254f] hover:to-[#1a1a3a] border-[#c8a96e]/50 hover:border-[#c8a96e]/80 text-[#8b7bba] hover:text-[#eed9c4]",
     success: "bg-gradient-to-b from-[#164a2a]/80 to-[#0d2918]/60 hover:from-[#1e5d34] hover:to-[#154226] border-[#c8a96e]/40 hover:border-[#c8a96e]/70 text-[#4de880]/90 hover:text-[#eed9c4]",
     danger: "bg-gradient-to-b from-[#651010]/70 to-[#3d0a0a]/50 hover:from-[#7d1414] hover:to-[#590e0e] border-[#c8a96e]/40 hover:border-[#c8a96e]/70 text-[#db6767]/90 hover:text-[#eed9c4]",
 };
+
+// ⏱️ ต้องตรงกับ duration ของ animation ปิดจริงๆ ไม่งั้น unmount ก่อน/หลัง animation จบ
+const CLOSE_ANIMATION_MS = 320;
 
 export const Modal = ({
     isOpen,
@@ -62,6 +65,26 @@ export const Modal = ({
 }: ModalProps) => {
     const modalRef = useRef<HTMLDivElement>(null);
 
+    // 🌟 คั่น "ถูกสั่งปิด" (isOpen=false) กับ "ยังอยู่ใน DOM จริงๆ" (shouldRender) แยกกัน
+    // เพื่อให้มีเวลาเล่น exit animation ก่อน unmount — ของเดิม return null ทันทีเลยไม่มีทาง
+    // เห็น animation ปิดได้เลยเพราะ React ลบ element ออกจาก DOM ในเฟรมเดียวกัน
+    const [shouldRender, setShouldRender] = useState(isOpen);
+    const [isClosing, setIsClosing] = useState(false);
+
+    useEffect(() => {
+        if (isOpen) {
+            setShouldRender(true);
+            setIsClosing(false);
+        } else if (shouldRender) {
+            setIsClosing(true);
+            const timer = setTimeout(() => {
+                setShouldRender(false);
+                setIsClosing(false);
+            }, CLOSE_ANIMATION_MS);
+            return () => clearTimeout(timer);
+        }
+    }, [isOpen]);
+
     useEffect(() => {
         const handleClickOutside = (event: MouseEvent) => {
             if (modalRef.current && !modalRef.current.contains(event.target as Node)) {
@@ -72,7 +95,7 @@ export const Modal = ({
         return () => document.removeEventListener('mousedown', handleClickOutside);
     }, [isOpen, onClose]);
 
-    if (!isOpen) return null;
+    if (!shouldRender) return null;
 
     const textAlignClass = {
         left: 'text-left',
@@ -81,26 +104,38 @@ export const Modal = ({
     }[titleAlign];
 
     return (
-        <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/30 backdrop-blur-md p-4 animate-in fade-in duration-300 cursor-exit">
-            {/* 🖤 scrollbar premium เฉพาะของ Modal — แก้บั๊ก scrollbar ขาวๆ ของ browser
-                ที่โผล่มาชนกับมุมกรอบตกแต่ง (ของเดิม: overflow-y-auto กับมุม decor
-                อยู่ใน element เดียวกันที่ position:relative เดียวกัน เลยซ้อนทับกันตอน scroll) */}
-            {/* 🧱 กรอบนอก — ตัวนี้ "ไม่ scroll" ถือ border + มุม decor เท่านั้น
-                กันไม่ให้มุม decor ไปชนกับ native scrollbar อีก (แยกชั้นกันเด็ดขาด) */}
+        <div
+            className={`fixed inset-0 z-[100] flex items-center justify-center bg-black/30 backdrop-blur-md p-4 cursor-exit ${isClosing
+                ? '[animation:backdrop-fade-out_320ms_ease-out_both]'
+                : '[animation:backdrop-fade-in_300ms_ease-out_both]'
+                }`}
+        >
             <div
                 ref={modalRef}
-                className={`relative w-full ${maxWidth} border-2 shadow-[0_26px_70px_rgba(0,0,0,0.6)] animate-in zoom-in-95 fade-in duration-300 ease-out ${variantStyles[variant]} ${className}`}
+                className={`relative w-full ${maxWidth} border-2 shadow-[0_26px_70px_rgba(0,0,0,0.6)] ${variantStyles[variant]} ${className} ${isClosing
+                    ? '[animation:soul-dissolve-out_320ms_ease-out_both]'
+                    : '[animation:reiatsu-summon-in_320ms_cubic-bezier(0.22,1,0.36,1)_both]'
+                    }`}
             >
-                {/* แสง glow เบื้องหลังกล่อง สีเปลี่ยนตาม variant */}
+                {/* 💥 Reiatsu flash — ทำให้เบาลง + sync duration ให้จบพร้อมๆกับ summon-in
+                    (ของเดิม 450ms ยาวกว่า summon-in 380ms ทำให้เห็นแสงค้างวูบวาบหลังกล่องนิ่งแล้ว) */}
+                {!isClosing && (
+                    <div
+                        aria-hidden
+                        className="pointer-events-none absolute inset-0 -z-10 [animation:reiatsu-flash-out_320ms_ease-out_both]"
+                        style={{ background: `radial-gradient(ellipse at 50% 50%, ${variantReiatsu[variant]} 0%, transparent 65%)`, filter: 'blur(40px)' }}
+                    />
+                )}
+
+                {/* 🔧 glow เบื้องหลังถาวร (blur 210px หนักมาก) — ไม่ต้อง animate เลย โผล่มาพร้อม
+                    กล่องแบบ static ไปเลย ลด paint cost ที่แข่งกับ animation อื่นตอนเฟรมแรกๆ ของการเปิด */}
                 <div
                     aria-hidden
                     className="pointer-events-none absolute inset-0 -z-10"
                     style={{ background: `radial-gradient(ellipse at 50% 0%, ${variantGlow[variant]} 0%, transparent 70%)`, filter: 'blur(210px)' }}
                 />
 
-                {/* ⬛ มุมกรอบ premium — reusable กลาง ใช้ได้ทุก <Modal>, ปิดได้ด้วย showCorners={false}
-                    ทยอยเข้า (stagger) ทีละมุมตอนเปิด แทนที่จะโผล่มาพร้อมกันทื่อๆ */}
-                {showCorners && (
+                {showCorners && !isClosing && (
                     <>
                         <span className="absolute -top-[4px] -left-[4px] w-6 h-6 border-t-[5px] border-l-[5px] border-[#e8c789] [animation:premium-corner-in_0.35s_ease-out_0.05s_both] pointer-events-none drop-shadow-[0_0_10px_rgba(200,169,110,0.65)]" />
                         <span className="absolute -top-[4px] -right-[4px] w-6 h-6 border-t-[5px] border-r-[5px] border-[#e8c789] [animation:premium-corner-in_0.35s_ease-out_0.1s_both] pointer-events-none drop-shadow-[0_0_10px_rgba(200,169,110,0.65)]" />
@@ -109,7 +144,6 @@ export const Modal = ({
                     </>
                 )}
 
-                {/* 📜 กล่องเนื้อในจริง — scroll เฉพาะชั้นนี้ชั้นเดียว, ไม่ยุ่งกับกรอบ/มุมชั้นนอก */}
                 <div className="premium-modal-scroll relative bg-transparent max-h-[90vh] overflow-y-auto p-8 flex flex-col">
                     {showClose && (
                         <button
@@ -130,12 +164,10 @@ export const Modal = ({
                         </h2>
                     )}
 
-                    {/* Content Area */}
                     <div className="flex-1">
                         {children}
                     </div>
 
-                    {/* ⚔️ DYNAMIC ACTION BUTTONS (Render อัตโนมัติเมื่อส่ง onConfirm มา) */}
                     {onConfirm && (
                         <div className="flex w-full gap-3 mt-8 pt-4 border-t border-white/5">
                             {!hideCancel && (

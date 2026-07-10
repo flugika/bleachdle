@@ -5,7 +5,6 @@ import { useEffect, useState } from 'react';
 import { QuoteGuessTable } from '@/src/features/quote/components/shared/QuoteGuessTable';
 import { QuoteSummaryGuess } from '@/src/features/quote/components/shared/QuoteSummaryGuess';
 import { useQuoteGame } from '@/src/features/quote/hooks/daily/useQuoteGame';
-import { getCharacters } from '@/src/features/character/character';
 import { QuoteHowToPlayModal } from '../shared/QuoteHowToPlayModal';
 import { Header } from '@/src/shared/ui/layout/Header';
 import { Divider } from '@/src/shared/ui/layout/Divider';
@@ -17,7 +16,6 @@ import { QuoteControlPanel } from '@/src/shared/ui/control-panel/QuoteControlPan
 import { ModeBadge } from '@/src/shared/ui/game-selector/ModeBadge';
 import { ModeSelectorModal } from '@/src/shared/ui/game-selector/ModeSelectorModal';
 import { useSenkaimon } from '@/src/shared/ui/context/NavigationContext';
-import { STORAGE_KEYS } from '@/src/const/localStorage';
 import { BL_MODES_METADATA } from '@/src/config/mode';
 import { MAX_DAILY_QUOTE_GUESSES } from '@/src/const/guess';
 import { DailyHubModalFooter } from '@/src/shared/ui/daily-hub/DailyHubModalFooter';
@@ -32,8 +30,10 @@ export default function DailyQuoteWrapper({ initialTarget }: { initialTarget: Qu
     const { navigate, state, reportReady } = useSenkaimon();
 
     const gameStore = useQuoteGame();
-    const { target, guesses, initializeGame, finalizeGame, resetGame, hasFinalized, _hasHydrated, stats, loadStats } = gameStore;
-    const characters = getCharacters();
+    // 🆕 initializeGame(target) ตัวเดิมถูกแทนด้วย setTarget(target) — factory ของ daily
+    // ไม่มี initializeGame แล้ว (ไม่มี concept "สุ่มตัวใหม่" ใน daily อยู่แล้วแต่แรก)
+    // reconcile วันเดิม/วันใหม่ทำอยู่ข้างใน setTarget ของ store เอง เหมือนที่ Silhouette daily ทำ
+    const { target, guesses, setTarget, finalizeGame, resetGame, hasFinalized, _hasHydrated, stats, loadStats } = gameStore;
     const quotes = getQuotes();
     const isSynced = target !== null && initialTarget !== null && target.id === initialTarget.id;
 
@@ -42,7 +42,7 @@ export default function DailyQuoteWrapper({ initialTarget }: { initialTarget: Qu
     useEffect(() => {
         if (!_hasHydrated) return;
         if (initialTarget !== null) {
-            initializeGame(initialTarget);
+            setTarget(initialTarget);
 
             if (target && process.env.NODE_ENV !== 'production') {
                 console.log('target:', useQuoteGame.getState().target);
@@ -102,12 +102,14 @@ export default function DailyQuoteWrapper({ initialTarget }: { initialTarget: Qu
         navigate(targetMode);
     };
 
+    // 🆕 initializeGame() ตัวเดิมเป็น no-op เสมอ (เรียกไม่มี target อาร์กิวเมนต์ →
+    // implementation เดิม `if (!target) return;` return ทันที) ตัดทิ้งไปเลย เหลือแค่
+    // loadStats + ประกาศพร้อม
     useEffect(() => {
         if (!_hasHydrated) return;
         loadStats();
-        initializeGame();
         setIsReady(true);
-    }, [initializeGame, characters.length, _hasHydrated, loadStats]);
+    }, [_hasHydrated, loadStats]);
 
     useEffect(() => {
         loadStats();
@@ -177,7 +179,6 @@ export default function DailyQuoteWrapper({ initialTarget }: { initialTarget: Qu
                     <SubHeader title={BL_MODES_METADATA.quote.title} subtitle={BL_MODES_METADATA.quote.statusLine} />
                 </div>
 
-                {/* เปลี่ยนสเตตัสสวิตช์ UI จาก !isModalOpen เป็น !showSummary ทั่วทั่งคอมโพเนนต์ */}
                 {!showSummary && (
                     <QuoteControlPanel
                         mode="daily"

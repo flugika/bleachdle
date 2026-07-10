@@ -28,8 +28,6 @@ const EXAMPLE_CORRECT_CHARACTER = {
 const EXAMPLE_QUOTE = `"If you wish to kill 100 men, you must be prepared to be killed by 100 men."`;
 
 export const QuoteHowToPlayModal = ({ isOpen, onClose, mode }: QuoteHowToPlayModalProps) => {
-    if (!isOpen) return null;
-
     return (
         <Modal isOpen={isOpen} onClose={onClose} title="How to Play" titleAlign="center">
             {/* Instructions */}

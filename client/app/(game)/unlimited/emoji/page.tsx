@@ -190,7 +190,7 @@ export default function UnlimitedEmojiGame() {
                         mode="unlimited"
                         target={target}
                         emojiSets={emojiSets}
-                        revealedCount={revealedCount}
+                        revealedCount={revealedCount as number}
                         remainingGuesses={remainingGuesses}
                         stats={stats}
                         game={gameStore}

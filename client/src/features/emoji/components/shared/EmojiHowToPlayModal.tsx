@@ -42,8 +42,6 @@ const DEMO_TILES = [
 ];
 
 export const EmojiHowToPlayModal = ({ isOpen, onClose, mode }: EmojiHowToPlayModalProps) => {
-    if (!isOpen) return null;
-
     return (
         <Modal isOpen={isOpen} onClose={onClose} title="RECORDS & GUIDELINES" titleAlign="center">
             {/* ─── SIDE-BY-SIDE SEPARATION OF CONCERNS ─── */}

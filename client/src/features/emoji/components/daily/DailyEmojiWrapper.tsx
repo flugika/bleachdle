@@ -32,7 +32,7 @@ export default function DailyEmojiWrapper({ initialTarget }: { initialTarget: Em
 
     const gameStore = useEmojiGame();
     const {
-        target, guesses, revealedCount, initializeGame, finalizeGame, resetGame,
+        target, guesses, revealedCount, setTarget, finalizeGame, resetGame,
         hasFinalized, _hasHydrated, stats, loadStats,
     } = gameStore;
     const characters = getCharacters();
@@ -44,7 +44,7 @@ export default function DailyEmojiWrapper({ initialTarget }: { initialTarget: Em
     useEffect(() => {
         if (!_hasHydrated) return;
         if (initialTarget !== null) {
-            initializeGame(initialTarget);
+            setTarget(initialTarget);
 
             if (target && process.env.NODE_ENV !== 'production') {
                 console.log('target:', useEmojiGame.getState().target);
@@ -106,9 +106,8 @@ export default function DailyEmojiWrapper({ initialTarget }: { initialTarget: Em
     useEffect(() => {
         if (!_hasHydrated) return;
         loadStats();
-        initializeGame();
         setIsReady(true);
-    }, [initializeGame, characters.length, _hasHydrated, loadStats]);
+    }, [characters.length, _hasHydrated, loadStats]);
 
     useEffect(() => {
         loadStats();

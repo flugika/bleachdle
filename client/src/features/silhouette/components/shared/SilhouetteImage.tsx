@@ -6,6 +6,7 @@ import { getCellWeights, getOccupiedCells, getRevealedCellIndices, getSilhouette
 import { STORAGE_KEYS } from '@/src/const/localStorage';
 import SoulSyncLoader from '@/src/shared/ui/loader/SoulSyncLoader';
 import { MAX_DAILY_SILHOUETTE_GUESSES, MAX_UNLIMITED_SILHOUETTE_GUESSES } from '@/src/const/guess';
+import Image from 'next/image'; // Next.js Component
 
 interface Props {
     characterId: string;
@@ -75,7 +76,8 @@ export const SilhouetteImage = ({
         let cancelled = false;
         setSilhouetteLoaded(false);
 
-        const silhouetteImg = new Image();
+        // 🛠️ แก้ไขจุดที่ 1: ใช้ window.Image ดั้งเดิมของ Browser เพื่อป้องกันชนกับ Next.js Image
+        const silhouetteImg = new window.Image();
         silhouetteImg.src = silhouetteSrc;
 
         const markSilhouetteLoaded = () => {
@@ -101,7 +103,8 @@ export const SilhouetteImage = ({
         }
 
         setRealImageLoaded(false);
-        const realImg = new Image();
+        // 🛠️ แก้ไขจุดที่ 2: ใช้ window.Image ดั้งเดิมของ Browser เช่นกัน
+        const realImg = new window.Image();
         realImg.src = fullCharacterSrc;
 
         const markRealImageLoaded = () => {
@@ -120,7 +123,7 @@ export const SilhouetteImage = ({
 
     const revealed = useMemo(
         () => getRevealedCellIndices(characterId, guessCount, mode, getOccupiedCells(image), getCellWeights(image)),
-        [characterId, guessCount, image],
+        [characterId, guessCount, image, mode],
     );
 
     const isReady = configReady && silhouetteLoaded;
@@ -187,22 +190,26 @@ export const SilhouetteImage = ({
                 style={{ backgroundColor: internalBg }}
             >
                 {/* 🖼️ LAYER 3 (Base Silhouette Image) */}
-                <img
+                <Image
                     src={silhouetteSrc}
                     alt="Target Silhouette Signature"
                     className={`absolute inset-0 w-full h-full object-cover pointer-events-none select-none filter drop-shadow-[0_0_15px_rgba(0,0,0,0.9)] transition-all duration-700 ease-in-out z-20 ${effectiveReveal ? 'opacity-0 scale-95 blur-sm' : 'opacity-100 scale-100'
                         }`}
                     draggable={false}
+                    fill
+                    sizes="(max-w-sm) 100vw, 384px" // 🛠️ แก้ไข: กำหนดขนาด responsive ให้ถูกต้องตามขนาด max-w-sm
                 />
 
                 {/* 🌟 LAYER 4 (Premium Reveal Layer) */}
                 {fullCharacterSrc && (
-                    <img
+                    <Image
                         src={fullCharacterSrc}
                         alt="Character Reality Decrypted"
                         className={`absolute inset-0 w-full h-full object-cover pointer-events-none select-none filter drop-shadow-[0_0_20px_rgba(200,169,110,0.3)] transition-all duration-1000 cubic-bezier(0.16, 1, 0.3, 1) z-30 ${effectiveReveal && realImageLoaded ? 'opacity-100 scale-100 rotate-0' : 'opacity-0 scale-105 rotate-1'
                             }`}
                         draggable={false}
+                        fill
+                        sizes="(max-w-sm) 100vw, 384px" // 🛠️ แก้ไข: กำหนดขนาด responsive ให้ถูกต้องเช่นเดียวกัน
                     />
                 )}
 
