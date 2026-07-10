@@ -181,10 +181,6 @@ export default function DailySongWrapper({ initialTarget, initialSegmentId }: Da
                     <SubHeader title={BL_MODES_METADATA.song.title} subtitle={BL_MODES_METADATA.song.statusLine} />
                 </div>
 
-                {!showSummary && hasFinalized && (
-                    <DailyProgressBar activeMode="song" className="mb-5" />
-                )}
-
                 {!showSummary && (
                     <SongControlPanel
                         mode="daily"
