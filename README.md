@@ -633,10 +633,11 @@ bleachdle
 │  │  │     │  ├─ AllModesButton.tsx
 │  │  │     │  ├─ AllModesModal.tsx
 │  │  │     │  ├─ HomeButton.tsx
+│  │  │     │  ├─ HowToPlayButton.tsx
 │  │  │     │  ├─ ModeBadge.tsx
 │  │  │     │  ├─ ModeSelectorModal.tsx
+│  │  │     │  ├─ StatsButton.tsx
 │  │  │     │  └─ ThematicModeSelector.tsx
-│  │  │     ├─ HowToPlayButton.tsx
 │  │  │     ├─ input.tsx
 │  │  │     ├─ layout
 │  │  │     │  ├─ Divider.tsx

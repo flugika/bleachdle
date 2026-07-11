@@ -22,9 +22,10 @@ export function HowToPlayButton({
                 className={`group/btn relative w-10 h-10 flex items-center justify-center text-[#c8a96e] hover:text-[#6fc3e8] transition-colors duration-300 hover:cursor-pointer ${className}`}
                 aria-label={tooltipContent}
             >
+                {/* 🔧 สลับมุมเป็น top-left / bottom-right ให้ตรงกับ AllModes/Home/Stats */}
                 <div className="absolute inset-0 opacity-0 scale-75 group-hover/btn:opacity-100 group-hover/btn:scale-100 transition-all duration-300 pointer-events-none">
-                    <div className="absolute top-0 right-0 w-1.5 h-1.5 border-t border-r border-[#6fc3e8]" />
-                    <div className="absolute bottom-0 left-0 w-1.5 h-1.5 border-b border-l border-[#6fc3e8]" />
+                    <div className="absolute top-0 left-0 w-1.5 h-1.5 border-t border-l border-[#6fc3e8]" />
+                    <div className="absolute bottom-0 right-0 w-1.5 h-1.5 border-b border-r border-[#6fc3e8]" />
                 </div>
 
                 <svg
