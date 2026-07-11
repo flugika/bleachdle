@@ -14,7 +14,7 @@ export function DailyHubModalFooter({ activeMode }: DailyHubModalFooterProps) {
     const { navigate } = useSenkaimon();
 
     return (
-        <div className="relative w-full max-w-md mx-auto mt-4 p-5 border border-[#c8a96e]/25 bg-[#060608]/95 backdrop-blur-xl shadow-[0_20px_40px_rgba(0,0,0,0.9),inset_0_0_60px_rgba(0,0,0,0.8)] group/footer">
+        <div className="relative w-full max-w-xl mx-auto mt-4 p-5 border border-[#c8a96e]/25 bg-[#060608]/95 backdrop-blur-xl shadow-[0_20px_40px_rgba(0,0,0,0.9),inset_0_0_60px_rgba(0,0,0,0.8)] group/footer">
 
             {/* 💠 PREMIUM SQUARED CORNER ACCENTS */}
             <span className="absolute top-0 left-0 w-3 h-3 border-t-2 border-l-2 border-[#c8a96e]/60" />
