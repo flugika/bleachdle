@@ -54,6 +54,7 @@ export const ReleaseSearchBar = ({ releases, disabled = false, game }: ReleaseSe
             // 🎯 ใช้ Array รูปแบบ ['object', 'field'] แทนการใช้จุดพ่วงสตริง และใส่คำสั่งระบุน้ำหนัก (Weight) ช่วยดันความสำคัญ
             keys: [
                 { name: 'technique_name', weight: 1.0 },
+                { name: 'trigger_phrase', weight: 0.7 },
                 { name: 'technique_translation', weight: 0.7 },
                 { name: ['character', 'name'], weight: 0.8 }
             ] as any
@@ -242,7 +243,7 @@ export const ReleaseSearchBar = ({ releases, disabled = false, game }: ReleaseSe
                                                 ? 'text-[#916564] line-through'
                                                 : 'text-[#d1d1d6]'
                                     ].join(' ')}>
-                                        {item.technique_name}
+                                        {item.trigger_phrase}, {item.technique_name}
                                     </span>
 
                                     {item.technique_translation && (
