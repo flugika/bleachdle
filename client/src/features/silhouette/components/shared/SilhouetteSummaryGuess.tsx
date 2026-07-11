@@ -24,7 +24,7 @@ interface SilhouetteSummaryGuessProps {
     target: SilhouetteTarget | null;
     isWin: boolean;
     mode: 'daily' | 'unlimited';
-    stats?: { currentStreak: number; maxStreak: number };
+    stats?: { currentStreak: number; maxStreak: number, playedCount: number, passedCount: number, guessDistribution: Record<string, number> };
 }
 
 export const SilhouetteSummaryGuess = ({
@@ -34,7 +34,7 @@ export const SilhouetteSummaryGuess = ({
     target,
     isWin,
     mode,
-    stats = { currentStreak: 0, maxStreak: 0 }
+    stats = { currentStreak: 0, maxStreak: 0, playedCount: 0, passedCount: 0, guessDistribution: {} },
 }: SilhouetteSummaryGuessProps) => {
     // 👁️ [Logic จาก HowToPlayModal]: ระบบลูปกระพริบโครงสร้างแรงดันวิญญาณสลับร่างจริง/เงา
     const [isRadarRevealed, setIsRadarRevealed] = useState(false);

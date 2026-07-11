@@ -376,3 +376,158 @@ AS $$
   FROM (SELECT p_date AS date) d
   LEFT JOIN daily_stats ds ON ds.date = d.date;
 $$;
+
+-- sql/get_global_stats.sql
+--
+-- Two RPCs backing GET /api/stats/global:
+--   get_global_stats_today(p_date)  → single day's numbers (Daily tab)
+--   get_global_stats_alltime()      → summed across every stored day
+--                                     (used as the "Unlimited" global number
+--                                     until a dedicated all-time rollup table
+--                                     exists — see note at bottom of this file)
+--
+-- Both return one JSONB object shaped like:
+--   {
+--     "character": { "played": 123, "passed": 45, "guess_distribution": {"1":2,...} },
+--     "quote": {...}, "song": {...}, "silhouette": {...}, "emoji": {...}, "release": {...}
+--   }
+-- so the API route can loop over a fixed mode list without six near-identical
+-- SQL blocks in the route handler itself.
+
+CREATE OR REPLACE FUNCTION get_global_stats_today(p_date date)
+RETURNS jsonb
+LANGUAGE sql
+STABLE
+AS $$
+    SELECT jsonb_build_object(
+        'character', jsonb_build_object(
+            'played', COALESCE(character_played_count, 0),
+            'passed', COALESCE(character_passed_count, 0),
+            'guess_distribution', COALESCE(character_guess_distribution, '{}'::jsonb)
+        ),
+        'song', jsonb_build_object(
+            'played', COALESCE(song_played_count, 0),
+            'passed', COALESCE(song_passed_count, 0),
+            'guess_distribution', COALESCE(song_guess_distribution, '{}'::jsonb)
+        ),
+        'silhouette', jsonb_build_object(
+            'played', COALESCE(silhouette_played_count, 0),
+            'passed', COALESCE(silhouette_passed_count, 0),
+            'guess_distribution', COALESCE(silhouette_guess_distribution, '{}'::jsonb)
+        ),
+        'release', jsonb_build_object(
+            'played', COALESCE(release_played_count, 0),
+            'passed', COALESCE(release_passed_count, 0),
+            'guess_distribution', COALESCE(release_guess_distribution, '{}'::jsonb)
+        ),
+        'emoji', jsonb_build_object(
+            'played', COALESCE(emoji_played_count, 0),
+            'passed', COALESCE(emoji_passed_count, 0),
+            'guess_distribution', COALESCE(emoji_guess_distribution, '{}'::jsonb)
+        ),
+        'quote', jsonb_build_object(
+            'played', COALESCE(quote_played_count, 0),
+            'passed', COALESCE(quote_passed_count, 0),
+            'guess_distribution', COALESCE(quote_guess_distribution, '{}'::jsonb)
+        )
+    )
+    FROM daily_stats
+    WHERE date = p_date;
+$$;
+
+-- Merges a jsonb distribution column across every row into one {"1": n, "2": n, ...}
+CREATE OR REPLACE FUNCTION _merge_guess_distribution(p_column text)
+RETURNS jsonb
+LANGUAGE plpgsql
+STABLE
+AS $$
+DECLARE
+    result jsonb;
+BEGIN
+    EXECUTE format(
+        $q$
+            SELECT COALESCE(jsonb_object_agg(bucket, total), '{}'::jsonb)
+            FROM (
+                SELECT key AS bucket, SUM(value::int) AS total
+                FROM daily_stats, jsonb_each_text(%I)
+                GROUP BY key
+            ) buckets
+        $q$,
+        p_column
+    ) INTO result;
+    RETURN result;
+END;
+$$;
+
+CREATE OR REPLACE FUNCTION get_global_stats_alltime()
+RETURNS jsonb
+LANGUAGE plpgsql
+STABLE
+AS $$
+DECLARE
+    totals record;
+BEGIN
+    SELECT
+        SUM(character_played_count)  AS character_played,
+        SUM(character_passed_count)  AS character_passed,
+        SUM(song_played_count)       AS song_played,
+        SUM(song_passed_count)       AS song_passed,
+        SUM(silhouette_played_count) AS silhouette_played,
+        SUM(silhouette_passed_count) AS silhouette_passed,
+        SUM(release_played_count)    AS release_played,
+        SUM(release_passed_count)    AS release_passed,
+        SUM(emoji_played_count)      AS emoji_played,
+        SUM(emoji_passed_count)      AS emoji_passed,
+        SUM(quote_played_count)      AS quote_played,
+        SUM(quote_passed_count)      AS quote_passed
+    INTO totals
+    FROM daily_stats;
+
+    RETURN jsonb_build_object(
+        'character', jsonb_build_object(
+            'played', COALESCE(totals.character_played, 0),
+            'passed', COALESCE(totals.character_passed, 0),
+            'guess_distribution', _merge_guess_distribution('character_guess_distribution')
+        ),
+        'song', jsonb_build_object(
+            'played', COALESCE(totals.song_played, 0),
+            'passed', COALESCE(totals.song_passed, 0),
+            'guess_distribution', _merge_guess_distribution('song_guess_distribution')
+        ),
+        'silhouette', jsonb_build_object(
+            'played', COALESCE(totals.silhouette_played, 0),
+            'passed', COALESCE(totals.silhouette_passed, 0),
+            'guess_distribution', _merge_guess_distribution('silhouette_guess_distribution')
+        ),
+        'release', jsonb_build_object(
+            'played', COALESCE(totals.release_played, 0),
+            'passed', COALESCE(totals.release_passed, 0),
+            'guess_distribution', _merge_guess_distribution('release_guess_distribution')
+        ),
+        'emoji', jsonb_build_object(
+            'played', COALESCE(totals.emoji_played, 0),
+            'passed', COALESCE(totals.emoji_passed, 0),
+            'guess_distribution', _merge_guess_distribution('emoji_guess_distribution')
+        ),
+        'quote', jsonb_build_object(
+            'played', COALESCE(totals.quote_played, 0),
+            'passed', COALESCE(totals.quote_passed, 0),
+            'guess_distribution', _merge_guess_distribution('quote_guess_distribution')
+        )
+    );
+END;
+$$;
+
+-- ============================================================================
+-- NOTE on "Unlimited" numbers:
+-- daily_stats only ever tracks the shared daily puzzle (PK = date), so
+-- get_global_stats_alltime() is really "all-time totals of the Daily mode",
+-- NOT global stats for the Unlimited game mode (which has no server-side
+-- table at all right now — it's 100% client localStorage, per-player, with
+-- no submission endpoint). If you want a real global Unlimited leaderboard
+-- (e.g. "X players have cleared Unlimited"), you need a new table that
+-- Unlimited actually writes to when a player finishes a full clear. Until
+-- that exists, the API route below returns this alltime-Daily rollup for
+-- both tabs so the page doesn't show fake data, with a `dimension` field
+-- so the client can label it honestly.
+-- ============================================================================

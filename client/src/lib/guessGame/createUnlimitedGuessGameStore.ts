@@ -2,7 +2,7 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import { nestedJSONStorage } from '@/src/lib/store/createNestedStorage';
-import { Stats } from '@/src/shared/types/guessGame';
+import { Stats } from '@/src/lib/guessGame/types';
 import {
     GuessEntry,
     UnlimitedGuessGameConfig,
@@ -56,11 +56,13 @@ export function createUnlimitedGuessGameStore<
                 setTarget: (target) => set({ target } as Partial<State>),
                 ...initialExtra(),
 
-                stats: { currentStreak: 0, maxStreak: 0 },
+                stats: { currentStreak: 0, maxStreak: 0, playedCount: 0, passedCount: 0, guessDistribution: {} },
                 loadStats: () => {
                     if (typeof window === 'undefined') return;
                     const statsData = JSON.parse(localStorage.getItem(config.storageKeys.stats) || '{}');
-                    const saved: Stats = statsData.unlimited || { currentStreak: 0, maxStreak: 0 };
+                    const saved: Stats = statsData.unlimited || {
+                        currentStreak: 0, maxStreak: 0, playedCount: 0, passedCount: 0, guessDistribution: {},
+                    };
                     set({ stats: saved } as Partial<State>);
                 },
 
@@ -115,7 +117,7 @@ export function createUnlimitedGuessGameStore<
                 },
 
                 finalizeGame: (isWin) => {
-                    const { target, hasFinalized } = get();
+                    const { target, hasFinalized, guesses } = get();
                     if (!target || hasFinalized) return;
 
                     const completedData = JSON.parse(localStorage.getItem(config.storageKeys.completed) || '{}');
@@ -126,10 +128,27 @@ export function createUnlimitedGuessGameStore<
                     localStorage.setItem(config.storageKeys.completed, JSON.stringify(completedData));
 
                     const statsData = JSON.parse(localStorage.getItem(config.storageKeys.stats) || '{}');
-                    const savedStats: Stats = statsData.unlimited || { currentStreak: 0, maxStreak: 0 };
+                    const savedStats: Stats = statsData.unlimited || {
+                        currentStreak: 0, maxStreak: 0, playedCount: 0, passedCount: 0, guessDistribution: {},
+                    };
+
+                    // 🆕 อัปเดต played/passed count
+                    const playedCount = savedStats.playedCount + (isWin ? 1 : 0);
+                    const passedCount = savedStats.passedCount + (isWin ? 0 : 1);
+
+                    // 🆕 อัปเดต guess distribution เฉพาะตอนชนะ (ตอบถูก)
+                    const guessDistribution = { ...savedStats.guessDistribution };
+                    if (isWin) {
+                        const bucket = guesses.length >= 6 ? '6' : String(guesses.length);
+                        guessDistribution[bucket] = (guessDistribution[bucket] || 0) + 1;
+                    }
+
                     const newStats: Stats = {
                         currentStreak: isWin ? savedStats.currentStreak + 1 : 0,
                         maxStreak: isWin ? Math.max(savedStats.maxStreak, savedStats.currentStreak + 1) : savedStats.maxStreak,
+                        playedCount,
+                        passedCount,
+                        guessDistribution,
                     };
                     statsData.unlimited = newStats;
                     localStorage.setItem(config.storageKeys.stats, JSON.stringify(statsData));
@@ -155,8 +174,10 @@ export function createUnlimitedGuessGameStore<
 
                 resetStreakKeepMax: () => {
                     const statsData = JSON.parse(localStorage.getItem(config.storageKeys.stats) || '{}');
-                    const saved: Stats = statsData.unlimited || { currentStreak: 0, maxStreak: 0 };
-                    const resetStats: Stats = { currentStreak: 0, maxStreak: saved.maxStreak };
+                    const saved: Stats = statsData.unlimited || {
+                        currentStreak: 0, maxStreak: 0, playedCount: 0, passedCount: 0, guessDistribution: {},
+                    };
+                    const resetStats: Stats = { ...saved, currentStreak: 0, maxStreak: saved.maxStreak };
                     statsData.unlimited = resetStats;
                     localStorage.setItem(config.storageKeys.stats, JSON.stringify(statsData));
                     set({ stats: resetStats } as Partial<State>);

@@ -3,7 +3,7 @@
 
 import { useMemo } from 'react';
 import Image from 'next/image';
-import { MatchResult } from "../../types";
+import { GuessEntry, MatchResult } from "../../types";
 import { STATUS_COLORS, RESULT_KEYS } from '@/src/const/summary';
 import { useCharacterTier } from '@/src/shared/hooks/useBadgeTier';
 import { DailyResetTimer } from '@/src/shared/ui/DailyResetTimer';
@@ -17,6 +17,8 @@ import {
     IdentificationHistoryPanel,
 } from '@/src/shared/ui/summary';
 import { formatAge, formatHeight } from '@/src/lib/utils/format';
+import { Stats } from '@/src/lib/guessGame/types';
+import { Character } from '@/src/entities/character/schema';
 
 // 🗺️ 1. TYBW LORE LOOKUP DICTIONARY (ทำหน้าที่เป็น Whitelist & อัปเดตชื่อไฟล์จริง)
 const EMBLEM_DATA: Record<string, { file: string; color: string }> = {
@@ -33,7 +35,17 @@ const EMBLEM_DATA: Record<string, { file: string; color: string }> = {
     "unknown": { file: "soul.webp", color: "#52525b" },
 };
 
-export const CharacterSummaryGuess = ({ isOpen, onClose, guesses, target, isWin, mode, stats = { currentStreak: 0, maxStreak: 0 } }: any) => {
+interface CharacterSummaryGuessProps {
+    isOpen: boolean;
+    onClose: () => void;
+    guesses: GuessEntry[];
+    target: Character | null;
+    isWin: boolean;
+    mode: 'daily' | 'unlimited';
+    stats: Stats;
+}
+
+export const CharacterSummaryGuess = ({ isOpen, onClose, guesses, target, isWin, mode, stats = { currentStreak: 0, maxStreak: 0, playedCount: 0, passedCount: 0, guessDistribution: {} }, }: CharacterSummaryGuessProps) => {
     if (!isOpen) return null;
 
     const activeTier = useCharacterTier(stats.maxStreak);
@@ -137,7 +149,7 @@ export const CharacterSummaryGuess = ({ isOpen, onClose, guesses, target, isWin,
                                 <h2 className="text-xl text-[#f5ebd5] tracking-wide truncate">{target.name}</h2>
                                 <div className="flex flex-wrap gap-2 mt-2">
                                     <span className="px-2 py-0.5 text-[12px] text-[#c8a96e]/80 border border-[#c8a96e]/20 bg-[#c8a96e]/5 font-mono">{target.gender}</span>
-                                    <span className="px-2 py-0.5 text-[12px] text-[#c8a96e]/80 border border-[#c8a96e]/20 bg-[#c8a96e]/5 font-mono">{target.race.join(' / ')}</span>
+                                    <span className="px-2 py-0.5 text-[12px] text-[#c8a96e]/80 border border-[#c8a96e]/20 bg-[#c8a96e]/5 font-mono">{target.race.length > 1 ? "Hybrid" : target.race}</span>
                                     <span className="px-2 py-0.5 text-[12px] text-[#c8a96e]/80 border border-[#c8a96e]/20 bg-[#c8a96e]/5 font-mono">{target.affiliation}</span>
                                 </div>
                             </div>

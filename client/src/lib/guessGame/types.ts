@@ -1,5 +1,4 @@
 // src/shared/lib/guessGame/types.ts
-import { Stats } from '@/src/shared/types/guessGame';
 import { recordDailyStat } from '@/src/services/statsClient';
 
 /**
@@ -99,3 +98,16 @@ export const defaultIsValidGuessEntry = <TCharacter,>(entry: unknown): entry is 
 
 export const defaultHasValidTargetShape = (target: unknown): boolean =>
     !!(target as { character?: unknown } | null)?.character;
+
+export interface GuessGameController {
+    guesses: { guess: { id: string } }[];
+    addGuess: (id: string) => void;
+}
+
+export interface Stats {
+    currentStreak: number;
+    maxStreak: number;
+    playedCount: number;              // จำนวนครั้งที่ชนะ (solved) สะสม
+    passedCount: number;               // จำนวนครั้งที่แพ้ (failed) สะสม
+    guessDistribution: Record<string, number>; // "1".."5", "6"="6+" -> จำนวนครั้ง
+}

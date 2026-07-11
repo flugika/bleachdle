@@ -1,32 +1,39 @@
 // src/features/release/types.ts
 import { BleachRelease } from '@/src/entities/release/schema';
-import { Stats } from '@/src/shared/types/guessGame';
+import { Character } from '@/src/entities/character/schema';
+import { Stats } from '@/src/lib/guessGame/types';
 
-/**
- * 🎯 เหมือน Song ไม่ใช่เหมือน Quote: คำตอบคือ record ของ release เอง (technique_name)
- * ไม่ใช่ Character — ผู้เล่นเลือก release จาก search bar โดยตรง ระบบเทียบด้วย id/technique_name
- * ของ record นั้น ไม่ใช่ข้อความที่พิมพ์ (compare logic คืนแค่ correct | wrong ไม่มี higher/lower)
- */
 export type ReleaseGuessStatus = 'correct' | 'wrong';
 
 export interface ReleaseGuessEntry {
     guess: BleachRelease;
     status: ReleaseGuessStatus;
-    isNew?: boolean; // true เฉพาะ guess ล่าสุด → trigger animation ใน ReleaseGuessTable
+    isNew?: boolean;
 }
 
 /**
- * 🔒 สัญญาที่ ReleaseSearchBar.tsx และ UI อื่นๆ ของโหมด release คาดหวังจาก store
- * โครงสร้างตั้งใจให้เหมือน useSongGame ทุกกระเบียดนิ้ว (guess เป็น item เดียวกับที่ทาย
- * ไม่ใช่ Character ที่ถูก attach เข้ามาแบบ Quote mode)
+ * 🔗 Shape ที่ createDailyGuessGameStore / createUnlimitedGuessGameStore ทั้งคู่ต้องการ:
+ * TTarget ต้องมี { id, character_id, character: TCharacter } โดย TCharacter คือชนิดที่
+ * ผู้เล่น "ทาย" — ในโหมด release คือ BleachRelease เอง ไม่ใช่ Character
+ *
+ * ดังนั้น target.character = ตัว release เอง (ใช้เทียบ compareGuess)
+ * ส่วน target.wielder = Character จริงที่ปล่อยท่านี้ (ใช้แค่โชว์ผล ไม่เกี่ยวกับ compare)
+ *
+ * ย้ายมาจาก useReleaseGame.ts เดิม เพราะตอนนี้ daily hook ก็ต้องใช้ชนิดเดียวกัน —
+ * มี 2 ที่ import ประกาศซ้ำจะ desync กันได้ง่ายเวลามีคนแก้แค่ที่เดียว
  */
+export type FactoryReleaseTarget = Omit<BleachRelease, 'character'> & {
+    character: BleachRelease;
+    wielder: Character;
+};
+
 export interface ReleaseGameController {
-    target: BleachRelease | null;
+    target: FactoryReleaseTarget | null;
     guesses: ReleaseGuessEntry[];
     stats: Stats;
     loadStats: () => void;
     addGuess: (releaseId: string) => void;
-    setTarget: (target: BleachRelease) => void;
+    setTarget: (target: FactoryReleaseTarget) => void;
     initializeGame: (force?: boolean) => void;
     finalizeGame: (isWin: boolean) => void;
     resetGame: () => void;
@@ -35,21 +42,6 @@ export interface ReleaseGameController {
     _hasHydrated: boolean;
     setHasHydrated: (state: boolean) => void;
     resetStreakKeepMax: () => void;
-}
-
-export interface DailyReleaseGameState {
-    target: BleachRelease | null;
-    guesses: ReleaseGuessEntry[];
-    stats: Stats;
-    addGuess: (releaseId: string) => void;
-    setTarget: (target: BleachRelease) => void;
-    initializeGame: (target?: BleachRelease) => void;
-    finalizeGame: (isWin: boolean) => void;
-    loadStats: () => void;
-    resetGame: () => void;
-    hasFinalized: boolean;
-    _hasHydrated: boolean;
-    setHasHydrated: (state: boolean) => void;
 }
 
 export type ReleaseGuessable = Pick<ReleaseGameController, 'addGuess' | 'guesses'>;

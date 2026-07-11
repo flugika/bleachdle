@@ -1,7 +1,7 @@
 // src/features/emoji/types.ts
 import { Character } from '@/src/entities/character/schema';
 import { BleachEmojiSet } from '@/src/entities/emoji/schema';
-import { GuessGameController, Stats } from '@/src/shared/types/guessGame';
+import { GuessGameController, Stats } from '@/src/lib/guessGame/types';
 
 /**
  * 🎯 เหมือน Quote: คำตอบเดียวเป๊ะ ไม่มี higher/lower/partial

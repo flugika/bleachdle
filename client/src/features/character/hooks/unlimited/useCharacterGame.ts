@@ -9,7 +9,7 @@ import { MAX_UNLIMITED_CHARACTER_GUESSES } from '@/src/const/guess';
 import { STORAGE_KEYS } from '@/src/const/localStorage'
 import { nestedJSONStorage } from '@/src/lib/store/createNestedStorage';
 import { isValidCharacterGuessEntry } from '../../validGuessEntry';
-import { Stats } from '@/src/shared/types/guessGame';
+import { Stats } from '@/src/lib/guessGame/types';
 
 interface GuessEntry {
     guess: Character;
@@ -39,7 +39,7 @@ export const useCharacterGame = create<CharacterGameState>()(
         (set, get) => ({
             target: null,
             guesses: [],
-            stats: { currentStreak: 0, maxStreak: 0 }, // 🆕
+            stats: { currentStreak: 0, maxStreak: 0, playedCount: 0, passedCount: 0, guessDistribution: {} }, // 🆕
             hasFinalized: false,
             _hasHydrated: false,
             setHasHydrated: (state) => set({ _hasHydrated: state }),
@@ -50,7 +50,7 @@ export const useCharacterGame = create<CharacterGameState>()(
             loadStats: () => {
                 if (typeof window === 'undefined') return;
                 const statsData = JSON.parse(localStorage.getItem(STORAGE_KEYS.CHARACTER_STATS) || '{}');
-                const saved: Stats = statsData.unlimited || { currentStreak: 0, maxStreak: 0 };
+                const saved: Stats = statsData.unlimited || { currentStreak: 0, maxStreak: 0, playedCount: 0, passedCount: 0, guessDistribution: {} };
                 set({ stats: saved });
             },
 
@@ -103,7 +103,7 @@ export const useCharacterGame = create<CharacterGameState>()(
                 }
             },
             finalizeGame: (isWin) => {
-                const { target, hasFinalized } = get();
+                const { target, hasFinalized, guesses } = get();
 
                 if (!target || hasFinalized) {
                     return;
@@ -128,13 +128,23 @@ export const useCharacterGame = create<CharacterGameState>()(
                 );
 
                 const statsData = JSON.parse(localStorage.getItem(STORAGE_KEYS.CHARACTER_STATS) || '{}');
-                const savedStats: Stats = statsData.unlimited || { currentStreak: 0, maxStreak: 0 };
+                const savedStats: Stats = statsData.unlimited || { currentStreak: 0, maxStreak: 0, playedCount: 0, passedCount: 0, guessDistribution: {} };
+
+                const playedCount = savedStats.playedCount + (isWin ? 1 : 0);
+                const passedCount = savedStats.passedCount + (isWin ? 0 : 1);
+
+                const guessDistribution = { ...savedStats.guessDistribution };
+                if (isWin) {
+                    const bucket = guesses.length >= 6 ? '6' : String(guesses.length);
+                    guessDistribution[bucket] = (guessDistribution[bucket] || 0) + 1;
+                }
 
                 const newStats: Stats = {
                     currentStreak: isWin ? savedStats.currentStreak + 1 : 0,
-                    maxStreak: isWin
-                        ? Math.max(savedStats.maxStreak, savedStats.currentStreak + 1)
-                        : savedStats.maxStreak,
+                    maxStreak: isWin ? Math.max(savedStats.maxStreak, savedStats.currentStreak + 1) : savedStats.maxStreak,
+                    playedCount,
+                    passedCount,
+                    guessDistribution,
                 };
 
                 statsData.unlimited = newStats;
@@ -165,13 +175,12 @@ export const useCharacterGame = create<CharacterGameState>()(
             },
             resetStreakKeepMax: () => {
                 const statsData = JSON.parse(localStorage.getItem(STORAGE_KEYS.CHARACTER_STATS) || '{}');
-                const saved: Stats = statsData.unlimited || { currentStreak: 0, maxStreak: 0 };
-
-                const resetStats: Stats = { currentStreak: 0, maxStreak: saved.maxStreak };
-
+                const saved: Stats = statsData.unlimited || {
+                    currentStreak: 0, maxStreak: 0, playedCount: 0, passedCount: 0, guessDistribution: {},
+                };
+                const resetStats: Stats = { ...saved, currentStreak: 0, maxStreak: saved.maxStreak };
                 statsData.unlimited = resetStats;
                 localStorage.setItem(STORAGE_KEYS.CHARACTER_STATS, JSON.stringify(statsData));
-
                 set({ stats: resetStats });
             },
         }),

@@ -8,7 +8,7 @@ import { recordDailyStat } from '@/src/services/statsClient';
 import { SongGuessEntry, DailySongGameState } from '@/src/features/song/types';
 import { STORAGE_KEYS } from '@/src/const/localStorage';
 import { nestedJSONStorage } from '@/src/lib/store/createNestedStorage';
-import { Stats } from '@/src/shared/types/guessGame';
+import { Stats } from '@/src/lib/guessGame/types';
 import { MAX_DAILY_SONG_GUESSES } from '@/src/const/guess';
 import { BleachSong } from '@/src/entities/song/schema';
 
@@ -22,7 +22,7 @@ export const useSongGame = create<DailySongGameState>()(
             target: null,
             targetSegmentId: null,
             guesses: [],
-            stats: { currentStreak: 0, maxStreak: 0 },
+            stats: { currentStreak: 0, maxStreak: 0, playedCount: 0, passedCount: 0, guessDistribution: {} },
             hasFinalized: false,
             _hasHydrated: false,
             setHasHydrated: (state) => set({ _hasHydrated: state }),
@@ -32,7 +32,7 @@ export const useSongGame = create<DailySongGameState>()(
             loadStats: () => {
                 if (typeof window === 'undefined') return;
                 const statsData = JSON.parse(localStorage.getItem(STORAGE_KEYS.SONG_STATS) || '{}');
-                const saved: Stats = statsData.daily || { currentStreak: 0, maxStreak: 0 };
+                const saved: Stats = statsData.daily || { currentStreak: 0, maxStreak: 0, playedCount: 0, passedCount: 0, guessDistribution: {} };
                 set({ stats: saved });
             },
 
@@ -97,13 +97,23 @@ export const useSongGame = create<DailySongGameState>()(
                 );
 
                 const statsData = JSON.parse(localStorage.getItem(STORAGE_KEYS.SONG_STATS) || '{}');
-                const savedStats: Stats = statsData.daily || { currentStreak: 0, maxStreak: 0 };
+                const savedStats: Stats = statsData.daily || { currentStreak: 0, maxStreak: 0, playedCount: 0, passedCount: 0, guessDistribution: {} };
+
+                const playedCount = savedStats.playedCount + (isWin ? 1 : 0);
+                const passedCount = savedStats.passedCount + (isWin ? 0 : 1);
+
+                const guessDistribution = { ...savedStats.guessDistribution };
+                if (isWin) {
+                    const bucket = guesses.length >= 6 ? '6' : String(guesses.length);
+                    guessDistribution[bucket] = (guessDistribution[bucket] || 0) + 1;
+                }
 
                 const newStats: Stats = {
                     currentStreak: isWin ? savedStats.currentStreak + 1 : 0,
-                    maxStreak: isWin
-                        ? Math.max(savedStats.maxStreak, savedStats.currentStreak + 1)
-                        : savedStats.maxStreak,
+                    maxStreak: isWin ? Math.max(savedStats.maxStreak, savedStats.currentStreak + 1) : savedStats.maxStreak,
+                    playedCount,
+                    passedCount,
+                    guessDistribution,
                 };
 
                 statsData.daily = newStats;

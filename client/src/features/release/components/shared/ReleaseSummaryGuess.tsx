@@ -6,11 +6,11 @@ import Image from 'next/image';
 import { DailyResetTimer } from '@/src/shared/ui/DailyResetTimer';
 import { BleachRelease } from '@/src/entities/release/schema';
 import { ReleaseGuessEntry } from '@/src/features/release/types';
-import { Stats } from '@/src/shared/types/guessGame';
+import { Stats } from '@/src/lib/guessGame/types';
 import { ReleaseTestimonyDisplay } from './ReleaseTestimonyDisplay';
 import { useRaceEmblem } from '@/src/shared/hooks/useRaceEmblem';
 import { useCharacterTier } from '@/src/shared/hooks/useBadgeTier';
-import { FactoryReleaseTarget } from '@/src/features/release/hooks/unlimited/useReleaseGame';
+import { FactoryReleaseTarget } from '@/src/features/release/types';
 import {
     SummaryCardShell,
     SummaryHeader,
@@ -50,7 +50,7 @@ export const ReleaseSummaryGuess = ({
     target,
     isWin,
     mode,
-    stats = { currentStreak: 0, maxStreak: 0 },
+    stats = { currentStreak: 0, maxStreak: 0, playedCount: 0, passedCount: 0, guessDistribution: {} },
 }: ReleaseSummaryGuessProps) => {
     if (!isOpen || !target) return null;
 

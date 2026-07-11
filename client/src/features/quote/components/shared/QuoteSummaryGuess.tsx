@@ -17,6 +17,7 @@ import {
     SummaryActionButton,
     IdentificationHistoryPanel,
 } from '@/src/shared/ui/summary';
+import { Stats } from '@/src/lib/guessGame/types';
 
 interface QuoteSummaryGuessProps {
     isOpen: boolean;
@@ -25,7 +26,7 @@ interface QuoteSummaryGuessProps {
     target: QuoteTarget | null;
     isWin: boolean;
     mode: 'daily' | 'unlimited';
-    stats?: { currentStreak: number; maxStreak: number };
+    stats: Stats;
 }
 
 /**
@@ -47,7 +48,7 @@ export const QuoteSummaryGuess = ({
     target,
     isWin,
     mode,
-    stats = { currentStreak: 0, maxStreak: 0 },
+    stats = { currentStreak: 0, maxStreak: 0, playedCount: 0, passedCount: 0, guessDistribution: {} },
 }: QuoteSummaryGuessProps) => {
     if (!isOpen || !target) return null;
 

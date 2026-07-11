@@ -2,7 +2,7 @@
 
 > A Wordle-style character guessing game for Bleach fans — unlimited mode, attribute-based feedback, Soul Society aesthetic.
 
-**Last Updated:** 11 July 2026, 7:03 AM.
+**Last Updated:** 12 July 2026, 5:19 AM.
 
 [![Next.js](https://img.shields.io/badge/Next.js-15-black?logo=next.js)](https://nextjs.org/)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5-blue?logo=typescript)](https://www.typescriptlang.org/)
@@ -164,29 +164,29 @@ Verticals are gated per mode in `src/config/feature.flags.ts`:
 
 ```ts
 export const FEATURE_FLAGS = {
-  // ── 📅 Daily Mode
+  // ── 📅 โหมดทายรายวัน (Daily Mode)
   daily: {
     character: true,
     quote: true,
     silhouette: true,
     emoji: true,
     song: true,
-    release: false,
+    release: true,
   },
 
-  // ── ♾️ Unlimited Mode
+  // ── ♾️ โหมดเล่นไม่จำกัด (Unlimited Mode)
   unlimited: {
     character: true,
     quote: true,
     silhouette: true,
     emoji: true,
     song: true,
-    release: false,
+    release: true,
   },
 
-  // ── config / system
   mockupSong: false,
   mockupSilhouette: false,
+  mockupRelease: false,
   support: true,
 } as const;
 ```
@@ -202,12 +202,12 @@ Flags are nested per mode rather than a flat list, since a vertical can ship in 
 ### Gameplay
 - [x] Silhouette Daily — bring Silhouette to Daily Hub
 - [x] Emoji Mode — abstract visual puzzle, shipped in both Daily and Unlimited
-- [ ] Release Mode — guess by release state (Shikai / Bankai / Resurrection)
+- [x] Release Mode — guess by release state (Shikai / Bankai / Resurrection)
 - [ ] i18n — Thai / English toggle
 
 ### Stats & Social
-- [ ] **Global daily stats** — "X% of players solved it within N guesses," aggregated via Supabase on top of existing round/result tables
-- [ ] **Surface badges on `/stats`** — badge system already exists but currently only renders inside each mode's summary card, not on the dedicated stats page
+- [x] **Global daily stats** — "X% of players solved it within N guesses," aggregated via Supabase on top of existing round/result tables
+- [x] **Surface badges on `/stats`** — badge system already exists but currently only renders inside each mode's summary card, not on the dedicated stats page
 - [ ] **Shareable result as image** — skip the Wordle/Worldle-style emoji-grid text share; generate a downloadable/story-ready image (canvas or server-side OG image) instead
 - [ ] **Streak/session portability without login** — auth is deprioritized for now. Exploring:
   - manual export/import of the localStorage blob to move a streak to another device
@@ -266,6 +266,8 @@ bleachdle
 │  │  │  │  ├─ page.tsx
 │  │  │  │  ├─ quote
 │  │  │  │  │  └─ page.tsx
+│  │  │  │  ├─ release
+│  │  │  │  │  └─ page.tsx
 │  │  │  │  ├─ silhouette
 │  │  │  │  │  └─ page.tsx
 │  │  │  │  └─ song
@@ -291,7 +293,9 @@ bleachdle
 │  │  │  ├─ stats
 │  │  │  │  ├─ daily
 │  │  │  │  │  └─ route.ts
-│  │  │  │  └─ finalize
+│  │  │  │  ├─ finalize
+│  │  │  │  │  └─ route.ts
+│  │  │  │  └─ global
 │  │  │  │     └─ route.ts
 │  │  │  └─ support
 │  │  │     └─ route.ts
@@ -309,6 +313,8 @@ bleachdle
 │  │  │     └─ page.tsx
 │  │  ├─ not-found.tsx
 │  │  ├─ soul-society-archives
+│  │  │  └─ page.tsx
+│  │  ├─ stats
 │  │  │  └─ page.tsx
 │  │  ├─ support
 │  │  │  └─ page.tsx
@@ -464,6 +470,8 @@ bleachdle
 │  │  │  │  └─ types.ts
 │  │  │  ├─ release
 │  │  │  │  ├─ components
+│  │  │  │  │  ├─ daily
+│  │  │  │  │  │  └─ DailyReleaseWrapper.tsx
 │  │  │  │  │  └─ shared
 │  │  │  │  │     ├─ ReleaseGuessTable.tsx
 │  │  │  │  │     ├─ ReleaseHowToPlayModal.tsx
@@ -471,6 +479,8 @@ bleachdle
 │  │  │  │  │     ├─ ReleaseSummaryGuess.tsx
 │  │  │  │  │     └─ ReleaseTestimonyDisplay.tsx
 │  │  │  │  ├─ hooks
+│  │  │  │  │  ├─ daily
+│  │  │  │  │  │  └─ useDailyReleaseGame.ts
 │  │  │  │  │  └─ unlimited
 │  │  │  │  │     └─ useReleaseGame.ts
 │  │  │  │  ├─ release.ts
@@ -514,6 +524,9 @@ bleachdle
 │  │  │  │  └─ components
 │  │  │  │     ├─ ArchiveCharacterCard.tsx
 │  │  │  │     └─ ArchiveReleaseCard.tsx
+│  │  │  ├─ stats
+│  │  │  │  └─ components
+│  │  │  │     └─ StatsHubPage.tsx
 │  │  │  └─ support
 │  │  │     ├─ KidoSeal.tsx
 │  │  │     ├─ PortfolioCard.tsx
@@ -573,6 +586,7 @@ bleachdle
 │  │  │     ├─ seed-characters.js
 │  │  │     ├─ seed-emojis.js
 │  │  │     ├─ seed-quotes.js
+│  │  │     ├─ seed-releases.js
 │  │  │     ├─ seed-silhouettes.js
 │  │  │     └─ seed-songs.js
 │  │  ├─ services

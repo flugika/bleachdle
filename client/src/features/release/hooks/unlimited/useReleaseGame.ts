@@ -4,19 +4,8 @@ import { STORAGE_KEYS } from '@/src/const/localStorage';
 import { MAX_UNLIMITED_RELEASE_GUESSES } from '@/src/const/guess';
 import { createUnlimitedGuessGameStore } from '@/src/lib/guessGame/createUnlimitedGuessGameStore';
 import { BleachRelease } from '@/src/entities/release/schema';
-import { Character } from '@/src/entities/character/schema';
 import { getCharacterById } from '@/src/features/character/character';
-
-/**
- * The store's generic bound forces target.character to equal TCharacter (BleachRelease,
- * since a release is what's guessed) — it is NOT the wielder. `wielder` carries the real
- * Character for display. Exported so every consumer (components, props) uses this exact
- * shape instead of redeclaring/assuming BleachRelease.
- */
-export type FactoryReleaseTarget = Omit<BleachRelease, 'character'> & {
-    character: BleachRelease;
-    wielder: Character;
-};
+import { FactoryReleaseTarget } from '@/src/features/release/types';
 
 export const useReleaseGame = createUnlimitedGuessGameStore<
     BleachRelease,

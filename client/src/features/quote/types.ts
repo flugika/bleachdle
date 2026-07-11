@@ -1,7 +1,7 @@
 // src/features/quote/types.ts
 import { Character } from '@/src/entities/character/schema';
 import { BleachQuote } from '@/src/entities/quote/schema';
-import { GuessGameController, Stats } from '@/src/shared/types/guessGame';
+import { GuessGameController, Stats } from '@/src/lib/guessGame/types';
 
 /**
  * 🎯 เหมือน Song: คำตอบเดียวเป๊ะ ไม่มี higher/lower/partial

@@ -4,7 +4,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { BleachRelease } from '@/src/entities/release/schema';
 import { generateCaseFileId } from '@/src/lib/utils/generateCaseFileId';
-import { FactoryReleaseTarget } from '@/src/features/release/hooks/unlimited/useReleaseGame';
+import { FactoryReleaseTarget } from '@/src/features/release/types';
 
 interface ReleaseTestimonyDisplayProps {
     target: FactoryReleaseTarget;

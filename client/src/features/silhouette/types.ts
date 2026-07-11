@@ -1,6 +1,6 @@
 import { Character } from '@/src/entities/character/schema';
 import { BleachSilhouette } from '@/src/entities/silhouette/schema';
-import { GuessGameController, Stats } from '@/src/shared/types/guessGame';
+import { GuessGameController, Stats } from '@/src/lib/guessGame/types';
 
 /**
  * 🎯 เหมือน Quote/Song: คำตอบเดียวเป๊ะ ไม่มี attribute grid

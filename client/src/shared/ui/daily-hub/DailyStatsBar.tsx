@@ -103,6 +103,11 @@ export function DailyStatsBar({ stats }: { stats: DailyStats }) {
     // ✅ POPULATED STATE: มีคนเล่นแล้ว แสดงแถบ Ticker เลื่อนไปมาตามปกติ
     // ──────────────────────────────────────────────────────────────────────────
     const scrollSeconds = Math.max(18, entries.length * 9);
+    // Below this many modes, the doubled ticker content is narrower than the
+    // bar itself — the -50% scroll animation then reads as "stuck on the
+    // left" because most of the bar to the right is just empty space rather
+    // than a genuine overflow scroll. Center it statically instead.
+    const shouldScroll = entries.length >= 4;
 
     return (
         <>
@@ -120,13 +125,20 @@ export function DailyStatsBar({ stats }: { stats: DailyStats }) {
                 <div className="absolute inset-y-0 right-0 w-8 z-10 pointer-events-none" style={{ background: "linear-gradient(270deg, rgba(2,2,5,1), transparent)" }} />
 
                 <div
-                    className="flex items-center gap-5 whitespace-nowrap w-max"
-                    style={{ animation: `bd-stats-ticker-scroll ${scrollSeconds}s linear infinite` }}
+                    className={`flex items-center gap-5 whitespace-nowrap ${shouldScroll ? "w-max" : "w-full justify-center"}`}
+                    style={shouldScroll ? { animation: `bd-stats-ticker-scroll ${scrollSeconds}s linear infinite` } : undefined}
                 >
-                    {[0, 1].map((copy) => (
+                    {(shouldScroll ? [0, 1] : [0]).map((copy) => (
                         <div key={copy} className="flex items-center gap-5">
-                            {entries.map(([modeId, modeStat]) => {
+                            {entries.map(([modeId, modeStat], i) => {
                                 const accent = MODE_ACCENT[modeId as SubFeatureKey] ?? FALLBACK_ACCENT;
+                                const isLastInCopy = i === entries.length - 1;
+                                // Scrolling ticker needs the trailing "//" on every entry
+                                // (including the last) so the loop reads as continuous once
+                                // it wraps back to the duplicated copy. A static, centered
+                                // bar has no wrap to hide — a trailing "//" there just reads
+                                // as an unfinished sentence, so swap it for a closing ◆
+                                // bookend instead, matching the empty-state's visual language.
                                 return (
                                     <span key={`${copy}-${modeId}`} className="inline-flex items-center gap-5 whitespace-nowrap">
                                         <span className="inline-flex items-center gap-1.5 text-[10px] md:text-xs lg:text-sm font-mono tracking-[0.1em] normal-case">
@@ -138,7 +150,13 @@ export function DailyStatsBar({ stats }: { stats: DailyStats }) {
                                                 <span className="text-neutral-400">・avg {modeStat.avg_guesses} g</span>
                                             )}
                                         </span>
-                                        <span style={{ color: `${FALLBACK_ACCENT.base}88` }}>//</span>
+                                        {shouldScroll ? (
+                                            <span style={{ color: `${FALLBACK_ACCENT.base}88` }}>//</span>
+                                        ) : isLastInCopy ? (
+                                            <></>
+                                        ) : (
+                                            <span style={{ color: `${FALLBACK_ACCENT.base}88` }}>//</span>
+                                        )}
                                     </span>
                                 );
                             })}

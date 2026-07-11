@@ -1,5 +1,5 @@
 import { Character } from "@/src/entities/character/schema";
-import { GuessGameController } from "@/src/shared/types/guessGame";
+import { GuessGameController } from '@/src/lib/guessGame/types';
 
 export type CharacterRace =
     | "Soul"
@@ -82,7 +82,7 @@ export interface GuessEntry {
 
 /**
  * 🔁 CharacterGameController now simply extends the shared GuessGameController
- * contract (moved to src/shared/types/guessGame.ts) so <SearchBar /> / the new
+ * contract (moved to src/lib/guessGame/types.ts) so <SearchBar /> / the new
  * <GuessSearchBar /> isn't hard-coupled to "character" — Quote mode's
  * QuoteGameController extends the exact same base.
  *

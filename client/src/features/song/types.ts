@@ -1,6 +1,6 @@
 // src/features/song/types.ts
 import { BleachSong } from '@/src/entities/song/schema';
-import { Stats } from '@/src/shared/types/guessGame';
+import { Stats } from '@/src/lib/guessGame/types';
 
 /**
  * 🎯 เพลงตอบเดียวเป๊ะ ไม่มีการเทียบ field ย่อย (artist/album) แบบ higher-lower/partial เหมือน

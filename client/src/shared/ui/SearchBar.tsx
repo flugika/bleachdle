@@ -5,7 +5,7 @@ import { createPortal } from 'react-dom';
 import { createSearchEngine } from '@/src/lib/search/fuzzy';
 import { Character } from '@/src/entities/character/schema';
 import Image from 'next/image';
-import { GuessGameController } from '@/src/shared/types/guessGame';
+import { GuessGameController } from '@/src/lib/guessGame/types';
 import { Z } from '@/src/config/zIndex'; // 🎯 ใช้ z-index scale กลาง แทน hardcode z-50
 
 interface GuessSearchBarProps {

@@ -8,7 +8,7 @@ import { SongGameController, SongGuessEntry } from '@/src/features/song/types';
 import { MAX_UNLIMITED_SONG_GUESSES } from '@/src/const/guess';
 import { STORAGE_KEYS } from '@/src/const/localStorage';
 import { nestedJSONStorage } from '@/src/lib/store/createNestedStorage';
-import { Stats } from '@/src/shared/types/guessGame';
+import { Stats } from '@/src/lib/guessGame/types';
 import { BleachSong } from '@/src/entities/song/schema';
 
 // 🔁 ใช้ shared validator แทน validGuessEntry.ts ของ song เอง — ไฟล์เดิมลบทิ้งได้
@@ -26,11 +26,11 @@ export const useSongGame = create<SongGameController>()(
 
             setTarget: (target) => set({ target }),
 
-            stats: { currentStreak: 0, maxStreak: 0 },
+            stats: { currentStreak: 0, maxStreak: 0, playedCount: 0, passedCount: 0, guessDistribution: {} },
             loadStats: () => {
                 if (typeof window === 'undefined') return;
                 const statsData = JSON.parse(localStorage.getItem(STORAGE_KEYS.SONG_STATS) || '{}');
-                const saved: Stats = statsData.unlimited || { currentStreak: 0, maxStreak: 0 };
+                const saved: Stats = statsData.unlimited || { currentStreak: 0, maxStreak: 0, playedCount: 0, passedCount: 0, guessDistribution: {} };
                 set({ stats: saved });
             },
 
@@ -88,7 +88,7 @@ export const useSongGame = create<SongGameController>()(
             },
 
             finalizeGame: (isWin) => {
-                const { target, targetSegmentId, hasFinalized } = get();
+                const { target, targetSegmentId, hasFinalized, guesses } = get();
                 if (!target || !targetSegmentId || hasFinalized) return;
 
                 const completedData = JSON.parse(localStorage.getItem(STORAGE_KEYS.SONG_COMPLETED) || '{}');
@@ -104,13 +104,23 @@ export const useSongGame = create<SongGameController>()(
                 localStorage.setItem(STORAGE_KEYS.SONG_COMPLETED, JSON.stringify(completedData));
 
                 const statsData = JSON.parse(localStorage.getItem(STORAGE_KEYS.SONG_STATS) || '{}');
-                const savedStats: Stats = statsData.unlimited || { currentStreak: 0, maxStreak: 0 };
+                const savedStats: Stats = statsData.unlimited || { currentStreak: 0, maxStreak: 0, playedCount: 0, passedCount: 0, guessDistribution: {} };
+
+                const playedCount = savedStats.playedCount + (isWin ? 1 : 0);
+                const passedCount = savedStats.passedCount + (isWin ? 0 : 1);
+
+                const guessDistribution = { ...savedStats.guessDistribution };
+                if (isWin) {
+                    const bucket = guesses.length >= 6 ? '6' : String(guesses.length);
+                    guessDistribution[bucket] = (guessDistribution[bucket] || 0) + 1;
+                }
 
                 const newStats: Stats = {
                     currentStreak: isWin ? savedStats.currentStreak + 1 : 0,
-                    maxStreak: isWin
-                        ? Math.max(savedStats.maxStreak, savedStats.currentStreak + 1)
-                        : savedStats.maxStreak,
+                    maxStreak: isWin ? Math.max(savedStats.maxStreak, savedStats.currentStreak + 1) : savedStats.maxStreak,
+                    playedCount,
+                    passedCount,
+                    guessDistribution,
                 };
 
                 statsData.unlimited = newStats;
@@ -143,9 +153,9 @@ export const useSongGame = create<SongGameController>()(
             },
             resetStreakKeepMax: () => {
                 const statsData = JSON.parse(localStorage.getItem(STORAGE_KEYS.SONG_STATS) || '{}');
-                const saved: Stats = statsData.unlimited || { currentStreak: 0, maxStreak: 0 };
+                const saved: Stats = statsData.unlimited || { currentStreak: 0, maxStreak: 0, playedCount: 0, passedCount: 0, guessDistribution: {} };
 
-                const resetStats: Stats = { currentStreak: 0, maxStreak: saved.maxStreak };
+                const resetStats: Stats = { ...saved, currentStreak: 0, maxStreak: saved.maxStreak };
 
                 statsData.unlimited = resetStats;
                 localStorage.setItem(STORAGE_KEYS.SONG_STATS, JSON.stringify(statsData));
