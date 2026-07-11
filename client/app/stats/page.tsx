@@ -349,14 +349,6 @@ export default function StatsPage() {
         };
     }, []);
 
-    if (loading) {
-        return (
-            <div className="min-h-screen w-full flex items-center justify-center" style={{ background: "#050506" }}>
-                <p style={{ color: "#a8998a", fontSize: "12px", letterSpacing: "0.3em" }}>OPENING ARCHIVE...</p>
-            </div>
-        );
-    }
-
     const isDaily = tab === "daily";
     const activePersonal = isDaily ? dailyPersonal : unlimitedPersonal;
     const activeGlobal = isDaily ? dailyGlobal : unlimitedGlobal;

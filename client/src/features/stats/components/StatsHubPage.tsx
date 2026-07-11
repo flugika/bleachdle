@@ -353,7 +353,6 @@ function GuessDistribution({
                             style={{
                                 width: "14px",
                                 fontSize: "12px",
-                                fontFamily: "monospace",
                                 color: T.mutedMid,
                                 flexShrink: 0,
                             }}
@@ -452,7 +451,7 @@ function SealedArchive({ accent }: { accent: { base: string; bright: string } })
             <div
                 className="absolute top-0 bottom-0 pointer-events-none"
                 style={{
-                    left: "16%",
+                    left: "12%",
                     width: "1px",
                     background: `linear-gradient(to bottom, transparent, ${accent.base}30 15%, ${accent.base}30 85%, transparent)`,
                 }}
@@ -460,7 +459,7 @@ function SealedArchive({ accent }: { accent: { base: string; bright: string } })
             <div
                 className="absolute top-0 bottom-0 pointer-events-none"
                 style={{
-                    right: "16%",
+                    right: "12%",
                     width: "1px",
                     background: `linear-gradient(to bottom, transparent, ${accent.base}30 15%, ${accent.base}30 85%, transparent)`,
                 }}
@@ -494,7 +493,7 @@ function SealedArchive({ accent }: { accent: { base: string; bright: string } })
                 <p style={{ fontSize: "12px", letterSpacing: "0.32em", color: T.mutedMid, textTransform: "uppercase", margin: 0 }}>
                     ARCHIVE SEALED
                 </p>
-                <p style={{ fontSize: "10px", letterSpacing: "0.14em", color: "#5a544c", textTransform: "uppercase", margin: 0, textAlign: "center" }}>
+                <p style={{ fontSize: "10px", letterSpacing: "0.14em", color: "#6b645b", textTransform: "uppercase", margin: 0, textAlign: "center" }}>
                     NO RECORD ON FILE — AWAITING FIRST INQUIRY
                 </p>
             </div>

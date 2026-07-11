@@ -7,6 +7,7 @@ import { AllModesButton } from '@/src/shared/ui/game-selector/AllModesButton';
 import { HowToPlayButton } from '@/src/shared/ui/HowToPlayButton';
 import { useSenkaimon } from '@/src/shared/ui/context/NavigationContext';
 import { HOW_TO_PLAY_MODALS } from '@/src/config/howToPlayModals';
+import { HomeButton } from '../game-selector/HomeButton';
 
 export function GlobalGameNav() {
     const pathname = usePathname();
@@ -38,6 +39,7 @@ export function GlobalGameNav() {
                 id="global-game-nav"
                 className="fixed top-4 right-4 flex items-center gap-2 z-50 pointer-events-auto transition-opacity duration-300 animate-[fadeIn_0.2s_ease-out]"
             >
+                {!isHome && <HomeButton />}
                 <AllModesButton />
                 {isValidGamePath && ActiveModal && (
                     <HowToPlayButton onClick={() => setIsHowToOpen(true)} />

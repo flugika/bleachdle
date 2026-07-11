@@ -609,7 +609,6 @@ bleachdle
 │  │  │  │  ├─ useTestWallpaper.ts
 │  │  │  │  └─ useTurnstile.ts
 │  │  │  ├─ types
-│  │  │  │  └─ guessGame.ts
 │  │  │  └─ ui
 │  │  │     ├─ BleachReiatsuCursor.tsx
 │  │  │     ├─ button.tsx
@@ -633,6 +632,7 @@ bleachdle
 │  │  │     ├─ game-selector
 │  │  │     │  ├─ AllModesButton.tsx
 │  │  │     │  ├─ AllModesModal.tsx
+│  │  │     │  ├─ HomeButton.tsx
 │  │  │     │  ├─ ModeBadge.tsx
 │  │  │     │  ├─ ModeSelectorModal.tsx
 │  │  │     │  └─ ThematicModeSelector.tsx
