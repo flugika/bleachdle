@@ -39,7 +39,7 @@ export type CharacterRelease =
     | "Shikai"
     | "Bankai"
     | "Resurreccion"
-    | "Vollständig"
+    | "Vollstandig"
     | "Shunko"
     | "None";      // สำหรับตัวละครที่ไม่มีการปลดปล่อย
 

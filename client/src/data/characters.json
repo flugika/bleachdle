@@ -847,8 +847,7 @@
             "Weaponized"
         ],
         "release": [
-            "Shikai",
-            "Bankai"
+            "Shikai"
         ],
         "primary_ability": [
             "Physical"
@@ -2322,7 +2321,8 @@
         ],
         "release": [
             "Shikai",
-            "Bankai"
+            "Bankai",
+            "Resurreccion"
         ],
         "primary_ability": [
             "Physical",
@@ -3721,7 +3721,7 @@
             "Weaponized"
         ],
         "release": [
-            "Vollständig"
+            "Vollstandig"
         ],
         "primary_ability": [
             "Physical"
@@ -3745,7 +3745,7 @@
             "Weaponized"
         ],
         "release": [
-            "Vollständig"
+            "Vollstandig"
         ],
         "primary_ability": [
             "Physical",
@@ -3770,7 +3770,7 @@
             "Weaponized"
         ],
         "release": [
-            "Vollständig"
+            "Vollstandig"
         ],
         "primary_ability": [
             "Physical",
@@ -3795,7 +3795,7 @@
             "Weaponized"
         ],
         "release": [
-            "Vollständig"
+            "Vollstandig"
         ],
         "primary_ability": [
             "Physical",
@@ -3820,7 +3820,7 @@
             "Weaponized"
         ],
         "release": [
-            "Vollständig"
+            "Vollstandig"
         ],
         "primary_ability": [
             "Physical",
@@ -3845,7 +3845,7 @@
             "Weaponized"
         ],
         "release": [
-            "Vollständig"
+            "Vollstandig"
         ],
         "primary_ability": [
             "Physical"
@@ -3869,7 +3869,7 @@
             "Weaponized"
         ],
         "release": [
-            "Vollständig"
+            "Vollstandig"
         ],
         "primary_ability": [
             "Physical",
@@ -3942,7 +3942,7 @@
             "Weaponized"
         ],
         "release": [
-            "Vollständig"
+            "Vollstandig"
         ],
         "primary_ability": [
             "Physical"
@@ -3990,7 +3990,7 @@
             "Weaponized"
         ],
         "release": [
-            "Vollständig"
+            "Vollstandig"
         ],
         "primary_ability": [
             "Special"
@@ -4014,7 +4014,7 @@
             "Weaponized"
         ],
         "release": [
-            "Vollständig"
+            "Vollstandig"
         ],
         "primary_ability": [
             "Physical"
@@ -4038,7 +4038,7 @@
             "Weaponized"
         ],
         "release": [
-            "Vollständig"
+            "Vollstandig"
         ],
         "primary_ability": [
             "Special"
@@ -4134,7 +4134,7 @@
             "Weaponized"
         ],
         "release": [
-            "Vollständig"
+            "Vollstandig"
         ],
         "primary_ability": [
             "Special"
@@ -4230,7 +4230,7 @@
             "Weaponized"
         ],
         "release": [
-            "Vollständig"
+            "Vollstandig"
         ],
         "primary_ability": [
             "Physical"
@@ -4254,7 +4254,7 @@
             "Weaponized"
         ],
         "release": [
-            "Vollständig"
+            "Vollstandig"
         ],
         "primary_ability": [
             "Special"
@@ -4278,7 +4278,7 @@
             "Weaponized"
         ],
         "release": [
-            "Vollständig"
+            "Vollstandig"
         ],
         "primary_ability": [
             "Special"
@@ -4302,7 +4302,7 @@
             "Unarmed"
         ],
         "release": [
-            "Vollständig"
+            "Vollstandig"
         ],
         "primary_ability": [
             "Physical"
@@ -4326,7 +4326,7 @@
             "Weaponized"
         ],
         "release": [
-            "Vollständig"
+            "Vollstandig"
         ],
         "primary_ability": [
             "Physical"
@@ -4350,7 +4350,7 @@
             "Weaponized"
         ],
         "release": [
-            "Vollständig"
+            "Vollstandig"
         ],
         "primary_ability": [
             "Physical"
@@ -4374,7 +4374,7 @@
             "Weaponized"
         ],
         "release": [
-            "Vollständig"
+            "Vollstandig"
         ],
         "primary_ability": [
             "Special"
@@ -4422,7 +4422,7 @@
             "Weaponized"
         ],
         "release": [
-            "Vollständig"
+            "Vollstandig"
         ],
         "primary_ability": [
             "Physical",
@@ -4447,7 +4447,7 @@
             "Weaponized"
         ],
         "release": [
-            "Vollständig"
+            "Vollstandig"
         ],
         "primary_ability": [
             "Physical",
@@ -4472,7 +4472,7 @@
             "Unarmed"
         ],
         "release": [
-            "Vollständig"
+            "Vollstandig"
         ],
         "primary_ability": [
             "Special",
@@ -4521,7 +4521,7 @@
             "Weaponized"
         ],
         "release": [
-            "Vollständig"
+            "Vollstandig"
         ],
         "primary_ability": [
             "Physical",
@@ -4546,7 +4546,7 @@
             "None"
         ],
         "release": [
-            "Vollständig"
+            "Vollstandig"
         ],
         "primary_ability": [
             "Special"
@@ -4728,7 +4728,7 @@
         "name": "Zangetsu",
         "gender": "Male",
         "race": [
-            "Zanpakuto"
+            "Soul"
         ],
         "affiliation": "Independent",
         "height_cm": 185,

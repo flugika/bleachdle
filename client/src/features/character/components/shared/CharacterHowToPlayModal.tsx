@@ -98,7 +98,7 @@ export const CharacterHowToPlayModal = ({ isOpen, onClose, mode }: CharacterHowT
                             <strong className="text-white">Release:</strong> Highest combat form achieved:
                             <span className="text-[#4de880]"> Shikai/Bankai</span>,
                             <span className="text-[#4de880]"> Resurreccion</span>,
-                            <span className="text-[#4de880]"> Vollständig</span>.
+                            <span className="text-[#4de880]"> Vollstandig</span>.
                         </li>
                         <li>
                             <strong className="text-white">Ability:</strong> The primary combat utility:

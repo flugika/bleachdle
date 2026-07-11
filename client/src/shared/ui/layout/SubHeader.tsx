@@ -12,7 +12,7 @@ export const SubHeader = ({ title, subtitle, className = "my-2" }: SubHeaderProp
                 {/* Left Line */}
                 <div className="h-px w-12 bg-gradient-to-r from-transparent via-[#c8a96e]/40 to-[#c8a96e]/60" />
 
-                <p className="text-[16px] tracking-[0.4em] text-[#c8a96e] font-bold uppercase drop-shadow-[0_0_10px_rgba(200,169,110,0.4)]"
+                <p className="text-[16px] text-center tracking-[0.4em] text-[#c8a96e] font-bold uppercase drop-shadow-[0_0_10px_rgba(200,169,110,0.4)]"
                     style={{ fontFamily: "'Cinzel', serif" }}>
                     {title}
                 </p>

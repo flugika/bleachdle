@@ -116,7 +116,7 @@ export function SilhouetteControlPanel({ target, characters, remainingGuesses, s
             </div>
 
             {/* ส่วนของช่องค้นหาเดาชื่อตัวละคร */}
-            <div className="w-full max-w-md mt-2">
+            <div className="w-full max-w-md">
                 <SearchBar
                     characters={characters}
                     disabled={isGameOver}

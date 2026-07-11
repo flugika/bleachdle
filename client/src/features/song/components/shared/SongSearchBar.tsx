@@ -2,9 +2,11 @@
 'use client';
 
 import { useState, useMemo, useRef, useEffect } from 'react';
+import { createPortal } from 'react-dom';
 import { createSearchEngine } from '@/src/lib/search/fuzzy';
 import { BleachSong } from '@/src/entities/song/schema';
 import { SongGuessable } from '@/src/features/song/types';
+import { Z } from '@/src/config/zIndex'; // 🎯 ใช้ z-index scale กลาง แทน hardcode z-50
 
 interface SongSearchBarProps {
     songs: BleachSong[];
@@ -12,10 +14,28 @@ interface SongSearchBarProps {
     game: SongGuessable;
 }
 
+// 📏 ค่าคงที่สำหรับคำนวณ collision detection ของ dropdown — เหมือน SearchBar/ReleaseSearchBar เป๊ะ
+// (ตอนนี้ SongSearchBar หน้ายาวพอไม่เจออาการ แต่ทำเผื่อไว้กันวันที่เนื้อหาหน้าสั้นลง/จอเล็กลง)
+const DROPDOWN_MAX_HEIGHT = 360; // ต้องตรงกับ max-h เดิมที่เคยใส่ผ่าน className
+const DROPDOWN_GAP = 8;          // ระยะห่างจาก input (บนหรือล่างแล้วแต่ทิศที่เปิด)
+
+interface DropdownPosition {
+    left: number;
+    width: number;
+    maxHeight: number;
+    flipped: boolean;
+    top?: number;
+    bottom?: number;
+}
+
 export const SongSearchBar = ({ songs, disabled = false, game }: SongSearchBarProps) => {
     const [query, setQuery] = useState('');
     const [isOpen, setIsOpen] = useState(false);
     const [activeIdx, setActiveIdx] = useState(-1);
+    // 🩹 ตำแหน่ง + ทิศทางของ dropdown คำนวณเองจาก getBoundingClientRect แล้ว render ผ่าน portal
+    // ด้วย position:fixed แทน absolute — กัน scrollbar หลอกของหน้า (fixed ไม่ถูกนับรวมเข้า
+    // scrollHeight ของ ancestor ไหนเลย) และรองรับ flip ขึ้นด้านบนเมื่อพื้นที่ด้านล่างไม่พอ
+    const [dropdownPos, setDropdownPos] = useState<DropdownPosition | null>(null);
 
     const wrapRef = useRef<HTMLDivElement>(null);
     const inputRef = useRef<HTMLInputElement>(null);
@@ -50,6 +70,43 @@ export const SongSearchBar = ({ songs, disabled = false, game }: SongSearchBarPr
         document.addEventListener('mousedown', handler);
         return () => document.removeEventListener('mousedown', handler);
     }, []);
+
+    // 📍 อัปเดตตำแหน่ง + ทิศทาง dropdown ทุกครั้งที่เปิด, ตอน scroll (ของ ancestor ชั้นไหนก็ตาม
+    // เลยใช้ capture: true), และตอน resize จอ
+    //
+    // 🔄 FLIP LOGIC: เช็คพื้นที่ว่างด้านล่าง input เทียบกับด้านบน — ถ้าด้านล่างไม่พอ
+    // (เช่น input อยู่ใกล้ footer/ขอบจอ) และด้านบนมีที่ว่างมากกว่า ให้เปิด dropdown ขึ้นด้านบน
+    // แทน (pattern เดียวกับ Radix/Headless UI Popover) พร้อมจำกัด maxHeight ตามพื้นที่จริง
+    // ที่เหลือของทิศนั้นๆ ด้วย กันไม่ให้ dropdown ยื่นล้นขอบจอไปเลยไม่ว่าจะเปิดทิศไหน
+    useEffect(() => {
+        if (!isOpen) return;
+
+        const updatePos = () => {
+            const rect = wrapRef.current?.getBoundingClientRect();
+            if (!rect) return;
+
+            const spaceBelow = window.innerHeight - rect.bottom - DROPDOWN_GAP;
+            const spaceAbove = rect.top - DROPDOWN_GAP;
+            const flipped = spaceBelow < DROPDOWN_MAX_HEIGHT && spaceAbove > spaceBelow;
+
+            setDropdownPos({
+                left: rect.left,
+                width: rect.width,
+                maxHeight: Math.max(0, Math.min(DROPDOWN_MAX_HEIGHT, flipped ? spaceAbove : spaceBelow)),
+                flipped,
+                top: flipped ? undefined : rect.bottom + DROPDOWN_GAP,
+                bottom: flipped ? window.innerHeight - rect.top + DROPDOWN_GAP : undefined,
+            });
+        };
+
+        updatePos();
+        window.addEventListener('scroll', updatePos, true);
+        window.addEventListener('resize', updatePos);
+        return () => {
+            window.removeEventListener('scroll', updatePos, true);
+            window.removeEventListener('resize', updatePos);
+        };
+    }, [isOpen]);
 
     const triggerScrollAndShake = (songId: string) => {
         const rowEl = document.getElementById(`row-${songId}`);
@@ -146,9 +203,22 @@ export const SongSearchBar = ({ songs, disabled = false, game }: SongSearchBarPr
                 </div>
             </div>
 
-            {/* DROPDOWN MENU - LUXURY BLADE DESIGN */}
-            {isOpen && results.length > 0 && (
-                <ul className="absolute top-[calc(100%+8px)] left-0 right-0 z-50 bg-[#050507] border border-red-900/40 max-h-[360px] overflow-y-auto shadow-[0_20px_50px_rgba(0,0,0,0.9)] backdrop-blur-md">
+            {/* DROPDOWN MENU - LUXURY BLADE DESIGN — render ผ่าน portal ไป document.body ด้วย
+                position:fixed เพื่อไม่ให้ถูกนับรวมเข้า scrollHeight ของหน้า และใช้ Z.dropdown
+                แทน hardcode เพื่อการันตีว่าชนะทุก static layout (footer/nav/cursor) เสมอ */}
+            {isOpen && results.length > 0 && dropdownPos && createPortal(
+                <ul
+                    style={{
+                        position: 'fixed',
+                        left: dropdownPos.left,
+                        width: dropdownPos.width,
+                        maxHeight: dropdownPos.maxHeight,
+                        top: dropdownPos.top,
+                        bottom: dropdownPos.bottom,
+                        zIndex: Z.dropdown,
+                    }}
+                    className="bg-[#050507] border border-red-900/40 overflow-y-auto shadow-[0_20px_50px_rgba(0,0,0,0.9)] backdrop-blur-md"
+                >
                     {results.map(({ item }, idx) => {
                         const isGuessed = guessedIds.has(item.id);
                         const isActive = idx === activeIdx;
@@ -213,7 +283,8 @@ export const SongSearchBar = ({ songs, disabled = false, game }: SongSearchBarPr
                             </li>
                         );
                     })}
-                </ul>
+                </ul>,
+                document.body
             )}
         </div>
     );

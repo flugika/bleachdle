@@ -2,7 +2,7 @@
 
 > A Wordle-style character guessing game for Bleach fans — unlimited mode, attribute-based feedback, Soul Society aesthetic.
 
-**Last Updated:** 10 July 2026, 8:40 AM.
+**Last Updated:** 11 July 2026, 7:03 AM.
 
 [![Next.js](https://img.shields.io/badge/Next.js-15-black?logo=next.js)](https://nextjs.org/)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5-blue?logo=typescript)](https://www.typescriptlang.org/)
@@ -278,6 +278,8 @@ bleachdle
 │  │  │     ├─ page.tsx
 │  │  │     ├─ quote
 │  │  │     │  └─ page.tsx
+│  │  │     ├─ release
+│  │  │     │  └─ page.tsx
 │  │  │     ├─ silhouette
 │  │  │     │  └─ page.tsx
 │  │  │     └─ song
@@ -299,6 +301,8 @@ bleachdle
 │  │  │  └─ page.tsx
 │  │  ├─ loading.tsx
 │  │  ├─ mockup
+│  │  │  ├─ release
+│  │  │  │  └─ page.tsx
 │  │  │  ├─ silhouette
 │  │  │  │  └─ page.tsx
 │  │  │  └─ song
@@ -321,6 +325,11 @@ bleachdle
 │  ├─ public
 │  │  ├─ assets
 │  │  │  ├─ audio
+│  │  │  │  ├─ releases
+│  │  │  │  │  ├─ Bankai_Byakuya_Kuchiki.mp3
+│  │  │  │  │  ├─ Bankai_Chojiro_Sasakibe.mp3
+│  │  │  │  │  ├─ Bankai_Genryusai_Shigekuni_Yamamoto.mp3
+│  │  │  │  │  └─ ...
 │  │  │  │  └─ songs
 │  │  │  │     ├─ 1106_tybw.mp3
 │  │  │  │     ├─ after_dark.mp3
@@ -368,7 +377,8 @@ bleachdle
 │  │  │  ├─ daily-hub.config.ts
 │  │  │  ├─ feature.flags.ts
 │  │  │  ├─ howToPlayModals.ts
-│  │  │  └─ mode.ts
+│  │  │  ├─ mode.ts
+│  │  │  └─ zIndex.ts
 │  │  ├─ const
 │  │  │  ├─ guess.ts
 │  │  │  ├─ localStorage.ts
@@ -379,6 +389,8 @@ bleachdle
 │  │  │  ├─ emojis.json
 │  │  │  ├─ powers.json
 │  │  │  ├─ quotes.json
+│  │  │  ├─ releases.json
+│  │  │  ├─ releases.json.bak
 │  │  │  ├─ silhouette-cells.json
 │  │  │  ├─ silhouettes.json
 │  │  │  ├─ songs.json
@@ -389,6 +401,8 @@ bleachdle
 │  │  │  ├─ emoji
 │  │  │  │  └─ schema.ts
 │  │  │  ├─ quote
+│  │  │  │  └─ schema.ts
+│  │  │  ├─ release
 │  │  │  │  └─ schema.ts
 │  │  │  ├─ silhouette
 │  │  │  │  └─ schema.ts
@@ -448,6 +462,19 @@ bleachdle
 │  │  │  │  │     └─ useQuoteGame.ts
 │  │  │  │  ├─ quote.ts
 │  │  │  │  └─ types.ts
+│  │  │  ├─ release
+│  │  │  │  ├─ components
+│  │  │  │  │  └─ shared
+│  │  │  │  │     ├─ ReleaseGuessTable.tsx
+│  │  │  │  │     ├─ ReleaseHowToPlayModal.tsx
+│  │  │  │  │     ├─ ReleaseSearchBar.tsx
+│  │  │  │  │     ├─ ReleaseSummaryGuess.tsx
+│  │  │  │  │     └─ ReleaseTestimonyDisplay.tsx
+│  │  │  │  ├─ hooks
+│  │  │  │  │  └─ unlimited
+│  │  │  │  │     └─ useReleaseGame.ts
+│  │  │  │  ├─ release.ts
+│  │  │  │  └─ types.ts
 │  │  │  ├─ silhouette
 │  │  │  │  ├─ components
 │  │  │  │  │  ├─ daily
@@ -472,6 +499,7 @@ bleachdle
 │  │  │  │  │     ├─ SongAudioPlayer.tsx
 │  │  │  │  │     ├─ SongGuessTable.tsx
 │  │  │  │  │     ├─ SongHowToPlayModal.tsx
+│  │  │  │  │     ├─ SongProgressBar.tsx
 │  │  │  │  │     ├─ SongSearchBar.tsx
 │  │  │  │  │     └─ SongSummaryGuess.tsx
 │  │  │  │  ├─ constants.ts
@@ -521,12 +549,14 @@ bleachdle
 │  │  │     └─ ui.ts
 │  │  ├─ scripts
 │  │  │  ├─ check-assets.js
+│  │  │  ├─ check-release-audio.js
 │  │  │  ├─ cutout_characters.py
 │  │  │  ├─ extract-character-meta.js
 │  │  │  ├─ extract-character.js
 │  │  │  ├─ fix-all-json-relations.js
 │  │  │  ├─ fix-duplicate-ids.js
 │  │  │  ├─ generate-emojis.js
+│  │  │  ├─ generate-releases.js
 │  │  │  ├─ generate-silhouettes.js
 │  │  │  ├─ generate-wallpapers.js
 │  │  │  ├─ map-character-quote.js
@@ -576,6 +606,7 @@ bleachdle
 │  │  │     │  ├─ CharacterControlPanel.tsx
 │  │  │     │  ├─ EmojiControlPanel.tsx
 │  │  │     │  ├─ QuoteControlPanel.tsx
+│  │  │     │  ├─ ReleaseControlPanel.tsx
 │  │  │     │  ├─ SilhouetteControlPanel.tsx
 │  │  │     │  └─ SongControlPanel.tsx
 │  │  │     ├─ daily-hub
@@ -609,6 +640,15 @@ bleachdle
 │  │  │     ├─ ScaleFit.tsx
 │  │  │     ├─ Sealed.tsx
 │  │  │     ├─ SearchBar.tsx
+│  │  │     ├─ summary
+│  │  │     │  ├─ IdentificationHistoryPanel.tsx
+│  │  │     │  ├─ index.ts
+│  │  │     │  ├─ NarrativeFlavorText.tsx
+│  │  │     │  ├─ StreakStatsGrid.tsx
+│  │  │     │  ├─ SummaryActionButton.tsx
+│  │  │     │  ├─ SummaryCardShell.tsx
+│  │  │     │  ├─ SummaryHeader.tsx
+│  │  │     │  └─ TierBadgeCard.tsx
 │  │  │     ├─ tooltip.tsx
 │  │  │     └─ WallpaperInitializer.tsx
 │  │  └─ styles

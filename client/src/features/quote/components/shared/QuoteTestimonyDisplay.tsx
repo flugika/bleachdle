@@ -46,7 +46,7 @@ export function QuoteTestimonyDisplay({ target, isSolved = false, speakerName }:
 
     return (
         <div
-            className="relative w-full max-w-lg mx-auto mb-6 overflow-hidden"
+            className="relative w-full max-w-lg mx-auto my-2 overflow-hidden"
             style={{
                 background: T.bg,
                 boxShadow: `0 0 0 1px ${T.border}, 0 26px 60px rgba(0,0,0,0.65)`,

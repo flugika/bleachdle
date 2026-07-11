@@ -5,6 +5,7 @@ import { useEffect, useRef, useState, useCallback } from 'react';
 import { BleachSong } from '@/src/entities/song/schema';
 import { getRevealMsForAttempt, formatRevealMs } from '@/src/features/song/constants';
 import { STORAGE_KEYS } from '@/src/const/localStorage';
+import { SongProgressBar } from './SongProgressBar';
 
 const DEFAULT_VOLUME = 0.5;
 
@@ -104,6 +105,13 @@ export function SongAudioPlayer({
     const previousVolumeRef = useRef<number>(volume > 0 ? volume : DEFAULT_VOLUME);
     const isMuted = volume === 0;
 
+    // 🆕 ms ที่เล่นไปแล้วนับจาก startSec ของ preview clip (แยกจาก `currentTime` ซึ่งเป็นวินาทีดิบ
+    // ของทั้งไฟล์ที่ใช้ในโหมด full เท่านั้น) — ใช้ rAF poll แทน onTimeUpdate เพราะ onTimeUpdate
+    // ยิงถี่ไม่พอ (~4/sec) ทำให้หลอด progress สะดุด ไม่ไหลลื่น
+    const [previewElapsedMs, setPreviewElapsedMs] = useState(0);
+    const rafIdRef = useRef<number | null>(null);
+    const pendingSeekHandlerRef = useRef<(() => void) | null>(null);
+
     const revealMs = getRevealMsForAttempt(attemptIndex);
     const startSec = (target?.segments?.[0]?.start_time_ms ?? 0) / 1000;
 
@@ -129,7 +137,40 @@ export function SongAudioPlayer({
 
     useEffect(() => () => {
         if (stopTimerRef.current) clearTimeout(stopTimerRef.current);
+        if (pendingSeekHandlerRef.current && audioRef.current) {
+            audioRef.current.removeEventListener('seeked', pendingSeekHandlerRef.current);
+        }
     }, []);
+
+    // 🆕 Preview-mode progress ticker: ขณะเล่นคลิปพรีวิว อ่าน audio.currentTime ทุกเฟรมแล้ว
+    // แปลงเป็น ms นับจาก startSec ของ segment, clamp ไว้ที่ revealMs (จุดตัด) — ให้หลอดค่อยๆ
+    // ไหลไปจนเต็มพอดีกับตอนที่เสียงถูก auto-stop ไม่ใช่หยุดค้างกลางทาง
+    useEffect(() => {
+        if (isFull || !isPlaying) {
+            if (rafIdRef.current !== null) {
+                cancelAnimationFrame(rafIdRef.current);
+                rafIdRef.current = null;
+            }
+            return;
+        }
+
+        const tick = () => {
+            const audio = audioRef.current;
+            if (audio) {
+                const elapsed = Math.max(0, (audio.currentTime - startSec) * 1000);
+                setPreviewElapsedMs(Math.min(elapsed, revealMs));
+            }
+            rafIdRef.current = requestAnimationFrame(tick);
+        };
+
+        rafIdRef.current = requestAnimationFrame(tick);
+        return () => {
+            if (rafIdRef.current !== null) {
+                cancelAnimationFrame(rafIdRef.current);
+                rafIdRef.current = null;
+            }
+        };
+    }, [isFull, isPlaying, startSec, revealMs]);
 
     useEffect(() => {
         if (audioRef.current) {
@@ -166,6 +207,7 @@ export function SongAudioPlayer({
 
     const handleEnded = useCallback(() => {
         setIsPlaying(false);
+        setPreviewElapsedMs(0);
     }, []);
 
     const handleVolumeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -219,27 +261,55 @@ export function SongAudioPlayer({
             return;
         }
 
-        // Original preview/gameplay behaviour — untouched.
+        // 🆕 dle-style: กด Play ซ้ำๆ ต้อง restart จาก 0 ทุกครั้งเสมอ ไม่มี toggle-to-stop
+        // ยกเลิก timer/listener ที่ค้างจากคลิกก่อนหน้า (เผื่อผู้ใช้กดรัวๆ ก่อน seek รอบก่อนจะเสร็จ)
         if (stopTimerRef.current) {
             clearTimeout(stopTimerRef.current);
+            stopTimerRef.current = null;
+        }
+        if (pendingSeekHandlerRef.current) {
+            audio.removeEventListener('seeked', pendingSeekHandlerRef.current);
+            pendingSeekHandlerRef.current = null;
         }
 
-        audio.currentTime = startSec;
+        audio.pause();
+        setPreviewElapsedMs(0);
 
-        const playPromise = audio.play();
-        if (playPromise) {
-            playPromise
-                .then(() => setIsPlaying(true))
-                .catch(() => {
-                    setStatus('error');
-                    setIsPlaying(false);
-                });
+        // 🆕 แก้บั๊ก: เดิม set audio.currentTime แล้วเรียก .play() ทันที แต่ seek ของ
+        // <audio> เป็น operation แบบ async ภายในเบราว์เซอร์ — ถ้า play() มาก่อน seek
+        // เสร็จจริง จะมีเสี้ยววินาทีที่เล่นจากตำแหน่งเดิมก่อนกระโดดมาที่ startSec
+        // แก้โดยรอ event 'seeked' ให้ seek เสร็จสมบูรณ์ก่อนค่อยสั่งเล่น
+        const beginPlaybackFromStart = () => {
+            pendingSeekHandlerRef.current = null;
+            const playPromise = audio.play();
+            if (playPromise) {
+                playPromise
+                    .then(() => setIsPlaying(true))
+                    .catch(() => {
+                        setStatus('error');
+                        setIsPlaying(false);
+                    });
+            }
+
+            stopTimerRef.current = setTimeout(() => {
+                audio.pause();
+                setIsPlaying(false);
+                setPreviewElapsedMs(0);
+            }, revealMs);
+        };
+
+        if (Math.abs(audio.currentTime - startSec) < 0.03) {
+            // อยู่ที่ตำแหน่งเริ่มต้นอยู่แล้ว ไม่ต้องรอ seek
+            beginPlaybackFromStart();
+        } else {
+            const handleSeeked = () => {
+                audio.removeEventListener('seeked', handleSeeked);
+                beginPlaybackFromStart();
+            };
+            pendingSeekHandlerRef.current = handleSeeked;
+            audio.addEventListener('seeked', handleSeeked);
+            audio.currentTime = startSec;
         }
-
-        stopTimerRef.current = setTimeout(() => {
-            audio.pause();
-            setIsPlaying(false);
-        }, revealMs);
     };
 
     const statusLabel = hasError
@@ -263,6 +333,12 @@ export function SongAudioPlayer({
                 isFull ? "max-w-full" : "max-w-sm" // 🆕 ใช้ max-w-full เพื่อให้ยืดเต็ม ScaleFit ในโหมดกุญแจคำตอบ
             ].join(' ')}
         >
+            <style>{`
+                @keyframes song-loop-spin {
+                    from { transform: rotate(0deg); }
+                    to { transform: rotate(-360deg); }
+                }
+            `}</style>
 
             {/* 霊子 REIATSU PARTICLE FIELD */}
             <div className="pointer-events-none absolute inset-0 overflow-hidden">
@@ -314,13 +390,14 @@ export function SongAudioPlayer({
                     <button
                         onClick={handlePlay} disabled={isButtonDisabled}
                         className={[
-                            'relative z-10 w-16 h-16 shrink-0 rounded-full border-2 flex items-center justify-center transition-all duration-300 select-none outline-none',
+                            'group relative z-10 w-16 h-16 shrink-0 rounded-full border-2 flex items-center justify-center transition-all duration-300 select-none outline-none',
                             isPlaying ? 'border-[#ffffff] bg-[#c8a96e]/20 shadow-[0_0_30px_rgba(200,169,110,0.5)] scale-95'
                                 : isButtonDisabled ? 'border-[#c8a96e]/25 bg-[#0a0a0f]/80'
                                     : 'border-[#c8a96e]/40 bg-[#0a0a0f]/80 hover:border-[#ffffff] hover:scale-105 hover:shadow-[0_0_20px_rgba(200,169,110,0.3)] active:scale-95',
                             isButtonDisabled ? 'cursor-not-allowed' : 'cursor-pointer',
                         ].join(' ')}
-                        aria-label={isFull ? (isPlaying ? 'Pause' : 'Play') : 'Play Control'}
+                        aria-label={isFull ? (isPlaying ? 'Pause' : 'Play') : 'Replay'}
+                        title={!isFull ? 'Tap to replay from the start' : undefined}
                     >
                         {isLoading && target && !hasError ? (
                             <svg className="w-5 h-5 animate-spin text-[#c8a96e]/60" viewBox="0 0 24 24" fill="none">
@@ -330,11 +407,21 @@ export function SongAudioPlayer({
                         ) : isFull && isPlaying ? (
                             <svg className="w-6 h-6 text-white" viewBox="0 0 24 24" fill="currentColor"><rect x="6" y="5" width="4" height="14" rx="1" /><rect x="14" y="5" width="4" height="14" rx="1" /></svg>
                         ) : isPlaying ? (
-                            <span className="flex gap-1 items-end h-5">
-                                <span className="w-0.5 bg-[#ffffff] origin-bottom will-change-transform" style={{ animation: 'song-eq 0.45s ease-in-out infinite alternate' }} />
-                                <span className="w-0.5 bg-[#c8a96e] origin-bottom will-change-transform" style={{ animation: 'song-eq 0.35s ease-in-out infinite alternate 0.1s' }} />
-                                <span className="w-0.5 bg-[#ffffff] origin-bottom will-change-transform" style={{ animation: 'song-eq 0.5s ease-in-out infinite alternate 0.05s' }} />
-                            </span>
+                            <svg
+                                className="w-6 h-6 text-white"
+                                viewBox="0 0 24 24"
+                                fill="none"
+                                stroke="currentColor"
+                                strokeWidth={2}
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                style={{ animation: 'song-loop-spin 2.2s linear infinite' }}
+                            >
+                                <path d="M20 11A8 8 0 0 0 6.05 6.05L3 9" />
+                                <path d="M3 4v5h5" />
+                                <path d="M4 13a8 8 0 0 0 13.95 4.95L21 15" />
+                                <path d="M16 20v-5h5" />
+                            </svg>
                         ) : (
                             <svg className={['w-6 h-6 ml-0.5 transition-colors duration-200', hasError ? 'text-[#c8a96e]/25' : 'text-[#c8a96e] group-hover:text-white'].join(' ')} viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z" /></svg>
                         )}
@@ -381,6 +468,13 @@ export function SongAudioPlayer({
                         />
                         <span className="shrink-0 w-8 text-right text-[11px] font-mono text-[#777796] tracking-tighter tabular-nums">{Math.round(volume * 100)}%</span>
                     </div>
+
+                    <SongProgressBar
+                        currentTimeMs={isFull ? currentTime * 1000 : previewElapsedMs}
+                        revealMs={isFull ? duration * 1000 : revealMs}
+                        durationMs={isFull ? duration * 1000 || 10000 : 10000}
+                        isPlaying={isPlaying}
+                    />
 
                 </div>
             </div>

@@ -18,11 +18,12 @@ export const FEATURE_FLAGS = {
         silhouette: true,
         emoji: true,
         song: true,
-        release: false,
+        release: true,
     },
 
     mockupSong: false,
-    mockupSilhouette: true,
+    mockupSilhouette: false,
+    mockupRelease: false,
     support: true,
 } as const;
 

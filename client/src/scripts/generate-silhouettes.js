@@ -12,9 +12,10 @@ const DATA_DIR = path.join(__dirname, '../data');
 const CHARACTERS_FILE = path.join(DATA_DIR, 'characters.json');
 const SILHOUETTES_FILE = path.join(DATA_DIR, 'silhouettes.json');
 
-// 🖼️ รูป silhouette อยู่ที่ /assets/character_silhouette/ ทั้งหมด
-// ชื่อไฟล์จริง = {ชื่อ}_cutout_silhouette.webp เช่น Aisslinger_Wernarr_cutout_silhouette.webp
-// char.image ใช้ร่วมกับ /assets/characters/ (คนละโฟลเดอร์) เผื่อมีนามสกุลติดมาแล้วต้องตัดทิ้งก่อน กัน double extension
+// 🖼️ Silhouette images live under /assets/character_silhouette/
+// Actual filename = {name}_cutout_silhouette.webp, e.g. Aisslinger_Wernarr_cutout_silhouette.webp
+// char.image is shared with /assets/characters/ (different folder), so strip any existing
+// extension first to avoid a double extension.
 function toSilhouetteFilename(baseImage) {
     const withoutExt = baseImage.replace(/\.(webp|png|jpe?g)$/i, '');
     return `${withoutExt}_cutout_silhouette.webp`;
@@ -37,7 +38,7 @@ function run() {
 
         let createdCount = 0;
         let keptCount = 0;
-        let backfilledIdCount = 0; // 🆕 entry เก่าก่อนมี field id เลยเติมให้ระหว่างทาง
+        let backfilledIdCount = 0; // 🆕 old entries created before the `id` field existed
 
         const nextSilhouettes = characters.map(char => {
             const existing = existingMap.get(char.id);
@@ -53,9 +54,9 @@ function run() {
 
             createdCount++;
             return {
-                id: randomUUID(),                          // 🆕 primary key ของ entry
+                id: randomUUID(),                          // 🆕 primary key for this entry
                 character_id: char.id,
-                image: toSilhouetteFilename(char.image),    // 🆕 baked-in filename เต็ม พร้อม suffix จริง
+                image: toSilhouetteFilename(char.image),    // 🆕 baked-in filename with real suffix
             };
         });
 
@@ -64,14 +65,14 @@ function run() {
 
         fs.writeFileSync(SILHOUETTES_FILE, JSON.stringify(nextSilhouettes, null, 4), 'utf8');
 
-        console.log('✅ ประมวลผลเสร็จสิ้น เขียนไฟล์ silhouettes.json แล้ว!');
-        console.log(`สร้างใหม่ (id + default focus/scale): ${createdCount} รายการ`);
-        console.log(`คงค่าเดิมไว้: ${keptCount} รายการ`);
-        if (backfilledIdCount > 0) console.log(`🆕 เติม id ให้ entry เก่า: ${backfilledIdCount} รายการ`);
-        if (orphanedCount > 0) console.warn(`⚠️ พบ ${orphanedCount} entry orphan (character_id ไม่ตรง characters.json ปัจจุบัน) — ถูกตัดออก`);
-        console.log(`ไฟล์ที่อัปเดต: ${SILHOUETTES_FILE}`);
+        console.log('✅ Done — silhouettes.json has been written.');
+        console.log(`Newly created (id + default focus/scale): ${createdCount}`);
+        console.log(`Kept unchanged: ${keptCount}`);
+        if (backfilledIdCount > 0) console.log(`🆕 Backfilled id for old entries: ${backfilledIdCount}`);
+        if (orphanedCount > 0) console.warn(`⚠️ Found ${orphanedCount} orphaned entr${orphanedCount === 1 ? 'y' : 'ies'} (character_id not found in current characters.json) — dropped`);
+        console.log(`Updated file: ${SILHOUETTES_FILE}`);
     } catch (error) {
-        console.error('❌ เกิดข้อผิดพลาด:', error.message);
+        console.error('❌ Error:', error.message);
     }
 }
 

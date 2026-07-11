@@ -17,10 +17,11 @@ export function GlobalGameNav() {
 
     const isHome = pathname === "/";
     const isSupport = pathname === "/support";
-    const gameMatch = pathname.match(/^\/(daily|unlimited)\/([^/]+)$/);
+    const gameMatch = pathname.match(/^\/(daily|unlimited|mockup)\/([^/]+)$/);
+    const isMockUp = pathname === `/mockup/release`;
     const isValidGamePath = !!gameMatch;
 
-    if (!isHome && !isValidGamePath && !isSupport) return null;
+    if (!isHome && !isValidGamePath && !isSupport && !isMockUp) return null;
 
     // 🔧 ถ้าสถานะประตูปิดหรือกำลังทำงานอยู่ ให้ซ่อนไปเลย
     if (state !== "idle") return null;

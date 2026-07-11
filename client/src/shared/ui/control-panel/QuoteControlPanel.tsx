@@ -53,7 +53,7 @@ export function QuoteControlPanel({
 
             {/* Search Section */}
             {target && characters && (
-                <div className="flex justify-center w-full mb-6">
+                <div className="flex justify-center w-full my-2">
                     <SearchBar
                         characters={characters}
                         disabled={disabled || isLimitReached || !target}

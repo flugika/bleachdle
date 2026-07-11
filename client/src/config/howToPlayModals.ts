@@ -15,4 +15,5 @@ export const HOW_TO_PLAY_MODALS: Record<string, ComponentType<HowToPlayModalProp
     song: dynamic(() => import('@/src/features/song/components/shared/SongHowToPlayModal').then(m => m.SongHowToPlayModal)),
     character: dynamic(() => import('@/src/features/character/components/shared/CharacterHowToPlayModal').then(m => m.CharacterHowToPlayModal)),
     silhouette: dynamic(() => import('@/src/features/silhouette/components/shared/SilhouetteHowToPlayModal').then(m => m.SilhouetteHowToPlayModal)),
+    release: dynamic(() => import('@/src/features/release/components/shared/ReleaseHowToPlayModal').then(m => m.ReleaseHowToPlayModal)),
 };

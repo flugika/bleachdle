@@ -1,10 +1,12 @@
 'use client';
 
 import { useState, useMemo, useRef, useEffect } from 'react';
+import { createPortal } from 'react-dom';
 import { createSearchEngine } from '@/src/lib/search/fuzzy';
 import { Character } from '@/src/entities/character/schema';
 import Image from 'next/image';
 import { GuessGameController } from '@/src/shared/types/guessGame';
+import { Z } from '@/src/config/zIndex'; // 🎯 ใช้ z-index scale กลาง แทน hardcode z-50
 
 interface GuessSearchBarProps {
     characters: Character[];
@@ -26,6 +28,19 @@ interface GuessSearchBarProps {
     placeholder?: string;
 }
 
+// 📏 ค่าคงที่สำหรับคำนวณ collision detection ของ dropdown
+const DROPDOWN_MAX_HEIGHT = 360; // ต้องตรงกับ max-h เดิมที่เคยใส่ผ่าน className
+const DROPDOWN_GAP = 8;          // ระยะห่างจาก input (บนหรือล่างแล้วแต่ทิศที่เปิด)
+
+interface DropdownPosition {
+    left: number;
+    width: number;
+    maxHeight: number;
+    flipped: boolean;
+    top?: number;
+    bottom?: number;
+}
+
 export const SearchBar = ({
     characters,
     disabled = false,
@@ -36,6 +51,10 @@ export const SearchBar = ({
     const [query, setQuery] = useState('');
     const [isOpen, setIsOpen] = useState(false);
     const [activeIdx, setActiveIdx] = useState(-1);
+    // 🩹 ตำแหน่ง + ทิศทางของ dropdown คำนวณเองจาก getBoundingClientRect แล้ว render ผ่าน portal
+    // ด้วย position:fixed แทน absolute — กัน scrollbar หลอกของหน้า (fixed ไม่ถูกนับรวมเข้า
+    // scrollHeight ของ ancestor ไหนเลย) และรองรับ flip ขึ้นด้านบนเมื่อพื้นที่ด้านล่างไม่พอ
+    const [dropdownPos, setDropdownPos] = useState<DropdownPosition | null>(null);
 
     const wrapRef = useRef<HTMLDivElement>(null);
     const inputRef = useRef<HTMLInputElement>(null);
@@ -67,6 +86,43 @@ export const SearchBar = ({
         document.addEventListener('mousedown', handler);
         return () => document.removeEventListener('mousedown', handler);
     }, []);
+
+    // 📍 อัปเดตตำแหน่ง + ทิศทาง dropdown ทุกครั้งที่เปิด, ตอน scroll (ของ ancestor ชั้นไหนก็ตาม
+    // เลยใช้ capture: true), และตอน resize จอ
+    //
+    // 🔄 FLIP LOGIC: เช็คพื้นที่ว่างด้านล่าง input เทียบกับด้านบน — ถ้าด้านล่างไม่พอ
+    // (เช่น input อยู่ใกล้ footer/ขอบจอ) และด้านบนมีที่ว่างมากกว่า ให้เปิด dropdown ขึ้นด้านบน
+    // แทน (pattern เดียวกับ Radix/Headless UI Popover) พร้อมจำกัด maxHeight ตามพื้นที่จริง
+    // ที่เหลือของทิศนั้นๆ ด้วย กันไม่ให้ dropdown ยื่นล้นขอบจอไปเลยไม่ว่าจะเปิดทิศไหน
+    useEffect(() => {
+        if (!isOpen) return;
+
+        const updatePos = () => {
+            const rect = wrapRef.current?.getBoundingClientRect();
+            if (!rect) return;
+
+            const spaceBelow = window.innerHeight - rect.bottom - DROPDOWN_GAP;
+            const spaceAbove = rect.top - DROPDOWN_GAP;
+            const flipped = spaceBelow < DROPDOWN_MAX_HEIGHT && spaceAbove > spaceBelow;
+
+            setDropdownPos({
+                left: rect.left,
+                width: rect.width,
+                maxHeight: Math.max(0, Math.min(DROPDOWN_MAX_HEIGHT, flipped ? spaceAbove : spaceBelow)),
+                flipped,
+                top: flipped ? undefined : rect.bottom + DROPDOWN_GAP,
+                bottom: flipped ? window.innerHeight - rect.top + DROPDOWN_GAP : undefined,
+            });
+        };
+
+        updatePos();
+        window.addEventListener('scroll', updatePos, true);
+        window.addEventListener('resize', updatePos);
+        return () => {
+            window.removeEventListener('scroll', updatePos, true);
+            window.removeEventListener('resize', updatePos);
+        };
+    }, [isOpen]);
 
     const triggerScrollAndShake = (charId: string) => {
         const rowEl = document.getElementById(`${rowIdPrefix}-${charId}`);
@@ -136,7 +192,7 @@ export const SearchBar = ({
     }, [query]);
 
     return (
-        <div ref={wrapRef} className="relative w-full max-w-md mx-auto pt-4">
+        <div ref={wrapRef} className="relative w-full max-w-md mx-auto pt-2">
             {/* INPUT BOX - TYBW STYLING */}
             <div className="relative group/input">
                 <div className="absolute -inset-px bg-gradient-to-r from-red-900/0 via-red-600/0 to-red-900/0 group-focus-within/input:via-red-600/40 transition-all duration-500" />
@@ -160,9 +216,22 @@ export const SearchBar = ({
                 </div>
             </div>
 
-            {/* DROPDOWN MENU */}
-            {isOpen && results.length > 0 && (
-                <ul className="absolute top-[calc(100%+8px)] left-0 right-0 z-50 bg-[#050507] border border-red-900/40 max-h-[360px] overflow-y-auto shadow-[0_20px_50px_rgba(0,0,0,0.9)] backdrop-blur-md">
+            {/* DROPDOWN MENU — render ผ่าน portal ไป document.body ด้วย position:fixed
+                เพื่อไม่ให้ถูกนับรวมเข้า scrollHeight ของหน้า และใช้ Z.dropdown แทน hardcode
+                เพื่อการันตีว่าชนะทุก static layout (footer/nav/cursor) เสมอไม่ว่าจะมี layer ใหม่แทรกกี่ตัว */}
+            {isOpen && results.length > 0 && dropdownPos && createPortal(
+                <ul
+                    style={{
+                        position: 'fixed',
+                        left: dropdownPos.left,
+                        width: dropdownPos.width,
+                        maxHeight: dropdownPos.maxHeight,
+                        top: dropdownPos.top,
+                        bottom: dropdownPos.bottom,
+                        zIndex: Z.dropdown,
+                    }}
+                    className="bg-[#050507] border border-red-900/40 overflow-y-auto shadow-[0_20px_50px_rgba(0,0,0,0.9)] backdrop-blur-md"
+                >
                     {results.map(({ item }, idx) => {
                         const isGuessed = guessedIds.has(item.id);
                         const isActive = idx === activeIdx;
@@ -218,7 +287,8 @@ export const SearchBar = ({
                             </li>
                         );
                     })}
-                </ul>
+                </ul>,
+                document.body
             )}
         </div>
     );

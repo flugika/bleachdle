@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useEffect, useRef } from 'react';
+import { Z } from '@/src/config/zIndex'; // 🎯 ใช้ z-index scale กลาง แทน hardcode z-[9999]
 
 // ปรับค่าความฟุ้งของไอเย็น
 const PARTICLE_LIFESPAN = 30; // ยิ่งมากยิ่งลอยนาน
@@ -21,9 +22,13 @@ export const BleachReiatsuCursor: React.FC = () => {
             const particle = document.createElement('div');
             // สไตล์ละอองน้ำแข็ง (เล็ก-ใหญ่สลับกัน)
             const size = Math.random() * 8 + 2;
-            particle.className = "fixed pointer-events-none rounded-full blur-[4px] z-[9999]";
+            // 🩹 เอา z-[9999] ออกจาก className แล้วย้ายไปตั้งผ่าน style.zIndex ด้วย Z.cursor แทน
+            // (Z.cursor = 40 พอสำหรับชนะ static layout ทั้งหมด แต่ยังต่ำกว่า dropdown/modal/transition
+            // ตามที่ตั้งใจไว้ในสเกลกลาง — เดิม 9999 มันชนะทุกอย่างในระบบซึ่งไม่ควรเกิดกับ cursor effect)
+            particle.className = "fixed pointer-events-none rounded-full blur-[4px]";
             particle.style.width = `${size}px`;
             particle.style.height = `${size}px`;
+            particle.style.zIndex = String(Z.cursor);
             particle.style.background = 'radial-gradient(circle, rgba(255,255,255,1) 0%, rgba(186,230,253,0.8) 50%, rgba(56,189,248,0.3) 100%)';
             particle.style.left = `${x}px`;
             particle.style.top = `${y}px`;

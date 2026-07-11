@@ -4,6 +4,7 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useSenkaimon } from '@/src/shared/ui/context/NavigationContext';
+import { Z } from '@/src/config/zIndex'; // 🎯 ใช้ z-index scale กลาง แทน hardcode ตัวเลขเอง
 // 💡 หมายเหตุ: ปรับเปลี่ยน Path ลิงก์ของ useSenkaimon ให้ตรงกับโครงสร้างจริงของคุณ เช่น @/src/shared/context/NavigationContext
 
 const FOOTER_LINKS = [
@@ -39,7 +40,10 @@ export default function Footer() {
     };
 
     return (
-        <footer className="w-full border-t border-white/5 bg-[#050505] py-12 px-6 relative z-30">
+        <footer
+            className="w-full border-t border-white/5 bg-[#050505] py-12 px-6 relative"
+            style={{ zIndex: Z.footer }}
+        >
             <div className="max-w-6xl mx-auto flex flex-col md:flex-row justify-between items-center gap-8">
 
                 {/* Brand Section */}
@@ -67,8 +71,8 @@ export default function Footer() {
                                 onClick={(e) => handleNavigation(e, link.path)}
                                 // เสริม UX: อิงตามสไตล์เกมคอนโซล ไฮไลท์สีทองเมื่ออยู่หน้านั้นๆ ทันที
                                 className={`text-[12px] uppercase tracking-[0.2em] transition-colors ${isActive
-                                        ? "text-[#c8a96e] font-bold drop-shadow-[0_0_10px_rgba(200,169,110,0.4)]"
-                                        : "text-white/50 hover:text-[#c8a96e]"
+                                    ? "text-[#c8a96e] font-bold drop-shadow-[0_0_10px_rgba(200,169,110,0.4)]"
+                                    : "text-white/50 hover:text-[#c8a96e]"
                                     }`}
                             >
                                 {link.name}
@@ -80,7 +84,7 @@ export default function Footer() {
                 {/* Metadata/Copyright */}
                 <div className="text-[11px] text-white/40 tracking-wider text-center md:text-right">
                     © {new Date().getFullYear()} fukusana.dev <br />
-                    Latest Updated: 10 July 2026, 8:40 AM. <br />
+                    Latest Updated: 11 July 2026, 7:03 AM. <br />
                     Thousand-Year Blood War Cour 3 (The Conflict)
                 </div>
             </div>

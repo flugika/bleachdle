@@ -203,7 +203,7 @@ function SongFilterBar({
                     onChange={(e) => onQueryChange(e.target.value)}
                     placeholder="FILTER: SEARCH TRACK TITLE OR ARTIST..."
                     autoComplete="off"
-                    className="relative w-full py-3 pl-5 pr-24 bg-[#050507] text-[#e2e2e5] text-xs font-medium tracking-[0.15em] uppercase border border-[#1a1a24] focus:outline-none focus:border-red-600/80 focus:text-white transition-all duration-300 placeholder-[#444452]"
+                    className="relative w-full py-3 pl-5 pr-24 bg-[#050507] text-[#e2e2e5] text-xs font-medium tracking-[0.15em] uppercase border border-[#777796] focus:outline-none focus:border-red-600/80 focus:text-white transition-all duration-300 placeholder-[#777796]"
                 />
 
                 <div className="absolute right-4 top-1/2 -translate-y-1/2 flex items-center gap-2 pointer-events-none">
