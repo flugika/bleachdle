@@ -170,10 +170,10 @@ export const ReleaseSummaryGuess = ({
                                     {answerCharacter && (
                                         <>
                                             <span className="px-2 py-0.5 text-[12px] text-[#c8a96e]/80 border border-[#c8a96e]/20 bg-[#c8a96e]/5 font-mono">
-                                                {answerCharacter.affiliation}
+                                                {answerCharacter.race.length > 1 ? "Hybrid" : answerCharacter.race}
                                             </span>
                                             <span className="px-2 py-0.5 text-[12px] text-[#c8a96e]/80 border border-[#c8a96e]/20 bg-[#c8a96e]/5 font-mono">
-                                                {answerCharacter.race.length > 1 ? "Hybrid" : answerCharacter.race}
+                                                {answerCharacter.affiliation}
                                             </span>
                                         </>
                                     )}
