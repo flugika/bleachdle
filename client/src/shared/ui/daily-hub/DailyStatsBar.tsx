@@ -31,7 +31,7 @@ const MODE_KANJI: Record<string, string> = {
 
 const FALLBACK_ACCENT = { base: "#c8a96e", bright: "#f2cf8a", glow: "rgba(200,169,110,0.45)" };
 
-export function DailyStatsBar({ stats }: { stats: DailyStats }) {
+export function DailyStatsBar({ stats, forceScroll = false }: { stats: DailyStats; forceScroll?: boolean }) {
     // จังหวะที่รอโหลดข้อมูลจาก Server (ป้องกัน UI กระตุก)
     if (!stats) {
         return (
@@ -107,7 +107,7 @@ export function DailyStatsBar({ stats }: { stats: DailyStats }) {
     // bar itself — the -50% scroll animation then reads as "stuck on the
     // left" because most of the bar to the right is just empty space rather
     // than a genuine overflow scroll. Center it statically instead.
-    const shouldScroll = entries.length >= 4;
+    const shouldScroll = forceScroll || entries.length >= 4;
 
     return (
         <>

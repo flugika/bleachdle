@@ -379,7 +379,7 @@ export function HeroDailyCTA({
                                 </div>
                             </div>
 
-                            <DailyStatsBar stats={initialStats} />
+                            <DailyStatsBar stats={initialStats} forceScroll />
                         </div>
                     </div>
                 </div>
