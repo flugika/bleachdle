@@ -1008,7 +1008,7 @@ function BadgeCell({ badge, rank }: { badge: BadgeTier; rank: number }) {
                     <span style={{ fontSize: "18px", fontWeight: 800, letterSpacing: "0.02em", color: "#c9a35f" }}>
                         {badge.requirementValue}
                     </span>
-                    <span style={{ fontSize: "9px", letterSpacing: "0.08em", color: "#8a8276", lineHeight: 1.4 }}>
+                    <span style={{ fontSize: "11px", letterSpacing: "0.08em", color: "#8a8276", lineHeight: 1.4 }}>
                         {badge.requirementLabel}
                     </span>
                 </div>
