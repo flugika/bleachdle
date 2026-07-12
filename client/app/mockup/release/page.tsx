@@ -551,7 +551,7 @@ function LiveTuningWorkbench({
 // ============================================================================
 
 export default function MockupReleaseGame() {
-    if (!FEATURE_FLAGS.mockupRelease) {
+    if (!FEATURE_FLAGS.mockup.release) {
         return <Sealed />;
     }
 

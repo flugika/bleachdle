@@ -7,17 +7,17 @@ import { useSenkaimon } from "@/src/shared/ui/context/NavigationContext";
 import { HeaderDivider } from "@/src/shared/ui/layout/HeaderDivider";
 import SoulSyncLoader from "@/src/shared/ui/loader/SoulSyncLoader";
 import { ModeSelectorModal, GameMode } from "@/src/shared/ui/game-selector/ModeSelectorModal";
-import { MODE_ACCENT } from "@/src/config/mode";
+import { MODE_ACCENT, BL_MODES_METADATA } from "@/src/config/mode";
 import { HeroDailyCTA } from "@/src/shared/ui/daily-hub/HeroDailyCTA";
 
 // ================= 📖 GAME MODE DATABASE =================
-// Accent colors now pull from MODE_ACCENT (mode-accents.ts) so every place this
-// mode shows up — this grid, DailyStatsBar, the mode selector modal — agrees on
-// the same identity color instead of each spot picking its own gold/blue guess.
+// Accent colors pull from MODE_ACCENT, and kanji pulls from BL_MODES_METADATA
+// (config/mode.ts) — so every place a mode shows up (this grid, DailyStatsBar,
+// the mode selector modal, Stats, About) agrees on the same identity color
+// AND the same glyph, instead of each spot keeping its own hardcoded copy.
 const GAME_MODES = [
     {
         id: "character",
-        kanji: "士",
         accent: MODE_ACCENT.character.base,
         name: "CHARACTER",
         tagline: "Classic deduction",
@@ -25,7 +25,6 @@ const GAME_MODES = [
     },
     {
         id: "quote",
-        kanji: "言",
         accent: MODE_ACCENT.quote.base,
         name: "QUOTE",
         tagline: "Who said it?",
@@ -33,7 +32,6 @@ const GAME_MODES = [
     },
     {
         id: "silhouette",
-        kanji: "像",
         accent: MODE_ACCENT.silhouette.base,
         name: "SILHOUETTE",
         tagline: "Shadows don't lie",
@@ -41,7 +39,6 @@ const GAME_MODES = [
     },
     {
         id: "emoji",
-        kanji: "絵",
         accent: MODE_ACCENT.emoji.base,
         name: "EMOJI",
         tagline: "Four symbols, one soul",
@@ -49,7 +46,6 @@ const GAME_MODES = [
     },
     {
         id: "song",
-        kanji: "曲",
         accent: MODE_ACCENT.song.base,
         name: "SONG",
         tagline: "Name that track",
@@ -57,13 +53,12 @@ const GAME_MODES = [
     },
     {
         id: "release",
-        kanji: "解",
         accent: MODE_ACCENT.release.base,
         name: "RELEASE",
         tagline: "Command the blade",
         description: "Listen to a short audio clip of a release command. Search by technique name or its English meaning to guess the correct blade.",
     },
-];
+] as const;
 
 // ================= ✨ AMBIENT REISHI PARTICLES =================
 // Fixed values (no Math.random at render time) so server/client markup always match.
@@ -580,7 +575,7 @@ export default function HomePageClient({ initialStats }: HomePageClientProps) {
                                             className="text-5xl font-black select-none opacity-[0.03] group-hover/mode:opacity-20 group-hover/mode:scale-110 group-hover/mode:rotate-6 transition-all duration-700 will-change-transform"
                                             style={{ color: mode.accent }}
                                         >
-                                            {mode.kanji}
+                                            {BL_MODES_METADATA[mode.id].symbol}
                                         </span>
                                     </div>
 

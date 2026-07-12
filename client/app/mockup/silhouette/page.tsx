@@ -396,7 +396,7 @@ function LiveTuningWorkbench({
 // ============================================================================
 
 export default function MockupSilhouetteGame() {
-    if (!FEATURE_FLAGS.mockupSilhouette) {
+    if (!FEATURE_FLAGS.mockup.silhouette) {
         return <Sealed />;
     }
 

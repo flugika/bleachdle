@@ -21,9 +21,12 @@ export const FEATURE_FLAGS = {
         release: true,
     },
 
-    mockupSong: false,
-    mockupSilhouette: false,
-    mockupRelease: false,
+    mockup: {
+        song: false,
+        silhouette: false,
+        release: false,
+    },
+
     support: true,
 } as const;
 

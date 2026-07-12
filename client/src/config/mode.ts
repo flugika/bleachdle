@@ -21,6 +21,11 @@ export interface ModeConfig {
 }
 
 // 🔒 LOCKED — do not reword: "character" and "song" titles are final.
+//
+// 🈶 SYMBOL — the single source of truth for every mode's kanji, used by
+// Home / About / Stats (and anywhere else a mode needs a glyph). Never
+// hardcode a kanji list anywhere else; import BL_MODES_METADATA instead so
+// every surface in the app stays in sync automatically.
 export const BL_MODES_METADATA: Record<SubFeatureKey, ModeConfig> = {
     character: {
         id: "character",
@@ -52,8 +57,10 @@ export const BL_MODES_METADATA: Record<SubFeatureKey, ModeConfig> = {
     silhouette: {
         id: "silhouette",
         title: "SHIKAKU VISUALIZATION",
-        romaji: "SHIKAKU GENSŌ • 視覚幻想",
-        symbol: "斬", // Slay / Zanpakuto
+        romaji: "KAGEE GENSŌ • 影絵幻想",
+        symbol: "影", // Shadow — matches the mode itself (a silhouette IS a shadow),
+        // rather than 斬 ("slay"), which was borrowed from Zanpakutō lore but
+        // didn't actually describe what this mode does.
         desc: "Guess the character hidden behind a tiled grid. Incorrect guesses will randomly unlock and open another tile, gradually exposing more of the silhouette.",
         technicalTerm: "KAGE MOCKUP: ENCRYPTED",
         statusLine: "System // Unveiling Reiatsu Grid",

@@ -2,7 +2,7 @@
 
 > A Wordle-style character guessing game for Bleach fans — unlimited mode, attribute-based feedback, Soul Society aesthetic.
 
-**Last Updated:** 12 July 2026, 5:19 AM.
+**Last Updated:** 12 July 2026, 6:39 PM.
 
 [![Next.js](https://img.shields.io/badge/Next.js-15-black?logo=next.js)](https://nextjs.org/)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5-blue?logo=typescript)](https://www.typescriptlang.org/)
@@ -26,22 +26,22 @@
 
 BLEACHDLE is a DLE-style character identification game scoped to the Bleach universe. Each round selects a target character, and players narrow it down through attribute-based guesses — Race, Affiliation, Weapon type, first-appearance Chapter, and more — with color-coded feedback per field.
 
-The game ships five verticals: **Character**, **Quote**, **Song**, **Silhouette**, and **Emoji**. All five are available in both **Daily** (one seeded round per day, shared across players) and **Unlimited** (random target, no daily lock, streak tracking) modes. **Release** (guess by release state) is scaffolded behind a feature flag but not released in either mode yet.
+The game ships six verticals: **Character**, **Quote**, **Song**, **Silhouette**, **Emoji**, and **Release** (guess by release state — Shikai / Bankai / Resurrection). All six are available in both **Daily** (one seeded round per day, shared across players) and **Unlimited** (random target, no daily lock, streak tracking) modes.
 
 ---
 
 ## Features
 
-- **Attribute comparison engine** — one stateless compare module per vertical (`compareCharacter.ts`, `compareQuote.ts`, `compareSong.ts`, `compareSilhouette.ts`, `compareEmoji.ts`): takes a guess and a target, returns a diffed result array. Height and Age are deliberately *not* routed through a shared numeric comparator — see [Comparison Engine notes](#-character-comparison-engine-architectural--technical-notes) below.
+- **Attribute comparison engine** — one stateless compare module per vertical (`compareCharacter.ts`, `compareSong.ts`, `compareBinaryGuess.ts`): takes a guess and a target, returns a diffed result array. Height and Age are deliberately *not* routed through a shared numeric comparator — see [Comparison Engine notes](#-character-comparison-engine-architectural--technical-notes) below.
 - **Fuzzy search** — typo- and alternate-romanization-tolerant name lookup for guesses (`src/lib/search/fuzzy.ts`)
-- **Daily Hub** — one seeded round per day across all five verticals, shared across all players, with countdown-based reset (`DailyResetTimer`, `useCountdown`, `useCooldown`, `DailyProgressBar`)
+- **Daily Hub** — one seeded round per day across all six verticals, shared across all players, with countdown-based reset (`DailyResetTimer`, `useCountdown`, `DailyProgressBar`)
 - **Session & streak tracking** — client-side round state, finalized server-side via `app/api/stats/finalize`
 - **Support ticket system** — `SupportForm` → `app/api/support`, persisted through Supabase (`0001_support_tickets.sql`), with IP-based rate limiting (`ipRateLimit.ts`, `rateLimitCookie.ts`). Cloudflare Turnstile is wired up (`useTurnstile.ts`) but currently **disabled** — it was misflagging legitimate traffic as bot activity; re-enabling it is tracked in the Roadmap.
 - **Dynamic wallpaper rotation** — background swaps per session/day (`useDailyWallpaper`, `WallpaperInitializer`, `wallpapers.json`)
 - **Race emblem indicator** — per-character race badge (Shinigami / Hollow / Arrancar / Quincy / Visored / Mod Soul) resolved via `useRaceEmblem` from `public/assets/emblems`
 - **Custom transitions & loaders** — `ZangetsuLoader`, `SoulSyncLoader`, `SenkaimonTransition`; purpose-built animations instead of a generic spinner
 - **Reiatsu cursor** — optional particle-trail cursor effect, togglable (`BleachReiatsuCursor.tsx`)
-- **Feature flags** — `src/config/feature.flags.ts` gates verticals per mode (nested under `daily` / `unlimited`) so a mode can ship in Unlimited before Daily. Character, Quote, Song, Silhouette, and Emoji are now live in both modes; `release` remains off in both.
+- **Feature flags** — `src/config/feature.flags.ts` gates verticals per mode (nested under `daily` / `unlimited`) so a mode can ship in Unlimited before Daily. All six verticals — Character, Quote, Song, Silhouette, Emoji, and Release — are now live in both modes.
 - **Dark-first UI** — Soul Society-themed palette, responsive layout down to mobile
 
 ---
@@ -164,7 +164,6 @@ Verticals are gated per mode in `src/config/feature.flags.ts`:
 
 ```ts
 export const FEATURE_FLAGS = {
-  // ── 📅 โหมดทายรายวัน (Daily Mode)
   daily: {
     character: true,
     quote: true,
@@ -174,7 +173,6 @@ export const FEATURE_FLAGS = {
     release: true,
   },
 
-  // ── ♾️ โหมดเล่นไม่จำกัด (Unlimited Mode)
   unlimited: {
     character: true,
     quote: true,
@@ -184,14 +182,17 @@ export const FEATURE_FLAGS = {
     release: true,
   },
 
-  mockupSong: false,
-  mockupSilhouette: false,
-  mockupRelease: false,
+  mockup: {
+    song: false,
+    silhouette: false,
+    release: false,
+  },
+
   support: true,
 } as const;
 ```
 
-Flags are nested per mode rather than a flat list, since a vertical can ship in Unlimited before it ships in Daily — Silhouette and Emoji both followed that path before landing in Daily as well. `release` is the only vertical still off in both modes; it guards an unreleased vertical (guess by release state — Shikai / Bankai / Resurrection). `mockupSong` / `mockupSilhouette` gate the standalone design-preview routes under `app/mockup/`, and `support` toggles the support ticket page/API independently of any game vertical.
+Flags are nested per mode rather than a flat list, since a vertical can ship in Unlimited before it ships in Daily — Silhouette, Emoji, and Release all followed that path before landing in Daily as well. All six verticals are now live in both modes. `mockup.song` / `mockup.silhouette` / `mockup.release` gate the standalone design-preview routes under `app/mockup/` independently of the live game flags above — all three are currently off, so none of the `/mockup/*` preview routes are reachable. `support` toggles the support ticket page/API independently of any game vertical.
 
 ---
 
@@ -288,6 +289,9 @@ bleachdle
 │  │  │        └─ page.tsx
 │  │  ├─ (home)
 │  │  │  ├─ HomePageClient.tsx
+│  │  │  └─ page.tsx
+│  │  ├─ about
+│  │  │  ├─ AboutPageClient.tsx
 │  │  │  └─ page.tsx
 │  │  ├─ api
 │  │  │  ├─ stats
@@ -629,6 +633,7 @@ bleachdle
 │  │  │     │  └─ HeroDailyCTA.tsx
 │  │  │     ├─ DailyResetTimer.tsx
 │  │  │     ├─ game-selector
+│  │  │     │  ├─ AboutButton.tsx
 │  │  │     │  ├─ AllModesButton.tsx
 │  │  │     │  ├─ AllModesModal.tsx
 │  │  │     │  ├─ HomeButton.tsx
