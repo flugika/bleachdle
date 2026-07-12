@@ -11,6 +11,7 @@ import { HomeButton } from '../game-selector/HomeButton';
 import { StatsButton } from '../game-selector/StatsButton';
 import { SpotifyPlaylistButton } from '../game-selector/SpotifyPlaylistButton';
 import { AboutButton } from '../game-selector/AboutButton';
+import { SupportButton } from '../game-selector/SupportButton';
 
 // ─────────────────────────────────────────────
 // 🗺️ ROUTE REGISTRY — single source of truth
@@ -29,6 +30,7 @@ const NAV_BUTTONS: NavButtonConfig[] = [
     { path: '/', Component: HomeButton },
     { path: '/stats', Component: StatsButton },
     { path: '/about', Component: AboutButton },
+    { path: '/support', Component: SupportButton },
 ];
 
 // Static paths that should show the nav but don't get their own nav button
@@ -38,7 +40,7 @@ const NAV_BUTTONS: NavButtonConfig[] = [
 // /unlimited/:mode. The original code hardcoded only '/mockup/release' as a
 // one-off static path, which meant any other /mockup/:mode page (e.g.
 // /mockup/character) would have silently gotten no nav at all.
-const STATIC_NAV_ONLY_PATHS = ['/support', '/soul-society-archives'];
+const STATIC_NAV_ONLY_PATHS = ['/soul-society-archives'];
 
 // Dynamic game routes: /daily/:mode, /unlimited/:mode, /mockup/:mode
 const GAME_PATH_REGEX = /^\/(daily|unlimited|mockup)\/([^/]+)$/;

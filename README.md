@@ -642,6 +642,7 @@ bleachdle
 │  │  │     │  ├─ ModeSelectorModal.tsx
 │  │  │     │  ├─ SpotifyPlaylistButton.tsx
 │  │  │     │  ├─ StatsButton.tsx
+│  │  │     │  ├─ SupportButton.tsx
 │  │  │     │  └─ ThematicModeSelector.tsx
 │  │  │     ├─ input.tsx
 │  │  │     ├─ layout
