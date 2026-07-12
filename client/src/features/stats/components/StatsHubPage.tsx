@@ -199,7 +199,7 @@ function bestMode(personal: StatsHubProps["personal"]): SubFeatureKey | null {
     let bestRate = -1;
     for (const m of MODE_ORDER) {
         const s = safe[m];
-        if (!s || s.played + s.passed < 3) continue; // ignore modes with too few attempts
+        if (!s || s.played < 3) continue; // ignore modes with too few attempts
         const rate = winRate(s) ?? -1;
         if (rate > bestRate) {
             bestRate = rate;
