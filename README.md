@@ -2,7 +2,7 @@
 
 > A Wordle-style character guessing game for Bleach fans — unlimited mode, attribute-based feedback, Soul Society aesthetic.
 
-**Last Updated:** 12 July 2026, 6:39 PM.
+**Last Updated:** 12 July 2026, 8:56 PM.
 
 [![Next.js](https://img.shields.io/badge/Next.js-15-black?logo=next.js)](https://nextjs.org/)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5-blue?logo=typescript)](https://www.typescriptlang.org/)
@@ -258,6 +258,9 @@ bleachdle
 ├─ client
 │  ├─ AGENTS.md
 │  ├─ app
+│  │  ├─ (admin)
+│  │  │  └─ monitor
+│  │  │     └─ page.tsx
 │  │  ├─ (game)
 │  │  │  ├─ daily
 │  │  │  │  ├─ character
@@ -294,6 +297,9 @@ bleachdle
 │  │  │  ├─ AboutPageClient.tsx
 │  │  │  └─ page.tsx
 │  │  ├─ api
+│  │  │  ├─ monitor
+│  │  │  │  └─ health
+│  │  │  │     └─ route.ts
 │  │  │  ├─ stats
 │  │  │  │  ├─ daily
 │  │  │  │  │  └─ route.ts
@@ -304,7 +310,7 @@ bleachdle
 │  │  │  └─ support
 │  │  │     └─ route.ts
 │  │  ├─ favicon.ico
-│  │  ├─ icon.ico
+│  │  ├─ icon.svg
 │  │  ├─ layout.tsx
 │  │  ├─ loading
 │  │  │  └─ page.tsx
@@ -422,6 +428,10 @@ bleachdle
 │  │  │  └─ stats
 │  │  │     └─ types.ts
 │  │  ├─ features
+│  │  │  ├─ admin
+│  │  │  │  ├─ components
+│  │  │  │  │  └─ MonitorClient.tsx
+│  │  │  │  └─ monitorAuth.ts
 │  │  │  ├─ character
 │  │  │  │  ├─ character.ts
 │  │  │  │  ├─ compareCharacter.ts
@@ -579,10 +589,11 @@ bleachdle
 │  │  │  ├─ map-character-quote.js
 │  │  │  ├─ migrations
 │  │  │  │  ├─ 0001_support_tickets.sql
-│  │  │  │  ├─ 01_table.sql
-│  │  │  │  ├─ 02_type.sql
-│  │  │  │  ├─ 03_function.sql
-│  │  │  │  └─ 04_cronjob.sql
+│  │  │  │  ├─ 01_type.sql
+│  │  │  │  ├─ 02_table.sql
+│  │  │  │  ├─ 03_index.sql
+│  │  │  │  ├─ 04_function.sql
+│  │  │  │  └─ 05_cronjob.sql
 │  │  │  ├─ precompute-silhouette-cells.mjs
 │  │  │  └─ seeds
 │  │  │     ├─ daily
@@ -594,12 +605,15 @@ bleachdle
 │  │  │     ├─ seed-silhouettes.js
 │  │  │     └─ seed-songs.js
 │  │  ├─ services
-│  │  │  ├─ character.ts
-│  │  │  ├─ emoji.ts
-│  │  │  ├─ quote.ts
-│  │  │  ├─ release.ts
-│  │  │  ├─ silhouette.ts
-│  │  │  ├─ song.ts
+│  │  │  ├─ getDailySchedule
+│  │  │  │  ├─ character.ts
+│  │  │  │  ├─ emoji.ts
+│  │  │  │  ├─ quote.ts
+│  │  │  │  ├─ release.ts
+│  │  │  │  ├─ silhouette.ts
+│  │  │  │  └─ song.ts
+│  │  │  ├─ monitor
+│  │  │  │  └─ logEvent.ts
 │  │  │  └─ statsClient.ts
 │  │  ├─ shared
 │  │  │  ├─ hooks

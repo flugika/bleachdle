@@ -136,3 +136,19 @@ CREATE TABLE public.daily_stats (
     emoji_guess_distribution jsonb NOT NULL DEFAULT '{}'::jsonb,
     quote_guess_distribution jsonb NOT NULL DEFAULT '{}'::jsonb
 );
+
+-- ============================================================================
+-- Lightweight API health log, used by /app/api/monitor/health and the
+-- /monitor dashboard page. Every route can fire-and-forget log a
+-- success / warning / error via log_api_event(). No IPs or payloads are
+-- stored — just enough to draw the health picture.
+-- ============================================================================
+
+CREATE TABLE IF NOT EXISTS api_events (
+    id          BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    endpoint    TEXT NOT NULL,                 -- e.g. 'support', 'stats.finalize'
+    level       TEXT NOT NULL CHECK (level IN ('success', 'warning', 'error')),
+    status_code SMALLINT,
+    note        TEXT,                          -- short machine reason, no user content
+    created_at  TIMESTAMPTZ NOT NULL DEFAULT now()
+);

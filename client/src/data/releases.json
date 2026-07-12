@@ -194,7 +194,7 @@
         "technique_name": "Benihime",
         "technique_translation": "Crimson Princess",
         "audio_url": "Shikai_Kisuke_Urahara.mp3",
-        "clip_end_ms": 1000,
+        "clip_end_ms": 900,
         "source_episode": null
     },
     {
@@ -261,17 +261,6 @@
         "technique_translation": "Cricket Final Form Demon Cricket",
         "audio_url": "Bankai_Kaname_Tosen.mp3",
         "clip_end_ms": 700,
-        "source_episode": null
-    },
-    {
-        "id": "197f9112-1999-4535-9e24-654f0cb1be85",
-        "character_id": "33600e87-bb9d-498e-91ee-95888efcc86e",
-        "release_type": "Resurreccion",
-        "trigger_phrase": "Stab",
-        "technique_name": "Escolopendra",
-        "technique_translation": "Centipede",
-        "audio_url": "Resurreccion_Loly_Aivirrne.mp3",
-        "clip_end_ms": 1250,
         "source_episode": null
     },
     {

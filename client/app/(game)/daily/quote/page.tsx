@@ -1,5 +1,5 @@
 import DailyQuoteWrapper from "@/src/features/quote/components/daily/DailyQuoteWrapper";
-import { getDailyQuote } from "@/src/services/quote";
+import { getDailyQuote } from "@/src/services/getDailySchedule/quote";
 
 export const dynamic = 'force-dynamic';
 

@@ -1,10 +1,10 @@
 // src/app/soul-society-archives/page.tsx
-import { getDailyCharacter } from '@/src/services/character';
-import { getDailySong } from '@/src/services/song';
-import { getDailySilhouette } from '@/src/services/silhouette';
-import { getDailyEmoji } from '@/src/services/emoji';
-import { getDailyQuote } from '@/src/services/quote';
-import { getDailyRelease } from '@/src/services/release';
+import { getDailyCharacter } from '@/src/services/getDailySchedule/character';
+import { getDailySong } from '@/src/services/getDailySchedule/song';
+import { getDailySilhouette } from '@/src/services/getDailySchedule/silhouette';
+import { getDailyEmoji } from '@/src/services/getDailySchedule/emoji';
+import { getDailyQuote } from '@/src/services/getDailySchedule/quote';
+import { getDailyRelease } from '@/src/services/getDailySchedule/release';
 
 import { QuoteTestimonyDisplay } from '@/src/features/quote/components/shared/QuoteTestimonyDisplay';
 import { EmojiTestimonyDisplay } from '@/src/features/emoji/components/shared/EmojiTestimonyDisplay';

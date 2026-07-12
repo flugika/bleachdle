@@ -1,6 +1,9 @@
 // proxy.ts
 
+// node -e "console.log(require('crypto').randomBytes(32).toString('hex'))"
+
 // /soul-society-archives?secret=
+// /monitor?secret=
 
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
@@ -10,6 +13,11 @@ import { edgeRateLimit, getRateLimitKey } from './src/lib/rateLimit';
 const ADMIN_SECRET = process.env.ADMIN_SECRET_KEY;
 const SECRET_COOKIE_NAME = 'bleachdle_admin_auth';
 const SECRET_HEADER_NAME = 'x-archive-key'; // ใช้ header แทน query string เพื่อไม่ให้หลุดใน log/history
+
+// 🔑 คีย์ลับ Monitor dashboard — แยกจาก ADMIN_SECRET_KEY โดยเจตนา
+const MONITOR_SECRET = process.env.MONITOR_SECRET;
+const MONITOR_COOKIE_NAME = 'mntr_key';
+const MONITOR_HEADER_NAME = 'x-monitor-key';
 
 export async function proxy(req: NextRequest) {
     const url = req.nextUrl;
@@ -60,6 +68,56 @@ export async function proxy(req: NextRequest) {
     }
 
     // ==========================================
+    // 🛡️ SECURITY LAYER: Monitor Dashboard Gatekeeper
+    // ==========================================
+    // เดิม /monitor เช็ค key === MONITOR_SECRET ใน page.tsx เฉยๆ แล้ว render
+    // ต่อเลย ไม่เคย redirect ตัด query string ทิ้ง ทำให้ ?key=... ค้างอยู่ใน
+    // URL bar / history / server access log / referrer ตลอดไปทุกครั้งที่เข้า
+    // (เหมือนปัญหาเดิมของ soul-society-archives) และไม่มีจุดไหนตั้ง cookie
+    // จริงเลยทั้งที่ comment ใน monitorAuth.ts สัญญาไว้ว่าจะจำให้ — ย้าย auth
+    // มาไว้ตรงนี้ ให้ทำงานแบบเดียวกับด้านบนแทน
+    if (pathname.startsWith('/monitor')) {
+        // ไม่ได้ตั้ง MONITOR_SECRET ไว้ — เปิดได้เฉพาะ local dev เท่านั้น
+        // (คงพฤติกรรมเดิมจาก isAuthorizedForMonitor เดิมไว้)
+        if (!MONITOR_SECRET) {
+            if (process.env.NODE_ENV !== 'production') {
+                return NextResponse.next();
+            }
+            return NextResponse.rewrite(new URL('/404', req.url));
+        }
+
+        const hasCookie = req.cookies.get(MONITOR_COOKIE_NAME)?.value === MONITOR_SECRET;
+        const secretHeader = req.headers.get(MONITOR_HEADER_NAME);
+        const secretParam = url.searchParams.get('secret');
+
+        if (hasCookie || secretHeader === MONITOR_SECRET) {
+            return NextResponse.next();
+        }
+
+        if (secretParam === MONITOR_SECRET) {
+            // แลก query param เป็น cookie แล้ว redirect ตัด query string ทิ้งทันที
+            const clean = new URL(pathname, req.url);
+            const response = NextResponse.redirect(clean, { status: 303 });
+            response.cookies.set(MONITOR_COOKIE_NAME, MONITOR_SECRET, {
+                httpOnly: true,
+                secure: process.env.NODE_ENV === 'production',
+                sameSite: 'lax',
+                maxAge: 60 * 60 * 24 * 7,
+                // ⚠️ path ต้องเป็น '/' ไม่ใช่ '/monitor' — MonitorClient.tsx fetch
+                // ข้อมูล refresh ไปที่ /api/monitor/health ซึ่งอยู่คนละ path,
+                // ถ้า scope cookie ไว้แค่ /monitor จะไม่ถูกส่งไปกับ request นั้น
+                // แล้ว isAuthorizedForMonitor จะปฏิเสธทุกครั้งที่ client refresh
+                path: '/',
+            });
+            return response;
+        }
+
+        // ปฏิเสธสิทธิ์: ไม่ต้องแกล้งเป็น 404 เหมือน archives (ไม่ใช่หน้าเฉลยเกม)
+        // แต่ก็ไม่ควรเผยว่าหน้านี้มีอยู่โดยไม่มีเหตุผล — rewrite ไปหน้า sealed แทน
+        return NextResponse.rewrite(new URL('/monitor/sealed', req.url));
+    }
+
+    // ==========================================
     // ⚡ RATE LIMIT LAYER: API Protection Engine
     // ==========================================
     if (pathname.startsWith('/api')) {
@@ -87,5 +145,6 @@ export const config = {
     matcher: [
         '/api/:path*',
         '/soul-society-archives/:path*',
+        '/monitor/:path*',
     ],
 };

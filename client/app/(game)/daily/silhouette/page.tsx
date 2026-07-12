@@ -1,5 +1,5 @@
 import DailySilhouetteWrapper from "@/src/features/silhouette/components/daily/DailySilhouetteWrapper";
-import { getDailySilhouette } from "@/src/services/silhouette";
+import { getDailySilhouette } from "@/src/services/getDailySchedule/silhouette";
 
 export const dynamic = 'force-dynamic';
 

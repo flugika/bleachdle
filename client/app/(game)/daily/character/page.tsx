@@ -1,6 +1,6 @@
 import { Character } from "@/src/entities/character/schema";
 import DailyCharacterWrapper from "@/src/features/character/components/daily/DailyCharacterWrapper";
-import { getDailyCharacter } from "@/src/services/character";
+import { getDailyCharacter } from "@/src/services/getDailySchedule/character";
 
 export const dynamic = 'force-dynamic';
 

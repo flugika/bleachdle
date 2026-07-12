@@ -4,9 +4,11 @@ import { supabaseServer } from "@/src/lib/supabase/supabase-server";
 import { packCookie, unpackCookie, todayKey } from "@/src/lib/support/rateLimitCookie";
 import { sanitizeInput } from "@/src/lib/utils/sanitize";
 import { checkIpRateLimit } from "@/src/lib/support/ipRateLimit"; // 💡 นำเข้าตัวตรวจ IP
+import { logApiEvent } from "@/src/services/monitor/logEvent";
 
 export const runtime = "nodejs";
 
+const ENDPOINT = "support";
 const COOLDOWN_SECONDS = 120;
 const DAILY_LIMIT_PER_DEVICE = 8;
 const MIN_LEN = 10;
@@ -21,6 +23,7 @@ export async function POST(req: NextRequest) {
     try {
         const body = await req.json().catch(() => null);
         if (!body) {
+            logApiEvent(ENDPOINT, "warning", 400, "invalid_json_body");
             return NextResponse.json({ ok: false, error: "Invalid request body." }, { status: 400 });
         }
 
@@ -28,14 +31,17 @@ export async function POST(req: NextRequest) {
 
         // ด่าน 0: Honeypot ล่อซื้อบอท
         if (honeypot) {
+            logApiEvent(ENDPOINT, "warning", 200, "honeypot_triggered");
             return NextResponse.json({ ok: true });
         }
 
         // ด่าน 1: เช็คขนาดของข้อความพื้นฐาน
         if (typeof message !== "string" || message.trim().length < MIN_LEN || message.length > MAX_LEN) {
+            logApiEvent(ENDPOINT, "warning", 400, "invalid_message_length");
             return NextResponse.json({ ok: false, error: "Invalid message length." }, { status: 400 });
         }
         if (!ALLOWED_CATEGORIES.includes(category as Category)) {
+            logApiEvent(ENDPOINT, "warning", 400, "invalid_category");
             return NextResponse.json({ ok: false, error: "Invalid category." }, { status: 400 });
         }
 
@@ -47,6 +53,7 @@ export async function POST(req: NextRequest) {
                 const elapsedSec = (Date.now() - lastSubmitMs) / 1000;
                 if (elapsedSec < COOLDOWN_SECONDS) {
                     const retryAfter = Math.ceil(COOLDOWN_SECONDS - elapsedSec);
+                    logApiEvent(ENDPOINT, "warning", 429, "cooldown_active");
                     return NextResponse.json({ ok: false, error: "The Kido barrier is still recharging.", retryAfter }, { status: 429 });
                 }
             }
@@ -56,6 +63,7 @@ export async function POST(req: NextRequest) {
         // อนุญาตให้ส่งตั๋วได้สูงสุดแค่ 2 ใบ ทุกๆ 45 วินาทีต่อ 1 วง IP (เผื่อเผื่อเน็ตหอพักกดพร้อมกัน)
         const ipCheck = checkIpRateLimit(req, 2, COOLDOWN_SECONDS);
         if (!ipCheck.success) {
+            logApiEvent(ENDPOINT, "warning", 429, "ip_rate_limited");
             return NextResponse.json(
                 { ok: false, error: "Too many tickets sent from this network. Please wait.", retryAfter: ipCheck.success },
                 { status: 429 }
@@ -71,6 +79,7 @@ export async function POST(req: NextRequest) {
             if (dayKey === today) dailyCount = Number(countStr) || 0;
         }
         if (dailyCount >= DAILY_LIMIT_PER_DEVICE) {
+            logApiEvent(ENDPOINT, "warning", 429, "daily_limit_reached");
             return NextResponse.json({ ok: false, error: "Daily report limit reached for this device." }, { status: 429 });
         }
 
@@ -90,9 +99,11 @@ export async function POST(req: NextRequest) {
         res.cookies.set(COOLDOWN_COOKIE, packCookie(String(Date.now())), { ...cookieOpts, maxAge: COOLDOWN_SECONDS });
         res.cookies.set(COUNTER_COOKIE, packCookie(`${dailyCount + 1}:${today}`), { ...cookieOpts, maxAge: 60 * 60 * 24 });
 
+        logApiEvent(ENDPOINT, "success", 200);
         return res;
     } catch (err) {
         console.error("[/api/support] error:", err);
+        logApiEvent(ENDPOINT, "error", 500, err instanceof Error ? err.message : "unknown_error");
         return NextResponse.json({ ok: false, error: "Server error." }, { status: 500 });
     }
 }

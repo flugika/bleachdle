@@ -23,8 +23,11 @@ import { supabaseServer } from '@/src/lib/supabase/supabase-server';
 import { getTodayStr } from '@/src/lib/utils/format';
 import { getRateLimitKey, edgeRateLimit } from '@/src/lib/rateLimit';
 import { VALID_STAT_MODES, type StatMode } from '@/src/entities/stats/types';
+import { logApiEvent } from "@/src/services/monitor/logEvent";
 
 export const revalidate = 60; // matches app/api/stats/daily/route.ts — stats don't need realtime
+
+const ENDPOINT = 'stats.global';
 
 type RawModeStat = {
     played: number;
@@ -45,7 +48,9 @@ function avgGuesses(s: RawModeStat | undefined): number | null {
     let totalGuesses = 0;
     let totalSolves = 0;
     for (const [bucket, count] of Object.entries(s.guess_distribution ?? {})) {
-        const n = bucket === '6' ? 6 : Number(bucket);
+        if (bucket === 'fail') continue; // 🩹 same bug as SQL's _stat_summary: 'fail' isn't a numeric guess count
+        const n = Number(bucket);
+        if (!Number.isFinite(n)) continue;
         totalGuesses += n * count;
         totalSolves += count;
     }
@@ -73,6 +78,7 @@ export async function GET(req: NextRequest) {
     const isAllowed = edgeRateLimit(limitKey, 10, 10000); // 10 req / 10s per IP
     if (!isAllowed) {
         console.warn(`[stats/global] Rate limit exceeded for IP: ${limitKey}`);
+        logApiEvent(ENDPOINT, 'warning', 429, 'rate_limited');
         return NextResponse.json({ error: 'Too many requests, please slow down.' }, { status: 429 });
     }
 
@@ -86,11 +92,13 @@ export async function GET(req: NextRequest) {
 
     if (error) {
         console.error(`[stats/global] RPC ${rpcName} failed:`, error);
+        logApiEvent(ENDPOINT, 'error', 500, error.message);
         return NextResponse.json({ error: 'Failed to load global stats' }, { status: 500 });
     }
 
     const global: RawGlobalStats = data ?? {};
 
+    logApiEvent(ENDPOINT, 'success', 200);
     return NextResponse.json({
         dimension,
         global,

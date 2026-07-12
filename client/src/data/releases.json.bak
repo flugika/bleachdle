@@ -341,17 +341,6 @@
         "source_episode": null
     },
     {
-        "id": "197f9112-1999-4535-9e24-654f0cb1be85",
-        "character_id": "33600e87-bb9d-498e-91ee-95888efcc86e",
-        "release_type": "Resurreccion",
-        "trigger_phrase": "",
-        "technique_name": "",
-        "technique_translation": null,
-        "audio_url": "Resurreccion_Loly_Aivirrne.mp3",
-        "clip_end_ms": 10000,
-        "source_episode": null
-    },
-    {
         "id": "843e693e-d4b5-40f7-a508-570d12d465db",
         "character_id": "feb5604b-a87a-4c94-accf-447f241e9407",
         "release_type": "Resurreccion",

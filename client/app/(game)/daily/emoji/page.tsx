@@ -1,5 +1,5 @@
 import DailyEmojiWrapper from "@/src/features/emoji/components/daily/DailyEmojiWrapper";
-import { getDailyEmoji } from "@/src/services/emoji";
+import { getDailyEmoji } from "@/src/services/getDailySchedule/emoji";
 
 export const dynamic = 'force-dynamic';
 
