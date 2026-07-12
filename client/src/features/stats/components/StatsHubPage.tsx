@@ -157,7 +157,7 @@ const FALLBACK_ACCENT = { base: "#c8a96e", bright: "#f2cf8a", glow: "rgba(200,16
 
 function winRate(s: ModeStat | undefined): number | null {
     if (!s) return null;
-    const total = s.played + s.passed;
+    const total = s.played;
     if (total === 0) return null;
     return Math.round((s.played / total) * 1000) / 10; // 1 decimal
 }
@@ -369,18 +369,39 @@ function GuessDistribution({
                                 }}
                             />
                         </div>
-                        <span
+
+                        {/* 🛠️ แก้ไขจุดนี้: แยกออกเป็น Grid/Flex Column ให้ตรงกันเป๊ะ */}
+                        <div
                             style={{
-                                width: "68px",
+                                display: "flex",
+                                alignItems: "center",
+                                gap: "8px",
+                                width: "86px",
                                 fontSize: "12px",
                                 fontFamily: "monospace",
-                                color: isMax ? accent.bright : T.mutedMid,
-                                textAlign: "right",
                                 flexShrink: 0,
                             }}
                         >
-                            {count.toLocaleString()} ({pct}%)
-                        </span>
+                            <span
+                                style={{
+                                    flex: 1,
+                                    textAlign: "right",
+                                    color: isMax ? accent.bright : T.mutedMid,
+                                }}
+                            >
+                                {count.toLocaleString()}
+                            </span>
+                            <span
+                                style={{
+                                    width: "54px",
+                                    textAlign: "right",
+                                    color: isMax ? accent.bright : T.mutedMid,
+                                    opacity: isMax ? 1 : 0.6,
+                                }}
+                            >
+                                ({pct}%)
+                            </span>
+                        </div>
                     </div>
                 );
             })}
