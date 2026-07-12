@@ -304,6 +304,7 @@ bleachdle
 │  │  │  └─ support
 │  │  │     └─ route.ts
 │  │  ├─ favicon.ico
+│  │  ├─ icon.ico
 │  │  ├─ layout.tsx
 │  │  ├─ loading
 │  │  │  └─ page.tsx
