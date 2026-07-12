@@ -208,7 +208,13 @@ export function SongAudioPlayer({
     const handleEnded = useCallback(() => {
         setIsPlaying(false);
         setPreviewElapsedMs(0);
-    }, []);
+        // 🆕 เล่นจบแล้วรีเซ็ตกลับ 0 ทันที (โหมด full) กัน seek bar/เวลาค้างอยู่ที่ท้ายเพลง
+        // ให้กด play ซ้ำแล้วเล่นใหม่จากต้นได้เลยโดยไม่ต้องลาก seek เอง
+        if (isFull) {
+            setCurrentTime(0);
+            if (audioRef.current) audioRef.current.currentTime = 0;
+        }
+    }, [isFull]);
 
     const handleVolumeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const next = Number(e.target.value) / 100;
@@ -229,13 +235,8 @@ export function SongAudioPlayer({
         }
     };
 
-    const handleSeek = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const next = Number(e.target.value);
-        const audio = audioRef.current;
-        if (!audio) return;
-        audio.currentTime = next;
-        setCurrentTime(next);
-    };
+    // 🆕 ถ้าอยากได้ seek กลับมาในอนาคต ค่อยผูก handler นี้เข้ากับ SongProgressBar
+    // (เช่น onClick คำนวณตำแหน่งจาก event.clientX) — ตอนนี้ลบทิ้งเพราะไม่มี UI ไหนเรียกใช้แล้ว
 
     const handlePlay = () => {
         if (!target || disabled || !isReady) return;
@@ -323,7 +324,6 @@ export function SongAudioPlayer({
                     : 'AWAITING TARGET';
 
     const hasLinks = Boolean(spotifyUrl || youtubeUrl);
-    const seekPct = duration > 0 ? Math.round((currentTime / duration) * 100) : 0;
 
     return (
         <div
@@ -441,16 +441,8 @@ export function SongAudioPlayer({
                         </span>
                     </div>
 
-                    {/* 2. Seek Bar (เฉพาะโหมด Full) */}
-                    {isFull && (
-                        <div className="w-full flex items-center h-2">
-                            <input
-                                type="range" min={0} max={duration || 0} step={0.1} value={currentTime} onChange={handleSeek} disabled={!isReady}
-                                className="reiatsu-slider w-full h-1 rounded-lg appearance-none cursor-pointer disabled:cursor-not-allowed"
-                                style={{ background: `linear-gradient(to right, #c8a96e ${seekPct}%, rgba(119,119,150,0.15) ${seekPct}%)` }}
-                            />
-                        </div>
-                    )}
+                    {/* 🆕 เอา seek bar เส้นเปล่าๆ ออก เพราะ SongProgressBar ด้านล่างโชว์
+                        duration/progress ซ้ำกันอยู่แล้ว (สวยกว่าด้วย) เหลือแท่งเดียวพอ */}
 
                     {/* 3. Volume Controller */}
                     <div className="flex items-center gap-2.5 w-full">
@@ -474,6 +466,8 @@ export function SongAudioPlayer({
                         revealMs={isFull ? duration * 1000 : revealMs}
                         durationMs={isFull ? duration * 1000 || 10000 : 10000}
                         isPlaying={isPlaying}
+                        showStageMarks={!isFull}
+                        showTimeLabels={!isFull}
                     />
 
                 </div>

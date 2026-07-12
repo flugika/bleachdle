@@ -4,7 +4,7 @@
 import { useEffect, useState } from 'react';
 import { ReleaseGuessTable } from '@/src/features/release/components/shared/ReleaseGuessTable';
 import { ReleaseSummaryGuess } from '@/src/features/release/components/shared/ReleaseSummaryGuess';
-import { useDailyReleaseGame } from '@/src/features/release/hooks/daily/useDailyReleaseGame';
+import { useReleaseGame } from '@/src/features/release/hooks/daily/useReleaseGame';
 import { ReleaseHowToPlayModal } from '../shared/ReleaseHowToPlayModal';
 import { Header } from '@/src/shared/ui/layout/Header';
 import { Divider } from '@/src/shared/ui/layout/Divider';
@@ -29,7 +29,7 @@ export default function DailyReleaseWrapper({ initialTarget }: { initialTarget: 
 
     const { navigate, state, reportReady } = useSenkaimon();
 
-    const gameStore = useDailyReleaseGame();
+    const gameStore = useReleaseGame();
     const { target, guesses, setTarget, finalizeGame, resetGame, hasFinalized, _hasHydrated, stats, loadStats } = gameStore;
     const releases = getReleases();
     // 🎯 sync check เทียบ target.id ตรงๆ — เหมือน quote (ทั้งคู่ reconcile ด้วย .id ของ target)
@@ -41,6 +41,10 @@ export default function DailyReleaseWrapper({ initialTarget }: { initialTarget: 
         if (!_hasHydrated) return;
         if (initialTarget !== null) {
             setTarget(initialTarget);
+
+            if (target && process.env.NODE_ENV !== 'production') {
+                console.log('target:', useReleaseGame.getState().target);
+            }
         }
     }, [initialTarget, _hasHydrated, setTarget]);
 

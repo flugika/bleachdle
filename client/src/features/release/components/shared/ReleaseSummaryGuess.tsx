@@ -8,6 +8,7 @@ import { BleachRelease } from '@/src/entities/release/schema';
 import { ReleaseGuessEntry } from '@/src/features/release/types';
 import { Stats } from '@/src/lib/guessGame/types';
 import { ReleaseTestimonyDisplay } from './ReleaseTestimonyDisplay';
+import { attachReleaseCharacter } from '@/src/features/release/release';
 import { useRaceEmblem } from '@/src/shared/hooks/useRaceEmblem';
 import { useCharacterTier } from '@/src/shared/hooks/useBadgeTier';
 import { FactoryReleaseTarget } from '@/src/features/release/types';
@@ -54,7 +55,7 @@ export const ReleaseSummaryGuess = ({
 }: ReleaseSummaryGuessProps) => {
     if (!isOpen || !target) return null;
 
-    const answerCharacter = target?.wielder;
+    const answerCharacter = target?.character;
 
     const activeTier = useCharacterTier(stats.maxStreak);
 
@@ -105,7 +106,7 @@ export const ReleaseSummaryGuess = ({
                         target={target}
                         isSolved={isWin}
                         speakerName={answerCharacter?.name}
-                        wielderImage={answerCharacter?.image ? `/assets/characters/${answerCharacter.image}` : null}
+                        characterImage={answerCharacter?.image ? `/assets/characters/${answerCharacter.image}` : null}
                     />
                 </div>
             </div>
@@ -207,6 +208,9 @@ export const ReleaseSummaryGuess = ({
                 ))}
                 logRows={[...guesses].map((entry, i) => {
                     const originalIndex = guesses.length - i;
+                    // 🩹 FIX: entry.guess เป็น BleachRelease ดิบ ไม่มี field `character` —
+                    // ต้อง resolve ผ่าน attachReleaseCharacter() เหมือนใน ReleaseGuessTable
+                    const guessCharacter = attachReleaseCharacter(entry.guess)?.character;
                     return (
                         <div
                             key={i}
@@ -215,11 +219,11 @@ export const ReleaseSummaryGuess = ({
                             <span className="font-mono text-[11px] text-[#ebc7c7]/50 shrink-0">
                                 #{String(originalIndex).padStart(2, '0')}
                             </span>
-                            {entry.guess.character?.image && (
+                            {guessCharacter?.image && (
                                 <div className='relative w-7 h-7 shrink-0'>
                                     <Image
-                                        src={`/assets/characters/${entry.guess.character.image}`}
-                                        alt={entry.guess.character.name}
+                                        src={`/assets/characters/${guessCharacter.image}`}
+                                        alt={guessCharacter.name}
                                         fill
                                         sizes="210px"
                                         className="border border-white/5 object-cover bg-neutral-900"
@@ -230,9 +234,9 @@ export const ReleaseSummaryGuess = ({
                                 <span className="text-[12px] font-medium text-[#ebc7c7]/80 tracking-wide truncate block flex items-center">
                                     {entry.guess.technique_name}<span className="text-[10px] text-[#c8a96e]/50 tracking-wide truncate block pl-1"> // {entry.guess.release_type}</span>
                                 </span>
-                                {entry.guess.character?.name && (
+                                {guessCharacter?.name && (
                                     <span className="text-[10px] text-[#c8a96e]/50 tracking-wide truncate block">
-                                        {entry.guess.character.name}
+                                        {guessCharacter.name}
                                     </span>
                                 )}
                             </div>

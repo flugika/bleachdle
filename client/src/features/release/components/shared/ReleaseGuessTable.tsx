@@ -147,7 +147,7 @@ function StatusStamp({ isCorrect }: { isCorrect: boolean }) {
 }
 
 /** avatar เล็กของตัวละคร ถ้ามีรูป */
-function WielderAvatar({ image }: { image?: string | null }) {
+function CharacterAvatar({ image }: { image?: string | null }) {
     if (!image) return null;
     return (
         <span
@@ -169,12 +169,12 @@ export function ReleaseGuessCard({ guess, status, isNew, attemptNumber }: Releas
     const num = attemptNumber ? String(attemptNumber).padStart(2, '0') : '--';
     const t = typeTheme(guess.release_type);
 
-    // 🩹 FIX: หน้า guess table เดิมไม่มีชื่อตัวละครเพราะ ReleaseGuessEntry.guess เป็นแค่
-    // BleachRelease (มีแค่ character_id) — resolve character ตรงนี้เองด้วย
-    // attachReleaseCharacter() แทนที่จะรอ parent ส่ง wielderName/wielderImage มาแบบเดิม
-    // (ถ้า field ชื่อ/รูปของ Character schema ไม่ตรง แก้ 2 บรรทัด any ด้านล่างได้เลย)
+    // 🩹 FIX: ReleaseGuessEntry.guess เป็น BleachRelease ดิบ (ไม่มี field `character` เลย —
+    // ดู schema.ts) เดิมโค้ดเขียน `guess.character ?? attachReleaseCharacter(guess)?.character`
+    // ไว้เผื่อ แต่ฝั่งซ้ายไม่มีทางมีค่าตาม type ปัจจุบันเลย เลยตัดออก resolve ผ่าน
+    // attachReleaseCharacter() เพียงทางเดียว
 
-    const character = guess.character ?? attachReleaseCharacter(guess)?.character;
+    const character = attachReleaseCharacter(guess)?.character;
 
     return (
         <motion.div
@@ -229,7 +229,7 @@ export function ReleaseGuessCard({ guess, status, isNew, attemptNumber }: Releas
                         <TypeTag type={guess.release_type} />
                         <span className="text-[10px] tracking-[0.15em] uppercase truncate flex items-center gap-1.5">
                             <span style={{ color: T.gold, opacity: 0.55 }}>術者 //</span>
-                            {character?.image && <WielderAvatar image={`/assets/characters/${character.image}`} />}
+                            {character?.image && <CharacterAvatar image={`/assets/characters/${character.image}`} />}
                             <span className="font-black" style={{ color: T.gold, opacity: 0.95 }}>{character?.name}</span>
                         </span>
                     </div>

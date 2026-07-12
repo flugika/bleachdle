@@ -29,9 +29,15 @@ export interface GuessGameStorageKeys {
 /**
  * Config ที่ทั้ง daily และ unlimited factory ใช้ร่วมกัน
  *
- * TTarget ถูกบังคับให้มี id / character_id / character เพราะทั้ง reconcile logic
- * (daily) และ compare logic (ทั้งคู่) พึ่งพา field พวกนี้ตรงๆ — ถ้าโหมดใหม่ไม่มี
- * character_id (เช่นเทียบกันคนละแบบ) ให้ override ผ่าน `compareGuess` แทน
+ * 🔧 FIX: TTarget ไม่บังคับมี field `character: TCharacter` อีกต่อไป — เดิมบังคับไว้
+ * เพราะโหมด Quote/Silhouette ใช้ target.character เทียบ (compareGuess default) แต่
+ * โหมด Release สิ่งที่ "ทาย" (TCharacter) คือ release เอง ไม่ใช่ Character คนปล่อยท่า
+ * พอบังคับ target.character: TCharacter ไว้ตายตัว โหมด Release เลยต้องยัด field
+ * character = release ซ้ำเข้าไปทั้งที่มันสื่อความหมายผิด (คนอ่านเห็น .character คิดว่า
+ * เป็นตัวละคร) — จริง ๆ แล้ว logic ในไฟล์นี้ทั้งหมดไม่เคยอ่าน target.character ตรง ๆ เลย
+ * (compareBinaryGuess เทียบด้วย target.character_id) field นี้เลยไม่จำเป็นต้องบังคับใน
+ * constraint เลย ปล่อยให้แต่ละโหมดมี field เสริมของตัวเอง (character, wielder, ฯลฯ)
+ * ตามที่ต้องการจริงแทน
  */
 
 export interface ExtraTargetFieldConfig<TTarget> {
@@ -52,11 +58,10 @@ export interface DerivedCounterConfig<TCharacter> {
     isValidRange: (value: number) => boolean;
 }
 
-export interface GuessGameConfig<TCharacter extends { id: string }, TTarget extends {
-    id: string;
-    character_id: string;
-    character: TCharacter;
-}> {
+export interface GuessGameConfig<
+    TCharacter extends { id: string },
+    TTarget extends { id: string; character_id: string }
+> {
     storageKeys: GuessGameStorageKeys;
     /** ใช้เป็น key ของ recordDailyStat(...) — ต้องเป็นค่าที่ recordDailyStat รับจริง */
     gameKey: DailyStatGameKey;
@@ -66,7 +71,9 @@ export interface GuessGameConfig<TCharacter extends { id: string }, TTarget exte
     compareGuess?: (guess: TCharacter, target: TTarget) => BinaryGuessStatus;
     /** default: ตรวจ status เป็น correct/wrong + guess เป็น object */
     isValidGuessEntry?: (entry: unknown) => entry is GuessEntry<TCharacter>;
-    /** default: ตรวจว่ามี target.character อยู่ (กัน target รุ่นเก่าที่ยังไม่แนบ character) */
+    /** default: ตรวจว่ามี target.character อยู่ (กัน target รุ่นเก่าที่ยังไม่แนบ character)
+     *  ⚠️ ใช้ default นี้ได้เฉพาะโหมดที่ TTarget มี field ชื่อ `character` จริง ๆ
+     *  (เช่น Quote/Silhouette) — โหมดที่ไม่มี (เช่น Release) ต้อง override เอง */
     hasValidTargetShape?: (target: unknown) => boolean;
     derivedCounters?: DerivedCounterConfig<TCharacter>[];
     extraTargetField?: ExtraTargetFieldConfig<TTarget>;
@@ -75,7 +82,7 @@ export interface GuessGameConfig<TCharacter extends { id: string }, TTarget exte
 export interface UnlimitedGuessGameConfig<
     TItem,
     TCharacter extends { id: string },
-    TTarget extends { id: string; character_id: string; character: TCharacter }
+    TTarget extends { id: string; character_id: string }
 > extends GuessGameConfig<TCharacter, TTarget> {
     getAllItems: () => TItem[];
     attachCharacter: (item: TItem) => TTarget | undefined;

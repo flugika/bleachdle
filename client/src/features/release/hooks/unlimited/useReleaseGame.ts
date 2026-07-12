@@ -23,9 +23,9 @@ export const useReleaseGame = createUnlimitedGuessGameStore<
     getAllItems: getReleases,
 
     attachCharacter: (item: BleachRelease): FactoryReleaseTarget | undefined => {
-        const wielder = getCharacterById(item.character_id);
-        if (!wielder) return undefined;
-        return { ...item, character: item, wielder };
+        const character = getCharacterById(item.character_id);
+        if (!character) return undefined;
+        return { ...item, character };
     },
 
     compareGuess: (guess, target) => (guess.id === target.id ? 'correct' : 'wrong'),

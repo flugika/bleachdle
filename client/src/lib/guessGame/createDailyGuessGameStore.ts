@@ -30,7 +30,9 @@ export interface DailyGuessGameState<TCharacter, TTarget> {
 
 export function createDailyGuessGameStore<
     TCharacter extends { id: string },
-    TTarget extends { id: string; character_id: string; character: TCharacter },
+    // 🔧 FIX: ตัด `character: TCharacter` ออกจาก constraint — เหตุผลเดียวกับ
+    // createUnlimitedGuessGameStore ดู comment ที่นั่น
+    TTarget extends { id: string; character_id: string },
     TExtra extends Record<string, number> = {}
 >(
     config: GuessGameConfig<TCharacter, TTarget> & {

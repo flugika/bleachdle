@@ -480,7 +480,7 @@ bleachdle
 │  │  │  │  │     └─ ReleaseTestimonyDisplay.tsx
 │  │  │  │  ├─ hooks
 │  │  │  │  │  ├─ daily
-│  │  │  │  │  │  └─ useDailyReleaseGame.ts
+│  │  │  │  │  │  └─ useReleaseGame.ts
 │  │  │  │  │  └─ unlimited
 │  │  │  │  │     └─ useReleaseGame.ts
 │  │  │  │  ├─ release.ts
@@ -522,8 +522,7 @@ bleachdle
 │  │  │  │  └─ types.ts
 │  │  │  ├─ soul-society-archives
 │  │  │  │  └─ components
-│  │  │  │     ├─ ArchiveCharacterCard.tsx
-│  │  │  │     └─ ArchiveReleaseCard.tsx
+│  │  │  │     └─ ArchiveCharacterCard.tsx
 │  │  │  ├─ stats
 │  │  │  │  └─ components
 │  │  │  │     └─ StatsHubPage.tsx
@@ -636,6 +635,7 @@ bleachdle
 │  │  │     │  ├─ HowToPlayButton.tsx
 │  │  │     │  ├─ ModeBadge.tsx
 │  │  │     │  ├─ ModeSelectorModal.tsx
+│  │  │     │  ├─ SpotifyPlaylistButton.tsx
 │  │  │     │  ├─ StatsButton.tsx
 │  │  │     │  └─ ThematicModeSelector.tsx
 │  │  │     ├─ input.tsx

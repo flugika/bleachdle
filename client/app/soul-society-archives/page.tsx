@@ -12,7 +12,7 @@ import { SilhouetteImage } from '@/src/features/silhouette/components/shared/Sil
 import { SongAudioPlayer } from '@/src/features/song/components/shared/SongAudioPlayer';
 import { ScaleFit } from '@/src/shared/ui/ScaleFit';
 import { ArchiveCharacterCard } from '@/src/features/soul-society-archives/components/ArchiveCharacterCard';
-import { ArchiveReleaseCard } from '@/src/features/soul-society-archives/components/ArchiveReleaseCard';
+import { ReleaseTestimonyDisplay } from '@/src/features/release/components/shared/ReleaseTestimonyDisplay';
 import Image from 'next/image';
 
 // 🏛️ Same Central 46 confidential-archive palette used across
@@ -136,9 +136,6 @@ export default async function ArchivePage() {
                         🛡️ Soul Society Daily Archives — Answer Key
                     </h1>
                 </div>
-                <p className="hidden sm:block shrink-0 text-[10px] font-mono tracking-[0.2em] uppercase" style={{ color: T.muted }}>
-                    6 / 6 Records Unsealed
-                </p>
             </div>
 
             {/* Answer grid — all six daily modes visible at once, no scrolling on desktop */}
@@ -247,26 +244,26 @@ export default async function ArchivePage() {
                 </ArchiveCell>
 
                 {/* RELEASE */}
-                {/* <ArchiveCell label="Release">
+                <ArchiveCell label="Release">
                     <AnswerHeader
                         name={release?.character?.name}
                         imageUrl={release?.character?.image ? `/assets/characters/${release.character.image}` : null}
                     />
                     {release ? (
                         <div className="flex-1 min-h-0 min-w-0">
-                            <ScaleFit referenceWidth={340}>
-                                <ArchiveReleaseCard
-                                    triggerPhrase={release.trigger_phrase}
-                                    techniqueName={release.technique_name}
-                                    techniqueTranslation={release.technique_translation}
-                                    audioUrl={release.audio_url}
+                            <ScaleFit referenceWidth={448} maxScale={1.4}>
+                                <ReleaseTestimonyDisplay
+                                    target={release}
+                                    isSolved
+                                    speakerName={release.character?.name}
+                                    characterImage={release.character?.image ? `/assets/characters/${release.character.image}` : null}
                                 />
                             </ScaleFit>
                         </div>
                     ) : (
                         <EmptyState label="Release" />
                     )}
-                </ArchiveCell> */}
+                </ArchiveCell>
             </div>
         </div>
     );

@@ -1,6 +1,6 @@
 // src/features/release/release.ts
 import rawReleases from '@/src/data/releases.json';
-import { BleachRelease, ReleaseSchema } from '@/src/entities/release/schema';
+import { BleachRelease } from '@/src/entities/release/schema';
 import { Character } from '@/src/entities/character/schema';
 import { getCharacterById } from '@/src/features/character/character';
 
@@ -12,23 +12,10 @@ import { getCharacterById } from '@/src/features/character/character';
 // TS infers from the JSON's current shape.
 const releases = rawReleases as BleachRelease[];
 
-export const getReleases = (): BleachRelease[] => {
-    return releases;
-};
+export const getReleases = (): BleachRelease[] => releases;
 
-// Raw shape actually present in releases.json — character_id only, no nested character.
-const RawReleaseSchema = ReleaseSchema.omit({ character: true });
-
-export const getReleaseById = (id: string): (BleachRelease & { character: Character }) | undefined => {
-    const raw = releases.find(r => r.id === id);
-    if (!raw) return undefined;
-
-    const parsedRaw = RawReleaseSchema.parse(raw);
-    const character = getCharacterById(parsedRaw.character_id);
-    if (!character) return undefined;
-
-    return { ...parsedRaw, character };
-};
+export const getReleaseById = (id: string): BleachRelease | undefined =>
+    releases.find(r => r.id === id);
 
 /**
  * 🔎 Search-bar pool สำหรับ Release mode โดยเฉพาะ (เหมือน getQuotableCharacters แต่
@@ -43,9 +30,6 @@ export const getReleasableItems = (): (BleachRelease & { character: Character })
         .filter((r): r is BleachRelease & { character: Character } => r !== undefined);
 };
 
-/**
- * ใช้ตอนเฉลย เพื่อโชว์ว่า technique นี้เป็นของตัวละครไหน (ไม่ใช้ compare)
- */
 export const attachReleaseCharacter = (
     release: BleachRelease
 ): (BleachRelease & { character: Character }) | undefined => {
@@ -54,9 +38,6 @@ export const attachReleaseCharacter = (
     return { ...release, character };
 };
 
-/**
- * นับจำนวน release ต่อตัวละคร — ใช้ debug/QA เท่านั้น
- */
 export const countReleasesByCharacter = (): Map<string, number> => {
     const counts = new Map<string, number>();
     for (const r of releases) {

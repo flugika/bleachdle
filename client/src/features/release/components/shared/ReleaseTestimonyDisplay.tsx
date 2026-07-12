@@ -10,7 +10,7 @@ interface ReleaseTestimonyDisplayProps {
     target: FactoryReleaseTarget;
     isSolved?: boolean;
     speakerName?: string;
-    wielderImage?: string | null;
+    characterImage?: string | null;
 }
 
 const T = {
@@ -220,12 +220,13 @@ function VerificationHanko({ isSolved, accent }: { isSolved: boolean; accent: st
     );
 }
 
-export function ReleaseTestimonyDisplay({ target, isSolved = false, speakerName, wielderImage }: ReleaseTestimonyDisplayProps) {
+export function ReleaseTestimonyDisplay({ target, isSolved = false, speakerName, characterImage }: ReleaseTestimonyDisplayProps) {
     const caseNo = generateCaseFileId(target.id);
     const accent = isSolved ? T.jade : T.vermillion;
+    const typeAccent = typeTheme(target.release_type).c; // 🎨 สีตาม release_type จริง (เหมือน ReleaseTypeBadge)
 
     return (
-        <div className="w-full max-w-2xl mx-auto my-4 animate-fade-in relative">
+        <div id="release-audio-player" className="w-full max-w-2xl mx-auto py-4 animate-fade-in relative">
             <div
                 className="relative overflow-hidden flex flex-col shadow-[0_25px_60px_rgba(0,0,0,0.8)] p-6 md:p-9"
                 style={{
@@ -244,8 +245,8 @@ export function ReleaseTestimonyDisplay({ target, isSolved = false, speakerName,
                     className="absolute top-0 right-0 w-2/3 h-full pointer-events-none opacity-40 mix-blend-screen"
                     style={{ maskImage: 'linear-gradient(to right, transparent, black 60%)', WebkitMaskImage: 'linear-gradient(to right, transparent, black 60%)' }}
                 >
-                    {wielderImage ? (
-                        <img src={wielderImage} alt="wielder bg" className="absolute right-0 top-1/2 -translate-y-1/2 h-[150%] object-cover opacity-60 filter grayscale brightness-125 contrast-150" />
+                    {characterImage ? (
+                        <img src={characterImage} alt="wielder bg" className="absolute right-0 top-1/2 -translate-y-1/2 h-[150%] object-cover opacity-60 filter grayscale brightness-125 contrast-150" />
                     ) : (
                         <span className="absolute right-4 bottom-[-10%] text-[150px] font-black opacity-10" style={{ color: accent }}>卍</span>
                     )}
@@ -280,9 +281,9 @@ export function ReleaseTestimonyDisplay({ target, isSolved = false, speakerName,
                         <div className="w-full text-center md:text-left mb-6">
                             <h2
                                 className="italic font-black mb-1.5 tracking-wide drop-shadow-lg break-words leading-[1.15]"
-                                style={{ color: T.ink, textShadow: `0 0 20px ${T.jade}55`, fontSize: 'clamp(1.5rem, 4vw, 2.5rem)' }}
+                                style={{ color: T.ink, textShadow: `0 0 20px ${typeAccent}55`, fontSize: 'clamp(1.5rem, 4vw, 2.5rem)' }}
                             >
-                                {target.technique_name}
+                                <span style={{ color: typeAccent }}>{target.trigger_phrase}, </span>{target.technique_name}
                             </h2>
                             {target.technique_translation && (
                                 <p className="text-[16px] italic break-words opacity-80" style={{ color: T.sub }}>

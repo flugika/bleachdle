@@ -9,6 +9,14 @@ interface SongProgressBarProps {
     durationMs?: number;
     /** 🆕 คุมว่าจะเปิด glow/shimmer animation ไหม (หยุดเล่น = หลอดนิ่ง ไม่ต้องขยับ) */
     isPlaying?: boolean;
+    /** 🆕 ขีดตัด Segment ตาม SONG_REVEAL_STAGES_MS (0.2/0.5/1/3/5s ฯลฯ) มีความหมายแค่ตอน
+     * เดายังไม่จบ (ทายทีละรอบ) — โหมดเฉลย/ฟังเต็มเพลง (full) ไม่มีแนวคิด "รอบ" แล้ว
+     * เลยไม่ต้องโชว์ ปิดได้ผ่าน prop นี้ (default: true = โชว์เหมือนเดิม)
+     */
+    showStageMarks?: boolean;
+    /** 🆕 แถวเวลา (mm:ss.d) ใต้แถบ — โหมด full ข้างบนมีเวลาโชว์อยู่แล้ว (Status & Time row)
+     * ซ้ำกัน เลยปิดได้ผ่าน prop นี้ (default: true = โชว์เหมือนเดิม, ใช้ตอน preview) */
+    showTimeLabels?: boolean;
 }
 
 export const SongProgressBar = ({
@@ -16,6 +24,8 @@ export const SongProgressBar = ({
     revealMs,
     durationMs = 10000, // ล็อกเพดานสูงสุดที่ 10 วินาทีตามกติกาเสียงพรีวิว
     isPlaying = false,
+    showStageMarks = true,
+    showTimeLabels = true,
 }: SongProgressBarProps) => {
     const safeCurrent = Math.min(currentTimeMs, durationMs);
     const safeReveal = Math.min(revealMs, durationMs);
@@ -84,7 +94,7 @@ export const SongProgressBar = ({
                 )}
 
                 {/* LAYER 4: ขีดตัดแบ่ง Segment ย่อย */}
-                {SONG_REVEAL_STAGES_MS.map((stageMs) => {
+                {showStageMarks && SONG_REVEAL_STAGES_MS.map((stageMs) => {
                     if (stageMs >= durationMs) return null;
                     const leftPercent = (stageMs / durationMs) * 100;
                     const isPassed = stageMs <= safeReveal;
@@ -104,10 +114,12 @@ export const SongProgressBar = ({
             </div>
 
             {/* ⏱️ ตัวเลขบอกเวลาสไตล์ Digital Mono */}
-            <div className="flex justify-between items-center text-[11px] font-mono font-bold tracking-widest text-[#e2c992]">
-                <span>{formatMsToTime(safeCurrent)}</span>
-                <span>{formatMsToTime(durationMs)}</span>
-            </div>
+            {showTimeLabels && (
+                <div className="flex justify-between items-center text-[11px] font-mono font-bold tracking-widest text-[#e2c992]">
+                    <span>{formatMsToTime(safeCurrent)}</span>
+                    <span>{formatMsToTime(durationMs)}</span>
+                </div>
+            )}
         </div>
     );
 };

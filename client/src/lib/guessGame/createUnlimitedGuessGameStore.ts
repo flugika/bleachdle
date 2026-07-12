@@ -31,7 +31,12 @@ export interface UnlimitedGuessGameState<TCharacter, TTarget> {
 export function createUnlimitedGuessGameStore<
     TItem,
     TCharacter extends { id: string },
-    TTarget extends { id: string; character_id: string; character: TCharacter }
+    // 🔧 FIX: ตัด `character: TCharacter` ออกจาก constraint — ไม่มี logic ในไฟล์นี้
+    // ที่อ่าน target.character ตรง ๆ เลย (compare ใช้ target.character_id ผ่าน
+    // compareBinaryGuess) การบังคับ field นี้ไว้เฉย ๆ ทำให้โหมดที่ "สิ่งที่ทาย" ไม่ใช่
+    // Character (เช่น Release ที่ทายด้วยตัว release เอง) ต้องยัด field character ปลอม
+    // เข้าไปให้ตรง type ทั้งที่ความหมายผิด (เห็น .character แต่ได้ release ไม่ใช่ตัวละคร)
+    TTarget extends { id: string; character_id: string }
 >(config: UnlimitedGuessGameConfig<TItem, TCharacter, TTarget>) {
     const compareGuess = config.compareGuess ?? ((guess: TCharacter, target: TTarget) => compareBinaryGuess(guess, target.character_id));
     const isValidGuessEntry = config.isValidGuessEntry ?? defaultIsValidGuessEntry<TCharacter>;

@@ -13,18 +13,19 @@ export interface ReleaseGuessEntry {
 
 /**
  * 🔗 Shape ที่ createDailyGuessGameStore / createUnlimitedGuessGameStore ทั้งคู่ต้องการ:
- * TTarget ต้องมี { id, character_id, character: TCharacter } โดย TCharacter คือชนิดที่
- * ผู้เล่น "ทาย" — ในโหมด release คือ BleachRelease เอง ไม่ใช่ Character
+ * TTarget ต้องมี { id, character_id } เท่านั้น (factory ไม่บังคับ field `character`
+ * ในระดับ type constraint แล้ว — ดู comment ใน src/lib/guessGame/types.ts)
  *
- * ดังนั้น target.character = ตัว release เอง (ใช้เทียบ compareGuess)
- * ส่วน target.wielder = Character จริงที่ปล่อยท่านี้ (ใช้แค่โชว์ผล ไม่เกี่ยวกับ compare)
+ * โหมด release: สิ่งที่ผู้เล่น "ทาย" (TCharacter ของ factory) คือตัว BleachRelease เอง
+ * ส่วน field `character` ตรงนี้คือ Character จริงที่ปล่อยท่านี้ (เหมือนโหมด Quote/
+ * Silhouette) ใช้แค่โชว์ผลตอนเฉลย ไม่เกี่ยวกับ compareGuess (compareGuess เทียบด้วย
+ * guess.id === target.id ตรง ๆ ใน useReleaseGame/useReleaseGame)
  *
  * ย้ายมาจาก useReleaseGame.ts เดิม เพราะตอนนี้ daily hook ก็ต้องใช้ชนิดเดียวกัน —
  * มี 2 ที่ import ประกาศซ้ำจะ desync กันได้ง่ายเวลามีคนแก้แค่ที่เดียว
  */
-export type FactoryReleaseTarget = Omit<BleachRelease, 'character'> & {
-    character: BleachRelease;
-    wielder: Character;
+export type FactoryReleaseTarget = BleachRelease & {
+    character: Character;
 };
 
 export interface ReleaseGameController {

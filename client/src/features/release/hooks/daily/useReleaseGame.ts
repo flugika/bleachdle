@@ -1,4 +1,4 @@
-// src/features/release/hooks/daily/useDailyReleaseGame.ts
+// src/features/release/hooks/daily/useReleaseGame.ts
 import { getReleaseById } from '@/src/features/release/release';
 import { STORAGE_KEYS } from '@/src/const/localStorage';
 import { MAX_DAILY_RELEASE_GUESSES } from '@/src/const/guess';
@@ -6,7 +6,7 @@ import { createDailyGuessGameStore } from '@/src/lib/guessGame/createDailyGuessG
 import { BleachRelease } from '@/src/entities/release/schema';
 import { FactoryReleaseTarget } from '@/src/features/release/types';
 
-export const useDailyReleaseGame = createDailyGuessGameStore<BleachRelease, FactoryReleaseTarget>({
+export const useReleaseGame = createDailyGuessGameStore<BleachRelease, FactoryReleaseTarget>({
     storageKeys: {
         // 🔧 ใช้ key เดียวกับ unlimited ได้เลย — nestedJSONStorage แยกโซนด้วย persist
         // `name: 'daily'` vs `'unlimited'` อยู่แล้ว ไม่ชนกันแม้ใช้ localStorage key เดิม
