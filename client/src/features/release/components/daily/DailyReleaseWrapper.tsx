@@ -21,6 +21,7 @@ import { MAX_DAILY_RELEASE_GUESSES } from '@/src/const/guess';
 import { DailyHubModalFooter } from '@/src/shared/ui/daily-hub/DailyHubModalFooter';
 import { useDailyHub } from '@/src/shared/hooks/useDailyHub';
 import { getReleases } from '../../release';
+import { logFullTarget } from '@/src/lib/debug/logFullTarget';
 
 export default function DailyReleaseWrapper({ initialTarget }: { initialTarget: ReleaseTargetHidden | null }) {
     if (!FEATURE_FLAGS.daily?.release) {
@@ -42,9 +43,7 @@ export default function DailyReleaseWrapper({ initialTarget }: { initialTarget: 
         if (initialTarget !== null) {
             setTarget(initialTarget);
 
-            if (target && process.env.NODE_ENV !== 'production') {
-                console.log('target:', useReleaseGame.getState().target);
-            }
+            logFullTarget(target);
         }
     }, [initialTarget, _hasHydrated, setTarget]);
 

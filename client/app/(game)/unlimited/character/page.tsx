@@ -20,6 +20,7 @@ import { MAX_UNLIMITED_CHARACTER_GUESSES } from '@/src/const/guess';
 import { STORAGE_KEYS } from '@/src/const/localStorage';
 import { BL_MODES_METADATA } from '@/src/config/mode';
 import { EmptyGuessState } from '@/src/features/character/components/shared/EmptyGuessState';
+import { logFullTarget } from '@/src/lib/debug/logFullTarget';
 
 export default function UnlimitedCharacterGame() {
     if (!FEATURE_FLAGS.unlimited.character) {
@@ -75,9 +76,7 @@ export default function UnlimitedCharacterGame() {
     // รีเซ็ตสถานะหน้าต่างสรุปผลเมื่อเป้าหมายเกม (Target) มีการเปลี่ยนแปลง
     useEffect(() => {
         setManuallyClosed(false);
-        if (target && process.env.NODE_ENV !== 'production') {
-            console.log('target:', useCharacterGame.getState().target);
-        }
+        logFullTarget(target);
         setRevealDelayDone(false);
     }, [target]);
 

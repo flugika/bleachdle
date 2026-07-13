@@ -17,12 +17,11 @@ import { SongControlPanel } from '@/src/shared/ui/control-panel/SongControlPanel
 import { ModeBadge } from '@/src/shared/ui/game-selector/ModeBadge';
 import { ModeSelectorModal } from '@/src/shared/ui/game-selector/ModeSelectorModal';
 import { useSenkaimon } from '@/src/shared/ui/context/NavigationContext';
-import { STORAGE_KEYS } from '@/src/const/localStorage';
 import { BL_MODES_METADATA } from '@/src/config/mode';
 import { MAX_DAILY_SONG_GUESSES } from '@/src/const/guess'; 
-import { DailyProgressBar } from '@/src/shared/ui/daily-hub/DailyProgressBar';
 import { DailyHubModalFooter } from '@/src/shared/ui/daily-hub/DailyHubModalFooter';
 import { useDailyHub } from '@/src/shared/hooks/useDailyHub';
+import { logFullTarget } from '@/src/lib/debug/logFullTarget';
 
 interface DailySongWrapperProps {
     initialTarget: BleachSong;
@@ -47,9 +46,7 @@ export default function DailySongWrapper({ initialTarget, initialSegmentId }: Da
         if (initialTarget !== null) {
             initializeGame(initialTarget, initialSegmentId);
 
-            if (target && process.env.NODE_ENV !== 'production') {
-                console.log('target:', useSongGame.getState().target);
-            }
+            logFullTarget(target);
         }
     }, [initialTarget, _hasHydrated]);
 

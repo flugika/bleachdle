@@ -22,6 +22,7 @@ import { MAX_DAILY_EMOJI_GUESSES } from '@/src/const/guess';
 import { DailyHubModalFooter } from '@/src/shared/ui/daily-hub/DailyHubModalFooter';
 import { useDailyHub } from '@/src/shared/hooks/useDailyHub';
 import { getEmojiSets } from '../../emoji';
+import { logFullTarget } from '@/src/lib/debug/logFullTarget';
 
 export default function DailyEmojiWrapper({ initialTarget }: { initialTarget: EmojiTargetHidden | null }) {
     if (!FEATURE_FLAGS.daily.emoji) {
@@ -46,9 +47,7 @@ export default function DailyEmojiWrapper({ initialTarget }: { initialTarget: Em
         if (initialTarget !== null) {
             setTarget(initialTarget);
 
-            if (target && process.env.NODE_ENV !== 'production') {
-                console.log('target:', useEmojiGame.getState().target);
-            }
+            logFullTarget(target);
         }
     }, [initialTarget, _hasHydrated]);
 

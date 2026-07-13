@@ -18,12 +18,12 @@ import { ModeBadge } from '@/src/shared/ui/game-selector/ModeBadge';
 import { usePathname, useRouter } from 'next/navigation';
 import { ModeSelectorModal } from '@/src/shared/ui/game-selector/ModeSelectorModal';
 import { useSenkaimon } from '@/src/shared/ui/context/NavigationContext';
-import { STORAGE_KEYS } from '@/src/const/localStorage';
 import { BL_MODES_METADATA } from '@/src/config/mode';
 import { MAX_DAILY_CHARACTER_GUESSES } from '@/src/const/guess';
 import { DailyHubModalFooter } from '@/src/shared/ui/daily-hub/DailyHubModalFooter';
 import { useDailyHub } from '@/src/shared/hooks/useDailyHub';
 import { EmptyGuessState } from '@/src/features/character/components/shared/EmptyGuessState';
+import { logFullTarget } from '@/src/lib/debug/logFullTarget';
 
 export default function DailyCharacterWrapper({ initialTarget }: { initialTarget: Character | null }) {
     if (!FEATURE_FLAGS.daily.character) {
@@ -46,9 +46,7 @@ export default function DailyCharacterWrapper({ initialTarget }: { initialTarget
         if (initialTarget !== null) {
             initializeGame(initialTarget);
 
-            if (target && process.env.NODE_ENV !== 'production') {
-                console.log('target:', useCharacterGame.getState().target);
-            }
+            logFullTarget(target);
         }
     }, [initialTarget, _hasHydrated]);
 

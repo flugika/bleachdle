@@ -20,6 +20,7 @@ import { useSenkaimon } from '@/src/shared/ui/context/NavigationContext';
 import { MAX_UNLIMITED_EMOJI_GUESSES } from '@/src/const/guess';
 import { STORAGE_KEYS } from '@/src/const/localStorage';
 import { BL_MODES_METADATA } from '@/src/config/mode';
+import { logFullTarget } from '@/src/lib/debug/logFullTarget';
 
 export default function UnlimitedEmojiGame() {
     if (!FEATURE_FLAGS.unlimited?.emoji) {
@@ -48,9 +49,7 @@ export default function UnlimitedEmojiGame() {
 
     useEffect(() => {
         setManuallyClosed(false);
-        if (target && process.env.NODE_ENV !== 'production') {
-            console.log('target:', useEmojiGame.getState().target);
-        }
+        logFullTarget(target);
         setRevealDelayDone(false);
     }, [target]);
 

@@ -21,6 +21,7 @@ import { BL_MODES_METADATA } from '@/src/config/mode';
 // 📅 Daily Hub: แถบ progress รวมทุกโหมด daily + CTA เล่นต่อ
 import { DailyHubModalFooter } from '@/src/shared/ui/daily-hub/DailyHubModalFooter';
 import { useDailyHub } from '@/src/shared/hooks/useDailyHub';
+import { logFullTarget } from '@/src/lib/debug/logFullTarget';
 
 /**
  * ⚠️ ต่างจาก DailyQuoteWrapper ตรงที่ SilhouetteControlPanel ตัวจริง**ไม่มี** prop `mode`/`timeLeft`/
@@ -53,9 +54,7 @@ export default function DailySilhouetteWrapper({ initialTarget }: { initialTarge
         if (initialTarget !== null) {
             setTarget(initialTarget);
 
-            if (target && process.env.NODE_ENV !== 'production') {
-                console.log('target:', useSilhouetteGame.getState().target);
-            }
+            logFullTarget(target);
         }
     }, [initialTarget, _hasHydrated]);
 

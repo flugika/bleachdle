@@ -70,8 +70,6 @@ export const ReleaseSummaryGuess = ({
         return revealedCharacter ? attachReleaseCharacter(revealedCharacter)?.character ?? null : null;
     }, [revealedCharacter]);
 
-    console.log(revealedCharacter)
-
     const activeTier = useCharacterTier(stats.maxStreak);
 
     const emblem = useMemo(() => useRaceEmblem(answerCharacter), [answerCharacter]);

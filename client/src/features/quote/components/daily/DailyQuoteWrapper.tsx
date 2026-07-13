@@ -21,6 +21,7 @@ import { MAX_DAILY_QUOTE_GUESSES } from '@/src/const/guess';
 import { DailyHubModalFooter } from '@/src/shared/ui/daily-hub/DailyHubModalFooter';
 import { useDailyHub } from '@/src/shared/hooks/useDailyHub';
 import { getQuotes } from '../../quote';
+import { logFullTarget } from '@/src/lib/debug/logFullTarget';
 
 export default function DailyQuoteWrapper({ initialTarget }: { initialTarget: QuoteTargetHidden | null }) {
     if (!FEATURE_FLAGS.daily.quote) {
@@ -44,9 +45,7 @@ export default function DailyQuoteWrapper({ initialTarget }: { initialTarget: Qu
         if (initialTarget !== null) {
             setTarget(initialTarget);
 
-            if (target && process.env.NODE_ENV !== 'production') {
-                console.log('target:', useQuoteGame.getState().target);
-            }
+            logFullTarget(target);
         }
     }, [initialTarget, _hasHydrated]);
 

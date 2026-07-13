@@ -20,6 +20,7 @@ import { useSenkaimon } from '@/src/shared/ui/context/NavigationContext';
 import { MAX_UNLIMITED_QUOTE_GUESSES } from '@/src/const/guess';
 import { STORAGE_KEYS } from '@/src/const/localStorage';
 import { BL_MODES_METADATA } from '@/src/config/mode';
+import { logFullTarget } from '@/src/lib/debug/logFullTarget';
 
 export default function UnlimitedQuoteGame() {
     // 🛡️ TODO: เพิ่ม key `quote: { daily: boolean; unlimited: boolean }` ใน feature.flags.ts
@@ -49,9 +50,7 @@ export default function UnlimitedQuoteGame() {
 
     useEffect(() => {
         setManuallyClosed(false);
-        if (target && process.env.NODE_ENV !== 'production') {
-            console.log('target:', useQuoteGame.getState().target);
-        }
+        logFullTarget(target);
         setRevealDelayDone(false);
     }, [target]);
 
