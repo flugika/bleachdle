@@ -6,11 +6,11 @@ import { ReleaseGuessable } from '@/src/features/release/types';
 import { Modal } from '../modal';
 import { ReleaseTestimonyDisplay } from '@/src/features/release/components/shared/ReleaseTestimonyDisplay';
 import { getReleasableItems } from '@/src/features/release/release';
-import { FactoryReleaseTarget } from '@/src/features/release/types';
+import { ReleaseTargetHidden } from '@/src/features/release/types';
 
 interface ReleaseControlPanelProps {
     mode: 'daily' | 'unlimited';
-    target: FactoryReleaseTarget | null;
+    target: ReleaseTargetHidden | null;
     releases: BleachRelease[];
     remainingGuesses?: number;
     stats: { currentStreak: number; maxStreak: number };

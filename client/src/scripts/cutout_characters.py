@@ -74,7 +74,7 @@ DEFAULT_MODEL = "isnet-anime"
 # directory. That way `py src/scripts/cutout_characters.py` works the same whether
 # you run it from the project root, from client/, or from inside scripts/ itself.
 # Layout assumed: client/src/scripts/cutout_characters.py
-#                 client/public/assets/characters/*.webp            (raw source art)
+#                 client/assets-private/characters/*.webp            (raw source art)
 #                 client/public/assets/character_cutout/*.webp      (bg removed)
 #                 client/public/assets/character_silhouette/*.webp  (flat black shapes)
 _SCRIPT_DIR = Path(__file__).resolve().parent           # .../client/src/scripts

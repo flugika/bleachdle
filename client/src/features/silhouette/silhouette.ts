@@ -1,4 +1,5 @@
 // src/features/silhouette/silhouette.ts
+
 import { INITIAL_REVEAL_SILHOUETTE, MAX_DAILY_SILHOUETTE_GUESSES, MAX_UNLIMITED_SILHOUETTE_GUESSES } from '@/src/const/guess';
 import { getCharacterById } from '@/src/features/character/character';
 import { SilhouetteSchema, BleachSilhouette } from '@/src/entities/silhouette/schema';
@@ -48,9 +49,6 @@ export const getSilhouetteSearchCharacters = (): Character[] => {
         .map((s) => getCharacterById(s.character_id))
         .filter((c): c is Character => c !== undefined);
 };
-
-export const getSilhouetteImageUrl = (image: string): string =>
-    `/assets/character_silhouette/${image}`;
 
 export const attachCharacter = (silhouette: BleachSilhouette): SilhouetteTarget | undefined => {
     const character = getCharacterById(silhouette.character_id);

@@ -5,6 +5,7 @@ import { getDailySilhouette } from '@/src/services/getDailySchedule/silhouette';
 import { getDailyEmoji } from '@/src/services/getDailySchedule/emoji';
 import { getDailyQuote } from '@/src/services/getDailySchedule/quote';
 import { getDailyRelease } from '@/src/services/getDailySchedule/release';
+import { getCharacterById } from '@/src/features/character/character';
 
 import { QuoteTestimonyDisplay } from '@/src/features/quote/components/shared/QuoteTestimonyDisplay';
 import { EmojiTestimonyDisplay } from '@/src/features/emoji/components/shared/EmojiTestimonyDisplay';
@@ -14,6 +15,7 @@ import { ScaleFit } from '@/src/shared/ui/ScaleFit';
 import { ArchiveCharacterCard } from '@/src/features/soul-society-archives/components/ArchiveCharacterCard';
 import { ReleaseTestimonyDisplay } from '@/src/features/release/components/shared/ReleaseTestimonyDisplay';
 import Image from 'next/image';
+import { getReleaseById } from '@/src/features/release/release';
 
 // 🏛️ Same Central 46 confidential-archive palette used across
 // QuoteTestimonyDisplay / EmojiTestimonyDisplay — the whole page reads as one
@@ -107,7 +109,7 @@ export default async function ArchivePage() {
         getDailyRelease(),
     ]);
 
-    const [character, song, silhouette, emoji, quote, release] = results.map((r) =>
+    const [characterObj, song, silhouette, emoji, quote, release] = results.map((r) =>
         r.status === 'fulfilled' ? r.value : null,
     ) as [
             Awaited<ReturnType<typeof getDailyCharacter>> | null,
@@ -117,6 +119,16 @@ export default async function ArchivePage() {
             Awaited<ReturnType<typeof getDailyQuote>> | null,
             Awaited<ReturnType<typeof getDailyRelease>> | null,
         ];
+
+    // 🔓 หน้านี้คือหน้าเฉลย (internal answer key) — quote/emoji/release ตอนนี้เหลือแค่
+    // {id, character_id, ...} เท่านั้น (ไม่มี .character แนบมาแล้ว กันสปอยล์ตอนเล่นจริง)
+    // ที่นี่เกม/ผู้เล่นไม่เกี่ยวข้อง เลย resolve character เต็มๆ เองจาก character_id ได้ตรงๆ
+    const character = characterObj ? getCharacterById(characterObj.id) ?? null : null;
+    const quoteCharacter = quote ? getCharacterById(quote.character_id) ?? null : null;
+    const emojiCharacter = emoji ? getCharacterById(emoji.character_id) ?? null : null;
+    const releaseCharacter = release ? getCharacterById(release.character_id) ?? null : null;
+    const fullRelease = release ? getReleaseById(release.id) ?? null : null; // 🆕 คำตอบเต็ม สำหรับ prop `revealed`
+    const silhouetteCharacter = silhouette ? getCharacterById(silhouette.character_id) ?? null : null;
 
     return (
         // 🆕 `fixed inset-0` instead of w-screen/h-screen — pins the page exactly
@@ -144,14 +156,14 @@ export default async function ArchivePage() {
                 <ArchiveCell label="Character">
                     <AnswerHeader
                         name={character?.name}
-                        imageUrl={character?.image ? `/assets/characters/${character.image}` : null}
+                        imageUrl={character?.image ? `/api/asset/character/${character.id}` : null}
                     />
                     {character ? (
                         <ScaleFit referenceWidth={340}>
                             <ArchiveCharacterCard
                                 characterId={character.id}
                                 name={character.name}
-                                imageUrl={character.image ? `/assets/characters/${character.image}` : null}
+                                imageUrl={character.image ? `/api/asset/character/${character.id}` : null}
                                 affiliation={character.affiliation}
                                 race={character.race}
                             />
@@ -161,7 +173,8 @@ export default async function ArchivePage() {
                     )}
                 </ArchiveCell>
 
-                {/* SONG — full, uncut playback, title/artist revealed, Spotify / YouTube links */}
+                {/* SONG — full, uncut playback, title/artist revealed, Spotify / YouTube links.
+                    Song ไม่โดนตัด .character (ไม่เคยมีตั้งแต่แรก) เลยไม่ต้อง resolve เพิ่ม */}
                 <ArchiveCell label="Song">
                     <AnswerHeader
                         name={song?.song.title}
@@ -185,16 +198,16 @@ export default async function ArchivePage() {
                 {/* SILHOUETTE — swaps between silhouette and real image on its own */}
                 <ArchiveCell label="Silhouette">
                     <AnswerHeader
-                        name={silhouette?.character?.name}
-                        imageUrl={silhouette?.character?.image ? `/assets/characters/${silhouette.character.image}` : null}
+                        name={silhouetteCharacter?.name}
+                        imageUrl={silhouetteCharacter?.image ? `/api/asset/character/${silhouetteCharacter.id}` : null}
                     />
-                    {silhouette?.character ? (
+                    {silhouetteCharacter ? (
                         <ScaleFit referenceWidth={340}>
                             <SilhouetteImage
-                                characterId={silhouette.character.id}
-                                image={silhouette.image}
+                                characterId={silhouetteCharacter.id}
+                                image={silhouetteCharacter.id}
                                 mode="daily"
-                                realImage={silhouette.character.image}
+                                realImage={silhouetteCharacter.id}
                                 revealMode="crossfade"
                             />
                         </ScaleFit>
@@ -203,11 +216,13 @@ export default async function ArchivePage() {
                     )}
                 </ArchiveCell>
 
-                {/* EMOJI */}
+                {/* EMOJI — emoji จาก getDailyEmoji() ตอนนี้เหลือแค่ {id, character_id, emoji_list}
+                    ต้อง resolve character เองจาก emojiCharacter ที่ get ไว้ข้างบนแล้ว
+                    (ไม่มี emoji.character ให้อ่านตรงๆ อีกต่อไป) */}
                 <ArchiveCell label="Emoji">
                     <AnswerHeader
-                        name={emoji?.character?.name}
-                        imageUrl={emoji?.character?.image ? `/assets/characters/${emoji.character.image}` : null}
+                        name={emojiCharacter?.name}
+                        imageUrl={emojiCharacter?.image ? `/api/asset/character/${emojiCharacter.id}` : null}
                     />
                     {emoji ? (
                         <div className="flex-1 min-h-0 min-w-0">
@@ -217,7 +232,7 @@ export default async function ArchivePage() {
                                     revealedCount={0}
                                     forceRevealAll
                                     isSolved
-                                    speakerName={emoji.character?.name}
+                                    speakerName={emojiCharacter?.name}
                                 />
                             </ScaleFit>
                         </div>
@@ -226,16 +241,18 @@ export default async function ArchivePage() {
                     )}
                 </ArchiveCell>
 
-                {/* QUOTE */}
+                {/* QUOTE — quote จาก getDailyQuote() ตอนนี้เหลือแค่ {id, text, character_id}
+                    ต้อง resolve character เองจาก quoteCharacter ที่ get ไว้ข้างบนแล้ว
+                    (ไม่มี quote.character ให้อ่านตรงๆ อีกต่อไป) */}
                 <ArchiveCell label="Quote">
                     <AnswerHeader
-                        name={quote?.character?.name}
-                        imageUrl={quote?.character?.image ? `/assets/characters/${quote.character.image}` : null}
+                        name={quoteCharacter?.name}
+                        imageUrl={quoteCharacter?.image ? `/api/asset/character/${quoteCharacter.id}` : null}
                     />
                     {quote ? (
                         <div className="flex-1 min-h-0 min-w-0">
                             <ScaleFit referenceWidth={448} maxScale={1.4}>
-                                <QuoteTestimonyDisplay target={quote} isSolved speakerName={quote.character?.name} />
+                                <QuoteTestimonyDisplay target={quote} isSolved speakerName={quoteCharacter?.name} />
                             </ScaleFit>
                         </div>
                     ) : (
@@ -243,20 +260,24 @@ export default async function ArchivePage() {
                     )}
                 </ArchiveCell>
 
-                {/* RELEASE */}
+                {/* RELEASE — release จาก getDailyRelease() ตอนนี้เหลือแค่ BleachRelease ล้วนๆ
+                    (id, character_id, release_type, trigger_phrase, technique_name, ...)
+                    ต้อง resolve character เองจาก releaseCharacter ที่ get ไว้ข้างบนแล้ว
+                    (ไม่มี release.character ให้อ่านตรงๆ อีกต่อไป) */}
                 <ArchiveCell label="Release">
                     <AnswerHeader
-                        name={release?.character?.name}
-                        imageUrl={release?.character?.image ? `/assets/characters/${release.character.image}` : null}
+                        name={releaseCharacter?.name}
+                        imageUrl={releaseCharacter?.image ? `/api/asset/character/${releaseCharacter.id}` : null}
                     />
-                    {release ? (
+                    {release && fullRelease ? (
                         <div className="flex-1 min-h-0 min-w-0">
                             <ScaleFit referenceWidth={448} maxScale={1.4}>
                                 <ReleaseTestimonyDisplay
                                     target={release}
-                                    isSolved
-                                    speakerName={release.character?.name}
-                                    characterImage={release.character?.image ? `/assets/characters/${release.character.image}` : null}
+                                    revealed={fullRelease}
+                                    isSolved={true}
+                                    speakerName={releaseCharacter?.name}
+                                    characterImage={releaseCharacter?.image ? `/api/asset/character/${releaseCharacter.id}` : null}
                                 />
                             </ScaleFit>
                         </div>

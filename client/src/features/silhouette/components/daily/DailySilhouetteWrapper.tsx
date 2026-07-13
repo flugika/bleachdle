@@ -12,7 +12,7 @@ import { Divider } from '@/src/shared/ui/layout/Divider';
 import { SubHeader } from '@/src/shared/ui/layout/SubHeader';
 import Sealed from '@/src/shared/ui/Sealed';
 import { FEATURE_FLAGS } from '@/src/config/feature.flags';
-import { SilhouetteTarget } from '@/src/features/silhouette/types';
+import { SilhouetteTargetHidden } from '@/src/features/silhouette/types';
 import { ModeBadge } from '@/src/shared/ui/game-selector/ModeBadge';
 import { ModeSelectorModal } from '@/src/shared/ui/game-selector/ModeSelectorModal';
 import { useSenkaimon } from '@/src/shared/ui/context/NavigationContext';
@@ -31,7 +31,7 @@ import { useDailyHub } from '@/src/shared/hooks/useDailyHub';
  * 🎯 win/loss ใช้ pattern เดียวกับหน้า unlimited (remaining-guesses cap เป็นเงื่อนไขแพ้จริง)
  * ไม่ใช่ pattern ของ quote daily (unlimited attempts + surrender) — เพื่อให้ streak มี stake จริง
  */
-export default function DailySilhouetteWrapper({ initialTarget }: { initialTarget: SilhouetteTarget | null }) {
+export default function DailySilhouetteWrapper({ initialTarget }: { initialTarget: SilhouetteTargetHidden | null }) {
     if (!FEATURE_FLAGS.daily?.silhouette) {
         return <Sealed />;
     }
@@ -39,7 +39,7 @@ export default function DailySilhouetteWrapper({ initialTarget }: { initialTarge
     const { navigate, state, reportReady } = useSenkaimon();
 
     const gameStore = useSilhouetteGame();
-    const { target, guesses, setTarget, finalizeGame, hasFinalized, _hasHydrated, stats, loadStats } = gameStore;
+    const { target, revealedCharacter, guesses, setTarget, finalizeGame, hasFinalized, _hasHydrated, stats, loadStats } = gameStore;
     const characters = getCharacters();
     const isSynced = target !== null && initialTarget !== null && target.id === initialTarget.id;
 
@@ -209,7 +209,7 @@ export default function DailySilhouetteWrapper({ initialTarget }: { initialTarge
                 <div className="w-full mt-2">
                     {showSummary ? (
                         <>
-                            <SilhouetteSummaryGuess isOpen={showSummary} onClose={handleCloseModal} guesses={guesses} target={target} isWin={isWin} mode="daily" stats={stats} />
+                            <SilhouetteSummaryGuess isOpen={showSummary} onClose={handleCloseModal} guesses={guesses} target={target} revealedCharacter={revealedCharacter} isWin={isWin} mode="daily" stats={stats} />
                             {/* 📅 Daily Hub: CTA "เล่นต่อ" ต่อท้ายการ์ดสรุปผล */}
                             <DailyHubModalFooter activeMode="silhouette" />
                         </>

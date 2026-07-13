@@ -31,7 +31,7 @@ const STEP_MS = 50;
 // 🩹 audio_url ใน releases.json เป็นแค่ชื่อไฟล์เปล่าๆ (เช่น "Bankai_Izuru_Kira.mp3")
 // ไม่ใช่ path เต็ม เลยต้องเติม base path นี้ก่อนใช้เป็น audio.src เสมอ
 // ปรับให้ตรงกับที่เก็บไฟล์จริงถ้าไม่ใช่ public/assets/releases
-const AUDIO_BASE_PATH = '/assets/audio/releases/';
+const AUDIO_BASE_PATH = '/api/asset/release/';
 const resolveAudioSrc = (audioUrl: string) => `${AUDIO_BASE_PATH}${audioUrl}`;
 
 const COLOR = {

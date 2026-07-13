@@ -29,7 +29,7 @@ export default function UnlimitedEmojiGame() {
     const { navigate, state, reportReady } = useSenkaimon();
 
     const gameStore = useEmojiGame();
-    const { target, guesses, revealedCount, initializeGame, finalizeGame, resetGame, hardReset, hasFinalized, _hasHydrated, resetStreakKeepMax, stats, loadStats } = gameStore;
+    const { target, revealedCharacter, guesses, revealedCount, initializeGame, finalizeGame, resetGame, hardReset, hasFinalized, _hasHydrated, resetStreakKeepMax, stats, loadStats } = gameStore;
     const emojiSets = getEmojiSets();
 
     const [manuallyClosed, setManuallyClosed] = useState(false);
@@ -217,7 +217,7 @@ export default function UnlimitedEmojiGame() {
                 )}
 
                 {showSummary ? (
-                    <EmojiSummaryGuess isOpen={showSummary} onClose={handleCloseModal} guesses={guesses} target={target} isWin={isWin} mode="unlimited" stats={stats} />
+                    <EmojiSummaryGuess isOpen={showSummary} onClose={handleCloseModal} guesses={guesses} target={target} revealedCharacter={revealedCharacter} isWin={isWin} mode="unlimited" stats={stats} />
                 ) : target ? (
                     <div className="w-full overflow-x-auto">
                         <EmojiGuessTable guesses={guesses} />

@@ -24,17 +24,21 @@ export interface ReleaseGuessEntry {
  * ย้ายมาจาก useReleaseGame.ts เดิม เพราะตอนนี้ daily hook ก็ต้องใช้ชนิดเดียวกัน —
  * มี 2 ที่ import ประกาศซ้ำจะ desync กันได้ง่ายเวลามีคนแก้แค่ที่เดียว
  */
-export type FactoryReleaseTarget = BleachRelease & {
+
+export type ReleaseTargetHidden = Pick<BleachRelease, 'id' | 'character_id' | 'release_type' | 'clip_end_ms'>;
+
+export type ReleaseTarget = BleachRelease & {
     character: Character;
 };
 
 export interface ReleaseGameController {
-    target: FactoryReleaseTarget | null;
+    target: ReleaseTargetHidden | null;
+    revealedCharacter: BleachRelease | null;
     guesses: ReleaseGuessEntry[];
     stats: Stats;
     loadStats: () => void;
     addGuess: (releaseId: string) => void;
-    setTarget: (target: FactoryReleaseTarget) => void;
+    setTarget: (target: ReleaseTargetHidden) => void;
     initializeGame: (force?: boolean) => void;
     finalizeGame: (isWin: boolean) => void;
     resetGame: () => void;

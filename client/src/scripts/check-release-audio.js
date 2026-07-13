@@ -18,7 +18,7 @@ const DATA_DIR = path.join(__dirname, '../data');
 const RELEASES_FILE = path.join(DATA_DIR, 'releases.json');
 
 // 🩹 ปรับ path นี้ให้ตรงกับที่เก็บไฟล์เสียงจริงในโปรเจกต์ (สมมติฐาน: public/assets/releases)
-const AUDIO_DIR = path.join(__dirname, '../../public/assets/audio/releases');
+const AUDIO_DIR = path.join(__dirname, '../../assets-private/audio/releases');
 
 const SHOULD_DELETE = process.argv.includes('--delete');
 const SHOULD_PRUNE = process.argv.includes('--prune-missing');

@@ -30,7 +30,7 @@ export default function UnlimitedQuoteGame() {
     const { navigate, state, reportReady } = useSenkaimon();
 
     const gameStore = useQuoteGame();
-    const { target, guesses, initializeGame, finalizeGame, resetGame, hardReset, hasFinalized, _hasHydrated, resetStreakKeepMax, stats, loadStats } = gameStore;
+    const { target, revealedCharacter, guesses, initializeGame, finalizeGame, resetGame, hardReset, hasFinalized, _hasHydrated, resetStreakKeepMax, stats, loadStats } = gameStore;
     const quotes = getQuotes();
 
     const [manuallyClosed, setManuallyClosed] = useState(false);
@@ -217,7 +217,7 @@ export default function UnlimitedQuoteGame() {
                 )}
 
                 {showSummary ? (
-                    <QuoteSummaryGuess isOpen={showSummary} onClose={handleCloseModal} guesses={guesses} target={target} isWin={isWin} mode="unlimited" stats={stats} />
+                    <QuoteSummaryGuess isOpen={showSummary} onClose={handleCloseModal} guesses={guesses} target={target} revealedCharacter={revealedCharacter} isWin={isWin} mode="unlimited" stats={stats} />
                 ) : target ? (
                     <div className="w-full overflow-x-auto">
                         <QuoteGuessTable guesses={guesses} />

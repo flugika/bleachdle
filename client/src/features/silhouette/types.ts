@@ -7,6 +7,8 @@ import { GuessGameController, Stats } from '@/src/lib/guessGame/types';
  */
 export type SilhouetteGuessStatus = 'correct' | 'wrong';
 
+export type SilhouetteTargetHidden = BleachSilhouette;
+
 export type SilhouetteTarget = BleachSilhouette & { character: Character };
 
 export interface SilhouetteGuessEntry {
@@ -16,12 +18,13 @@ export interface SilhouetteGuessEntry {
 }
 
 export interface SilhouetteGameController extends GuessGameController {
-    target: SilhouetteTarget | null;
+    target: SilhouetteTargetHidden | null;
+    revealedCharacter: Character | null;
     guesses: SilhouetteGuessEntry[];
     stats: Stats;
     loadStats: () => void;
     addGuess: (characterId: string) => void;
-    setTarget: (target: SilhouetteTarget) => void;
+    setTarget: (target: SilhouetteTargetHidden) => void;
     initializeGame: (force?: boolean) => void;
     finalizeGame: (isWin: boolean) => void;
     resetGame: () => void;

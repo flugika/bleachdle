@@ -18,6 +18,8 @@ export type QuoteGuessStatus = 'correct' | 'wrong';
  * Build one via `attachCharacter()` / `getQuoteWithCharacterById()`
  * in src/features/quote/quote.ts.
  */
+export type QuoteTargetHidden = Pick<BleachQuote, 'id' | 'text' | 'character_id'>;
+
 export type QuoteTarget = BleachQuote & { character: Character };
 
 export interface QuoteGuessEntry {
@@ -31,12 +33,13 @@ export interface QuoteGuessEntry {
  * this store with zero special-casing — same contract Character mode uses.
  */
 export interface QuoteGameController extends GuessGameController {
-    target: QuoteTarget | null;
+    target: QuoteTargetHidden | null;
+    revealedCharacter: Character | null;
     guesses: QuoteGuessEntry[];
     stats: Stats; // 🆕
     loadStats: () => void; // 🆕
     addGuess: (characterId: string) => void;
-    setTarget: (target: QuoteTarget) => void;
+    setTarget: (target: QuoteTargetHidden) => void;
     initializeGame: (force?: boolean) => void;
     finalizeGame: (isWin: boolean) => void;
     resetGame: () => void;

@@ -11,7 +11,6 @@ import { nestedJSONStorage } from '@/src/lib/store/createNestedStorage';
 import { Stats } from '@/src/lib/guessGame/types';
 import { BleachSong } from '@/src/entities/song/schema';
 
-// 🔁 ใช้ shared validator แทน validGuessEntry.ts ของ song เอง — ไฟล์เดิมลบทิ้งได้
 const isValidGuessEntry = defaultIsValidGuessEntry<BleachSong>;
 
 export const useSongGame = create<SongGameController>()(
@@ -41,11 +40,9 @@ export const useSongGame = create<SongGameController>()(
                 const guessedSong = getSongById(songId);
                 if (!guessedSong) return state;
 
-                // 🛡️ กันเดาเพลงซ้ำ (เผื่อ UI ฝั่งเรียกมาซ้ำโดยไม่ผ่าน guessedIds guard ของ SongSearchBar)
                 const alreadyGuessed = state.guesses.some(g => g.guess.id === guessedSong.id);
                 if (alreadyGuessed) return state;
 
-                // 🔁 ใช้ shared compareBinaryGuess แทน getSongStatus — compareSong.ts ลบทิ้งได้
                 const status = compareBinaryGuess(guessedSong, state.target.id);
                 const newEntry: SongGuessEntry = { guess: guessedSong, status, isNew: true };
                 const prevGuesses = state.guesses.map(g => ({ ...g, isNew: false }));
@@ -53,9 +50,6 @@ export const useSongGame = create<SongGameController>()(
                 return { guesses: [newEntry, ...prevGuesses] };
             }),
 
-            // 🛡️ ROOT-CAUSE FIX เดียวกับ useCharacterGame: เช็คแค่ "มี target แล้วหรือยัง" ไม่สนจำนวน
-            // guesses กัน StrictMode double-invoke / component remount ตอนสลับหน้าผ่าน Senkaimon
-            // สุ่ม target ใหม่ทับของเดิมซ้อนกัน + HYDRATION GUARD กัน race กับ persist rehydrate (async)
             initializeGame: (force = false) => {
                 const { target, _hasHydrated } = get();
 
@@ -63,11 +57,9 @@ export const useSongGame = create<SongGameController>()(
                 if (!force && target) return;
 
                 const allSegments = getAllSongSegments();
-
                 const completedData = JSON.parse(localStorage.getItem(STORAGE_KEYS.SONG_COMPLETED) || '{}');
                 const completedSongIds: string[] = completedData.unlimited || [];
 
-                // 🛡️ เช็ค s.song_id แทน s.id เพื่อไม่ให้เซกเมนต์อื่นของเพลงเดิมหลุดเข้ามาได้อีก
                 const remainingSegments = allSegments.filter(s => !completedSongIds.includes(s.song_id));
 
                 if (remainingSegments.length === 0) {
@@ -95,7 +87,6 @@ export const useSongGame = create<SongGameController>()(
 
                 if (isWin) {
                     const currentUnlimited: string[] = completedData.unlimited || [];
-                    // 🧠 บันทึก target.id (Song ID) ลงไป เพื่อบอกว่า "เพลงนี้ทั้งเพลงเล่นผ่านแล้วนะ"
                     completedData.unlimited = [...new Set([...currentUnlimited, target.id])];
                 } else {
                     completedData.unlimited = [];
@@ -166,14 +157,34 @@ export const useSongGame = create<SongGameController>()(
         {
             name: 'unlimited',
             storage: nestedJSONStorage(STORAGE_KEYS.SONG_PROGRESS),
+            // ✂️ เก็บแค่ ID ลง LocalStorage เช่นกัน ไม่บันทึกส่วนสปอยล์
             partialize: (state) => ({
-                guesses: state.guesses.map(({ guess, status }) => ({ guess, status, isNew: false })),
-                target: state.target,
+                guesses: state.guesses.map(({ guess, status }) => ({
+                    guess: { id: guess.id } as BleachSong,
+                    status,
+                    isNew: false
+                })),
+                target: state.target ? { id: state.target.id } as BleachSong : null,
                 targetSegmentId: state.targetSegmentId,
                 hasFinalized: state.hasFinalized,
             }),
+            // 🔄 ทำ Rehydrate ดึงข้อมูลเต็มกลับเข้า Object ปกติ
             onRehydrateStorage: () => (state) => {
                 if (state) {
+                    if (state.target?.id) {
+                        state.target = getSongById(state.target.id) || null;
+                    }
+
+                    if (Array.isArray(state.guesses)) {
+                        state.guesses = state.guesses.map(g => {
+                            if (g.guess?.id) {
+                                const fullSong = getSongById(g.guess.id);
+                                return fullSong ? { ...g, guess: fullSong } : g;
+                            }
+                            return g;
+                        });
+                    }
+
                     const hasCorruptedData = !Array.isArray(state.guesses) ||
                         state.guesses.some(g => !isValidGuessEntry(g));
 

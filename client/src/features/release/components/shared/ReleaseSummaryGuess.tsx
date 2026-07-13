@@ -4,14 +4,13 @@
 import { useMemo } from 'react';
 import Image from 'next/image';
 import { DailyResetTimer } from '@/src/shared/ui/DailyResetTimer';
+import { ReleaseGuessEntry, ReleaseTargetHidden } from '@/src/features/release/types';
 import { BleachRelease } from '@/src/entities/release/schema';
-import { ReleaseGuessEntry } from '@/src/features/release/types';
 import { Stats } from '@/src/lib/guessGame/types';
 import { ReleaseTestimonyDisplay } from './ReleaseTestimonyDisplay';
 import { attachReleaseCharacter } from '@/src/features/release/release';
 import { useRaceEmblem } from '@/src/shared/hooks/useRaceEmblem';
 import { useCharacterTier } from '@/src/shared/hooks/useBadgeTier';
-import { FactoryReleaseTarget } from '@/src/features/release/types';
 import {
     SummaryCardShell,
     SummaryHeader,
@@ -26,7 +25,14 @@ interface ReleaseSummaryGuessProps {
     isOpen: boolean;
     onClose: () => void;
     guesses: ReleaseGuessEntry[];
-    target: FactoryReleaseTarget | null;
+    // 🩹 SECURITY FIX: เดิม type นี้คือ `ReleaseTarget` เต็ม (มี technique_name,
+    // trigger_phrase ฯลฯ) ทั้งที่ store จริงมีแค่ `ReleaseTargetHidden` — ผลคือ
+    // caller (DailyReleaseWrapper) ต้อง "โกงทาง type" ยัด hidden target เข้ามาแทน
+    // ของเต็ม ซึ่งพอเรียก .technique_name ใน component นี้จริงๆ จะเป็น undefined
+    target: ReleaseTargetHidden | null;
+    // 🆕 คำตอบเต็ม ต้อง populate จาก store เฉพาะตอนเกมจบ (ชนะ/แพ้ก็ตาม) — ดู
+    // comment บน `revealedCharacter` ใน ReleaseGameController (types.ts)
+    revealedCharacter: BleachRelease | null;
     isWin: boolean;
     mode: 'daily' | 'unlimited';
     stats: Stats;
@@ -49,19 +55,28 @@ export const ReleaseSummaryGuess = ({
     onClose,
     guesses,
     target,
+    revealedCharacter,
     isWin,
     mode,
     stats = { currentStreak: 0, maxStreak: 0, playedCount: 0, passedCount: 0, guessDistribution: {} },
 }: ReleaseSummaryGuessProps) => {
     if (!isOpen || !target) return null;
 
-    const answerCharacter = target?.character;
+    // 🩹 ก่อนหน้านี้ resolve character จาก `target` ตรงๆ (ซึ่งมีแค่ character_id
+    // ไม่มีคำตอบเต็ม) ตอนนี้ resolve จาก `revealedCharacter` (เฉลยเต็มจาก store)
+    // แทน — ถ้า store ยังไม่ populate (เช่น กำลังโหลด) จะได้ null อย่างปลอดภัย
+    // แทนที่จะพังหรือเผลอโชว์ค่า undefined
+    const answerCharacter = useMemo(() => {
+        return revealedCharacter ? attachReleaseCharacter(revealedCharacter)?.character ?? null : null;
+    }, [revealedCharacter]);
+
+    console.log(revealedCharacter)
 
     const activeTier = useCharacterTier(stats.maxStreak);
 
     const emblem = useMemo(() => useRaceEmblem(answerCharacter), [answerCharacter]);
 
-    const hasMeta = target.source_episode != null;
+    const hasMeta = revealedCharacter?.source_episode != null;
 
     return (
         <SummaryCardShell
@@ -104,9 +119,10 @@ export const ReleaseSummaryGuess = ({
                        เจ้าของท่าถูกเฉลยทั้งคู่ */}
                     <ReleaseTestimonyDisplay
                         target={target}
-                        isSolved={isWin}
+                        revealed={revealedCharacter}
+                        isSolved={true}
                         speakerName={answerCharacter?.name}
-                        characterImage={answerCharacter?.image ? `/assets/characters/${answerCharacter.image}` : null}
+                        characterImage={answerCharacter?.image ? `/api/asset/character/${answerCharacter.id}` : null}
                     />
                 </div>
             </div>
@@ -148,7 +164,7 @@ export const ReleaseSummaryGuess = ({
                             <div className="relative h-20 w-20 shrink-0 border border-[#c8a96e]/20 p-[1px] bg-black/40 z-10">
                                 {answerCharacter.image ? (
                                     <Image
-                                        src={`/assets/characters/${answerCharacter.image}`}
+                                        src={`/api/asset/character/${answerCharacter.id}`}
                                         alt={answerCharacter.name}
                                         fill
                                         className="object-cover grayscale-[10%] brightness-[95%]"
@@ -186,7 +202,7 @@ export const ReleaseSummaryGuess = ({
                             <div className="grid grid-cols-2 gap-[1px] bg-[#c8a96e]/10 border-t border-[#c8a96e]/10">
                                 <div className="bg-[#0a0a0f]/90 p-3 flex flex-col gap-0.5 col-span-2 hover:bg-[#c8a96e]/5 transition-colors">
                                     <span className="text-[11px] uppercase tracking-[0.2em] text-[#c8a96e]/70 font-bold">Source Episode</span>
-                                    <span className="text-[11px] text-[#eed9c4]/90 font-medium truncate">{target.source_episode}</span>
+                                    <span className="text-[11px] text-[#eed9c4]/90 font-medium truncate">{revealedCharacter?.source_episode}</span>
                                 </div>
                             </div>
                         )}
@@ -197,8 +213,6 @@ export const ReleaseSummaryGuess = ({
             <IdentificationHistoryPanel
                 guessCount={guesses.length}
                 chronicleLabel="Ward Chronicle // View Logs"
-                expandedMaxHeightClassName="max-h-[160px]"
-                innerMaxHeightClassName="max-h-[157px]"
                 matrix={guesses.map((guess, i) => (
                     <div
                         key={i}
@@ -222,7 +236,7 @@ export const ReleaseSummaryGuess = ({
                             {guessCharacter?.image && (
                                 <div className='relative w-7 h-7 shrink-0'>
                                     <Image
-                                        src={`/assets/characters/${guessCharacter.image}`}
+                                        src={`/api/asset/character/${guessCharacter.id}`}
                                         alt={guessCharacter.name}
                                         fill
                                         sizes="210px"

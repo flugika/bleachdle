@@ -240,7 +240,7 @@ const GuessRow = ({ guess, result, isNew = false }: GuessEntry) => {
                 {/* Name cell: ปรับขนาดเป็น 72x72 เท่ากันเป๊ะ */}
                 <div className="relative bg-[#111120] border border-[#1e1e30] overflow-hidden w-[72px] h-[72px] flex-shrink-0">
                     <Image
-                        src={`/assets/characters/${guess.image}`}
+                        src={`/api/asset/character/${guess.id}`}
                         alt={guess.name}
                         className="w-full h-full object-cover"
                         title={guess.name}

@@ -11,7 +11,7 @@ import { Divider } from '@/src/shared/ui/layout/Divider';
 import { SubHeader } from '@/src/shared/ui/layout/SubHeader';
 import Sealed from '@/src/shared/ui/Sealed';
 import { FEATURE_FLAGS } from '@/src/config/feature.flags';
-import { FactoryReleaseTarget } from '@/src/features/release/types';
+import { ReleaseTargetHidden } from '@/src/features/release/types';
 import { ReleaseControlPanel } from '@/src/shared/ui/control-panel/ReleaseControlPanel';
 import { ModeBadge } from '@/src/shared/ui/game-selector/ModeBadge';
 import { ModeSelectorModal } from '@/src/shared/ui/game-selector/ModeSelectorModal';
@@ -22,7 +22,7 @@ import { DailyHubModalFooter } from '@/src/shared/ui/daily-hub/DailyHubModalFoot
 import { useDailyHub } from '@/src/shared/hooks/useDailyHub';
 import { getReleases } from '../../release';
 
-export default function DailyReleaseWrapper({ initialTarget }: { initialTarget: FactoryReleaseTarget | null }) {
+export default function DailyReleaseWrapper({ initialTarget }: { initialTarget: ReleaseTargetHidden | null }) {
     if (!FEATURE_FLAGS.daily?.release) {
         return <Sealed />;
     }
@@ -30,7 +30,7 @@ export default function DailyReleaseWrapper({ initialTarget }: { initialTarget: 
     const { navigate, state, reportReady } = useSenkaimon();
 
     const gameStore = useReleaseGame();
-    const { target, guesses, setTarget, finalizeGame, resetGame, hasFinalized, _hasHydrated, stats, loadStats } = gameStore;
+    const { target, revealedCharacter, guesses, setTarget, finalizeGame, resetGame, hasFinalized, _hasHydrated, stats, loadStats } = gameStore;
     const releases = getReleases();
     // 🎯 sync check เทียบ target.id ตรงๆ — เหมือน quote (ทั้งคู่ reconcile ด้วย .id ของ target)
     const isSynced = target !== null && initialTarget !== null && target.id === initialTarget.id;
@@ -180,7 +180,10 @@ export default function DailyReleaseWrapper({ initialTarget }: { initialTarget: 
 
                 {showSummary ? (
                     <>
-                        <ReleaseSummaryGuess isOpen={showSummary} onClose={handleCloseModal} guesses={guesses} target={target} isWin={isWin} mode="daily" stats={stats} />
+                        {/* 🩹 เดิมไม่ได้ส่ง revealedCharacter เข้ามาเลย ทั้งที่ destructure จาก
+                            gameStore ไว้แล้วด้านบน — component เลยต้องพึ่ง `target` (hidden)
+                            แทนของเต็ม ตอนนี้ต้องส่งทั้งคู่แยกกันตามสัญญาใหม่ */}
+                        <ReleaseSummaryGuess isOpen={showSummary} onClose={handleCloseModal} guesses={guesses} target={target} revealedCharacter={revealedCharacter} isWin={isWin} mode="daily" stats={stats} />
                         <DailyHubModalFooter activeMode="release" />
                     </>
                 ) : target && isSynced ? (

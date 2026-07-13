@@ -255,7 +255,7 @@ export const SearchBar = ({
                                 <div className="flex items-center gap-3 min-w-0 pr-4 transition-transform duration-200 group-hover:translate-x-1">
                                     <div className="relative w-8 h-8 shrink-0 border border-[#1a1a24]">
                                         <Image
-                                            src={`/assets/characters/${item.image}`}
+                                            src={`/api/asset/character/${item.id}`}
                                             alt={item.name}
                                             fill
                                             className={`object-cover transition-all duration-200 ${isGuessed ? 'grayscale opacity-60' : ''}`}

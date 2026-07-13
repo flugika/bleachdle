@@ -1,3 +1,5 @@
+// src/features/song/song.ts
+
 import rawSongs from '@/src/data/songs.json';
 import { BleachSong, SongDropdown, SongSchema, SongDropdownSchema } from '@/src/entities/song/schema';
 

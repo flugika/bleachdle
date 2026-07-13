@@ -216,9 +216,9 @@ export default function DailyCharacterWrapper({ initialTarget }: { initialTarget
                     </>
                 )}
 
-                {showSummary ? (
+                {showSummary && target ? (
                     <>
-                        <CharacterSummaryGuess isOpen={showSummary} onClose={handleCloseModal} guesses={guesses} target={target} isWin={isWin} mode="daily" stats={stats} />
+                        <CharacterSummaryGuess isOpen={showSummary} onClose={handleCloseModal} guesses={guesses} targetId={target.id} isWin={isWin} mode="daily" stats={stats} />
                         <DailyHubModalFooter activeMode="character" />
                     </>
                 ) : target && isSynced ? (

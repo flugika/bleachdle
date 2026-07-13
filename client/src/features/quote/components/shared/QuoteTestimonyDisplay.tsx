@@ -1,11 +1,11 @@
 // src/features/quote/components/shared/QuoteTestimonyDisplay.tsx
 'use client';
 
-import { BleachQuote } from '@/src/entities/quote/schema';
+import { QuoteTargetHidden } from '@/src/features/quote/types';
 import { generateCaseFileId } from '@/src/lib/utils/generateCaseFileId';
 
 interface QuoteTestimonyDisplayProps {
-    target: BleachQuote;
+    target: QuoteTargetHidden;
     isSolved?: boolean;
     speakerName?: string; // ส่งเข้ามาเมื่อ isSolved = true เท่านั้น
 }

@@ -4,10 +4,20 @@
 import { useEffect, useRef, useState } from 'react';
 import { BleachRelease } from '@/src/entities/release/schema';
 import { generateCaseFileId } from '@/src/lib/utils/generateCaseFileId';
-import { FactoryReleaseTarget } from '@/src/features/release/types';
+import { ReleaseTargetHidden } from '@/src/features/release/types';
 
 interface ReleaseTestimonyDisplayProps {
-    target: FactoryReleaseTarget;
+    // 🩹 SECURITY FIX: เดิม type นี้เป็น `ReleaseTarget` (ข้อมูลเต็มรวมคำเฉลย) แบบบังคับ
+    // เสมอ ไม่ว่า isSolved จะเป็น true/false ก็ตาม แปลว่า caller ต้องส่ง technique_name/
+    // trigger_phrase/technique_translation เข้ามาตั้งแต่ก่อนตอบถูกเสมอ — เท่ากับเฉลย
+    // หลุดไปกับ props/React state ตั้งแต่โหลดหน้าเกม ต่อให้ UI จะซ่อนไว้ด้วย isSolved
+    // ก็ตาม (React DevTools / network payload ก็เห็นได้อยู่ดี)
+    //
+    // ตอนนี้แยกเป็น 2 ก้อน:
+    // - `target`  : ข้อมูลปลอดภัย โชว์ได้ตลอดเวลา แม้ยังไม่เฉลย (id, release_type, clip_end_ms)
+    // - `revealed`: คำตอบเต็ม ส่งเข้ามาเป็น null/undefined ได้จนกว่าเกมจะจบ
+    target: ReleaseTargetHidden;
+    revealed?: BleachRelease | null;
     isSolved?: boolean;
     speakerName?: string;
     characterImage?: string | null;
@@ -25,8 +35,6 @@ const T = {
     jade: '#39e6b8',
     vermillion: '#c23b32',
 };
-
-const AUDIO_BASE = '/assets/audio/releases/';
 
 function typeTheme(releaseType: string) {
     const key = releaseType.toLowerCase();
@@ -146,7 +154,7 @@ function ReleaseTypeBadge({ type }: { type: string }) {
 }
 
 /* 🛠️ ปรับ Player ให้เพรียวขึ้นเมื่อเป็นแนวนอน (Certificate Style) */
-function InvokeWardPlayer({ audioUrl, clipEndMs, layout = 'vertical' }: { audioUrl: string; clipEndMs?: number | null; layout?: 'vertical' | 'horizontal' }) {
+function InvokeWardPlayer({ releaseId, clipEndMs, layout = 'vertical' }: { releaseId: string; clipEndMs?: number | null; layout?: 'vertical' | 'horizontal' }) {
     const audioRef = useRef<HTMLAudioElement>(null);
     const [playing, setPlaying] = useState(false);
 
@@ -171,7 +179,7 @@ function InvokeWardPlayer({ audioUrl, clipEndMs, layout = 'vertical' }: { audioU
 
     return (
         <div className={`relative z-10 flex ${isHz ? 'flex-row items-center gap-1 px-6' : 'flex-col items-center justify-center'}`}>
-            <audio ref={audioRef} src={`${AUDIO_BASE}${audioUrl}`} onEnded={() => setPlaying(false)} preload="none" />
+            <audio ref={audioRef} src={`/api/asset/release/${releaseId}`} onEnded={() => setPlaying(false)} preload="none" />
             <button
                 type="button" onClick={handlePlay}
                 className="group relative flex items-center justify-center outline-none transition-transform active:scale-95 shrink-0"
@@ -220,8 +228,11 @@ function VerificationHanko({ isSolved, accent }: { isSolved: boolean; accent: st
     );
 }
 
-export function ReleaseTestimonyDisplay({ target, isSolved = false, speakerName, characterImage }: ReleaseTestimonyDisplayProps) {
+export function ReleaseTestimonyDisplay({ target, revealed = null, isSolved = false, speakerName, characterImage }: ReleaseTestimonyDisplayProps) {
     const caseNo = generateCaseFileId(target.id);
+    // 🩹 isSolved จาก parent อาจ true ได้ในเชิง "เกมจบแล้ว" แต่ถ้า `revealed` ยังไม่มา
+    // (เช่น store ยัง populate ไม่ทัน) ก็ต้องไม่พังไปเรียก revealed.technique_name บน null
+    const canShowAnswer = isSolved && revealed != null;
     const accent = isSolved ? T.jade : T.vermillion;
     const typeAccent = typeTheme(target.release_type).c; // 🎨 สีตาม release_type จริง (เหมือน ReleaseTypeBadge)
 
@@ -275,7 +286,7 @@ export function ReleaseTestimonyDisplay({ target, isSolved = false, speakerName,
                 </div>
 
                 {/* ─── DYNAMIC CONTENT AREA ─── */}
-                {isSolved ? (
+                {canShowAnswer && revealed ? (
                     <div className="relative z-10 flex flex-col w-full animate-fade-in-up">
 
                         <div className="w-full text-center md:text-left mb-6">
@@ -283,11 +294,11 @@ export function ReleaseTestimonyDisplay({ target, isSolved = false, speakerName,
                                 className="italic font-black mb-1.5 tracking-wide drop-shadow-lg break-words leading-[1.15]"
                                 style={{ color: T.ink, textShadow: `0 0 20px ${typeAccent}55`, fontSize: 'clamp(1.5rem, 4vw, 2.5rem)' }}
                             >
-                                <span style={{ color: typeAccent }}>{target.trigger_phrase}, </span>{target.technique_name}
+                                <span style={{ color: typeAccent }}>{revealed.trigger_phrase}, </span>{revealed.technique_name}
                             </h2>
-                            {target.technique_translation && (
+                            {revealed.technique_translation && (
                                 <p className="text-[16px] italic break-words opacity-80" style={{ color: T.sub }}>
-                                    &ldquo;{target.technique_translation}&rdquo;
+                                    &ldquo;{revealed.technique_translation}&rdquo;
                                 </p>
                             )}
                         </div>
@@ -320,7 +331,7 @@ export function ReleaseTestimonyDisplay({ target, isSolved = false, speakerName,
                                 {/* กล่อง Player เพรียวๆ สไตล์ Data Field */}
                                 <div className="relative p-1.5 px-3 border mt-1" style={{ borderColor: `${T.gold}33`, background: 'rgba(0,0,0,0.2)', backdropFilter: 'blur(6px)' }}>
                                     <CornerFret pos="tl" /><CornerFret pos="br" />
-                                    <InvokeWardPlayer audioUrl={target.audio_url} clipEndMs={null} layout="horizontal" />
+                                    <InvokeWardPlayer releaseId={target.id} clipEndMs={null} layout="horizontal" />
                                 </div>
                             </div>
 
@@ -331,7 +342,7 @@ export function ReleaseTestimonyDisplay({ target, isSolved = false, speakerName,
                     <div className="relative z-10 flex flex-col md:flex-row gap-4 md:gap-8 items-center md:items-stretch">
                         <div className="relative flex flex-col items-center justify-center p-5 border shrink-0 min-w-[140px] md:min-w-[190px] w-full md:w-auto" style={{ borderColor: `${T.gold}22`, background: 'rgba(0,0,0,0.35)', backdropFilter: 'blur(4px)' }}>
                             <CornerFret pos="tl" /><CornerFret pos="br" />
-                            <InvokeWardPlayer audioUrl={target.audio_url} clipEndMs={target.clip_end_ms} />
+                            <InvokeWardPlayer releaseId={target.id} clipEndMs={target.clip_end_ms} />
                             <p className="text-[9px] mt-4 tracking-[0.25em] uppercase text-center" style={{ color: T.sub }}>Reiatsu<br />Signature</p>
                         </div>
 

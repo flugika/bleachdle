@@ -12,11 +12,7 @@ export async function getDailyCharacter() {
     const { data, error } = await supabaseServer
         .from('daily_schedule')
         .select(`
-            characters:character_id (
-                id, name, gender, race, affiliation, height_cm, age, eye_color, 
-                hair_color, first_appearance_chapter, weapon, release, 
-                primary_ability, image
-            )
+            characters:character_id (id)
         `)
         .eq('date', todayStr)
         .maybeSingle(); // ใช้ maybeSingle เพื่อดึงมาแค่ Object เดียว

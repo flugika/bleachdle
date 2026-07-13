@@ -4,7 +4,7 @@ import fs from 'fs';
 import path from 'path';
 import { getCharacters } from '../features/character/character.ts'; // ปรับ path ตามโปรเจกต์คุณ
 
-const ASSETS_DIR = path.resolve(process.cwd(), '../../../../../public/assets/characters');
+const ASSETS_DIR = path.resolve(process.cwd(), '../../../../../public/api/asset/character');
 
 function checkAssets() {
     const characters = getCharacters();

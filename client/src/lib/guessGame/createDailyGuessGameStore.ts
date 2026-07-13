@@ -16,6 +16,7 @@ import { compareBinaryGuess } from './compareBinaryGuess';
 
 export interface DailyGuessGameState<TCharacter, TTarget> {
     target: TTarget | null;
+    revealedCharacter: TCharacter | null;
     guesses: GuessEntry<TCharacter>[];
     stats: Stats;
     hasFinalized: boolean;
@@ -40,6 +41,7 @@ export function createDailyGuessGameStore<
     }
 ) {
     const compareGuess = config.compareGuess ?? ((guess: TCharacter, target: TTarget) => compareBinaryGuess(guess, target.character_id));
+    const resolveAnswerId = config.resolveAnswerId ?? ((target: TTarget) => target.character_id);
     const isValidGuessEntry = config.isValidGuessEntry ?? defaultIsValidGuessEntry<TCharacter>;
     const hasValidTargetShape = config.hasValidTargetShape ?? defaultHasValidTargetShape;
 
@@ -58,6 +60,7 @@ export function createDailyGuessGameStore<
         persist(
             (set, get) => ({
                 target: null,
+                revealedCharacter: null,
                 guesses: [],
                 hasFinalized: false,
                 _hasHydrated: false,
@@ -141,11 +144,18 @@ export function createDailyGuessGameStore<
 
                     const extraFinal = Object.fromEntries(derivedCounters.map((d) => [d.key, d.finalizeValue]));
 
-                    set({ hasFinalized: true, stats: newStats, ...extraFinal } as unknown as Partial<State>);
+                    // 🩹 FIX: เดิม `revealedCharacter = isWin ? guesses[0]?.guess ?? null : null`
+                    // เฉลยเฉพาะตอนชนะเท่านั้น — ฝั่งแพ้ (จบเกมแบบ isWin=false) ไม่เคยมีข้อมูล
+                    // คำตอบให้ UI เอาไปโชว์เลย ทั้งที่เกมจบแล้วควรเฉลยทั้งสองกรณี
+                    // เปลี่ยนมาใช้ getCharacterById + resolveAnswerId เพื่อดึง "คำตอบเต็ม"
+                    // จริง ๆ เสมอเมื่อเกมจบ ไม่ผูกกับผลแพ้ชนะอีกต่อไป
+                    const revealedCharacter = config.getCharacterById(resolveAnswerId(target)) ?? null;
+
+                    set({ hasFinalized: true, stats: newStats, revealedCharacter, ...extraFinal } as unknown as Partial<State>);
                     recordDailyStat(config.gameKey, isWin, guesses.length).catch(() => { });
                 },
 
-                resetGame: () => set({ target: null, guesses: [], hasFinalized: false, ...initialExtra() } as unknown as Partial<State>),
+                resetGame: () => set({ target: null, revealedCharacter: null, guesses: [], hasFinalized: false, ...initialExtra() } as unknown as Partial<State>),
             } as unknown as State),
             {
                 name: 'daily',
@@ -153,6 +163,7 @@ export function createDailyGuessGameStore<
                 partialize: (state) => ({
                     guesses: state.guesses.map(({ guess, status }) => ({ guess, status, isNew: false })),
                     target: state.target,
+                    revealedCharacter: state.revealedCharacter,
                     hasFinalized: state.hasFinalized,
                     ...Object.fromEntries(derivedCounters.map((d) => [d.key, getCounter(state, d.key)])),
                 }),

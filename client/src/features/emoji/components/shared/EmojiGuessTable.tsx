@@ -174,7 +174,7 @@ export function EmojiGuessCard({ guess, status, isNew, attemptNumber }: EmojiGue
             <div className="relative w-24 h-28 m-4 shrink-0 border-2 border-[#2d271e]/80 shadow-md bg-[#ded0b0] p-1 z-10 group overflow-hidden">
                 <div className="absolute inset-0 pointer-events-none border border-black/10 z-20" />
                 <Image
-                    src={`/assets/characters/${guess.image}`}
+                    src={`/api/asset/character/${guess.id}`}
                     alt={guess.name}
                     className="w-full h-full object-cover grayscale transition-transform duration-500 group-hover:scale-105"
                     style={{ filter: theme.photoFilter }}

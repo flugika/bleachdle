@@ -229,7 +229,7 @@ export function ReleaseGuessCard({ guess, status, isNew, attemptNumber }: Releas
                         <TypeTag type={guess.release_type} />
                         <span className="text-[10px] tracking-[0.15em] uppercase truncate flex items-center gap-1.5">
                             <span style={{ color: T.gold, opacity: 0.55 }}>術者 //</span>
-                            {character?.image && <CharacterAvatar image={`/assets/characters/${character.image}`} />}
+                            {character?.image && <CharacterAvatar image={`/api/asset/character/${character.id}`} />}
                             <span className="font-black" style={{ color: T.gold, opacity: 0.95 }}>{character?.name}</span>
                         </span>
                     </div>

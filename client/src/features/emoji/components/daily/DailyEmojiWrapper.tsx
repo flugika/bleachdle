@@ -12,7 +12,7 @@ import { Divider } from '@/src/shared/ui/layout/Divider';
 import { SubHeader } from '@/src/shared/ui/layout/SubHeader';
 import Sealed from '@/src/shared/ui/Sealed';
 import { FEATURE_FLAGS } from '@/src/config/feature.flags';
-import { EmojiTarget } from '@/src/features/emoji/types';
+import { EmojiTargetHidden } from '@/src/features/emoji/types';
 import { EmojiControlPanel } from '@/src/shared/ui/control-panel/EmojiControlPanel';
 import { ModeBadge } from '@/src/shared/ui/game-selector/ModeBadge';
 import { ModeSelectorModal } from '@/src/shared/ui/game-selector/ModeSelectorModal';
@@ -23,7 +23,7 @@ import { DailyHubModalFooter } from '@/src/shared/ui/daily-hub/DailyHubModalFoot
 import { useDailyHub } from '@/src/shared/hooks/useDailyHub';
 import { getEmojiSets } from '../../emoji';
 
-export default function DailyEmojiWrapper({ initialTarget }: { initialTarget: EmojiTarget | null }) {
+export default function DailyEmojiWrapper({ initialTarget }: { initialTarget: EmojiTargetHidden | null }) {
     if (!FEATURE_FLAGS.daily.emoji) {
         return <Sealed />;
     }
@@ -32,7 +32,7 @@ export default function DailyEmojiWrapper({ initialTarget }: { initialTarget: Em
 
     const gameStore = useEmojiGame();
     const {
-        target, guesses, revealedCount, setTarget, finalizeGame, resetGame,
+        target, revealedCharacter, guesses, revealedCount, setTarget, finalizeGame, resetGame,
         hasFinalized, _hasHydrated, stats, loadStats,
     } = gameStore;
     const characters = getCharacters();
@@ -210,7 +210,7 @@ export default function DailyEmojiWrapper({ initialTarget }: { initialTarget: Em
 
                 {showSummary ? (
                     <>
-                        <EmojiSummaryGuess isOpen={showSummary} onClose={handleCloseModal} guesses={guesses} target={target} isWin={isWin} mode="daily" stats={stats} />
+                        <EmojiSummaryGuess isOpen={showSummary} onClose={handleCloseModal} guesses={guesses} target={target} revealedCharacter={revealedCharacter} isWin={isWin} mode="daily" stats={stats} />
                         <DailyHubModalFooter activeMode="emoji" />
                     </>
                 ) : target && isSynced ? (

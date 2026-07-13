@@ -3,7 +3,8 @@
 
 import { useMemo } from 'react';
 import Image from 'next/image';
-import { QuoteGuessEntry, QuoteTarget } from '@/src/features/quote/types';
+import { QuoteGuessEntry, QuoteTargetHidden } from '@/src/features/quote/types';
+import { getQuoteById } from '@/src/features/quote/quote';
 import { QuoteTestimonyDisplay } from './QuoteTestimonyDisplay';
 import { useRaceEmblem } from '@/src/shared/hooks/useRaceEmblem';
 import { useCharacterTier } from '@/src/shared/hooks/useBadgeTier';
@@ -18,12 +19,14 @@ import {
     IdentificationHistoryPanel,
 } from '@/src/shared/ui/summary';
 import { Stats } from '@/src/lib/guessGame/types';
+import { Character } from '@/src/entities/character/schema';
 
 interface QuoteSummaryGuessProps {
     isOpen: boolean;
     onClose: () => void;
     guesses: QuoteGuessEntry[];
-    target: QuoteTarget | null;
+    target: QuoteTargetHidden | null;
+    revealedCharacter: Character | null;
     isWin: boolean;
     mode: 'daily' | 'unlimited';
     stats: Stats;
@@ -40,19 +43,27 @@ interface QuoteSummaryGuessProps {
  *   2. Gets the race-emblem watermark glow behind the reveal, driven by the
  *      revealed speaker's race (target.character comes pre-joined from
  *      useQuoteGame).
+ *
+ * 🔒 target (QuoteTargetHidden) ตอนนี้มีแค่ id/text/character_id — episode/
+ * chapter/arc/context ไม่ได้แนบมาด้วยแล้ว (กันสปอยล์ก่อนเกมจบ) ถึงตรงนี้เกมจบแล้ว
+ * เลย lookup เอกสารเต็มจาก quotes.json ตรงๆ ผ่าน getQuoteById(target.id) แทน
  */
 export const QuoteSummaryGuess = ({
     isOpen,
     onClose,
     guesses,
     target,
+    revealedCharacter,
     isWin,
     mode,
     stats = { currentStreak: 0, maxStreak: 0, playedCount: 0, passedCount: 0, guessDistribution: {} },
 }: QuoteSummaryGuessProps) => {
     if (!isOpen || !target) return null;
 
-    const answerCharacter = target.character;
+    const answerCharacter = revealedCharacter;
+
+    // 🔓 เกมจบแล้ว โหลดเอกสาร quote เต็ม (episode/chapter/arc/context) มาโชว์ได้เต็มที่
+    const fullQuote = useMemo(() => getQuoteById(target.id), [target.id]);
 
     const activeTier = useCharacterTier(stats.maxStreak);
 
@@ -63,7 +74,7 @@ export const QuoteSummaryGuess = ({
         ? "bg-gradient-to-b from-[#281508] via-[#0f0a07] to-[#0a0705] border-[#d47a2a]/45 shadow-[0_0_50px_rgba(212,122,42,0.25)] ring-1 ring-[#d47a2a]/10"
         : "bg-gradient-to-b from-[#0f0e1a] via-[#090912] to-[#05050a] border-[#c8a96e]/50 shadow-[0_0_37px_rgba(200,169,110,0.1)] ring-1 ring-[#c8a96e]/10";
 
-    const hasMeta = target.episode != null || target.chapter != null || target.arc || target.context;
+    const hasMeta = fullQuote?.episode != null || fullQuote?.chapter != null || fullQuote?.arc || fullQuote?.context;
 
     return (
         <SummaryCardShell isWin={isWin} kanji={activeTier.kanji} kanjiColor={activeTier.color}>
@@ -141,7 +152,7 @@ export const QuoteSummaryGuess = ({
                         <div className="relative flex items-start gap-4 p-4">
                             <div className="relative h-20 w-20 shrink-0 border border-[#c8a96e]/20 p-[1px] bg-black/40 z-10">
                                 <Image
-                                    src={`/assets/characters/${answerCharacter.image}`}
+                                    src={`/api/asset/character/${answerCharacter.id}`}
                                     alt={answerCharacter.name}
                                     fill
                                     className="object-cover grayscale-[10%] brightness-[95%]"
@@ -156,7 +167,7 @@ export const QuoteSummaryGuess = ({
                                         </span>
                                     )}
                                     <span className="px-2 py-0.5 text-[12px] text-[#c8a96e]/80 border border-[#c8a96e]/20 bg-[#c8a96e]/5 font-mono">
-                                        {answerCharacter.race.join(' / ')}
+                                        {answerCharacter.race.length > 1 ? "Hybrid" : answerCharacter.race}
                                     </span>
                                     <span className="px-2 py-0.5 text-[12px] text-[#c8a96e]/80 border border-[#c8a96e]/20 bg-[#c8a96e]/5 font-mono">
                                         {answerCharacter.affiliation}
@@ -167,28 +178,28 @@ export const QuoteSummaryGuess = ({
 
                         {hasMeta && (
                             <div className="grid grid-cols-2 gap-[1px] bg-[#c8a96e]/10 border-t border-[#c8a96e]/10">
-                                {target.episode != null && (
+                                {fullQuote?.episode != null && (
                                     <div className="bg-[#0a0a0f]/90 p-3 flex flex-col gap-0.5 hover:bg-[#c8a96e]/5 transition-colors">
                                         <span className="text-[11px] uppercase tracking-[0.2em] text-[#c8a96e]/70 font-bold">Episode</span>
-                                        <span className="text-[11px] text-[#eed9c4]/90 font-medium truncate">{target.episode}</span>
+                                        <span className="text-[11px] text-[#eed9c4]/90 font-medium truncate">{fullQuote.episode}</span>
                                     </div>
                                 )}
-                                {target.chapter != null && (
+                                {fullQuote?.chapter != null && (
                                     <div className="bg-[#0a0a0f]/90 p-3 flex flex-col gap-0.5 hover:bg-[#c8a96e]/5 transition-colors">
                                         <span className="text-[11px] uppercase tracking-[0.2em] text-[#c8a96e]/70 font-bold">Chapter</span>
-                                        <span className="text-[11px] text-[#eed9c4]/90 font-medium truncate">{target.chapter}</span>
+                                        <span className="text-[11px] text-[#eed9c4]/90 font-medium truncate">{fullQuote.chapter}</span>
                                     </div>
                                 )}
-                                {target.arc && (
+                                {fullQuote?.arc && (
                                     <div className="bg-[#0a0a0f]/90 p-3 flex flex-col gap-0.5 col-span-2 hover:bg-[#c8a96e]/5 transition-colors">
                                         <span className="text-[11px] uppercase tracking-[0.2em] text-[#c8a96e]/70 font-bold">Arc</span>
-                                        <span className="text-[11px] text-[#eed9c4]/90 font-medium truncate">{target.arc}</span>
+                                        <span className="text-[11px] text-[#eed9c4]/90 font-medium truncate">{fullQuote.arc}</span>
                                     </div>
                                 )}
-                                {target.context && (
+                                {fullQuote?.context && (
                                     <div className="bg-[#0a0a0f]/90 p-3 flex flex-col gap-0.5 col-span-2 hover:bg-[#c8a96e]/5 transition-colors">
                                         <span className="text-[11px] uppercase tracking-[0.2em] text-[#c8a96e]/70 font-bold">Context</span>
-                                        <span className="text-[11px] text-[#eed9c4]/90 leading-relaxed">{target.context}</span>
+                                        <span className="text-[11px] text-[#eed9c4]/90 leading-relaxed">{fullQuote.context}</span>
                                     </div>
                                 )}
                             </div>
@@ -219,7 +230,7 @@ export const QuoteSummaryGuess = ({
                             </span>
                             <div className='relative w-7 h-7 shrink-0'>
                                 <Image
-                                    src={`/assets/characters/${entry.guess.image}`}
+                                    src={`/api/asset/character/${entry.guess.id}`}
                                     alt={entry.guess.name}
                                     fill
                                     sizes="210px"

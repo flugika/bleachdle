@@ -2,12 +2,12 @@
 import 'server-only'
 
 import { supabaseServer } from '@/src/lib/supabase/supabase-server';
-import { QuoteTarget } from '@/src/features/quote/types';
+import { QuoteTargetHidden } from '@/src/features/quote/types';
 import { getTodayStr } from '@/src/lib/utils/format';
 
 /**
  * 🗓️ Mirrors getDailyCharacter() exactly, just one join deeper: we need
- * today's quote AND the character who said it (QuoteTarget = quote row +
+ * today's quote AND the character who said it (QuoteTargetHidden = quote row +
  * .character), so downstream consumers (QuoteSummaryGuess, QuoteTestimonyDisplay,
  * the race-emblem effect) can read target.character without a second round-trip.
  *
@@ -18,19 +18,14 @@ import { getTodayStr } from '@/src/lib/utils/format';
  * swap the `.from('quote_daily_schedule')` below to `.from('daily_schedule')`
  * — everything else stays the same.
  */
-export async function getDailyQuote(): Promise<QuoteTarget | null> {
+export async function getDailyQuote(): Promise<QuoteTargetHidden | null> {
     const todayStr = getTodayStr();
 
     const { data, error } = await supabaseServer
         .from('daily_schedule')
         .select(`
             quotes:quote_id (
-                id, character_id, text, episode, chapter, arc, context,
-                character:characters (
-                    id, name, gender, race, affiliation, height_cm, age, eye_color,
-                    hair_color, first_appearance_chapter, weapon, release,
-                    primary_ability, image
-                )
+                id, character_id, text, episode, chapter, arc, context
             )
         `)
         .eq('date', todayStr)
@@ -46,18 +41,9 @@ export async function getDailyQuote(): Promise<QuoteTarget | null> {
 
     if (!quoteRow) return null;
 
-    const characterData = Array.isArray(quoteRow.character)
-        ? quoteRow.character[0]
-        : quoteRow.character;
-
-    // 🛡️ A quote whose character_id points nowhere is unusable — treat it
-    // the same as "no quote scheduled" rather than shipping a half-built target.
-    if (!characterData) return null;
-
-    const { character, ...quoteFields } = quoteRow;
+    const { ...quoteFields } = quoteRow;
 
     return {
         ...quoteFields,
-        character: characterData,
-    } as QuoteTarget;
+    } as QuoteTargetHidden;
 }

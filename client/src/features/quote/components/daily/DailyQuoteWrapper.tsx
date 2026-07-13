@@ -11,7 +11,7 @@ import { Divider } from '@/src/shared/ui/layout/Divider';
 import { SubHeader } from '@/src/shared/ui/layout/SubHeader';
 import Sealed from '@/src/shared/ui/Sealed';
 import { FEATURE_FLAGS } from '@/src/config/feature.flags';
-import { QuoteTarget } from '@/src/features/quote/types';
+import { QuoteTargetHidden } from '@/src/features/quote/types';
 import { QuoteControlPanel } from '@/src/shared/ui/control-panel/QuoteControlPanel';
 import { ModeBadge } from '@/src/shared/ui/game-selector/ModeBadge';
 import { ModeSelectorModal } from '@/src/shared/ui/game-selector/ModeSelectorModal';
@@ -22,7 +22,7 @@ import { DailyHubModalFooter } from '@/src/shared/ui/daily-hub/DailyHubModalFoot
 import { useDailyHub } from '@/src/shared/hooks/useDailyHub';
 import { getQuotes } from '../../quote';
 
-export default function DailyQuoteWrapper({ initialTarget }: { initialTarget: QuoteTarget | null }) {
+export default function DailyQuoteWrapper({ initialTarget }: { initialTarget: QuoteTargetHidden | null }) {
     if (!FEATURE_FLAGS.daily.quote) {
         return <Sealed />;
     }
@@ -33,7 +33,7 @@ export default function DailyQuoteWrapper({ initialTarget }: { initialTarget: Qu
     // 🆕 initializeGame(target) ตัวเดิมถูกแทนด้วย setTarget(target) — factory ของ daily
     // ไม่มี initializeGame แล้ว (ไม่มี concept "สุ่มตัวใหม่" ใน daily อยู่แล้วแต่แรก)
     // reconcile วันเดิม/วันใหม่ทำอยู่ข้างใน setTarget ของ store เอง เหมือนที่ Silhouette daily ทำ
-    const { target, guesses, setTarget, finalizeGame, resetGame, hasFinalized, _hasHydrated, stats, loadStats } = gameStore;
+    const { target, revealedCharacter, guesses, setTarget, finalizeGame, resetGame, hasFinalized, _hasHydrated, stats, loadStats } = gameStore;
     const quotes = getQuotes();
     const isSynced = target !== null && initialTarget !== null && target.id === initialTarget.id;
 
@@ -211,7 +211,7 @@ export default function DailyQuoteWrapper({ initialTarget }: { initialTarget: Qu
 
                 {showSummary ? (
                     <>
-                        <QuoteSummaryGuess isOpen={showSummary} onClose={handleCloseModal} guesses={guesses} target={target} isWin={isWin} mode="daily" stats={stats} />
+                        <QuoteSummaryGuess isOpen={showSummary} onClose={handleCloseModal} guesses={guesses} target={target} revealedCharacter={revealedCharacter} isWin={isWin} mode="daily" stats={stats} />
                         <DailyHubModalFooter activeMode="quote" />
                     </>
                 ) : target && isSynced ? (

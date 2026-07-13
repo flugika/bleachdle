@@ -2,7 +2,7 @@
 
 > A Wordle-style character guessing game for Bleach fans — unlimited mode, attribute-based feedback, Soul Society aesthetic.
 
-**Last Updated:** 12 July 2026, 8:56 PM.
+**Last Updated:** 13 July 2026, 8:09 AM.
 
 [![Next.js](https://img.shields.io/badge/Next.js-15-black?logo=next.js)](https://nextjs.org/)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5-blue?logo=typescript)](https://www.typescriptlang.org/)
@@ -154,7 +154,7 @@ Character data is defined in `src/data/characters.json`. Each entry includes:
 - `primary_ability` — Combat utilities, Physical / Element / Kido / etc.
 - `image`
 
-To add a character: append an entry to `characters.json` and drop the corresponding `.webp` into `public/assets/characters/`. Run `src/lib/utils/scripts/check-assets.js` to validate name parity between the JSON and the asset directory.
+To add a character: append an entry to `characters.json` and drop the corresponding `.webp` into `public/api/asset/character/`. Run `src/lib/utils/scripts/check-assets.js` to validate name parity between the JSON and the asset directory.
 
 ---
 
@@ -297,6 +297,13 @@ bleachdle
 │  │  │  ├─ AboutPageClient.tsx
 │  │  │  └─ page.tsx
 │  │  ├─ api
+│  │  │  ├─ asset
+│  │  │  │  ├─ audio
+│  │  │  │  │  └─ [...path]
+│  │  │  │  │     └─ route.ts
+│  │  │  │  └─ [type]
+│  │  │  │     └─ [id]
+│  │  │  │        └─ route.ts
 │  │  │  ├─ monitor
 │  │  │  │  └─ health
 │  │  │  │     └─ route.ts
@@ -331,6 +338,30 @@ bleachdle
 │  │  │  └─ page.tsx
 │  │  └─ [...catchAll]
 │  │     └─ page.tsx
+│  ├─ assets-private
+│  │  ├─ audio
+│  │  │  ├─ releases
+│  │  │  │  ├─ Bankai_Byakuya_Kuchiki.mp3
+│  │  │  │  ├─ Bankai_Chojiro_Sasakibe.mp3
+│  │  │  │  ├─ Bankai_Genryusai_Shigekuni_Yamamoto.mp3
+│  │  │  │  └─ ...
+│  │  │  └─ songs
+│  │  │     ├─ 1106_tybw.mp3
+│  │  │     ├─ after_dark.mp3
+│  │  │     ├─ alones.mp3
+│  │  │     └─ ...
+│  │  ├─ characters
+│  │  │  ├─ Aaroniero_Arruruerie.webp
+│  │  │  ├─ Abirama_Redder.webp
+│  │  │  ├─ Aisslinger_Wernarr.webp
+│  │  │  ├─ Akon.webp
+│  │  │  └─ ...
+│  │  └─ character_silhouette
+│  │     ├─ Aaroniero_Arruruerie_cutout_silhouette.webp
+│  │     ├─ Abirama_Redder_cutout_silhouette.webp
+│  │     ├─ Aisslinger_Wernarr_cutout_silhouette.webp
+│  │     ├─ Akon_cutout_silhouette.webp
+│  │     └─ ...
 │  ├─ CLAUDE.md
 │  ├─ eslint.config.mjs
 │  ├─ next.config.ts
@@ -341,30 +372,7 @@ bleachdle
 │  ├─ proxy.ts
 │  ├─ public
 │  │  ├─ assets
-│  │  │  ├─ audio
-│  │  │  │  ├─ releases
-│  │  │  │  │  ├─ Bankai_Byakuya_Kuchiki.mp3
-│  │  │  │  │  ├─ Bankai_Chojiro_Sasakibe.mp3
-│  │  │  │  │  ├─ Bankai_Genryusai_Shigekuni_Yamamoto.mp3
-│  │  │  │  │  └─ ...
-│  │  │  │  └─ songs
-│  │  │  │     ├─ 1106_tybw.mp3
-│  │  │  │     ├─ after_dark.mp3
-│  │  │  │     ├─ alones.mp3
-│  │  │  │     └─ ...
 │  │  │  ├─ bleachdle-avatar.psd
-│  │  │  ├─ characters
-│  │  │  │  ├─ Aaroniero_Arruruerie.webp
-│  │  │  │  ├─ Abirama_Redder.webp
-│  │  │  │  ├─ Aisslinger_Wernarr.webp
-│  │  │  │  ├─ Akon.webp
-│  │  │  │  └─ ...
-│  │  │  ├─ character_silhouette
-│  │  │  │  ├─ Aaroniero_Arruruerie_cutout_silhouette.webp
-│  │  │  │  ├─ Abirama_Redder_cutout_silhouette.webp
-│  │  │  │  ├─ Aisslinger_Wernarr_cutout_silhouette.webp
-│  │  │  │  ├─ Akon_cutout_silhouette.webp
-│  │  │  │  └─ ...
 │  │  │  ├─ emblems
 │  │  │  │  ├─ arrancar.webp
 │  │  │  │  ├─ daiko_shinigami.webp
@@ -547,6 +555,8 @@ bleachdle
 │  │  │     ├─ SupportForm.tsx
 │  │  │     └─ SupportPageClient.tsx
 │  │  ├─ lib
+│  │  │  ├─ assets
+│  │  │  │  └─ resolveAssetPath.ts
 │  │  │  ├─ guessGame
 │  │  │  │  ├─ compareBinaryGuess.ts
 │  │  │  │  ├─ createDailyGuessGameStore.ts

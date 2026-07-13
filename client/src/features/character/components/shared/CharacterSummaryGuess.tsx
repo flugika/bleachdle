@@ -19,6 +19,7 @@ import {
 import { formatAge, formatHeight } from '@/src/lib/utils/format';
 import { Stats } from '@/src/lib/guessGame/types';
 import { Character } from '@/src/entities/character/schema';
+import { getCharacterById } from '../../character';
 
 // 🗺️ 1. TYBW LORE LOOKUP DICTIONARY (ทำหน้าที่เป็น Whitelist & อัปเดตชื่อไฟล์จริง)
 const EMBLEM_DATA: Record<string, { file: string; color: string }> = {
@@ -39,14 +40,16 @@ interface CharacterSummaryGuessProps {
     isOpen: boolean;
     onClose: () => void;
     guesses: GuessEntry[];
-    target: Character | null;
+    targetId: string;
     isWin: boolean;
     mode: 'daily' | 'unlimited';
     stats: Stats;
 }
 
-export const CharacterSummaryGuess = ({ isOpen, onClose, guesses, target, isWin, mode, stats = { currentStreak: 0, maxStreak: 0, playedCount: 0, passedCount: 0, guessDistribution: {} }, }: CharacterSummaryGuessProps) => {
+export const CharacterSummaryGuess = ({ isOpen, onClose, guesses, targetId, isWin, mode, stats = { currentStreak: 0, maxStreak: 0, playedCount: 0, passedCount: 0, guessDistribution: {} }, }: CharacterSummaryGuessProps) => {
     if (!isOpen) return null;
+
+    const target = getCharacterById(targetId);
 
     const activeTier = useCharacterTier(stats.maxStreak);
 
@@ -137,7 +140,7 @@ export const CharacterSummaryGuess = ({ isOpen, onClose, guesses, target, isWin,
                             {/* Character Image */}
                             <div className='relative h-20 w-20 shrink-0 border border-[#c8a96e]/20 p-[1px] bg-black/40 z-10'>
                                 <Image
-                                    src={`/assets/characters/${target.image}`}
+                                    src={`/api/asset/character/${target.id}`}
                                     alt={target.name}
                                     fill
                                     className="object-cover grayscale-[10%] brightness-[95%]"
@@ -215,7 +218,7 @@ export const CharacterSummaryGuess = ({ isOpen, onClose, guesses, target, isWin,
                             </span>
                             <div className='relative w-7 h-7 shrink-0'>
                                 <Image
-                                    src={`/assets/characters/${entry.guess.image}`}
+                                    src={`/api/asset/character/${entry.guess.id}`}
                                     alt={entry.guess.name}
                                     fill
                                     sizes="210px"

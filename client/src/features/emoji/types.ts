@@ -3,44 +3,29 @@ import { Character } from '@/src/entities/character/schema';
 import { BleachEmojiSet } from '@/src/entities/emoji/schema';
 import { GuessGameController, Stats } from '@/src/lib/guessGame/types';
 
-/**
- * 🎯 เหมือน Quote: คำตอบเดียวเป๊ะ ไม่มี higher/lower/partial
- * "guess" คือ Character ที่ผู้เล่นคิดว่าเป็นเจ้าของชุด emoji
- */
 export type EmojiGuessStatus = 'correct' | 'wrong';
 
-/**
- * 🔗 emoji set joined กับ Character เต็มๆ — เหมือน QuoteTarget
- * ให้ทุก consumer (display, summary) อ่าน target.character ได้เลย
- * ไม่ต้อง getCharacterById ซ้ำ
- */
+/** 🆕 สิ่งที่ client ถือระหว่างเล่น — มีแค่ character_id เฉยๆ ไม่มี name/image */
+export type EmojiTargetHidden = BleachEmojiSet;
+
+/** ตัวเต็ม — ใช้ตอน finalize แล้วเท่านั้น (revealedCharacter ใน store) */
 export type EmojiTarget = BleachEmojiSet & { character: Character };
 
 export interface EmojiGuessEntry {
     guess: Character;
     status: EmojiGuessStatus;
-    isNew?: boolean; // true เฉพาะ guess ล่าสุด → trigger animation ใน EmojiGuessTable
+    isNew?: boolean;
 }
 
-/**
- * 🔁 Extends the shared GuessGameController so <GuessSearchBar /> can drive
- * this store with zero special-casing — same contract Quote/Character mode uses.
- */
 export interface EmojiGameController extends GuessGameController {
-    target: EmojiTarget | null;
+    target: EmojiTargetHidden | null;      // 🔧 เปลี่ยนจาก EmojiTarget
+    revealedCharacter: Character | null;   // 🆕 เต็มเฉพาะตอน isWin, ไม่งั้น null
     guesses: EmojiGuessEntry[];
     stats: Stats;
     loadStats: () => void;
-
-    /**
-     * 🔓 จำนวน emoji ที่เปิดเผยแล้ว (1-4) ของ target ปัจจุบัน
-     * เริ่มต้นที่ 1 เสมอเมื่อ initializeGame แล้วไต่ขึ้นทีละ 1 ทุก 2 ครั้งที่เดาผิด
-     * จนสุดที่ 4 — ดู logic ทั้งหมดใน useEmojiGame.ts > addGuess()
-     */
     revealedCount: number;
-
     addGuess: (characterId: string) => void;
-    setTarget: (target: EmojiTarget) => void;
+    setTarget: (target: EmojiTargetHidden) => void;
     initializeGame: (force?: boolean) => void;
     finalizeGame: (isWin: boolean) => void;
     resetGame: () => void;

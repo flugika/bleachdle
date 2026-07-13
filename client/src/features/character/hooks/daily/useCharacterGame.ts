@@ -19,6 +19,7 @@ interface GuessEntry {
 }
 
 interface CharacterGameState {
+    targetId: string | null;
     target: Character | null;
     guesses: GuessEntry[];
     stats: Stats; // 🆕
@@ -36,6 +37,7 @@ interface CharacterGameState {
 export const useCharacterGame = create<CharacterGameState>()(
     persist(
         (set, get) => ({
+            targetId: null,
             target: null,
             guesses: [],
             stats: { currentStreak: 0, maxStreak: 0, playedCount: 0, passedCount: 0, guessDistribution: {} }, // 🆕
@@ -43,7 +45,7 @@ export const useCharacterGame = create<CharacterGameState>()(
             _hasHydrated: false,
             setHasHydrated: (state) => set({ _hasHydrated: state }),
 
-            setTarget: (target) => set({ target }),
+            setTarget: (target) => set({ target, targetId: target.id }),
 
             // 🆕 ย้ายมาจาก component: อ่าน STORAGE_KEYS.CHARACTER_STATS เข้า store
             loadStats: () => {
@@ -58,9 +60,10 @@ export const useCharacterGame = create<CharacterGameState>()(
                 if (!state.target || isGameOver) return state;
 
                 const guessedCharacter = getCharacterById(guessId);
-                if (!guessedCharacter) return state;
+                const targetCharacter = getCharacterById(state.target.id);
+                if (!guessedCharacter || !targetCharacter) return state;
 
-                const result = compareCharacter(guessedCharacter, state.target);
+                const result = compareCharacter(guessedCharacter, targetCharacter);
 
                 const newEntry: GuessEntry = { guess: guessedCharacter, result, isNew: true };
                 const prevGuesses: GuessEntry[] = state.guesses.map(g => ({ ...g, isNew: false }));
@@ -71,16 +74,14 @@ export const useCharacterGame = create<CharacterGameState>()(
             initializeGame: (target) => {
                 if (!target) return;
 
-                const currentTarget = get().target;
+                const { targetId } = get();
 
-                if (currentTarget && currentTarget.id === target.id) {
-                    if (currentTarget !== target) {
-                        set({ target });
-                    }
+                if (targetId && targetId === target.id) {
+                    set({ target }); // sync object ใหม่ (เผื่อ ref เปลี่ยน) แต่ id เดิม
                     return;
                 }
 
-                set({ target, guesses: [], hasFinalized: false });
+                set({ target, targetId: target.id, guesses: [], hasFinalized: false });
             },
 
             finalizeGame: (isWin) => {
@@ -143,7 +144,7 @@ export const useCharacterGame = create<CharacterGameState>()(
             storage: nestedJSONStorage(STORAGE_KEYS.CHARACTER_PROGRESS),
             partialize: (state) => ({
                 guesses: state.guesses,
-                target: state.target,
+                targetId: state.targetId,
                 hasFinalized: state.hasFinalized,
                 // ❌ ไม่ใส่ stats — stats เก็บแยกที่ STORAGE_KEYS.CHARACTER_STATS อยู่แล้ว
             }),
@@ -156,9 +157,12 @@ export const useCharacterGame = create<CharacterGameState>()(
                         state.guesses = [];
                         state.target = null;
                         state.hasFinalized = false;
+                    } else if (state.targetId) {
+                        // 👈 resolve object จาก id ที่โหลดมา ไม่ได้อ่าน target ตรงๆ จาก localStorage
+                        state.target = getCharacterById(state.targetId) ?? null;
                     }
 
-                    state.setHasHydrated(true);
+                    state._hasHydrated = true;
                 }
             },
         }

@@ -18,6 +18,7 @@ interface GuessEntry {
 }
 
 interface CharacterGameState {
+    targetId: string | null;
     target: Character | null;
     guesses: GuessEntry[];
     stats: Stats; // 🆕
@@ -37,6 +38,7 @@ interface CharacterGameState {
 export const useCharacterGame = create<CharacterGameState>()(
     persist(
         (set, get) => ({
+            targetId: null,
             target: null,
             guesses: [],
             stats: { currentStreak: 0, maxStreak: 0, playedCount: 0, passedCount: 0, guessDistribution: {} }, // 🆕
@@ -44,7 +46,7 @@ export const useCharacterGame = create<CharacterGameState>()(
             _hasHydrated: false,
             setHasHydrated: (state) => set({ _hasHydrated: state }),
 
-            setTarget: (target) => set({ target }),
+            setTarget: (target) => set({ target, targetId: target.id }),
 
             // 🆕 ย้ายมาจาก component: อ่าน STORAGE_KEYS.CHARACTER_STATS เข้า store
             loadStats: () => {
@@ -80,26 +82,20 @@ export const useCharacterGame = create<CharacterGameState>()(
             // กัน race condition ระหว่าง persist rehydrate (async จาก localStorage) กับ effect
             // ฝั่ง component ที่อาจยิงก่อน/หลัง hydrate เสร็จคนละรอบ ทำให้สุ่มซ้อนกัน 2 ครั้ง
             initializeGame: (force = false) => {
-                const { target, _hasHydrated } = get();
-
+                const { targetId, _hasHydrated } = get();
                 if (!_hasHydrated) return;
-                if (!force && target) return;
+                if (!force && targetId) return;
 
                 const allCharacters = getCharacters();
-
                 const completedData = JSON.parse(localStorage.getItem(STORAGE_KEYS.CHARACTER_COMPLETED) || '{}');
                 const completedIds = completedData.unlimited || [];
-
                 const remainingCharacters = allCharacters.filter(c => !completedIds.includes(c.id));
 
                 if (remainingCharacters.length === 0) {
-                    set({ target: null, guesses: [], hasFinalized: false });
+                    set({ target: null, targetId: null, guesses: [], hasFinalized: false });
                 } else {
-                    set({
-                        target: remainingCharacters[Math.floor(Math.random() * remainingCharacters.length)],
-                        guesses: [],
-                        hasFinalized: false
-                    });
+                    const picked = remainingCharacters[Math.floor(Math.random() * remainingCharacters.length)];
+                    set({ target: picked, targetId: picked.id, guesses: [], hasFinalized: false });
                 }
             },
             finalizeGame: (isWin) => {
@@ -156,7 +152,7 @@ export const useCharacterGame = create<CharacterGameState>()(
                 });
             },
             resetGame: () => {
-                set({ target: null, guesses: [], hasFinalized: false });
+                set({ targetId: null, target: null, guesses: [], hasFinalized: false });
             },
             hardReset: () => {
                 const progressData = JSON.parse(localStorage.getItem(STORAGE_KEYS.CHARACTER_PROGRESS) || '{}');
@@ -167,7 +163,7 @@ export const useCharacterGame = create<CharacterGameState>()(
                 completedData.unlimited = [];
                 localStorage.setItem(STORAGE_KEYS.CHARACTER_COMPLETED, JSON.stringify(completedData));
 
-                set({ target: null, guesses: [], hasFinalized: false });
+                set({ targetId: null, target: null, guesses: [], hasFinalized: false });
 
                 setTimeout(() => {
                     get().initializeGame(true);
@@ -189,7 +185,7 @@ export const useCharacterGame = create<CharacterGameState>()(
             storage: nestedJSONStorage(STORAGE_KEYS.CHARACTER_PROGRESS),
             partialize: (state) => ({
                 guesses: state.guesses,
-                target: state.target,
+                targetId: state.targetId,
                 hasFinalized: state.hasFinalized,
             }),
             // 👇 หัวใจของ fix: บอก store ว่า rehydrate เสร็จแล้วจริงๆ (เหมือน daily store)
@@ -203,9 +199,11 @@ export const useCharacterGame = create<CharacterGameState>()(
                         state.guesses = [];
                         state.target = null;
                         state.hasFinalized = false;
+                    } else if (state.targetId) {
+                        state.target = getCharacterById(state.targetId) ?? null;   // 👈 resolve จาก id
                     }
 
-                    state.setHasHydrated(true);
+                    state._hasHydrated = true;
                 }
             },
         }

@@ -4,7 +4,7 @@
 import { useState, useEffect } from 'react';
 import Image from 'next/image';
 import { DailyResetTimer } from '@/src/shared/ui/DailyResetTimer';
-import { SilhouetteGuessEntry, SilhouetteTarget } from '@/src/features/silhouette/types';
+import { SilhouetteGuessEntry, SilhouetteTarget, SilhouetteTargetHidden } from '@/src/features/silhouette/types';
 import { SilhouetteImage } from './SilhouetteImage';
 import { useCharacterTier } from '@/src/shared/hooks/useBadgeTier';
 import {
@@ -16,12 +16,14 @@ import {
     SummaryActionButton,
     IdentificationHistoryPanel,
 } from '@/src/shared/ui/summary';
+import { Character } from '@/src/entities/character/schema';
 
 interface SilhouetteSummaryGuessProps {
     isOpen: boolean;
     onClose: () => void;
     guesses: SilhouetteGuessEntry[];
-    target: SilhouetteTarget | null;
+    target: SilhouetteTargetHidden | null;
+    revealedCharacter: Character | null;
     isWin: boolean;
     mode: 'daily' | 'unlimited';
     stats?: { currentStreak: number; maxStreak: number, playedCount: number, passedCount: number, guessDistribution: Record<string, number> };
@@ -32,6 +34,7 @@ export const SilhouetteSummaryGuess = ({
     onClose,
     guesses,
     target,
+    revealedCharacter,
     isWin,
     mode,
     stats = { currentStreak: 0, maxStreak: 0, playedCount: 0, passedCount: 0, guessDistribution: {} },
@@ -54,7 +57,7 @@ export const SilhouetteSummaryGuess = ({
 
     if (!isOpen || !target) return null;
 
-    const answerCharacter = target.character;
+    const answerCharacter = revealedCharacter;
 
     // การกำหนดค่า Color Scheme ประจำผลลัพธ์
     const cardBgStyle = isWin
@@ -130,13 +133,8 @@ export const SilhouetteSummaryGuess = ({
             )}
 
             <IdentificationHistoryPanel
-                historyLabel="Identification Logs"
-                historyLabelClassName="text-[10px] text-[#ebc7c7]/40 uppercase tracking-[0.2em] mb-1 font-mono"
-                countSuffixColorClassName="text-[#ebc7c7]/40"
                 guessCount={guesses.length}
                 chronicleLabel="Visual Chronicle // View History"
-                triggerButtonClassName="flex items-center justify-between w-full border border-[#c8a96e]/15 bg-[#c8a96e]/4 hover:bg-[#c8a96e]/8 px-3 py-2 text-[9px] font-mono uppercase tracking-[0.15em] text-[#c8a96e] transition-all duration-200 select-none rounded-xs"
-                triggerLabelWrapperClassName="flex items-center gap-2"
                 matrix={guesses.map((guess, i) => (
                     <div
                         key={i}
@@ -159,7 +157,7 @@ export const SilhouetteSummaryGuess = ({
                             {/* 🖼️ Premium Character Avatar Thumbnail (พอร์ตมาตรฐานมาจากคำคมโหมด) */}
                             <div className="relative w-7 h-7 shrink-0 border border-white/5 bg-neutral-900 overflow-hidden rounded-xs shadow-sm">
                                 <Image
-                                    src={`/assets/characters/${entry.guess.image}`}
+                                    src={`/api/asset/character/${entry.guess.id}`}
                                     alt={entry.guess.name}
                                     className="w-full h-full object-cover filter brightness-[90%] contrast-[105%]"
                                     draggable={false}

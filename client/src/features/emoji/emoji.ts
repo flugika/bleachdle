@@ -1,4 +1,5 @@
 // src/features/emoji/emoji.ts
+
 import rawEmojiSets from '@/src/data/emojis.json';
 import { BleachEmojiSet, EmojiSetSchema } from '@/src/entities/emoji/schema';
 import { Character } from '@/src/entities/character/schema';

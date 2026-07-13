@@ -21,7 +21,7 @@ const EDGE_DIRECTION_MIN_MAGNITUDE = 15;
 const CONTOUR_WEIGHT = 0.7;
 const EXTREMITY_WEIGHT = 0.3;
 
-const SILHOUETTE_DIR = path.resolve('public/assets/character_silhouette');
+const SILHOUETTE_DIR = path.resolve('assets-private/character_silhouette');
 const OUTPUT_PATH = path.resolve('src/data/silhouette-cells.json');
 const DEBUG_STATS_PATH = path.resolve('src/data/silhouette-cells.debug.json');
 

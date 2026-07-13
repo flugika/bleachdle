@@ -2,13 +2,13 @@
 'use client';
 
 import { compareCharacter } from "@/src/features/character/compareCharacter";
-import { getCharacterById } from "@/src/features/character/character";
 import { formatAge, formatHeight } from "@/src/lib/utils/format";
 import { useMemo } from "react";
 import { CELL_STYLES, ResultCell } from "./CharacterGuessTable";
 import { Button } from "@/src/shared/ui/button";
 import { Modal } from "@/src/shared/ui/modal";
 import Image from 'next/image';
+import { Character } from "@/src/entities/character/schema";
 
 const statusDefinitions = [
     { label: 'Correct Match', status: 'correct' as const },
@@ -26,8 +26,63 @@ interface CharacterHowToPlayModalProps {
 
 export const CharacterHowToPlayModal = ({ isOpen, onClose, mode }: CharacterHowToPlayModalProps) => {
     // ── 🎯 1. ประกาศ Hooks ทั้งหมดไว้ที่ TOP LEVEL ──────────────────
-    const target = useMemo(() => getCharacterById("e9a8f2c3-9d10-4f5a-8b2c-1d0e9f8a7b6c"), []);
-    const guess = useMemo(() => getCharacterById("c7a8b9d0-1e2f-4a3b-8c5d-6e7f8a9b0c1d"), []);
+    const target = {
+        "id": "e9a8f2c3-9d10-4f5a-8b2c-1d0e9f8a7b6c",
+        "name": "Byakuya Kuchiki",
+        "gender": "Male",
+        "race": [
+            "Shinigami"
+        ],
+        "affiliation": "Gotei 13",
+        "height_cm": 180,
+        "age": 300,
+        "eye_color": "Grey",
+        "hair_color": "Black",
+        "first_appearance_chapter": "Soul Society",
+        "weapon": [
+            "Weaponized"
+        ],
+        "release": [
+            "Shikai",
+            "Bankai"
+        ],
+        "primary_ability": [
+            "Element",
+            "Physical",
+            "Kido"
+        ],
+        "image": "Byakuya_Kuchiki.webp"
+    } as Character;
+
+    const guess = {
+        "id": "c7a8b9d0-1e2f-4a3b-8c5d-6e7f8a9b0c1d",
+        "name": "Ichigo Kurosaki",
+        "gender": "Male",
+        "race": [
+            "Shinigami",
+            "Quincy",
+            "Hollow",
+            "Human",
+            "Fullbringer"
+        ],
+        "affiliation": "Independent",
+        "height_cm": 181,
+        "age": 19,
+        "eye_color": "Brown",
+        "hair_color": "Orange",
+        "first_appearance_chapter": "Agent of the Shinigami",
+        "weapon": [
+            "Weaponized"
+        ],
+        "release": [
+            "Shikai",
+            "Bankai"
+        ],
+        "primary_ability": [
+            "Physical"
+        ],
+        "image": "Ichigo_Kurosaki.webp"
+    } as Character;
 
     const comparison = useMemo(() => {
         if (target && guess) {
@@ -122,7 +177,7 @@ export const CharacterHowToPlayModal = ({ isOpen, onClose, mode }: CharacterHowT
                     {target && (
                         <div className="relative flex items-center gap-4">
                             <div className="relative w-16 h-16">
-                                <Image src={`/assets/characters/${target.image}`} alt={target.name} fill sizes="66px" className="object-cover border border-[#2a2a42]" />
+                                <Image src={`/api/asset/character/${target.id}`} alt={target.name} fill sizes="66px" className="object-cover border border-[#2a2a42]" />
                             </div>
                             <p className="text-xs text-[#a0988e]">Target Character: <span className="font-bold text-white">{target.name}</span></p>
                         </div>
@@ -139,7 +194,7 @@ export const CharacterHowToPlayModal = ({ isOpen, onClose, mode }: CharacterHowT
                         <div className="grid grid-cols-13 gap-1 text-[10px] font-bold text-center mb-2">
                             <div className={`${cellClass} bg-[#0e0e1a]`}>Target</div>
                             <div className={`${cellClass} bg-gray-900 relative`}>
-                                <Image src={`/assets/characters/${target.image}`} alt={target.name} fill sizes="40px" className="object-cover" />
+                                <Image src={`/api/asset/character/${target.id}`} alt={target.name} fill sizes="40px" className="object-cover" />
                             </div>
                             <div className={`${cellClass} bg-[#0e0e1a]`}>{target.gender}</div>
                             <div className={`${cellClass} bg-[#0e0e1a]`}>{target.race.length > 1 ? "Hybrid" : target.race[0]}</div>
@@ -160,7 +215,7 @@ export const CharacterHowToPlayModal = ({ isOpen, onClose, mode }: CharacterHowT
                         <div className="grid grid-cols-13 gap-1 text-[10px] font-bold text-center">
                             <div className={`${cellClass} bg-[#0e0e1a]`}>Guess</div>
                             <div className={`${cellClass} bg-gray-900 relative`}>
-                                <Image src={`/assets/characters/${guess.image}`} alt={guess.name} fill sizes="40px" className="object-cover" />
+                                <Image src={`/api/asset/character/${guess.id}`} alt={guess.name} fill sizes="40px" className="object-cover" />
                             </div>
 
                             <ResultCell size="sm" value={guess.gender} status={comparison.gender} colIndex={0} animate={false} />

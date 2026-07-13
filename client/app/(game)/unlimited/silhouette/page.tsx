@@ -41,7 +41,7 @@ export default function UnlimitedSilhouetteGame() {
     const { navigate, state, reportReady } = useSenkaimon();
 
     const gameStore = useSilhouetteGame();
-    const { target, guesses, initializeGame, finalizeGame, resetGame, hardReset, hasFinalized, _hasHydrated, resetStreakKeepMax, stats, loadStats } = gameStore;
+    const { target, revealedCharacter, guesses, initializeGame, finalizeGame, resetGame, hardReset, hasFinalized, _hasHydrated, resetStreakKeepMax, stats, loadStats } = gameStore;
     const silhouettes = getSilhouettes();
     const characters = getCharacters(); // full roster ตามที่ SilhouetteControlPanel ต้องการ
 
@@ -242,7 +242,7 @@ export default function UnlimitedSilhouetteGame() {
                     {/* 📊 โซนแสดงรายงานตารางสรุป / ตารางเดาผล */}
                     <div className="w-full mt-2">
                         {showSummary ? (
-                            <SilhouetteSummaryGuess isOpen={showSummary} onClose={handleCloseModal} guesses={guesses} target={target} isWin={isWin} mode="unlimited" stats={stats} />
+                            <SilhouetteSummaryGuess isOpen={showSummary} onClose={handleCloseModal} guesses={guesses} target={target} revealedCharacter={revealedCharacter} isWin={isWin} mode="unlimited" stats={stats} />
                         ) : target ? (
                             /* นำแรปเปอร์ขยายจอตัวเดิม (w-full overflow-x-auto) ออก 
                                เนื่องจากตัว SilhouetteGuessTable ด้านในถูกออกแบบใหม่ให้จบในตัวแบบพรีเมียมแล้ว */

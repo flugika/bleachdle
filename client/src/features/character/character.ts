@@ -1,4 +1,5 @@
 // src/data/character.ts
+
 import rawCharacters from '@/src/data/characters.json';
 import { Character, CharacterDropdown } from '@/src/entities/character/schema';
 

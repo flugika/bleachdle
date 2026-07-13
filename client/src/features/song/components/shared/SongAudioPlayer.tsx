@@ -235,6 +235,14 @@ export function SongAudioPlayer({
         }
     };
 
+    const handleSeek = useCallback((ms: number) => {
+        const audio = audioRef.current;
+        if (!audio || !isFull) return;
+        const seconds = ms / 1000;
+        audio.currentTime = seconds;
+        setCurrentTime(seconds);
+    }, [isFull]);
+
     // 🆕 ถ้าอยากได้ seek กลับมาในอนาคต ค่อยผูก handler นี้เข้ากับ SongProgressBar
     // (เช่น onClick คำนวณตำแหน่งจาก event.clientX) — ตอนนี้ลบทิ้งเพราะไม่มี UI ไหนเรียกใช้แล้ว
 
@@ -361,7 +369,7 @@ export function SongAudioPlayer({
 
             {target?.audio_url && (
                 <audio
-                    ref={audioRef} src={target.audio_url} preload="auto"
+                    ref={audioRef} src={`/api/asset/song/${target.id}`} preload="auto"
                     onCanPlay={handleCanPlay} onCanPlayThrough={handleCanPlay} onWaiting={handleWaiting}
                     onLoadStart={handleLoadStart} onError={handleAudioError} onLoadedMetadata={handleLoadedMetadata}
                     onTimeUpdate={handleTimeUpdate} onEnded={handleEnded}
@@ -468,6 +476,8 @@ export function SongAudioPlayer({
                         isPlaying={isPlaying}
                         showStageMarks={!isFull}
                         showTimeLabels={!isFull}
+                        seekable={isFull}
+                        onSeek={handleSeek}
                     />
 
                 </div>

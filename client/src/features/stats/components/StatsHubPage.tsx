@@ -40,7 +40,7 @@
 "use client";
 
 import React, { useMemo, useState } from "react";
-import { MODE_ACCENT, BL_MODES_METADATA, MODE_ORDER, SubFeatureKey } from "@/src/config/mode";
+import { MODE_ACCENT, SubFeatureKey } from "@/src/config/mode";
 import { DailyStatsBar } from "@/src/shared/ui/daily-hub/DailyStatsBar";
 
 // ─────────────────────────────────────────────
@@ -119,12 +119,25 @@ const T = {
     mutedMid: "#a8998a",
 } as const;
 
-// MODE_ORDER, mode kanji, and mode labels now come from config/mode.ts
-// (BL_MODES_METADATA + MODE_ORDER) instead of being redeclared here — this
-// used to drift out of sync with Home/About whenever a symbol changed.
-// NOTE: config's MODE_ORDER is ['character','song','quote','silhouette','emoji','release'],
-// which differs from the old local order here (song and quote were swapped).
-// If the visual grid below depends on the old order, re-check §03/§05 layout.
+const MODE_ORDER: SubFeatureKey[] = ["character", "quote", "silhouette", "emoji", "song", "release"];
+
+const MODE_KANJI: Record<string, string> = {
+    character: "士",
+    quote: "言",
+    silhouette: "像",
+    emoji: "絵",
+    song: "曲",
+    release: "解",
+};
+
+const MODE_LABELS: Record<string, string> = {
+    character: "CHARACTER",
+    quote: "QUOTE",
+    silhouette: "SILHOUETTE",
+    emoji: "EMOJI",
+    song: "SONG",
+    release: "RELEASE",
+};
 
 // technical scan-method flavor text, reused from Central46 to keep vocab consistent
 const MODE_METHOD: Record<string, string> = {
@@ -564,7 +577,7 @@ function ModeArchiveCard({
                         {MODE_METHOD[mode]}
                     </p>
                     <h4 style={{ fontSize: "16px", fontWeight: 700, letterSpacing: "0.1em", color: T.value, margin: 0 }}>
-                        {mode.toUpperCase()}
+                        {MODE_LABELS[mode]}
                     </h4>
                 </div>
                 <div className="flex items-start gap-2 flex-shrink-0">
@@ -579,7 +592,7 @@ function ModeArchiveCard({
                         </span>
                     )}
                     <span className="text-4xl font-black select-none" style={{ color: accent.base, opacity: 0.15 }}>
-                        {BL_MODES_METADATA[mode].symbol}
+                        {MODE_KANJI[mode]}
                     </span>
                 </div>
             </div>
@@ -807,7 +820,7 @@ function DisciplineRegistryCell({
                 <button
                     type="button"
                     onClick={startEdit}
-                    aria-label={`Re-etch name for ${mode.toUpperCase()}`}
+                    aria-label={`Re-etch name for ${MODE_LABELS[mode]}`}
                     className="absolute inset-0 flex items-start justify-end p-2 transition-opacity"
                     style={{
                         opacity: hovered ? 1 : 0,
@@ -841,7 +854,7 @@ function DisciplineRegistryCell({
                     transition: "font-size 0.2s ease",
                 }}
             >
-                {BL_MODES_METADATA[mode].symbol}
+                {MODE_KANJI[mode]}
             </span>
             <p
                 style={{
@@ -853,7 +866,7 @@ function DisciplineRegistryCell({
                     position: "relative",
                 }}
             >
-                {mode.toUpperCase()}
+                {MODE_LABELS[mode]}
             </p>
 
             {editing ? (
@@ -1107,8 +1120,8 @@ export default function StatsHubPage({
                         />
                         <HeroMetric
                             label="STRONGEST DISCIPLINE"
-                            value={best ? BL_MODES_METADATA[best].symbol : "—"}
-                            sub={best ? best.toUpperCase() : "INSUFFICIENT DATA"}
+                            value={best ? MODE_KANJI[best] : "—"}
+                            sub={best ? MODE_LABELS[best] : "INSUFFICIENT DATA"}
                             accent={best ? (MODE_ACCENT[best]?.bright ?? T.gold) : T.gold}
                         />
                         {isDaily ? (

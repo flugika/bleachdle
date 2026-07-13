@@ -13,6 +13,7 @@ import { compareBinaryGuess } from './compareBinaryGuess';
 
 export interface UnlimitedGuessGameState<TCharacter, TTarget> {
     target: TTarget | null;
+    revealedCharacter: TCharacter | null;
     guesses: GuessEntry<TCharacter>[];
     stats: Stats;
     hasFinalized: boolean;
@@ -39,6 +40,7 @@ export function createUnlimitedGuessGameStore<
     TTarget extends { id: string; character_id: string }
 >(config: UnlimitedGuessGameConfig<TItem, TCharacter, TTarget>) {
     const compareGuess = config.compareGuess ?? ((guess: TCharacter, target: TTarget) => compareBinaryGuess(guess, target.character_id));
+    const resolveAnswerId = config.resolveAnswerId ?? ((target: TTarget) => target.character_id);
     const isValidGuessEntry = config.isValidGuessEntry ?? defaultIsValidGuessEntry<TCharacter>;
     const hasValidTargetShape = config.hasValidTargetShape ?? defaultHasValidTargetShape;
 
@@ -54,6 +56,7 @@ export function createUnlimitedGuessGameStore<
         persist(
             (set, get) => ({
                 target: null,
+                revealedCharacter: null,
                 guesses: [],
                 hasFinalized: false,
                 _hasHydrated: false,
@@ -159,10 +162,15 @@ export function createUnlimitedGuessGameStore<
                     localStorage.setItem(config.storageKeys.stats, JSON.stringify(statsData));
 
                     const extraFinal = Object.fromEntries(derivedCounters.map((d) => [d.key, d.finalizeValue]));
-                    set({ hasFinalized: true, stats: newStats, ...extraFinal } as Partial<State>);
-                },
+                    // 🩹 FIX: เดิม hardcode `target.character_id` — ใช้ได้กับ Quote (guess เป็น
+                    // Character, character_id คือคำตอบ) แต่ Release "คำตอบ" คือ target.id เอง
+                    // (release เอง) ไม่ใช่ character_id (id เจ้าของท่า) ทำให้ getReleaseById
+                    // หาไม่เจอ → revealedCharacter เป็น null เสมอ ไม่ว่าจะตอบถูกหรือผิด
+                    const revealedCharacter = config.getCharacterById(resolveAnswerId(target)) ?? null;
 
-                resetGame: () => set({ target: null, guesses: [], hasFinalized: false, ...initialExtra() } as Partial<State>),
+                    set({ hasFinalized: true, stats: newStats, revealedCharacter, ...extraFinal } as unknown as Partial<State>);
+                },
+                resetGame: () => set({ target: null, revealedCharacter: null, guesses: [], hasFinalized: false, ...initialExtra() } as unknown as Partial<State>),
 
                 hardReset: () => {
                     const progressData = JSON.parse(localStorage.getItem(config.storageKeys.progress) || '{}');
@@ -194,6 +202,7 @@ export function createUnlimitedGuessGameStore<
                 partialize: (state) => ({
                     guesses: state.guesses.map(({ guess, status }) => ({ guess, status, isNew: false })),
                     target: state.target,
+                    revealedCharacter: state.revealedCharacter,
                     hasFinalized: state.hasFinalized,
                     // 🔧 ใช้ getCounter แทน (state as State)[d.key] ตรงๆ
                     ...Object.fromEntries(derivedCounters.map((d) => [d.key, getCounter(state, d.key)])),

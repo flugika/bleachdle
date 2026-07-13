@@ -3,11 +3,11 @@ import { getCharacterById } from '@/src/features/character/character';
 import { STORAGE_KEYS } from '@/src/const/localStorage';
 import { MAX_DAILY_EMOJI_GUESSES } from '@/src/const/guess';
 import { createDailyGuessGameStore } from '@/src/lib/guessGame/createDailyGuessGameStore';
-import { EmojiTarget } from '@/src/features/emoji/types';
+import { EmojiTargetHidden } from '@/src/features/emoji/types';
 import { Character } from '@/src/entities/character/schema';
 import { revealedCounter } from '@/src/features/emoji/emojiRevealedCounter';
 
-export const useEmojiGame = createDailyGuessGameStore<Character, EmojiTarget, { revealedCount: number }>({
+export const useEmojiGame = createDailyGuessGameStore<Character, EmojiTargetHidden, { revealedCount: number }>({
     storageKeys: {
         progress: STORAGE_KEYS.EMOJI_PROGRESS,
         completed: STORAGE_KEYS.EMOJI_COMPLETED,

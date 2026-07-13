@@ -30,7 +30,7 @@ export default function UnlimitedReleaseGame() {
     const { navigate, state, reportReady } = useSenkaimon();
 
     const gameStore = useReleaseGame();
-    const { target, guesses, initializeGame, finalizeGame, resetGame, hardReset, hasFinalized, _hasHydrated, resetStreakKeepMax, stats, loadStats } = gameStore;
+    const { target, revealedCharacter, guesses, initializeGame, finalizeGame, resetGame, hardReset, hasFinalized, _hasHydrated, resetStreakKeepMax, stats, loadStats } = gameStore;
     const releases = getReleases();
 
     const [manuallyClosed, setManuallyClosed] = useState(false);
@@ -217,7 +217,7 @@ export default function UnlimitedReleaseGame() {
                 )}
 
                 {showSummary ? (
-                    <ReleaseSummaryGuess isOpen={showSummary} onClose={handleCloseModal} guesses={guesses} target={target} isWin={isWin} mode="unlimited" stats={stats} />
+                    <ReleaseSummaryGuess isOpen={showSummary} onClose={handleCloseModal} guesses={guesses} target={target} revealedCharacter={revealedCharacter} isWin={isWin} mode="unlimited" stats={stats} />
                 ) : target ? (
                     <div className="max-w-full mx-auto overflow-x-auto">
                         <ReleaseGuessTable guesses={guesses} />

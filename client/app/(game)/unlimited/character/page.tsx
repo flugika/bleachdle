@@ -236,8 +236,8 @@ export default function UnlimitedCharacterGame() {
                     </>
                 )}
 
-                {showSummary ? (
-                    <CharacterSummaryGuess isOpen={showSummary} onClose={handleCloseModal} guesses={guesses} target={target} isWin={isWin} mode="unlimited" stats={stats} />
+                {showSummary && target ? (
+                    <CharacterSummaryGuess isOpen={showSummary} onClose={handleCloseModal} guesses={guesses} targetId={target.id} isWin={isWin} mode="unlimited" stats={stats} />
                 ) : target ? (
                     <div className="w-full overflow-x-auto">
                         <CharacterGuessTable guesses={guesses} />

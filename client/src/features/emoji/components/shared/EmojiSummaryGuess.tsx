@@ -4,7 +4,7 @@
 import { useMemo } from 'react';
 import Image from 'next/image';
 import { DailyResetTimer } from '@/src/shared/ui/DailyResetTimer';
-import { EmojiGuessEntry, EmojiTarget } from '@/src/features/emoji/types';
+import { EmojiGuessEntry, EmojiTarget, EmojiTargetHidden } from '@/src/features/emoji/types';
 import { EmojiTestimonyDisplay } from './EmojiTestimonyDisplay';
 import { useRaceEmblem } from '@/src/shared/hooks/useRaceEmblem';
 import { useCharacterTier } from '@/src/shared/hooks/useBadgeTier';
@@ -18,12 +18,14 @@ import {
     IdentificationHistoryPanel,
 } from '@/src/shared/ui/summary';
 import { Stats } from '@/src/lib/guessGame/types';
+import { Character } from '@/src/entities/character/schema';
 
 interface EmojiSummaryGuessProps {
     isOpen: boolean;
     onClose: () => void;
     guesses: EmojiGuessEntry[];
-    target: EmojiTarget | null;
+    target: EmojiTargetHidden | null;      // 🔧 เปลี่ยน type
+    revealedCharacter: Character | null;   // 🆕 เพิ่ม prop ใหม่
     isWin: boolean;
     mode: 'daily' | 'unlimited';
     stats: Stats;
@@ -41,13 +43,14 @@ export const EmojiSummaryGuess = ({
     onClose,
     guesses,
     target,
+    revealedCharacter,
     isWin,
     mode,
     stats = { currentStreak: 0, maxStreak: 0, playedCount: 0, passedCount: 0, guessDistribution: {} },
 }: EmojiSummaryGuessProps) => {
     if (!isOpen || !target) return null;
 
-    const answerCharacter = target.character;
+    const answerCharacter = revealedCharacter;
 
     const activeTier = useCharacterTier(stats.maxStreak);
 
@@ -135,7 +138,7 @@ export const EmojiSummaryGuess = ({
                         <div className="relative flex items-start gap-4 p-4">
                             <div className="relative h-20 w-20 shrink-0 border border-[#c8a96e]/20 p-[1px] bg-black/40 z-10">
                                 <Image
-                                    src={`/assets/characters/${answerCharacter.image}`}
+                                    src={`/api/asset/character/${answerCharacter.id}`}
                                     alt={answerCharacter.name}
                                     fill
                                     className="object-cover grayscale-[10%] brightness-[95%]"
@@ -184,7 +187,7 @@ export const EmojiSummaryGuess = ({
                             </span>
                             <div className='relative w-7 h-7 shrink-0'>
                                 <Image
-                                    src={`/assets/characters/${entry.guess.image}`}
+                                    src={`/api/asset/character/${entry.guess.id}`}
                                     alt={entry.guess.name}
                                     fill
                                     sizes="210px"

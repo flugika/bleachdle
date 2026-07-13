@@ -105,8 +105,8 @@ export const SilhouetteGuessTable = ({ guesses }: { guesses: SilhouetteGuessEntr
                     const caseNo = String(guesses.length - idx).padStart(3, '0');
 
                     const characterThumbSrc = entry.guess.image
-                        ? `/assets/characters/${entry.guess.image}`
-                        : `/assets/characters/${entry.guess.id}.webp`;
+                        ? `/api/asset/character/${entry.guess.id}`
+                        : "" ;
 
                     // See wiring note above: cast is intentional until the shared
                     // type file grows these fields.

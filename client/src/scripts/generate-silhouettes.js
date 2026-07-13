@@ -14,7 +14,7 @@ const SILHOUETTES_FILE = path.join(DATA_DIR, 'silhouettes.json');
 
 // 🖼️ Silhouette images live under /assets/character_silhouette/
 // Actual filename = {name}_cutout_silhouette.webp, e.g. Aisslinger_Wernarr_cutout_silhouette.webp
-// char.image is shared with /assets/characters/ (different folder), so strip any existing
+// char.image is shared with /api/asset/character/ (different folder), so strip any existing
 // extension first to avoid a double extension.
 function toSilhouetteFilename(baseImage) {
     const withoutExt = baseImage.replace(/\.(webp|png|jpe?g)$/i, '');

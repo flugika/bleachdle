@@ -2,11 +2,11 @@
 'use client';
 
 import { useEffect, useMemo, useState } from 'react';
-import { getCellWeights, getOccupiedCells, getRevealedCellIndices, getSilhouetteImageUrl, GRID_SIZE } from '@/src/features/silhouette/silhouette';
+import { getCellWeights, getOccupiedCells, getRevealedCellIndices, GRID_SIZE } from '@/src/features/silhouette/silhouette';
 import { STORAGE_KEYS } from '@/src/const/localStorage';
 import SoulSyncLoader from '@/src/shared/ui/loader/SoulSyncLoader';
 import { MAX_DAILY_SILHOUETTE_GUESSES, MAX_UNLIMITED_SILHOUETTE_GUESSES } from '@/src/const/guess';
-import Image from 'next/image'; // Next.js Component
+import Image from 'next/image';
 
 interface Props {
     characterId: string;
@@ -15,14 +15,7 @@ interface Props {
     realImage?: string;
     guessCount?: number;
     bgColor?: string;
-    /**
-     * 🎯 ควบคุมสถานะการแสดงผลของคอมโพเนนต์
-     * 'guessing' = โหมดเล่นเกม (default) มีตารางดำปิดบังภาพ
-     * 'revealed' = เฉลยแล้ว โชว์รูปจริง 100% ตลอดเวลา
-     * 'crossfade' = สลับไปมาระหว่างเงากับรูปจริงอัตโนมัติ (ตารางดำเปิดหมด)
-     */
     revealMode?: 'guessing' | 'revealed' | 'crossfade';
-    /** ระยะเวลา (ms) สำหรับการสลับภาพในโหมด crossfade (Default 3200ms) */
     crossfadeIntervalMs?: number;
 }
 
@@ -35,7 +28,7 @@ export const SilhouetteImage = ({
     realImage,
     guessCount = 0,
     bgColor,
-    revealMode = 'guessing', // ค่าเริ่มต้นคือโหมดทายผล
+    revealMode = 'guessing',
     crossfadeIntervalMs = 3200,
 }: Props) => {
     const [internalBg, setInternalBg] = useState(bgColor || DEFAULT_BG);
@@ -69,14 +62,21 @@ export const SilhouetteImage = ({
         }
     }, [bgColor]);
 
-    const silhouetteSrc = getSilhouetteImageUrl(image);
-    const fullCharacterSrc = realImage ? `/assets/characters/${realImage}` : null;
+    // 🔒 จุดที่ 1: silhouette เดิมโหลดได้เสมอ (ไม่ใช่เฉลยเต็ม) แต่เปลี่ยนไปผ่าน proxy
+    // เพื่อความสม่ำเสมอ — ไม่ต้อง getSilhouetteImageUrl(image) ที่ยิง /assets/... ตรงอีก
+    const silhouetteSrc = `/api/asset/silhouette/${characterId}`;
+
+    // 🔒 จุดที่ 2: fullCharacterSrc ต้องเป็น null จนกว่าจะถึงจังหวะเฉลยจริง
+    // เดิม: realImage ? `/api/asset/character/${realImage}` : null  ← เห็นชื่อไฟล์ตรงๆ ใน Network
+    // ใหม่: ใช้ proxy + เงื่อนไข revealMode ป้องกันทั้ง "เห็นชื่อไฟล์" และ "เห็นจังหวะโหลดก่อนเฉลย"
+    const fullCharacterSrc = (revealMode !== 'guessing' && realImage)
+        ? `/api/asset/character/${characterId}`
+        : null;
 
     useEffect(() => {
         let cancelled = false;
         setSilhouetteLoaded(false);
 
-        // 🛠️ แก้ไขจุดที่ 1: ใช้ window.Image ดั้งเดิมของ Browser เพื่อป้องกันชนกับ Next.js Image
         const silhouetteImg = new window.Image();
         silhouetteImg.src = silhouetteSrc;
 
@@ -94,16 +94,19 @@ export const SilhouetteImage = ({
         return () => { cancelled = true; };
     }, [silhouetteSrc]);
 
+    // 🔒 จุดที่ 3: อย่า fetch fullCharacterSrc จนกว่า revealMode จะไม่ใช่ 'guessing'
+    // เดิม effect นี้รันทันทีที่ fullCharacterSrc มีค่า ไม่สนโหมด — ทำให้รูปจริงถูก
+    // request ล่วงหน้าตั้งแต่ตอนเกมยังไม่จบ (เห็นใน Network tab ก่อนทายถูกเสียอีก)
     useEffect(() => {
         let cancelled = false;
 
         if (!fullCharacterSrc) {
+            // ยังไม่ถึงจังหวะเฉลย หรือไม่มีรูปจริงให้โหลด — ถือว่า "พร้อม" ไปเลย ไม่ต้องรอ
             setRealImageLoaded(true);
             return;
         }
 
         setRealImageLoaded(false);
-        // 🛠️ แก้ไขจุดที่ 2: ใช้ window.Image ดั้งเดิมของ Browser เช่นกัน
         const realImg = new window.Image();
         realImg.src = fullCharacterSrc;
 
@@ -128,7 +131,6 @@ export const SilhouetteImage = ({
 
     const isReady = configReady && silhouetteLoaded;
 
-    // 🎯 Timer สลับภาพ จะทำงานก็ต่อเมื่ออยู่ในโหมด 'crossfade' เท่านั้น
     useEffect(() => {
         if (revealMode !== 'crossfade' || !fullCharacterSrc || !isReady || !realImageLoaded) {
             setIsCrossfadeRevealed(false);
@@ -142,13 +144,11 @@ export const SilhouetteImage = ({
         return () => clearInterval(id);
     }, [revealMode, fullCharacterSrc, isReady, realImageLoaded, crossfadeIntervalMs]);
 
-    // 🎯 คำนวณว่าตอนนี้ต้องโชว์รูปจริงหรือไม่
     const effectiveReveal = revealMode === 'revealed' || (revealMode === 'crossfade' && isCrossfadeRevealed);
 
     return (
         <div className="relative w-full max-w-sm aspect-square mx-auto">
-
-            {/* 🔄 LOADING LAYER */}
+            {/* 🔄 LOADING LAYER — เหมือนเดิมทั้งหมด ไม่แตะ */}
             <div
                 aria-hidden={isReady}
                 className={`absolute inset-0 overflow-hidden rounded-sm border border-[#c8a96e]/20 bg-[radial-gradient(ellipse_at_center,#0d0d14_0%,#020205_90%)] transition-all duration-500 ease-out ${isReady ? 'opacity-0 scale-[1.02] pointer-events-none' : 'opacity-100 scale-100'
@@ -182,14 +182,13 @@ export const SilhouetteImage = ({
                 </span>
             </div>
 
-            {/* 🖼️ CONTENT LAYER */}
+            {/* 🖼️ CONTENT LAYER — เหมือนเดิมทั้งหมด ไม่แตะ */}
             <div
                 aria-hidden={!isReady}
                 className={`absolute inset-0 overflow-hidden border border-[#232333] rounded-sm shadow-2xl group ring-1 ring-white/5 transition-all duration-700 ease-out ${isReady ? 'opacity-100 scale-100' : 'opacity-0 scale-[0.98] pointer-events-none'
                     }`}
                 style={{ backgroundColor: internalBg }}
             >
-                {/* 🖼️ LAYER 3 (Base Silhouette Image) */}
                 <Image
                     src={silhouetteSrc}
                     alt="Target Silhouette Signature"
@@ -197,10 +196,10 @@ export const SilhouetteImage = ({
                         }`}
                     draggable={false}
                     fill
-                    sizes="(max-w-sm) 100vw, 384px" // 🛠️ แก้ไข: กำหนดขนาด responsive ให้ถูกต้องตามขนาด max-w-sm
+                    sizes="(max-w-sm) 100vw, 384px"
+                    unoptimized // 👈 เพิ่ม: /api/asset/... เป็น dynamic route ไม่ใช่ static file ปล่อยให้ Next.js Image Optimizer จัดการเองจะ error/ไม่คุ้ม
                 />
 
-                {/* 🌟 LAYER 4 (Premium Reveal Layer) */}
                 {fullCharacterSrc && (
                     <Image
                         src={fullCharacterSrc}
@@ -209,11 +208,11 @@ export const SilhouetteImage = ({
                             }`}
                         draggable={false}
                         fill
-                        sizes="(max-w-sm) 100vw, 384px" // 🛠️ แก้ไข: กำหนดขนาด responsive ให้ถูกต้องเช่นเดียวกัน
+                        sizes="(max-w-sm) 100vw, 384px"
+                        unoptimized
                     />
                 )}
 
-                {/* 🔲 LAYER 6: แผ่นป้ายบล็อกสีดำปิดทับปริศนา */}
                 <div
                     className="absolute inset-0 grid z-40 transition-opacity duration-500"
                     style={{
@@ -222,9 +221,7 @@ export const SilhouetteImage = ({
                     }}
                 >
                     {Array.from({ length: GRID_SIZE * GRID_SIZE }).map((_, i) => {
-                        // 🎯 ปรับลอจิกให้เปิดแผ่นป้าย 100% ทันทีถ้าไม่ใช่โหมด guessing
                         const isBoxRevealed = effectiveReveal || revealed.has(i);
-
                         return (
                             <div
                                 key={i}

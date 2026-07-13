@@ -3,7 +3,7 @@ import { getCharacterById } from '@/src/features/character/character';
 import { STORAGE_KEYS } from '@/src/const/localStorage';
 import { MAX_DAILY_SILHOUETTE_GUESSES } from '@/src/const/guess';
 import { createDailyGuessGameStore } from '@/src/lib/guessGame/createDailyGuessGameStore';
-import { SilhouetteTarget } from '@/src/features/silhouette/types';
+import { SilhouetteTargetHidden } from '@/src/features/silhouette/types';
 import { Character } from '@/src/entities/character/schema';
 
 /**
@@ -13,7 +13,7 @@ import { Character } from '@/src/entities/character/schema';
  * ยัง type เป็น SilhouetteGameController อยู่ ต้องแยก type ใหม่สำหรับ daily ก่อน
  * (ดูตัวอย่างที่ Quote ทำไว้แล้ว: QuoteDailyGameState แยกจาก QuoteGameController)
  */
-export const useSilhouetteGame = createDailyGuessGameStore<Character, SilhouetteTarget>({
+export const useSilhouetteGame = createDailyGuessGameStore<Character, SilhouetteTargetHidden>({
     storageKeys: {
         progress: STORAGE_KEYS.SILHOUETTE_PROGRESS,
         completed: STORAGE_KEYS.SILHOUETTE_COMPLETED,

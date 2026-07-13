@@ -229,7 +229,7 @@ export function QuoteGuessCard({ guess, status, isNew, attemptNumber }: QuoteGue
                 style={{ border: `1px solid ${isCorrect ? theme.ink + '99' : '#2a2620'}` }}
             >
                 <Image
-                    src={`/assets/characters/${guess.image}`}
+                    src={`/api/asset/character/${guess.id}`}
                     alt={guess.name}
                     className="w-full h-full object-cover"
                     style={{ filter: theme.photoFilter }}

@@ -45,5 +45,7 @@ client/package-lock.json
 # file
 client/public/assets/character_cutout
 client/public/assets/character_silhouette/_contact_sheet*
+client/assets-private/character_cutout
+client/assets-private/character_silhouette/_contact_sheet*
 client/src/data/silhouette-cells.debug.json
 client/src/data/emojis.backup.json

@@ -4,7 +4,7 @@ import { useState, useRef, useMemo, useEffect } from 'react';
 import { getCharacters } from '@/src/features/character/character';
 import { Character } from '@/src/entities/character/schema';
 import { createSearchEngine } from '@/src/lib/search/fuzzy';
-import { getCellWeights, getOccupiedCells, getRevealedCellIndices, getSilhouetteImageUrl, getSilhouettes, GRID_SIZE } from '@/src/features/silhouette/silhouette';
+import { getCellWeights, getOccupiedCells, getRevealedCellIndices, getSilhouettes, GRID_SIZE } from '@/src/features/silhouette/silhouette';
 import Image from 'next/image';
 
 // Layout Shared Components
@@ -180,7 +180,7 @@ function SilhouettePreviewBox({
 
                     {/* Image Base Layer */}
                     <Image
-                        src={getSilhouetteImageUrl(image)}
+                        src={`/api/asset/silhouette/${characterId}`}
                         alt="preview"
                         fill // ✨ ใส่ fill เพื่อรองรับ Next.js Image Optimization ร่วมกับ relative parent
                         sizes="(max-w-sm) 100vw, 384px" // ⚡ ช่วยบอก Browser ให้โหลดขนาดรูปที่เหมาะสม ประหยัดเน็ต
@@ -333,7 +333,7 @@ function LiveTuningWorkbench({
             {/* Image path input */}
             <div>
                 <label className="text-[10px] font-mono font-bold block text-gray-400 mb-1">
-                    IMAGE PATH (/assets/character_silhouette/...)
+                    IMAGE PATH (/assets-private/character_silhouette/...)
                 </label>
                 <input
                     type="text"
@@ -479,7 +479,7 @@ export default function MockupSilhouetteGame() {
                                         <div className="col-span-12 lg:col-span-3 flex flex-col gap-1">
                                             <div className="relative w-16 h-16 border border-[#1a1a24] bg-[#111120] overflow-hidden mb-1">
                                                 <Image
-                                                    src={`/assets/characters/${character.image}`}
+                                                    src={`/api/asset/character/${character.id}`}
                                                     alt={character.name}
                                                     className="w-full h-full object-cover"
                                                     fill
