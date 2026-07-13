@@ -168,7 +168,8 @@ function avgGuesses(s: ModeStat | undefined): number | null {
     let totalGuesses = 0;
     let totalSolves = 0;
     for (const [k, count] of Object.entries(dist)) {
-        const n = k === "6" ? 6 : Number(k); // "6" bucket represents 6+ — treat as 6 for the average
+        if (!/^[0-9]+$/.test(k)) continue; // skip "fail" and any other non-numeric bucket
+        const n = k === "6" ? 6 : Number(k);
         totalGuesses += n * count;
         totalSolves += count;
     }
@@ -530,10 +531,12 @@ function ModeArchiveCard({
     mode,
     personalStat,
     globalStat,
+    variant,
 }: {
     mode: SubFeatureKey;
     personalStat?: ModeStat;
     globalStat?: ModeStat;
+    variant?: "daily" | "unlimited" | undefined;
 }) {
     const accent = MODE_ACCENT[mode] ?? FALLBACK_ACCENT;
     const pWin = winRate(personalStat);
@@ -636,7 +639,7 @@ function ModeArchiveCard({
                     {pAvg != null && (
                         <p style={{ fontSize: "12px", color: T.mutedMid, letterSpacing: "0.08em", margin: "10px 0 0" }}>
                             YOU: <span style={{ color: accent.bright, fontWeight: 700 }}>{pAvg} guesses avg</span>
-                            {gAvg != null && (
+                            {variant === "daily" && gAvg != null && (
                                 <>
                                     {" · "}GLOBAL: <span style={{ color: T.body }}>{gAvg} guesses avg</span>
                                 </>
@@ -1137,7 +1140,7 @@ export default function StatsHubPage({
                     <SectionHead>§ 02 — Discipline Records</SectionHead>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                         {MODE_ORDER.map((mode) => (
-                            <ModeArchiveCard key={mode} mode={mode} personalStat={personal[mode]} globalStat={global[mode]} />
+                            <ModeArchiveCard variant={variant} key={mode} mode={mode} personalStat={personal[mode]} globalStat={global[mode]} />
                         ))}
                     </div>
                 </div>
