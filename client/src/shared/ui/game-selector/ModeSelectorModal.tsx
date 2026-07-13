@@ -140,7 +140,7 @@ export function ModeSelectorModal({
                                         CURRENT
                                     </span>
                                 ) : (
-                                    <span className="text-[10px] tracking-[0.1em] px-2 py-0.5 text-[#777796] opacity-0 group-hover:opacity-100 transition-opacity duration-300 uppercase">
+                                    <span className="text-[10px] tracking-[0.1em] px-2 py-0.5 text-[#777796] font-black opacity-0 group-hover:opacity-100 transition-opacity duration-300 uppercase font-[family-name:var(--font-display)]">
                                         {/* ถ้าหน้าปัจจุบันคือ /unlimited/character แล้วปุ่มนี้คือ Daily ให้เขียนว่า SWITCH TO DAILY */}
                                         {activeBaseMode ? "SWITCH MODE \u2192" : "CONNECT \u2192"}
                                     </span>
