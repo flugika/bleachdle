@@ -17,6 +17,8 @@ import { ReleaseTestimonyDisplay } from '@/src/features/release/components/share
 import Image from 'next/image';
 import { getReleaseById } from '@/src/features/release/release';
 
+export const dynamic = 'force-dynamic';
+
 // 🏛️ Same Central 46 confidential-archive palette used across
 // QuoteTestimonyDisplay / EmojiTestimonyDisplay — the whole page reads as one
 // continuous dossier instead of six mismatched styles.

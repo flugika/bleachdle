@@ -21,14 +21,14 @@ const T = {
 };
 
 const EXAMPLE_WRONG_CHARACTER = {
-    id: 'example-wrong',
+    id: 'ef5ac1b1-6858-4880-b62f-f4d878d1edf3',
     name: 'Kon',
     image: 'Kon.webp',
     affiliation: 'MOD-SOUL'
 } as unknown as Character;
 
 const EXAMPLE_CORRECT_CHARACTER = {
-    id: 'example-correct',
+    id: 'c7a8b9d0-1e2f-4a3b-8c5d-6e7f8a9b0c1d',
     name: 'Ichigo Kurosaki',
     image: 'Ichigo_Kurosaki.webp',
     affiliation: 'SUBSTITUTE SOUL REAPER'

@@ -14,14 +14,14 @@ interface QuoteHowToPlayModalProps {
 
 // 🎭 ข้อมูลตัวอย่างสำหรับสาธิตเท่านั้น ไม่ใช่ตัวละครจริงในชุดข้อมูลเกม
 const EXAMPLE_WRONG_CHARACTER = {
-    id: 'example-wrong',
+    id: 'ef5ac1b1-6858-4880-b62f-f4d878d1edf3',
     name: 'Kon',
     image: 'Kon.webp',
 } as unknown as Character;
 
 const EXAMPLE_CORRECT_CHARACTER = {
-    id: 'example-correct',
-    name: 'Sōsuke Aizen',
+    id: '6adb1439-598a-47aa-afde-002c4bc0cbb0',
+    name: 'Sosuke Aizen',
     image: 'Sosuke_Aizen.webp',
 } as unknown as Character;
 

@@ -2,7 +2,7 @@
 
 > A Wordle-style character guessing game for Bleach fans — unlimited mode, attribute-based feedback, Soul Society aesthetic.
 
-**Last Updated:** 13 July 2026, 6:39 PM.
+**Last Updated:** 14 July 2026, 12:00 AM.
 
 [![Next.js](https://img.shields.io/badge/Next.js-15-black?logo=next.js)](https://nextjs.org/)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5-blue?logo=typescript)](https://www.typescriptlang.org/)
@@ -28,7 +28,7 @@
 
 BLEACHDLE is a DLE-style character identification game scoped to the Bleach universe. Each round selects a target character, and players narrow it down through attribute-based guesses — Race, Affiliation, Weapon type, first-appearance Chapter, and more — with color-coded feedback per field.
 
-The game ships six verticals: **Character**, **Quote**, **Song**, **Silhouette**, **Emoji**, and **Release** (guess by release state — Shikai / Bankai / Resurrection). All six are available in both **Daily** (one seeded round per day, shared across players) and **Unlimited** (random target, no daily lock, streak tracking) modes.
+The game ships six verticals: **Character**, **Quote**, **Song**, **Silhouette**, **Emoji**, and **Release** (guess by release state — Shikai / Bankai / Resurrection). All six are complete and available in both **Daily** (one seeded round per day, shared across players) and **Unlimited** (random target, no daily lock, streak tracking) modes. Core gameplay is considered done — active work now is new modes, accounts/progression, and infra hardening (see [Roadmap](#roadmap)).
 
 ---
 
@@ -158,6 +158,8 @@ Character data is defined in `src/data/characters.json`. Each entry includes:
 
 To add a character: append an entry to `characters.json` and drop the corresponding `.webp` into `public/api/asset/character/`. Run `src/lib/utils/scripts/check-assets.js` to validate name parity between the JSON and the asset directory.
 
+> **Note:** several planned modes below (Pair, Connection, First Name, Trait Group) need new data that doesn't exist on `characters.json` yet — see the **Data Model** section of the Roadmap.
+
 ---
 
 ## Feature Flags
@@ -194,7 +196,7 @@ export const FEATURE_FLAGS = {
 } as const;
 ```
 
-Flags are nested per mode rather than a flat list, since a vertical can ship in Unlimited before it ships in Daily — Silhouette, Emoji, and Release all followed that path before landing in Daily as well. All six verticals are now live in both modes. `mockup.song` / `mockup.silhouette` / `mockup.release` gate the standalone design-preview routes under `app/mockup/` independently of the live game flags above — all three are currently off, so none of the `/mockup/*` preview routes are reachable. `support` toggles the support ticket page/API independently of any game vertical.
+Flags are nested per mode rather than a flat list, since a vertical can ship in Unlimited before it ships in Daily — Silhouette, Emoji, and Release all followed that path before landing in Daily as well. All six verticals are now live in both modes — this part of the flag config is stable going forward; new entries will only be added for brand-new modes (see Roadmap). `mockup.song` / `mockup.silhouette` / `mockup.release` gate the standalone design-preview routes under `app/mockup/` independently of the live game flags above — all three are currently off, so none of the `/mockup/*` preview routes are reachable. `support` toggles the support ticket page/API independently of any game vertical.
 
 ---
 
@@ -202,35 +204,49 @@ Flags are nested per mode rather than a flat list, since a vertical can ship in 
 
 > Testing (unit/integration/UAT) is intentionally deferred — data schemas (`characters.json`, entity types) are still changing frequently, so writing tests now would mean rewriting them constantly. Will pick up once the data layer stabilizes (post Supabase migration).
 
-### Gameplay
+### Gameplay — core modes (done)
 - [x] Silhouette Daily — bring Silhouette to Daily Hub
 - [x] Emoji Mode — abstract visual puzzle, shipped in both Daily and Unlimited
 - [x] Release Mode — guess by release state (Shikai / Bankai / Resurrection)
-- [ ] i18n — Thai / English toggle
+- [x] All six verticals (Character, Quote, Song, Silhouette, Emoji, Release) complete and live in both Daily and Unlimited
+
+### Gameplay — new modes (planned)
+- [ ] **Imposter** — 5 characters shown, 1 breaks the group's pattern (trait / race / appearance / power); player has to spot the odd one out
+- [ ] **Pyramid** — order ~10 characters along an axis (e.g. power level); height and age are excluded as axes since canon data is too inconsistent for them. Mode itself may be skipped entirely unless Bleach actually has enough data to build a real pyramid ranking
+- [ ] **Pair** — a flip-card / memory-matching game where cards aren't reused; the target relationship type (siblings, family, enemies, romantic, past opponents, shared trait, etc.) is shown to the player up front, and they match pairs of characters that fit that relationship — needs the new relationship table, see Data Model below
+- [ ] **Connection** — 16 characters shown, 4 of them share a hidden boundary/relationship (trait, race, affiliation, etc.). Player picks 4 and submits; sees how many of the 4 were correct (e.g. "3 of 4 belong, 1 doesn't"), then re-picks to isolate the outlier — up to 5 guesses total
+- [ ] **First Name** — simplest new mode, Wordle-style guessing on a character's first name only, with the classic gray/yellow/green letter feedback. Needs a new `first_name` field split out from the existing full `name` field, otherwise no new data required
+- [ ] **Trait Group** — system picks 3 characters at random and reveals what they share (trait / race / affiliation / friend group) but NOT who they are — player must guess the identities of those 3 hidden characters themselves (not guess additional members of the group); countdown-based
+- [ ] **Higher/Lower** — one character card shows a revealed "power level," the other is hidden; guess higher or lower than the revealed card. Blocked on defining a power-ranking methodology — win rate alone isn't sufficient, multiple factors need to be weighed
+
+### Data Model (new, supports the modes above)
+- [ ] **Character relationship / boundary table** — stores how one character relates to another. Rough shape so far: `id`, `character_id`, `related_character_id`, `type` (e.g. friend / family / rival / same-trait). Still deciding what else needs to be captured — directional vs. bidirectional, a strength/weight field, free-text notes, whether one row can represent multiple shared boundaries at once, etc.
+- [ ] **Emoji list anti-peek** — the full emoji clue array currently ships to the client up front, so opening dev tools reveals every clue immediately. Plan is to send emojis one at a time as the round progresses instead of the whole array at once.
 
 ### Stats & Social
 - [x] **Global daily stats** — "X% of players solved it within N guesses," aggregated via Supabase on top of existing round/result tables
 - [x] **Surface badges on `/stats`** — badge system already exists but currently only renders inside each mode's summary card, not on the dedicated stats page
-- [ ] **Shareable result as image** — skip the Wordle/Worldle-style emoji-grid text share; generate a downloadable/story-ready image (canvas or server-side OG image) instead
-- [ ] **Streak/session portability without login** — auth is deprioritized for now. Exploring:
-  - manual export/import of the localStorage blob to move a streak to another device
-  - same-network auto-detection to sync a session across devices on the same connection
-  - open problem: same-network detection breaks down for shared networks (family, roommates) where distinct players would collide onto one streak — needs a disambiguation strategy before this ships
-- [ ] **Rate limiting on game APIs** (not just `/api/support`) — starting point to research:
-  - sliding-window or token-bucket limiter (e.g. Upstash Redis + `@upstash/ratelimit`) at the edge/middleware level, keyed by IP + session id
-  - apply first to `app/api/stats/finalize` (highest abuse risk — fake streak submissions) and any future leaderboard-writing routes
-  - reuse the existing `ipRateLimit.ts` / `rateLimitCookie.ts` pattern from the support ticket system as a base, generalize it into shared middleware
+- [ ] **Shareable result as image** — still pending. Skip the Wordle/Worldle-style emoji-grid text share; generate a downloadable/story-ready image (canvas or server-side OG image) instead
+- [ ] **Streak/session portability without login** — still pending. Current direction: generate a code on one device that can be entered on a second device to link/sync the streak data across them. This replaces the earlier same-network auto-detection idea, which had an unresolved collision problem on shared networks (family, roommates) where distinct players would merge onto one streak
+- [ ] **Rate limiting on game APIs** (not just `/api/support`) — still pending. Direction: sliding-window or token-bucket limiter via Upstash Redis + `@upstash/ratelimit` at the edge/middleware level, keyed by IP + session id. Apply first to `app/api/stats/finalize` (highest abuse risk — fake streak submissions) and any future leaderboard-writing routes; generalize the existing `ipRateLimit.ts` / `rateLimitCookie.ts` pattern from the support ticket system into shared middleware
+
+### Accounts & Progression (new)
+- [ ] **Login** — account system, currently unauthenticated
+- [ ] **Card pack rewards** — gacha-style random cosmetic character card drawn after each round, collected and displayed on the user's profile
+- [ ] **User level** — XP/progression tied to playtime and rounds completed
+- [ ] **Character card / archive detail view** — a fuller per-character info page. Hesitant here because it could let players look up dle answers directly, but still seems worth building — likely gated somehow (behind account/level, or hiding the specific fields used in comparisons) rather than dropped
 
 ### Reliability & Process
-- [ ] **Error monitoring (Sentry or similar)** — high priority precisely because there's no test coverage yet; need visibility into prod failures before shipping faster
-- [ ] **Real CI pipeline** — a CI file exists but currently only validates character data; needs lint + `tsc --noEmit` + build checks gating PRs
-- [ ] Reduced-motion setting — lower priority, touches many components (loaders, transitions, cursor effect), needs a broader pass
-- [ ] Testing suite (unit + integration) — blocked on schema stabilization, see note above
+- [x] **Error monitoring (Sentry or similar)** — done — high priority precisely because there's no test coverage yet; needed visibility into prod failures before shipping faster
+- [ ] **Real CI pipeline** — still pending. A CI file exists but currently only validates character data; needs lint + `tsc --noEmit` + build checks gating PRs
+- [ ] **Reduced-motion setting** — still pending, lower priority; touches many components (loaders, transitions, cursor effect), needs a broader pass
+- [ ] **Testing suite** (unit + integration) — still pending, blocked on schema stabilization, see note above
 
 ### Infra
-- [ ] Supabase migration — persistent leaderboard and cross-session streaks
-- [ ] Turnstile spam mitigation — currently paused; legitimate traffic was being flagged as bot activity, needs a fix before re-enabling
-- [ ] PWA + push notifications — undecided on trigger points (daily reset reminder? streak-at-risk warning?); need to land on something useful without being intrusive
+- [ ] **Supabase migration** — still pending. Persistent leaderboard and cross-session streaks
+- [ ] **Turnstile spam mitigation** — still paused. Legitimate traffic was being flagged as bot activity, needs a fix before re-enabling
+- [ ] **PWA + push notifications** — still pending, and tied to the Discord bot notifications below — both are further out since they depend on renting a domain first
+- [ ] **Discord integration** — bot-based notifications, blocked on renting a domain
 
 ---
 
