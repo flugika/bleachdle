@@ -35,7 +35,7 @@ export function EmptyGuessState({ characters, targetId, onRandomGuess, disabled 
                 className={[
                     'random-guess-btn mt-2 px-5 py-2 text-[10px] uppercase tracking-[0.2em] font-bold',
                     'border border-[#c8a96e]/40 text-[#c8a96e] bg-[#c8a96e]/5',
-                    'transition-all duration-300 ease-out',
+                    'transition-all duration-300 ease-out font-[family-name:var(--font-display)]',
                     'hover:border-[#c8a96e] hover:text-white hover:bg-[#c8a96e]/15',
                     'hover:shadow-[0_0_18px_rgba(200,169,110,0.5),inset_0_0_12px_rgba(200,169,110,0.15)]',
                     'hover:scale-105 active:scale-95',
