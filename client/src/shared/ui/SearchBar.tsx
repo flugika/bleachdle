@@ -192,7 +192,7 @@ export const SearchBar = ({
     }, [query]);
 
     return (
-        <div ref={wrapRef} className="relative w-full max-w-md mx-auto pt-2">
+        <div ref={wrapRef} className="relative w-full max-w-md mx-auto pt-2 font-[family-name:var(--font-display)]">
             {/* INPUT BOX - TYBW STYLING */}
             <div className="relative group/input">
                 <div className="absolute -inset-px bg-gradient-to-r from-red-900/0 via-red-600/0 to-red-900/0 group-focus-within/input:via-red-600/40 transition-all duration-500" />
@@ -230,7 +230,7 @@ export const SearchBar = ({
                         bottom: dropdownPos.bottom,
                         zIndex: Z.dropdown,
                     }}
-                    className="bg-[#050507] border border-red-900/40 overflow-y-auto shadow-[0_20px_50px_rgba(0,0,0,0.9)] backdrop-blur-md"
+                    className="bg-[#050507] border border-red-900/40 overflow-y-auto shadow-[0_20px_50px_rgba(0,0,0,0.9)] backdrop-blur-md font-[family-name:var(--font-display)]"
                 >
                     {results.map(({ item }, idx) => {
                         const isGuessed = guessedIds.has(item.id);

@@ -237,7 +237,7 @@ function SectionHead({ children }: { children: React.ReactNode }) {
 function SecurityStrip() {
     return (
         <div
-            className="overflow-hidden whitespace-nowrap"
+            className="overflow-hidden whitespace-nowrap font-[family-name:var(--font-display)]"
             style={{
                 width: "100%",
                 fontSize: "10px",
@@ -579,7 +579,7 @@ function ModeArchiveCard({
                     >
                         {MODE_METHOD[mode]}
                     </p>
-                    <h4 style={{ fontSize: "16px", fontWeight: 700, letterSpacing: "0.1em", color: T.value, margin: 0 }}>
+                    <h4 className="font-[family-name:var(--font-display)]" style={{ fontSize: "16px", fontWeight: 700, letterSpacing: "0.1em", color: T.value, margin: 0 }}>
                         {MODE_LABELS[mode]}
                     </h4>
                 </div>
@@ -1050,28 +1050,6 @@ export default function StatsHubPage({
 
     return (
         <div className="min-h-screen w-full" style={{ color: T.value }}>
-            <style>{`
-                @keyframes bd-stats-marquee-scroll {
-                    0% { transform: translateX(0); }
-                    100% { transform: translateX(-16.66%); }
-                }
-                .bd-stats-marquee { animation: bd-stats-marquee-scroll 22s linear infinite; }
-
-                @keyframes bd-reiatsu-rise {
-                    0% { transform: translate(0, 0); opacity: 0; }
-                    12% { opacity: 1; }
-                    80% { opacity: 0.7; }
-                    100% { transform: translate(var(--bd-drift, 8px), -46px); opacity: 0; }
-                }
-                .bd-reiatsu-mote { animation-name: bd-reiatsu-rise; animation-timing-function: ease-out; animation-iteration-count: infinite; }
-
-                @keyframes bd-badge-pulse-glow {
-                    0%, 100% { box-shadow: 0 0 40px -4px var(--bd-pulse-color), inset 0 0 26px -6px var(--bd-pulse-color); }
-                    50% { box-shadow: 0 0 58px -2px var(--bd-pulse-color), inset 0 0 34px -4px var(--bd-pulse-color); }
-                }
-                .bd-badge-pulse { animation: bd-badge-pulse-glow 2.4s ease-in-out infinite; }
-            `}</style>
-
             {/* ══ §00 SEAL BANNER ══ */}
             <SecurityStrip />
             <div
@@ -1081,11 +1059,11 @@ export default function StatsHubPage({
                     backdropFilter: "blur(3px)",
                 }}
             >
-                <p style={{ fontSize: "11px", letterSpacing: "0.32em", color: T.label, textTransform: "uppercase", margin: "0 0 10px" }}>
+                <p className="font-[family-name:var(--font-display)]" style={{ fontSize: "11px", letterSpacing: "0.32em", color: T.label, textTransform: "uppercase", margin: "0 0 10px" }}>
                     CENTRAL 46 · SPIRITUAL RECORD ARCHIVE · 霊圧記録保管庫 · {isDaily ? "DAILY DUEL LEDGER" : "UNLIMITED CAMPAIGN LEDGER"}
                 </p>
                 <div className="flex items-end justify-between flex-wrap gap-3">
-                    <h1 style={{ fontSize: "28px", fontWeight: 700, letterSpacing: "0.08em", margin: 0, color: T.value }}>
+                    <h1 className="font-[family-name:var(--font-display)]" style={{ fontSize: "28px", fontWeight: 700, letterSpacing: "0.08em", margin: 0, color: T.value }}>
                         {isDaily ? "TODAY'S DUEL RECORD" : "YOUR REIATSU DOSSIER"}
                     </h1>
                     <div className="text-right">

@@ -1,19 +1,39 @@
 // app/layout.tsx
 import type { Metadata } from "next";
 import '../src/styles/globals.css';
-import { Cinzel, Geist } from "next/font/google";
+import { Cinzel, Geist, Inter, JetBrains_Mono } from "next/font/google";
 import Footer from "@/src/shared/ui/layout/Footer";
 import { BleachReiatsuCursor } from "@/src/shared/ui/BleachReiatsuCursor";
 import { WallpaperInitializer } from "@/src/shared/ui/WallpaperInitializer";
 import { SenkaimonTransition } from "@/src/shared/ui/loader/SenkaimonTransition";
 import { NavigationProvider } from "@/src/shared/ui/context/NavigationContext";
-// 💡 นำเข้าตัว Ambient พรีเมียมตัวใหม่ที่เราเพิ่งสร้าง
-import { ReiatsuAmbientSides } from "@/src/shared/ui/layout/ReiatsuAmbientSides"; 
+import { ReiatsuAmbientSides } from "@/src/shared/ui/layout/ReiatsuAmbientSides";
 import { GlobalGameNav } from "@/src/shared/ui/layout/GlobalGameNav";
 
+// Display: logotype, big titles, kanji accents — used sparingly, opt-in via
+// font-[family-name:var(--font-display)]
 const cinzel = Cinzel({
   subsets: ["latin"],
   weight: ["400", "500", "600", "700"],
+  variable: "--font-display",
+});
+
+// Body: the default for everything — paragraphs, descriptions, buttons
+const inter = Inter({
+  subsets: ["latin"],
+  variable: "--font-body",
+});
+
+// Mono: labels, stats, timers, HUD-style tags — opt-in via
+// font-[family-name:var(--font-mono)]
+const mono = JetBrains_Mono({
+  subsets: ["latin"],
+  variable: "--font-mono",
+});
+
+const geist = Geist({
+  subsets: ["latin"],
+  variable: "--font-geist-sans",
 });
 
 export const metadata: Metadata = {
@@ -27,24 +47,18 @@ export const metadata: Metadata = {
   },
 };
 
-const geist = Geist({
-  subsets: ["latin"],
-  variable: "--font-geist-sans",
-});
-
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en" className="h-full">
-      <body className={`${cinzel.className} ${geist.variable} text-white antialiased relative`}>
-        {/* เลเยอร์ล่างสุด */}
+      <body
+        className={`${cinzel.variable} ${inter.variable} ${mono.variable} ${geist.variable} font-[family-name:var(--font-body)] text-white antialiased relative`}
+      >
         <div className="fixed inset-0 bleach-scanlines pointer-events-none z-[0] opacity-40" />
 
         <NavigationProvider>
           <SenkaimonTransition />
           <BleachReiatsuCursor />
           <WallpaperInitializer />
-
-          {/* 🚪 เสียบเลเยอร์แรงดันวิญญาณด้านข้างตรงนี้ (z-[1]) */}
           <ReiatsuAmbientSides />
           <GlobalGameNav />
 

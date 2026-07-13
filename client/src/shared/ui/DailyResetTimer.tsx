@@ -23,7 +23,7 @@ export const DailyResetTimer = () => {
     }, []);
     
     return (
-        <div className="relative mx-auto bg-[#0a0a0c] border border-[#c8a96e]/20 p-6 shadow-2xl">
+        <div className="relative mx-auto bg-[#0a0a0c] border border-[#c8a96e]/20 p-6 shadow-2xl font-[family-name:var(--font-display)]">
             {/* Corner Accents: ตัวช่วยทำให้ดูเหมือน Data Terminal */}
             <div className="absolute top-1 left-1 w-2 h-2 border-t border-l border-[#c8a96e]/50" />
             <div className="absolute top-1 right-1 w-2 h-2 border-t border-r border-[#c8a96e]/50" />
@@ -40,7 +40,7 @@ export const DailyResetTimer = () => {
 
             {/* Timer Display - ใช้ Monospace Font เสมอ */}
             <div className="flex justify-center items-center">
-                <div className="text-4xl font-mono text-[#f5ebd5] tracking-widest tabular-nums font-light">
+                <div className="text-4xl font-mono text-[#f5ebd5] tracking-widest tabular-nums font-black">
                     {timeLeft}
                 </div>
             </div>

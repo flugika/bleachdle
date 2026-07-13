@@ -145,7 +145,7 @@ export function EmojiGuessCard({ guess, status, isNew, attemptNumber }: EmojiGue
             variants={cardVariants}
             initial="initial"
             animate="animate"
-            className="relative flex mb-6 mx-auto w-full bg-[#f4ebd0] text-[#1a1612] shadow-[5px_5px_15px_rgba(0,0,0,0.4),inset_0_0_40px_rgba(139,115,85,0.15)] overflow-hidden border border-[#2d271e]/20"
+            className="relative flex mb-6 mx-auto w-full bg-[#f4ebd0] text-[#1a1612] font-[family-name:var(--font-display)] shadow-[5px_5px_15px_rgba(0,0,0,0.4),inset_0_0_40px_rgba(139,115,85,0.15)] overflow-hidden border border-[#2d271e]/20"
             style={{
                 background: theme.bg,
                 boxShadow: isCorrect ? '0 0 25px rgba(45,133,68,0.15), 5px 5px 20px rgba(0,0,0,0.4)' : undefined,
@@ -282,7 +282,7 @@ export const EmojiGuessTable = ({ guesses }: { guesses: EmojiGuessEntry[] }) => 
         <div className="w-full max-w-xl mx-auto py-8 px-4">
             {/* Top Archive Title Header */}
             <div className="flex flex-col items-center mb-6 select-none">
-                <p className="text-[11px] tracking-[0.35em] font-semibold uppercase text-[#a69680]">
+                <p className="text-[11px] tracking-[0.35em] font-semibold font-[family-name:var(--font-display)] uppercase text-[#a69680]">
                     § Central 46 Verification Ledger
                 </p>
                 <div className="w-16 h-[1px] bg-gradient-to-r from-transparent via-[#a69680]/40 to-transparent mt-2" />

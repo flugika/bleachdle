@@ -37,8 +37,8 @@ export default function Sealed() {
                 <div className="absolute bottom-0 left-0 w-6 h-6 border-b-2 border-l-2 border-solid border-white/30"></div>
                 <div className="absolute bottom-0 right-0 w-6 h-6 border-b-2 border-r-2 border-solid border-white/30"></div>
 
-                <span className="absolute bottom-2 left-8 font-mono text-[11px] tracking-[0.4em] text-white/40 uppercase">System // Absolute_Seal_Active</span>
-                <span className="absolute top-2 right-8 font-mono text-[11px] tracking-[0.4em] text-cyan-400/70 uppercase font-bold">Decree // Central_46_Law</span>
+                <span className="absolute bottom-2 left-8 font-[family-name:var(--font-display)] text-[11px] tracking-[0.4em] text-white/40 uppercase">System // Absolute_Seal_Active</span>
+                <span className="absolute top-2 right-8 font-[family-name:var(--font-display)] text-[11px] tracking-[0.4em] text-cyan-400/70 uppercase font-bold">Decree // Central_46_Law</span>
             </div>
 
             {/* 💎 [CORE ZONE: z-30] */}
@@ -68,7 +68,7 @@ export default function Sealed() {
                         <div className="w-full flex items-center justify-center gap-3">
                             <div className="h-[1px] flex-1 bg-gradient-to-r from-transparent via-[#e83030]/30 to-[#e83030]/70"></div>
 
-                            <h2 className="text-xl md:text-2xl font-black tracking-[0.4em] bg-gradient-to-r from-[#e83030] via-[#ff5555] to-[#e83030] bg-clip-text text-transparent drop-shadow-[0_0_14px_rgba(232,48,48,0.4)] uppercase animate-pulse select-none pl-[0.4em]">
+                            <h2 className="text-xl md:text-2xl font-[family-name:var(--font-display)] font-black tracking-[0.4em] bg-gradient-to-r from-[#e83030] via-[#ff5555] to-[#e83030] bg-clip-text text-transparent drop-shadow-[0_0_14px_rgba(232,48,48,0.4)] uppercase animate-pulse select-none pl-[0.4em]">
                                 卍 ACCESS DENIED 卍
                             </h2>
 
@@ -76,7 +76,7 @@ export default function Sealed() {
                         </div>
 
                         {/* Subtitle / System Log */}
-                        <div className="text-[11px] uppercase tracking-[0.4em] text-[#c8a96e]/40 font-mono -mt-2">
+                        <div className="text-[11px] uppercase tracking-[0.4em] font-[family-name:var(--font-display)] text-[#c8a96e]/40 -mt-2">
                             Central 46 Executive Order // Dimensional_Lockdown
                         </div>
 

@@ -265,7 +265,7 @@ export function EmojiTestimonyDisplay({ target, revealedCount, isSolved = false,
     }, [revealedCount]);
 
     return (
-        <div className="relative w-full max-w-lg mx-auto px-1 py-1" style={{ isolation: 'isolate' }}>
+        <div className="relative w-full max-w-lg mx-auto px-1 py-1 font-[family-name:var(--font-display)]" style={{ isolation: 'isolate' }}>
             <div
                 className="absolute inset-0"
                 style={{ background: `linear-gradient(135deg, ${T.reiatsu}33, transparent 40%, ${T.gold}22)` }}
@@ -374,7 +374,7 @@ export function EmojiTestimonyDisplay({ target, revealedCount, isSolved = false,
                         })}
                     </div>
 
-                    <p className="text-center text-[11px] tracking-[0.2em] uppercase mt-4" style={{ color: T.mutedMid }}>
+                    <p className="text-center text-[11px] tracking-[0.2em] uppercase mt-4 font-[family-name:var(--font-body)]" style={{ color: T.mutedMid }}>
                         {actualRevealed} / {target.emoji_list.length} Unsealed
                     </p>
                 </div>

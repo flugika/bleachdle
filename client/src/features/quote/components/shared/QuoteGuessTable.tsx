@@ -189,7 +189,7 @@ export function QuoteGuessCard({ guess, status, isNew, attemptNumber }: QuoteGue
             initial={initial}
             animate={animate}
             transition={transition}
-            className="relative flex mb-3 overflow-hidden bg-[#0a0a0c]"
+            className="relative flex mb-3 overflow-hidden bg-[#0a0a0c] font-[family-name:var(--font-display)]"
             style={{
                 border: `${theme.borderWidth} solid ${theme.border}`,
                 boxShadow: theme.glow,
@@ -275,7 +275,7 @@ export function QuoteGuessCard({ guess, status, isNew, attemptNumber }: QuoteGue
                         >
                             {guess.name}
                         </h3>
-                        <p className="text-[12px] mt-0.5 truncate" style={{ color: isCorrect ? '#a89a86' : '#6b6258' }}>
+                        <p className="text-[12px] mt-0.5 truncate font-black" style={{ color: isCorrect ? '#a89a86' : '#6b6258' }}>
                             {guess.affiliation}
                         </p>
                     </div>

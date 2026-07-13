@@ -168,7 +168,7 @@ export const Modal = ({
                     )}
 
                     {title && (
-                        <h2 className={`text-2xl md:text-3xl font-bold text-transparent bg-clip-text bg-gradient-to-b from-[#eed9c4] via-[#eed9c4] to-[#c8a96e] mb-6 uppercase tracking-[0.2em] ${textAlignClass}`}>
+                        <h2 className={`text-2xl md:text-3xl font-[family-name:var(--font-display)] font-bold text-transparent bg-clip-text bg-gradient-to-b from-[#eed9c4] via-[#eed9c4] to-[#c8a96e] mb-6 uppercase tracking-[0.2em] ${textAlignClass}`}>
                             {title}
                         </h2>
                     )}

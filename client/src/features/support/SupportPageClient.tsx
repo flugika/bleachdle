@@ -13,7 +13,7 @@ export default function SupportPageClient() {
         <div className="relative min-h-screen w-full text-white overflow-hidden">
             <div className="relative z-10 max-w-5xl mx-auto px-4 py-16 md:py-24">
                 {/* Header */}
-                <div className="text-center mb-6">
+                <div className="text-center mb-6 font-[family-name:var(--font-display)]">
                     <button
                         onClick={() => router.push("/")}
                         className="text-[11px] uppercase tracking-[0.3em] text-[#eed9c4]/50 hover:text-[#c8a96e] font-mono mb-6 transition-colors duration-200 cursor-pointer"

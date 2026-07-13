@@ -154,7 +154,7 @@ export default function HomePageClient({ initialStats }: HomePageClientProps) {
     };
 
     return (
-        <div className="relative w-full min-h-[100vh] flex flex-col items-center justify-center overflow-hidden px-4 md:px-8 select-none pt-16">
+        <div className="relative w-full min-h-[100vh] flex flex-col items-center justify-center overflow-hidden px-4 md:px-8 select-none pt-16 font-[family-name:var(--font-display)]">
             {/* ================= 🛰️ FIXED HUD FRAME (desktop only, ambient chrome) ================= */}
             {/* Incantation rings — tighter + independently paced vs. the ambient background rings */}
             <svg
@@ -234,7 +234,7 @@ export default function HomePageClient({ initialStats }: HomePageClientProps) {
             </div>
 
             {/* ================= 🎴 HERO INTRO SECTION ================= */}
-            <div className="relative z-20 text-center mb-6 max-w-5xl w-full px-4 flex flex-col items-center justify-center">
+            <div className="relative z-20 text-center mb-6 max-w-5xl w-full px-4 flex flex-col items-center justify-center font-[family-name:var(--font-display)]">
                 <div className="text-[9px] md:text-xs tracking-[0.7em] text-[#c8a96e] font-mono font-bold mb-6 flex flex-col md:flex-row items-center justify-center gap-3">
                     <div className="flex items-center gap-3">
                         <span className="w-1 h-1 md:w-2 md:h-2 bg-[#c8a96e] animate-ping rounded shrink-0" />
@@ -247,7 +247,7 @@ export default function HomePageClient({ initialStats }: HomePageClientProps) {
                 <div className="relative w-full">
                     {/* glow duplicate sits behind the real title for depth */}
                     <h1
-                        className="relative text-3xl min-[400px]:text-4xl sm:text-6xl md:text-7xl lg:text-8xl font-black tracking-[0.2em] pl-[0.2em] text-transparent bg-gradient-to-r from-[#c8a96e] via-[#f5ebd5] to-[#c8a96e] bg-clip-text drop-shadow-[0_0_60px_rgba(255,255,255,0.2)] select-text whitespace-nowrap text-center block w-full"
+                        className="relative text-3xl min-[400px]:text-4xl sm:text-6xl md:text-7xl lg:text-8xl font-black tracking-[0.2em] text-transparent bg-gradient-to-r from-[#c8a96e] via-[#f5ebd5] to-[#c8a96e] bg-clip-text drop-shadow-[0_0_60px_rgba(255,255,255,0.2)] select-text whitespace-nowrap text-center block w-full"
                         style={{ animation: "bd-flicker 1.7s ease-out" }}
                     >
                         BLEACHDLE
@@ -403,7 +403,7 @@ export default function HomePageClient({ initialStats }: HomePageClientProps) {
                 vertical center, so the ring reads as the divider's centerpiece
                 — a sightline running through it — rather than a spinner
                 floating alone in empty space between two sections. */}
-            <div className="relative z-10 flex flex-col items-center w-full max-w-2xl px-4 mb-10 md:mb-12">
+            <div className="relative z-10 flex flex-col items-center w-full max-w-2xl px-4 mb-10 md:mb-12 font-[family-name:var(--font-display)]">
                 <span
                     className="text-[8px] md:text-[9px] font-mono tracking-[0.4em] uppercase text-[#c8a96e]/40 mb-4"
                     aria-hidden="true"
@@ -445,7 +445,7 @@ export default function HomePageClient({ initialStats }: HomePageClientProps) {
             </div>
 
             {/* ================= 📖 ABOUT / WHAT IS BLEACHDLE SECTION ================= */}
-            <div className="relative z-20 w-full max-w-5xl px-4 pb-16 group/main">
+            <div className="relative z-20 w-full max-w-5xl px-4 pb-16 group/main font-[family-name:var(--font-display)]">
                 {/* 📦 Main Outer Container Panel — (ถอด overflow-hidden ออกเพื่อให้ Badge ล้นได้อิสระ) */}
                 <div className="relative border border-[#c8a96e]/20 bg-gradient-to-b from-[#0d0b06] to-[#030305] p-6 sm:p-8 md:p-12 shadow-[0_25px_70px_rgba(0,0,0,0.85),inset_0_1px_1px_rgba(255,255,255,0.03)] transition-all duration-500 hover:border-[#c8a96e]/40">
 
@@ -460,7 +460,7 @@ export default function HomePageClient({ initialStats }: HomePageClientProps) {
                     {/* 🔖 Floating Header Badge — ปลดปล่อยขีดจำกัด! ลอยพ้นขอบบนได้เต็มตัวแล้ว */}
                     <div className="absolute top-0 left-4 md:left-8 -translate-y-1/2 z-20">
                         <span className="inline-flex items-center gap-1.5 bg-[#c8a96e] text-black text-[9px] font-mono font-bold tracking-[0.25em] uppercase px-3 py-1 shadow-[0_4px_20px_rgba(200,169,110,0.4)]">
-                            <span className="w-1.5 h-1.5 bg-black rounded-full animate-pulse" /> CORE_DATABASE
+                            <span className="w-1.5 h-1.5 bg-black rounded-full animate-pulse pointer-events-none" /> CORE_DATABASE
                         </span>
                     </div>
 
@@ -482,17 +482,17 @@ export default function HomePageClient({ initialStats }: HomePageClientProps) {
                         <div className="h-px flex-1 bg-white/10" />
                     </div>
 
-                    <h3 className="relative z-10 text-3xl md:text-4xl font-black tracking-[0.12em] text-white uppercase mb-4" style={{ fontFamily: "'Cinzel', serif" }}>
+                    <h3 className="relative z-10 text-3xl md:text-4xl font-black tracking-[0.12em] text-white uppercase mb-4">
                         What is Bleachdle?
                     </h3>
 
-                    <p className="relative z-10 text-[13px] sm:text-sm text-neutral-400 font-light leading-relaxed max-w-4xl mb-4">
+                    <p className="relative z-10 text-[13px] sm:text-sm text-neutral-400 font-light leading-relaxed max-w-4xl mb-4 font-[family-name:var(--font-body)]">
                         Welcome to <span className="font-bold text-white tracking-wide">Bleachdle</span>, the daily trivia challenge for the Bleach community.
                         Test your knowledge of <span className="text-[#c8a96e] font-medium">Soul Reapers</span>, <span className="text-[#c8a96e] font-medium">Arrancars</span>, and <span className="text-[#c8a96e] font-medium">Quincy</span> across
                         {" "}six modes: <span className="text-white font-medium">character</span>, <span className="text-white font-medium">quote</span>, <span className="text-white font-medium">silhouette</span>, <span className="text-white font-medium">emoji</span>, <span className="text-white font-medium">song</span>, and <span className="text-white font-medium">release</span>.
                     </p>
 
-                    <p className="relative z-10 text-[13px] sm:text-sm text-neutral-400 font-light leading-relaxed max-w-4xl mb-10">
+                    <p className="relative z-10 text-[13px] sm:text-sm text-neutral-400 font-light leading-relaxed max-w-4xl mb-10 font-[family-name:var(--font-body)]">
                         <span className="font-semibold text-white">New puzzles every day.</span> Pick a mode below to
                         {" "}<span className="text-[#c8a96e] font-semibold tracking-wide">initiate the Senkaimon protocol</span>.
                     </p>
@@ -579,7 +579,7 @@ export default function HomePageClient({ initialStats }: HomePageClientProps) {
                                         </span>
                                     </div>
 
-                                    <p className="text-[12.5px] leading-relaxed text-neutral-500 group-hover/mode:text-neutral-300 transition-colors duration-500 mb-6">
+                                    <p className="text-[12.5px] leading-relaxed text-neutral-500 group-hover/mode:text-neutral-300 transition-colors duration-500 mb-6 font-[family-name:var(--font-body)]">
                                         {mode.description}
                                     </p>
 

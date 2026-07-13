@@ -244,7 +244,7 @@ export const SongSearchBar = ({ songs, disabled = false, game }: SongSearchBarPr
                                 <div className="flex flex-col min-w-0 pr-4 transition-transform duration-200 group-hover:translate-x-1">
                                     {/* ชื่อเพลงหลัก (Bold & Clear) */}
                                     <span className={[
-                                        'text-xs font-semibold tracking-wider uppercase truncate transition-colors duration-200',
+                                        'text-xs font-semibold tracking-wider uppercase truncate transition-colors duration-200 font-[family-name:var(--font-display)]',
                                         isActive
                                             ? 'text-red-500'
                                             : isGuessed

@@ -67,7 +67,7 @@ export function SilhouetteControlPanel({ target, characters, remainingGuesses, s
     };
 
     return (
-        <div className="flex flex-col items-center gap-4 w-full">
+        <div className="flex flex-col items-center gap-4 w-full font-[family-name:var(--font-display)]">
 
             {/* กล่องแสดงเงาตัวละครพร้อมสลับสีพื้นหลังตาม State */}
             {target && (

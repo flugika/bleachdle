@@ -23,6 +23,7 @@ import { BL_MODES_METADATA } from '@/src/config/mode';
 import { MAX_DAILY_CHARACTER_GUESSES } from '@/src/const/guess';
 import { DailyHubModalFooter } from '@/src/shared/ui/daily-hub/DailyHubModalFooter';
 import { useDailyHub } from '@/src/shared/hooks/useDailyHub';
+import { EmptyGuessState } from '@/src/features/character/components/shared/EmptyGuessState';
 
 export default function DailyCharacterWrapper({ initialTarget }: { initialTarget: Character | null }) {
     if (!FEATURE_FLAGS.daily.character) {
@@ -223,7 +224,16 @@ export default function DailyCharacterWrapper({ initialTarget }: { initialTarget
                     </>
                 ) : target && isSynced ? (
                     <div className="w-full overflow-x-auto">
-                        <CharacterGuessTable guesses={guesses} />
+                        {guesses.length === 0 ? (
+                            <EmptyGuessState
+                                characters={characters}
+                                targetId={target.id}
+                                onRandomGuess={gameStore.addGuess}
+                                disabled={isGameOver}
+                            />
+                        ) : (
+                            <CharacterGuessTable guesses={guesses} />
+                        )}
                     </div>
                 ) : (
                     <div className="mt-40 flex flex-col items-center justify-center">

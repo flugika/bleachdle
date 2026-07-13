@@ -240,7 +240,7 @@ function TabBar({ active, onChange }: { active: Tab; onChange: (t: Tab) => void 
         { id: "unlimited", label: "UNLIMITED", kanji: "無" },
     ];
     return (
-        <div className="flex justify-center gap-2 py-4" style={{ borderBottom: "1px solid #2a2620" }}>
+        <div className="flex justify-center gap-2 py-4 font-[family-name:var(--font-display)]" style={{ borderBottom: "1px solid #2a2620" }}>
             {tabs.map((t) => {
                 const isActive = t.id === active;
                 return (

@@ -3,6 +3,7 @@
 "use client";
 
 import { useEffect, useMemo, useState, useCallback } from "react";
+import FeedbackPanel from "./FeedbackPanel";
 
 type HourBucket = { hour: string; success: number; warning: number; error: number };
 type EndpointRow = { endpoint: string; total: number; success: number; warning: number; error: number };
@@ -36,6 +37,11 @@ type DayHistory = {
     modes: DailyStats;
 };
 
+const VIEW_TABS: { label: string; value: "system" | "feedback"; kanji: string }[] = [
+    { label: "System", value: "system", kanji: "陣" },
+    { label: "Feedback", value: "feedback", kanji: "声" },
+];
+
 const RANGE_OPTIONS = [
     { label: "1H", hours: 1 },
     { label: "24H", hours: 24 },
@@ -49,7 +55,7 @@ const LEVEL_OPTIONS: { label: string; value: EventLevel | null; kanji: string }[
     { label: "Error", value: "error", kanji: "破" },
 ];
 
-const COLORS = {
+export const COLORS = {
     void: "#07060A",
     surface: "#120F16",
     raised: "#1C1620",
@@ -100,7 +106,7 @@ function KidoField() {
     );
 }
 
-function CornerSeal({ color }: { color: string }) {
+export function CornerSeal({ color }: { color: string }) {
     return (
         <>
             <svg aria-hidden className="absolute -top-px -left-px w-5 h-5" viewBox="0 0 20 20">
@@ -119,7 +125,7 @@ function CornerSeal({ color }: { color: string }) {
     );
 }
 
-function SectionHeading({ kanji, title }: { kanji: string; title: string }) {
+export function SectionHeading({ kanji, title }: { kanji: string; title: string }) {
     return (
         <div className="flex items-center gap-3 mb-4">
             <span className="font-[family-name:var(--font-display)] text-lg" style={{ color: COLORS.gold }}>
@@ -170,6 +176,7 @@ export default function MonitorClient({
     // Start null (renders a non-breaking space) and stamp it after mount.
     const [lastUpdated, setLastUpdated] = useState<Date | null>(null);
     const [loading, setLoading] = useState(false);
+    const [view, setView] = useState<"system" | "feedback">("system");
 
     const refresh = useCallback(
         async (targetHours: number, level: EventLevel | null, range: { from: string; to: string } | null) => {
@@ -282,6 +289,33 @@ export default function MonitorClient({
                 </div>
             </div>
 
+            {/* View tabs */}
+            <div className="relative flex items-center gap-2 mb-10">
+                {VIEW_TABS.map((tab) => {
+                    const active = view === tab.value;
+                    return (
+                        <button
+                            key={tab.value}
+                            onClick={() => setView(tab.value)}
+                            className="flex items-center gap-2 font-[family-name:var(--font-mono)] text-xs px-4 py-2.5 rounded-sm transition-colors"
+                            style={{
+                                border: `1px solid ${active ? COLORS.gold : COLORS.hairline}`,
+                                background: active ? COLORS.raised : "transparent",
+                                color: active ? COLORS.gold : COLORS.muted,
+                                textShadow: active ? `0 0 8px rgba(201,161,94,0.5)` : "none",
+                            }}
+                        >
+                            <span className="font-[family-name:var(--font-display)]">{tab.kanji}</span>
+                            {tab.label}
+                        </button>
+                    );
+                })}
+            </div>
+
+            {view === "feedback" ? (
+                <FeedbackPanel monitorKey={monitorKey} />
+            ) : (
+            <>
             {/* Status cards */}
             <div className="relative grid grid-cols-1 md:grid-cols-3 gap-5 mb-4">
                 <StatusCard
@@ -518,6 +552,8 @@ export default function MonitorClient({
                     </div>
                 </section>
             )}
+            </>
+            )}
         </div>
     );
 }
@@ -672,19 +708,6 @@ function PulseRing({ rate, color, loading }: { rate: number; color: string; load
                     {rate}%
                 </span>
             </div>
-            <style>{`
-                @keyframes monitor-breathe {
-                    0%, 100% { opacity: 1; }
-                    50% { opacity: 0.6; }
-                }
-                @keyframes monitor-spin {
-                    from { transform: rotate(0deg); }
-                    to { transform: rotate(360deg); }
-                }
-                @media (prefers-reduced-motion: reduce) {
-                    circle { animation: none !important; }
-                }
-            `}</style>
         </div>
     );
 }

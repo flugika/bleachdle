@@ -67,7 +67,7 @@ export const Button = ({
 
     return (
         <button
-            className={`${baseStyles} ${variantLayouts[variant]} ${stateStyles} ${className}`}
+            className={`font-[family-name:var(--font-display)] ${baseStyles} ${variantLayouts[variant]} ${stateStyles} ${className}`}
             disabled={isDisabled}
             {...props}
         >

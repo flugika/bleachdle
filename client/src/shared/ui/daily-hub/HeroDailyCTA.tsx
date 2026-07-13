@@ -109,7 +109,7 @@ export function HeroDailyCTA({
 
     return (
         <>
-            <div className="relative w-[400px] md:w-[600px] lg:w-[800px] flex flex-col items-center py-2">
+            <div className="relative w-[400px] md:w-[600px] lg:w-[800px] flex flex-col items-center py-2 font-[family-name:var(--font-display)]">
 
                 <div
                     className="bd-panel-breathe-el absolute inset-0 -z-10 pointer-events-none blur-3xl"
@@ -260,7 +260,6 @@ export function HeroDailyCTA({
                                 <span
                                     className="relative whitespace-nowrap text-xl md:text-2xl lg:text-3xl tracking-[0.06em] font-extrabold uppercase"
                                     style={{
-                                        fontFamily: "'Shippori Mincho', serif",
                                         backgroundImage: "linear-gradient(180deg, #fff7e6 0%, #f2cf8a 40%, #c8a96e 70%, #a9814f 100%)",
                                         WebkitBackgroundClip: "text",
                                         backgroundClip: "text",

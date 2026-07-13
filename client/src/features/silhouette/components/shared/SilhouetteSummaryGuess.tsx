@@ -76,9 +76,6 @@ export const SilhouetteSummaryGuess = ({
                 iconWrapperClassName="flex justify-center mb-1"
                 isWin={isWin}
                 subtitle={isWin ? "VISUAL SPECTRUM TRACED SUCCESSFULLY" : "TARGET IDENTITY DISRUPTED"}
-                className="text-center mb-5 relative z-10"
-                titleClassName="text-xl font-bold tracking-[0.25em] uppercase"
-                subtitleClassName="text-[9px] tracking-[0.22em] uppercase text-[#ebc7c7]/40 mt-1 font-mono"
             />
 
             {mode === 'daily' && <DailyResetTimer />}
@@ -118,7 +115,7 @@ export const SilhouetteSummaryGuess = ({
             {/* บล็อกจัดแสดงแถบรายชื่อตัวละครเป้าหมาย (สไตล์แฟ้มประวัติความลับสูงสุด) */}
             {answerCharacter && (
                 <div className="text-center bg-gradient-to-b from-black/60 to-black/30 border border-white/[0.03] p-3 rounded-xs relative z-10 shadow-md">
-                    <h3 className="text-lg font-bold text-[#eedcc5] uppercase tracking-[0.15em]">
+                    <h3 className="text-lg font-black text-[#eedcc5] uppercase tracking-[0.15em] font-[family-name:var(--font-display)]">
                         {answerCharacter.name}
                     </h3>
                     <div className="flex justify-center gap-1.5 mt-2 text-[12px] font-mono">

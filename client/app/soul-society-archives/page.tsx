@@ -134,7 +134,7 @@ export default async function ArchivePage() {
         // 🆕 `fixed inset-0` instead of w-screen/h-screen — pins the page exactly
         // to the viewport box so there is no chance of a 100vw-vs-scrollbar
         // mismatch introducing a sliver of horizontal scroll.
-        <div className="min-h-screen h-full flex flex-col overflow-hidden" style={{ color: '#e8ddd0' }}>
+        <div className="min-h-screen h-full flex flex-col overflow-hidden font-[family-name:var(--font-display)]" style={{ color: '#e8ddd0' }}>
             {/* Header — deliberately compact, this is a dashboard not a page to scroll */}
             <div
                 className="shrink-0 px-6 py-3 flex items-center justify-between"

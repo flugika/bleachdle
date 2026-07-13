@@ -24,7 +24,7 @@ export function DailyProgressBar({ activeMode, variant = 'bar', className = '' }
             <div className="flex items-center justify-between mb-3 border-b border-[#c8a96e]/15 pb-2">
                 <div className="flex items-center gap-2">
                     <span className="text-[12px] leading-none text-[#c8a96e]/60 animate-pulse">卍</span>
-                    <span className="text-[10px] uppercase tracking-[0.4em] text-[#eed9c4]/60 font-bold">
+                    <span className="text-[10px] uppercase tracking-[0.4em] text-[#eed9c4]/60 font-black font-[family-name:var(--font-display)]">
                         Seireitei Operations
                     </span>
                 </div>

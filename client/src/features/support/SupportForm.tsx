@@ -131,7 +131,7 @@ export function SupportForm() {
                                             }`}
                                     >
                                         <span className="text-sm">{c.kanji}</span>
-                                        {c.label}
+                                        <span className="font-[family-name:var(--font-display)]">{c.label}</span>
                                     </button>
                                 );
                             })}

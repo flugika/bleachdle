@@ -6,12 +6,7 @@ import ZangetsuLoader from '@/src/shared/ui/loader/ZangetsuLoader';
 export default function LoadingPreview() {
     return (
         <>
-            {/* 🎯 ทริคไม้ตาย: บังคับซ่อน Global Nav ทันทีที่หน้านี้โผล่ ไม่ต้องรอ JS Hydrate */}
-            <style>{`
-                #global-game-nav { display: none !important; }
-            `}</style>
-
-            <div className="fixed inset-0 z-[60] flex flex-col items-center justify-center w-screen h-screen bg-[#020205] text-white overflow-hidden select-none">
+            <div className="fixed inset-0 z-[60] flex flex-col items-center justify-center w-screen h-screen bg-[#020205] text-white overflow-hidden select-none font-[family-name:var(--font-display)]">
                 {/* 🌌 [BOTTOM ZONE: z-0] */}
                 <div className="absolute inset-0 bg-ambient-void pointer-events-none z-0"></div>
                 <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,transparent_30%,#010103_98%)] pointer-events-none z-0 opacity-60"></div>
@@ -32,8 +27,8 @@ export default function LoadingPreview() {
                     <div className="absolute bottom-0 left-0 w-6 h-6 border-b-2 border-l-2 border-solid border-white/30"></div>
                     <div className="absolute bottom-0 right-0 w-6 h-6 border-b-2 border-r-2 border-solid border-white/30"></div>
 
-                    <span className="absolute bottom-2 left-8 font-mono text-[11px] tracking-[0.4em] text-white/40 uppercase">System // Reiatsu_Locked</span>
-                    <span className="absolute top-2 right-8 font-mono text-[11px] tracking-[0.4em] text-cyan-400/70 uppercase font-bold">Stage_3 // Bankai_Unleashed</span>
+                    <span className="absolute bottom-2 left-8 text-[11px] tracking-[0.4em] text-white/40 uppercase">System // Reiatsu_Locked</span>
+                    <span className="absolute top-2 right-8 text-[11px] tracking-[0.4em] text-cyan-400/70 uppercase font-bold">Stage_3 // Bankai_Unleashed</span>
                 </div>
 
                 {/* 💎 [CORE ZONE: z-30] */}

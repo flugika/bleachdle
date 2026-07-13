@@ -79,10 +79,10 @@ export default function AboutPageClient() {
         <div className="relative min-h-screen w-full text-white overflow-hidden">
             <div className="relative z-10 max-w-4xl mx-auto px-4 py-16 md:py-24">
                 {/* ================= HEADER ================= */}
-                <div className="text-center mb-14">
+                <div className="text-center mb-14 font-[family-name:var(--font-display)]">
                     <button
                         onClick={() => router.push("/")}
-                        className="text-[11px] uppercase tracking-[0.3em] text-[#eed9c4]/50 hover:text-[#c8a96e] font-mono mb-6 transition-colors duration-200 cursor-pointer"
+                        className="text-[11px] uppercase tracking-[0.3em] text-[#eed9c4]/50 hover:text-[#c8a96e] mb-6 transition-colors duration-200 cursor-pointer"
                     >
                         ← Return To Living World Gateway
                     </button>
@@ -110,7 +110,15 @@ export default function AboutPageClient() {
                 <div className="flex flex-col gap-8">
                     {/* ================= WHAT IS A "DLE"? ================= */}
                     <KidoCard kanji="遊戯" eyebrow="For First-Time Visitors">
-                        <h2 className="text-xl font-bold text-white mb-4 tracking-wide">
+                        <h2 className="flex gap-2 text-xl font-bold text-white mb-4 tracking-wide font-[family-name:var(--font-display)]">
+                            <img
+                                src="/icon.svg"
+                                alt=""
+                                className="w-5 h-5 md:w-6 md:h-6 bd-anim"
+                                style={{
+                                    animation: "icon-reiatsu-breathe 3.2s ease-in-out infinite",
+                                }}
+                            />
                             What is Bleachdle?
                         </h2>
                         <p className="text-sm text-neutral-300 leading-relaxed mb-4">
@@ -134,7 +142,7 @@ export default function AboutPageClient() {
                             <div className="border border-[#c8a96e]/25 bg-black/20 p-5">
                                 <div className="flex items-center gap-2 mb-3">
                                     <span className="text-lg text-[#c8a96e]">日</span>
-                                    <span className="text-sm font-bold uppercase tracking-[0.2em] text-[#c8a96e]">
+                                    <span className="text-sm font-bold uppercase tracking-[0.2em] text-[#c8a96e] font-[family-name:var(--font-display)]">
                                         Daily
                                     </span>
                                 </div>
@@ -150,7 +158,7 @@ export default function AboutPageClient() {
                             <div className="border border-[#4a90d9]/25 bg-black/20 p-5">
                                 <div className="flex items-center gap-2 mb-3">
                                     <span className="text-lg text-[#4a90d9]">無</span>
-                                    <span className="text-sm font-bold uppercase tracking-[0.2em] text-[#4a90d9]">
+                                    <span className="text-sm font-bold uppercase tracking-[0.2em] text-[#4a90d9] font-[family-name:var(--font-display)]">
                                         Unlimited
                                     </span>
                                 </div>
@@ -188,7 +196,7 @@ export default function AboutPageClient() {
                                     className="flex items-center gap-2.5 border border-white/8 bg-black/20 px-3.5 py-2.5"
                                 >
                                     <span className="text-lg text-[#c8a96e]/70">{m.kanji}</span>
-                                    <span className="text-[11px] uppercase tracking-[0.15em] text-neutral-300 font-mono">
+                                    <span className="text-[11px] uppercase tracking-[0.15em] text-neutral-300 font-[family-name:var(--font-display)]">
                                         {m.name}
                                     </span>
                                 </div>
@@ -201,7 +209,7 @@ export default function AboutPageClient() {
 
                     {/* ================= WHY I MADE THIS ================= */}
                     <KidoCard kanji="由来" eyebrow="Why This Exists">
-                        <h2 className="text-xl font-bold text-white mb-4 tracking-wide">
+                        <h2 className="text-xl font-bold text-white mb-4 tracking-wide font-[family-name:var(--font-display)]">
                             Why I made this
                         </h2>
                         <div className="text-sm text-neutral-300 leading-relaxed space-y-4">
@@ -298,7 +306,7 @@ export default function AboutPageClient() {
 
                     {/* ================= FAN-MADE / NON-COMMERCIAL / CREDITS ================= */}
                     <KidoCard kanji="権利" eyebrow="Rights &amp; Ownership">
-                        <h2 className="text-xl font-bold text-white mb-4 tracking-wide">
+                        <h2 className="text-xl font-bold text-white mb-4 tracking-wide font-[family-name:var(--font-display)]">
                             Fan-made, non-commercial, no ads
                         </h2>
                         <p className="text-sm text-neutral-300 leading-relaxed mb-4">
@@ -335,7 +343,7 @@ export default function AboutPageClient() {
                                 href={PORTFOLIO_URL}
                                 target="_blank"
                                 rel="noopener noreferrer"
-                                className="group relative font-black inline-flex items-center gap-2 border border-[#c8a96e]/50 px-6 py-2.5 text-[12px] uppercase tracking-[0.25em] font-mono text-[#c8a96e] transition-all duration-300 hover:border-[#c8a96e] hover:bg-[#c8a96e] hover:text-[#0a0a0f] hover:shadow-[0_0_27px_rgba(200,169,110,0.5)]"
+                                className="group relative font-[family-name:var(--font-display)] font-black inline-flex items-center gap-2 border border-[#c8a96e]/50 px-6 py-2.5 text-[12px] uppercase tracking-[0.25em] text-[#c8a96e] transition-all duration-300 hover:border-[#c8a96e] hover:bg-[#c8a96e] hover:text-[#0a0a0f] hover:shadow-[0_0_27px_rgba(200,169,110,0.5)]"
                             >
                                 View My Portfolio
                                 <ArrowUpRight className="w-3.5 h-3.5 transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
@@ -351,7 +359,7 @@ export default function AboutPageClient() {
                         <a
                             href="/support"
                             onClick={(e) => handleGateNavigate(e, "/support")}
-                            className="group font-black relative inline-flex items-center gap-2 border border-[#c8a96e]/50 px-7 py-3 text-[12px] uppercase tracking-[0.25em] font-mono text-[#c8a96e] transition-all duration-300 hover:border-[#c8a96e] hover:bg-[#c8a96e] hover:text-[#0a0a0f] hover:shadow-[0_0_27px_rgba(200,169,110,0.5)]"
+                            className="group font-black relative font-[family-name:var(--font-display)] inline-flex items-center gap-2 border border-[#c8a96e]/50 px-7 py-3 text-[12px] uppercase tracking-[0.25em] text-[#c8a96e] transition-all duration-300 hover:border-[#c8a96e] hover:bg-[#c8a96e] hover:text-[#0a0a0f] hover:shadow-[0_0_27px_rgba(200,169,110,0.5)]"
                         >
                             Go To Support &amp; Reports
                             <ArrowUpRight className="w-3.5 h-3.5 transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />

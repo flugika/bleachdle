@@ -36,3 +36,81 @@ alter table public.support_tickets enable row level security;
 
 comment on table public.support_tickets is
   'Feedback/bug reports from /support. Writable only via the service role (API route). No IP or user-agent is stored anywhere in this table.';
+
+CREATE OR REPLACE FUNCTION get_support_tickets(
+    p_status   TEXT DEFAULT NULL,
+    p_category TEXT DEFAULT NULL,
+    p_limit    INT DEFAULT 50,
+    p_offset   INT DEFAULT 0
+)
+RETURNS jsonb
+LANGUAGE sql
+STABLE
+AS $$
+  WITH filtered AS (
+    SELECT id, created_at, category, message, client_ref, status
+    FROM support_tickets
+    WHERE (p_status IS NULL OR status = p_status)
+      AND (p_category IS NULL OR category = p_category)
+  ),
+  page AS (
+    SELECT *
+    FROM filtered
+    ORDER BY created_at DESC
+    LIMIT LEAST(GREATEST(p_limit, 1), 200)
+    OFFSET GREATEST(p_offset, 0)
+  ),
+  counts AS (
+    SELECT
+      COUNT(*) FILTER (WHERE status = 'new')      AS new,
+      COUNT(*) FILTER (WHERE status = 'seen')      AS seen,
+      COUNT(*) FILTER (WHERE status = 'resolved')  AS resolved,
+      COUNT(*) FILTER (WHERE status = 'ignored')   AS ignored,
+      COUNT(*)                                      AS total
+    FROM support_tickets
+    WHERE (p_category IS NULL OR category = p_category)
+  ),
+  category_counts AS (
+    SELECT COALESCE(jsonb_object_agg(category, n), '{}'::jsonb) AS by_category
+    FROM (
+      SELECT category, COUNT(*) AS n
+      FROM support_tickets
+      WHERE (p_status IS NULL OR status = p_status)
+      GROUP BY category
+    ) c
+  )
+  SELECT jsonb_build_object(
+    'tickets', COALESCE((SELECT jsonb_agg(row_to_json(page)) FROM page), '[]'::jsonb),
+    'counts', (SELECT row_to_json(counts) FROM counts),
+    'by_category', (SELECT by_category FROM category_counts),
+    'has_more', (SELECT total FROM counts) > (p_offset + p_limit)
+  );
+$$;
+ 
+-- ----------------------------------------------------------------------------
+-- update_ticket_status
+--   Simple, validated status transition. Returns the updated row (or NULL
+--   if no ticket matched the id) so the client can optimistically reconcile.
+-- ----------------------------------------------------------------------------
+CREATE OR REPLACE FUNCTION update_ticket_status(
+    p_id     UUID,
+    p_status TEXT
+)
+RETURNS jsonb
+LANGUAGE plpgsql
+AS $$
+DECLARE
+    updated jsonb;
+BEGIN
+    IF p_status NOT IN ('new', 'seen', 'resolved', 'ignored') THEN
+        RAISE EXCEPTION 'invalid status: %', p_status;
+    END IF;
+ 
+    UPDATE support_tickets
+    SET status = p_status
+    WHERE id = p_id
+    RETURNING row_to_json(support_tickets)::jsonb INTO updated;
+ 
+    RETURN updated; -- NULL if no row matched
+END;
+$$;

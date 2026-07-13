@@ -36,7 +36,7 @@ export function DailyStatsBar({ stats, forceScroll = false }: { stats: DailyStat
     if (!stats) {
         return (
             <div
-                className="relative w-full overflow-hidden py-2 border-b flex items-center justify-center opacity-50"
+                className="relative w-full overflow-hidden py-2 border-b flex items-center justify-center opacity-50 font-[family-name:var(--font-display)]"
                 style={{ borderColor: "rgba(200,169,110,0.2)", background: "rgba(0,0,0,0.35)", minHeight: "36px" }}
             >
                 <div className="w-48 h-3 bg-[#c8a96e]/20 rounded animate-pulse" />
@@ -58,7 +58,7 @@ export function DailyStatsBar({ stats, forceScroll = false }: { stats: DailyStat
         return (
             <>
                 <div
-                    className="relative w-full overflow-hidden py-2 border-b flex items-center justify-center"
+                    className="relative w-full overflow-hidden py-2 border-b flex items-center justify-center font-[family-name:var(--font-display)]"
                     style={{ borderColor: "rgba(200,169,110,0.2)", background: "rgba(0,0,0,0.35)", minHeight: "36px" }}
                 >
                     <div className="absolute inset-y-0 left-0 w-8 z-10 pointer-events-none" style={{ background: "linear-gradient(90deg, rgba(2,2,5,1), transparent)" }} />
@@ -111,14 +111,8 @@ export function DailyStatsBar({ stats, forceScroll = false }: { stats: DailyStat
 
     return (
         <>
-            <style>{`
-                @keyframes bd-stats-ticker-scroll {
-                    0%   { transform: translateX(0); }
-                    100% { transform: translateX(-50%); }
-                }
-            `}</style>
             <div
-                className="relative w-full overflow-hidden py-2 border-b"
+                className="relative w-full overflow-hidden py-2 border-b font-[family-name:var(--font-display)]"
                 style={{ borderColor: "rgba(200,169,110,0.2)", background: "rgba(0,0,0,0.35)", minHeight: "36px" }}
             >
                 <div className="absolute inset-y-0 left-0 w-8 z-10 pointer-events-none" style={{ background: "linear-gradient(90deg, rgba(2,2,5,1), transparent)" }} />

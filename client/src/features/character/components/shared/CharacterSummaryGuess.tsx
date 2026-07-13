@@ -129,7 +129,7 @@ export const CharacterSummaryGuess = ({ isOpen, onClose, guesses, targetId, isWi
 
                         {/* Header: Soul Identity Report (จะทับตราสัญลักษณ์ด้านหลังแน่นอน) */}
                         <div className="relative bg-[#c8a96e]/5 px-4 py-2 border-b border-[#c8a96e]/10 flex items-center justify-between backdrop-blur-[1px]">
-                            <p className="text-[12px] font-bold uppercase tracking-[0.3em] text-[#c8a96e]/70">
+                            <p className="text-[12px] font-bold uppercase tracking-[0.3em] text-[#c8a96e]/70 font-[family-name:var(--font-display)]">
                                 {isWin ? "Identity Verified" : "Data Analysis Report"}
                             </p>
                             <div className="w-1.5 h-1.5 rounded-full bg-[#c8a96e] animate-pulse shadow-[0_0_10px_#c8a96e] pointer-events-none" />
@@ -149,7 +149,7 @@ export const CharacterSummaryGuess = ({ isOpen, onClose, guesses, targetId, isWi
 
                             {/* Info Section */}
                             <div className="flex flex-col text-left overflow-hidden pt-1 z-10">
-                                <h2 className="text-xl text-[#f5ebd5] tracking-wide truncate">{target.name}</h2>
+                                <h2 className="text-xl text-[#f5ebd5] tracking-wide font-black truncate font-[family-name:var(--font-display)]">{target.name}</h2>
                                 <div className="flex flex-wrap gap-2 mt-2">
                                     <span className="px-2 py-0.5 text-[12px] text-[#c8a96e]/80 border border-[#c8a96e]/20 bg-[#c8a96e]/5 font-mono">{target.gender}</span>
                                     <span className="px-2 py-0.5 text-[12px] text-[#c8a96e]/80 border border-[#c8a96e]/20 bg-[#c8a96e]/5 font-mono">{target.race.length > 1 ? "Hybrid" : target.race}</span>
@@ -184,8 +184,6 @@ export const CharacterSummaryGuess = ({ isOpen, onClose, guesses, targetId, isWi
             <IdentificationHistoryPanel
                 guessCount={guesses.length}
                 chronicleLabel="Reiatsu Chronicle // View Logs"
-                labelColorClassName="text-[#eed9c4]/70"
-                countSuffixColorClassName="text-[#eed9c4]/50"
                 matrix={guesses.map((guess: any, i: number) => (
                     <div key={i} className="flex gap-1">
                         {RESULT_KEYS.map((key) => {

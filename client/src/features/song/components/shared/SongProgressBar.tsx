@@ -75,18 +75,7 @@ export const SongProgressBar = ({
     };
 
     return (
-        <div className="w-full flex flex-col gap-2 select-none">
-            <style>{`
-                @keyframes song-shimmer {
-                    0% { left: -120px; }
-                    100% { left: var(--reveal-percent); }
-                }
-                @keyframes reveal-window-pulse {
-                    0%, 100% { opacity: 0.4; }
-                    50% { opacity: 1; }
-                }
-            `}</style>
-
+        <div className="w-full flex flex-col gap-2 select-none font-[family-name:var(--font-body)]">
             <div
                 ref={barRef}
                 onPointerDown={handlePointerDown}

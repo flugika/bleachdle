@@ -23,16 +23,16 @@ export const StreakStatsGrid = ({
     labelColorClassName = 'text-[#ebc7c7]/50',
 }: StreakStatsGridProps) => {
     return (
-        <div className="grid grid-cols-2 divide-x divide-white/[0.08] mb-6 border-t border-white/[0.05] pt-4">
+        <div className="grid grid-cols-2 divide-x divide-white/[0.08] mb-6 border-t border-white/[0.05] pt-4 font-[family-name:var(--font-display)]">
             <div className="flex flex-col items-center">
-                <p className={`text-[11px] uppercase ${labelColorClassName} tracking-widest`}>Current Streaks</p>
+                <p className={`text-[13px] uppercase ${labelColorClassName} tracking-widest`}>Current Streaks</p>
                 <p className="text-xl font-mono font-bold mt-0.5 text-[#f5ebd5]">
                     {isWin ? currentStreak : 0}
                 </p>
             </div>
 
             <div className="flex flex-col items-center">
-                <p className={`text-[11px] uppercase ${labelColorClassName} tracking-widest`}>Max Streaks</p>
+                <p className={`text-[13px] uppercase ${labelColorClassName} tracking-widest`}>Max Streaks</p>
                 <p className="text-xl font-mono font-bold mt-0.5" style={{ color: tierColor }}>
                     {maxStreak}
                 </p>

@@ -20,7 +20,7 @@ interface TierBadgeCardProps {
  */
 export const TierBadgeCard = ({ activeTier }: TierBadgeCardProps) => {
     return (
-        <div className="relative p-[1px] my-4 bg-gradient-to-b from-[#c8a96e]/50 to-transparent">
+        <div className="relative p-[1px] my-4 bg-gradient-to-b from-[#c8a96e]/50 to-transparent font-[family-name:var(--font-display)]">
             <div className="bg-[#0a0a0c] p-5 flex items-center gap-6 overflow-hidden relative shadow-2xl">
                 <div className="absolute top-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-[#c8a96e]/50 to-transparent" />
                 <div

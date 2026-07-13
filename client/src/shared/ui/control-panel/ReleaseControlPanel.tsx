@@ -49,7 +49,7 @@ export function ReleaseControlPanel({
     const hasGuesses = game?.guesses?.length > 0;
 
     return (
-        <div className="flex flex-col items-center">
+        <div className="flex flex-col items-center font-[family-name:var(--font-display)]">
             {/* Release testimony card */}
             {target && (
                 <ReleaseTestimonyDisplay target={target} isSolved={false} />

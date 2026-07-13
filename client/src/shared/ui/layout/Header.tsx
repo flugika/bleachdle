@@ -30,7 +30,7 @@ export const Header = ({
     return (
         <header className="w-full relative">
             {/* Content container */}
-            <div className="max-w-[80%] mx-auto px-4 py-8 flex flex-col items-center text-center">
+            <div className="max-w-[80%] mx-auto px-4 py-8 flex flex-col items-center text-center font-[family-name:var(--font-display)]">
                 {/* วงแสง Background Aura */}
                 <div
                     className={`absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[100vw] h-[10vh] bg-[radial-gradient(circle_at_center,rgba(200,169,110,0.25)_0%,transparent_60%)] pointer-events-none z-0 blur-[100px] transition-all duration-[2000ms] ease-in-out ${isMounted ? "opacity-100 scale-100" : "opacity-0 scale-90"

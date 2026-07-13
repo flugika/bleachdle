@@ -141,7 +141,7 @@ export function SongGuessCard({ guess, status, isNew, attemptNumber }: SongGuess
             initial={isNew ? { opacity: 0, y: -16, scale: 0.94 } : false}
             animate={{ opacity: 1, y: 0, scale: 1 }}
             transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
-            className={`relative flex overflow-hidden border mb-4 ${theme.bg} ${theme.border} ${theme.ring}`}
+            className={`relative flex overflow-hidden border mb-4 font-[family-name:var(--font-display)] ${theme.bg} ${theme.border} ${theme.ring}`}
             style={{ boxShadow: theme.glow }}
         >
             {/* เส้นไฮไลต์บนสุด */}

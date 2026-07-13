@@ -53,7 +53,7 @@ export function SenkaimonTransition() {
             key={cycleRef.current}
             aria-hidden="true"
             role="presentation"
-            className="fixed inset-0 z-[9999] select-none overflow-hidden bg-transparent"
+            className="fixed inset-0 z-[9999] select-none overflow-hidden bg-transparent font-[family-name:var(--font-display)]"
             style={{ animation: `senkaimon-impact-shake ${CYCLE_MS}ms cubic-bezier(0.25,1,0.5,1) forwards` }}
         >
             {/* 🚪 Left gate leaf */}

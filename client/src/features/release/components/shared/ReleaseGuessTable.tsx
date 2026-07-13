@@ -178,8 +178,9 @@ export function ReleaseGuessCard({ guess, status, isNew, attemptNumber }: Releas
 
     return (
         <motion.div
+            id={`release-row-${guess.id}`}
             layout initial={isNew ? { opacity: 0, x: -20 } : false} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.4, ease: 'easeOut' }}
-            className="group relative flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-4 px-5 mb-3 overflow-hidden backdrop-blur-sm"
+            className="group relative font-[family-name:var(--font-display)] flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-4 px-5 mb-3 overflow-hidden backdrop-blur-sm"
             style={{
                 background: `linear-gradient(135deg, ${theme.bg}, ${T.parchment} 60%, ${T.void})`,
                 border: `1px solid ${theme.border}`,
@@ -221,7 +222,7 @@ export function ReleaseGuessCard({ guess, status, isNew, attemptNumber }: Releas
                         {guess.technique_name}
                     </p>
                     {guess.technique_translation && (
-                        <p className="text-[10px] italic mt-0.5 truncate" style={{ color: T.sub, opacity: 0.75 }}>
+                        <p className="text-[10px] italic mt-0.5 truncate font-[family-name:var(--font-body)]" style={{ color: T.sub, opacity: 0.75 }}>
                             &ldquo;{guess.technique_translation}&rdquo;
                         </p>
                     )}

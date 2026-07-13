@@ -72,7 +72,7 @@ const AttrChip = ({ label, value, status }: { label: string; value?: string; sta
             className="inline-flex items-center gap-1 px-1.5 py-[3px] rounded-[3px] border font-mono text-[8px] uppercase tracking-wider whitespace-nowrap"
             style={{ backgroundColor: style.bg, borderColor: style.border, color: style.text }}
         >
-            <span className="opacity-50">{label}</span>
+            <span className="opacity-80">{label}</span>
             <span className="font-bold">{value}</span>
             {status === 'higher' && <ArrowUp size={8} />}
             {status === 'lower' && <ArrowDown size={8} />}
@@ -84,7 +84,7 @@ export const SilhouetteGuessTable = ({ guesses }: { guesses: SilhouetteGuessEntr
     if (!guesses.length) return null;
 
     return (
-        <div className="w-full max-w-2xl mx-auto py-4 space-y-4">
+        <div className="w-full max-w-2xl mx-auto py-4 space-y-4 font-[family-name:var(--font-display)]">
             <div className="flex items-center justify-between px-1">
                 <div className="flex items-center gap-2">
                     <span className="w-1 h-1 rounded-full bg-[#c9a13b]/70" />
@@ -97,7 +97,7 @@ export const SilhouetteGuessTable = ({ guesses }: { guesses: SilhouetteGuessEntr
                 </span>
             </div>
 
-            <AnimatePresence initial={false}>
+            <AnimatePresence initial={true}>
                 {guesses.map((entry, idx) => {
                     const isCorrect = entry.status === 'correct';
                     const accent = isCorrect ? '#35d68a' : '#ff4d4d';
@@ -235,7 +235,7 @@ export const SilhouetteGuessTable = ({ guesses }: { guesses: SilhouetteGuessEntr
                                         {isCorrect ? 'Record Match' : 'Record Mismatch'}
                                     </div>
 
-                                    <div className="mt-3 flex flex-wrap gap-1">
+                                    <div className="mt-3 flex flex-wrap gap-1 font-[family-name:var(--font-body)]">
                                         <AttrChip label="Gender" value={sheet.gender} status={attrs.gender} />
                                         <AttrChip label="Race" value={(sheet.race?.length ?? 0) > 1 ? "Hybrid" : sheet.race?.[0]} status={attrs.race} />
                                         <AttrChip label="Height" value={formatHeight(Number(sheet.height_cm || -1))} status={attrs.height} />

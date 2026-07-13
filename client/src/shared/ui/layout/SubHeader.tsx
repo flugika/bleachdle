@@ -6,7 +6,7 @@ interface SubHeaderProps {
 
 export const SubHeader = ({ title, subtitle, className = "my-2" }: SubHeaderProps) => {
     return (
-        <div className={`flex flex-col items-center animate-in fade-in duration-700 pt-4 ${className}`}>
+        <div className={`flex flex-col items-center animate-in fade-in duration-700 pt-4 font-[family-name:var(--font-display)] ${className}`}>
             {/* Decorative Lines & Title */}
             <div className="flex items-center justify-center w-full gap-4 mb-2">
                 {/* Left Line */}

@@ -63,7 +63,7 @@ export const SongSummaryGuess = ({
 
             {/* Target Song Metadata Block — จุดที่ต่างจาก character (ไม่มี race/gender/height ฯลฯ) */}
             {target && (
-                <div className="relative mb-6 overflow-hidden border border-[#c8a96e]/20 bg-[#06060a] shadow-[0_0_30px_rgba(0,0,0,0.5)]">
+                <div className="relative mb-6 overflow-hidden border border-[#c8a96e]/20 bg-[#06060a] shadow-[0_0_30px_rgba(0,0,0,0.5)] font-[family-name:var(--font-display)]">
                     {/* Header Bar */}
                     <div className="relative bg-[#c8a96e]/5 px-5 py-2.5 border-b border-[#c8a96e]/10 flex items-center justify-between backdrop-blur-[1px]">
                         <p className="text-[11px] font-bold uppercase tracking-[0.3em] text-[#c8a96e]/70">
@@ -77,7 +77,7 @@ export const SongSummaryGuess = ({
 
                         {/* Left Section: Track Info */}
                         <div className="flex-1 min-w-0 w-full">
-                            <h2 className="text-xl md:text-2xl font-medium text-[#f5ebd5] tracking-wide truncate">
+                            <h2 className="text-xl md:text-2xl font-black text-[#f5ebd5] tracking-wide truncate">
                                 {target.title}
                             </h2>
                             <div className="flex items-center gap-2 mt-1.5 text-xs md:text-sm text-[#eed9c4]/50 truncate">
@@ -125,10 +125,6 @@ export const SongSummaryGuess = ({
             <IdentificationHistoryPanel
                 guessCount={guesses.length}
                 chronicleLabel="Melodic Chronicle // View Logs"
-                labelColorClassName="text-[#eed9c4]/50"
-                countSuffixColorClassName="text-[#eed9c4]/50"
-                expandedMaxHeightClassName="max-h-[160px]"
-                innerMaxHeightClassName="max-h-[157px]"
                 matrix={guesses.map((guess, i) => (
                     <div
                         key={i}

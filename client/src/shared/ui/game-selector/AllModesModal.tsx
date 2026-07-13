@@ -64,7 +64,7 @@ export function AllModesModal({ isOpen, onClose }: AllModesModalProps) {
             />
 
             {/* Header */}
-            <div className="relative text-center mb-6">
+            <div className="relative text-center mb-6 font-[family-name:var(--font-display)]">
                 <div className="flex items-center justify-center gap-3 mb-1">
                     <span className="h-px w-8 bg-gradient-to-r from-transparent to-[#c8a96e]/50" />
                     <span
@@ -110,7 +110,7 @@ export function AllModesModal({ isOpen, onClose }: AllModesModalProps) {
                             key={dim}
                             type="button"
                             onClick={() => setDimension(dim)}
-                            className={`relative z-10 flex items-center justify-center gap-2 py-2.5 text-[11px] font-medium uppercase tracking-[0.22em] transition-colors duration-300 cursor-pointer ${isActive ? 'text-[#eed9c4]' : 'text-[#eed9c4]/35 hover:text-[#eed9c4]/65'
+                            className={`relative z-10 flex items-center justify-center gap-2 py-2.5 text-[11px] font-[family-name:var(--font-display)] uppercase tracking-[0.22em] transition-colors duration-300 cursor-pointer ${isActive ? 'text-[#eed9c4]' : 'text-[#eed9c4]/35 hover:text-[#eed9c4]/65'
                                 }`}
                         >
                             <span
@@ -124,7 +124,7 @@ export function AllModesModal({ isOpen, onClose }: AllModesModalProps) {
                     );
                 })}
             </div>
-            <p className={`text-center text-[11px] uppercase tracking-[0.22em] mb-5 transition-colors duration-500 ${dimAccent.descTint}`}>
+            <p className={`text-center text-[11px] uppercase tracking-[0.22em] mb-5 transition-colors duration-500 font-[family-name:var(--font-display)] ${dimAccent.descTint}`}>
                 {dimAccent.desc}
             </p>
 
@@ -183,7 +183,7 @@ export function AllModesModal({ isOpen, onClose }: AllModesModalProps) {
                                     {cfg.symbol}
                                 </span>
 
-                                <span className="relative flex flex-col items-start text-left flex-1 min-w-0">
+                                <span className="relative flex flex-col items-start text-left flex-1 min-w-0 font-[family-name:var(--font-display)]">
                                     <span className="text-[11px] font-bold uppercase tracking-[0.14em] text-[#eed9c4]">
                                         {cfg.title}
                                     </span>
@@ -194,7 +194,7 @@ export function AllModesModal({ isOpen, onClose }: AllModesModalProps) {
 
                                 {isCurrent ? (
                                     <span
-                                        className="relative flex items-center gap-1.5 text-[10px] uppercase tracking-[0.2em] px-2 py-1 shrink-0 border"
+                                        className="relative flex items-center gap-1.5 text-[10px] uppercase tracking-[0.2em] px-2 py-1 shrink-0 border font-[family-name:var(--font-display)]"
                                         style={{ color: dimAccent.bright, borderColor: `${dimAccent.base}70`, background: `${dimAccent.base}1a` }}
                                     >
                                         <span

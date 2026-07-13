@@ -84,7 +84,7 @@ export function ModeBadge({ mode, onClick }: ModeBadgeProps) {
                 {/* Text Block */}
                 <div className="flex flex-col items-start pr-1">
                     <span
-                        className="text-[11px] md:text-xs font-bold uppercase tracking-[0.25em] transition-colors duration-300"
+                        className="text-[11px] md:text-xs font-bold uppercase tracking-[0.25em] transition-colors duration-300 font-[family-name:var(--font-display)]"
                         style={{ color: config.color }}
                     >
                         {config.label}

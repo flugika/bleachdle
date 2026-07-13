@@ -46,7 +46,7 @@ export function QuoteTestimonyDisplay({ target, isSolved = false, speakerName }:
 
     return (
         <div
-            className="relative w-full max-w-lg mx-auto my-2 overflow-hidden"
+            className="relative w-full max-w-lg mx-auto my-2 overflow-hidden font-[family-name:var(--font-display)]"
             style={{
                 background: T.bg,
                 boxShadow: `0 0 0 1px ${T.border}, 0 26px 60px rgba(0,0,0,0.65)`,
@@ -112,7 +112,7 @@ export function QuoteTestimonyDisplay({ target, isSolved = false, speakerName }:
                 </span>
 
                 <p
-                    className="italic leading-relaxed whitespace-pre-line"
+                    className="italic leading-relaxed whitespace-pre-line font-[family-name:var(--font-body)]"
                     style={{ color: T.value, fontSize: '17px', letterSpacing: '0.02em' }}
                 >
                     {target.text}

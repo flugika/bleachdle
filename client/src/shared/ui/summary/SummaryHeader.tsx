@@ -39,7 +39,7 @@ export const SummaryHeader = ({
     winTitle = 'REISHI KAKUNIN',
     loseTitle = 'KONPAKU DANZETSU',
     subtitleColorClassName = 'text-[#ebc7c7]/50',
-    className = 'text-center mb-6 relative z-10',
+    className = 'text-center mb-6 relative z-10 font-[family-name:var(--font-display)]',
     iconWrapperClassName,
     iconSizeClassName = 'text-3xl',
     titleClassName = 'text-2xl font-bold mt-2 tracking-[0.2em] uppercase',

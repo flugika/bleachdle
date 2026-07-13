@@ -351,13 +351,6 @@ export function SongAudioPlayer({
                 isFull ? "max-w-full" : "max-w-sm" // 🆕 ใช้ max-w-full เพื่อให้ยืดเต็ม ScaleFit ในโหมดกุญแจคำตอบ
             ].join(' ')}
         >
-            <style>{`
-                @keyframes song-loop-spin {
-                    from { transform: rotate(0deg); }
-                    to { transform: rotate(-360deg); }
-                }
-            `}</style>
-
             {/* 霊子 REIATSU PARTICLE FIELD */}
             <div className="pointer-events-none absolute inset-0 overflow-hidden">
                 {REIATSU_PARTICLES.map((p, i) => (
@@ -451,10 +444,10 @@ export function SongAudioPlayer({
 
                     {/* 1. Status & Time */}
                     <div className="flex flex-row justify-between items-center w-full px-1">
-                        <span className={['text-[9px] uppercase tracking-[0.25em] font-mono font-bold transition-colors duration-300', hasError ? 'text-[#e83030] animate-pulse' : isPlaying ? 'text-[#c8a96e] animate-[flat-blink_1.5s_infinite]' : 'text-[#777796]/70'].join(' ')}>
+                        <span className={['text-[9px] uppercase tracking-[0.25em] font-[family-name:var(--font-body)] font-bold transition-colors duration-300', hasError ? 'text-[#e83030] animate-pulse' : isPlaying ? 'text-[#c8a96e] animate-[flat-blink_1.5s_infinite]' : 'text-[#777796]/70'].join(' ')}>
                             {statusLabel}
                         </span>
-                        <span className={`text-sm font-black font-mono tracking-widest transition-all duration-300 ${isPlaying ? 'text-white drop-shadow-[0_0_8px_rgba(200,169,110,0.6)]' : 'text-[#c8a96e]'}`}>
+                        <span className={`text-sm font-black tracking-widest transition-all duration-300 ${isPlaying ? 'text-white drop-shadow-[0_0_8px_rgba(200,169,110,0.6)]' : 'text-[#c8a96e]'}`}>
                             {isFull ? `${formatClockTime(currentTime)} / ${formatClockTime(duration)}` : formatRevealMs(revealMs)}
                         </span>
                     </div>
@@ -476,7 +469,7 @@ export function SongAudioPlayer({
                             className="reiatsu-slider flex-1 h-1 rounded-lg appearance-none cursor-pointer"
                             style={{ background: `linear-gradient(to right, #c8a96e ${Math.round(volume * 100)}%, rgba(119,119,150,0.15) ${Math.round(volume * 100)}%)` }}
                         />
-                        <span className="shrink-0 w-8 text-right text-[11px] font-mono text-[#777796] tracking-tighter tabular-nums">{Math.round(volume * 100)}%</span>
+                        <span className="shrink-0 w-8 text-right text-[11px] font-[family-name:var(--font-body)] text-[#777796] tracking-tighter tabular-nums">{Math.round(volume * 100)}%</span>
                     </div>
 
                     <SongProgressBar

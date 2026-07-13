@@ -47,7 +47,7 @@ export function EmojiControlPanel({
     const hasGuesses = game?.guesses?.length > 0;
 
     return (
-        <div className="flex flex-col items-center">
+        <div className="flex flex-col items-center font-[family-name:var(--font-display)]">
             {/* Emoji dossier card */}
             {target && (
                 <EmojiTestimonyDisplay target={target} revealedCount={revealedCount} isSolved={isGameOver} />

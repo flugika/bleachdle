@@ -45,7 +45,7 @@ export function QuoteControlPanel({
     const hasGuesses = game?.guesses?.length > 0;
 
     return (
-        <div className="flex flex-col items-center">
+        <div className="flex flex-col items-center font-[family-name:var(--font-display)]">
             {/* Quote display card */}
             {target && (
                 <QuoteTestimonyDisplay target={target} isSolved={isGameOver} />
@@ -58,6 +58,7 @@ export function QuoteControlPanel({
                         characters={characters}
                         disabled={disabled || isLimitReached || !target}
                         game={game}
+                        rowIdPrefix="quote-row"
                     />
                 </div>
             )}

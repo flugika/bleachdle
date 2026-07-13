@@ -19,6 +19,7 @@ import { useSenkaimon } from '@/src/shared/ui/context/NavigationContext';
 import { MAX_UNLIMITED_CHARACTER_GUESSES } from '@/src/const/guess';
 import { STORAGE_KEYS } from '@/src/const/localStorage';
 import { BL_MODES_METADATA } from '@/src/config/mode';
+import { EmptyGuessState } from '@/src/features/character/components/shared/EmptyGuessState';
 
 export default function UnlimitedCharacterGame() {
     if (!FEATURE_FLAGS.unlimited.character) {
@@ -240,7 +241,16 @@ export default function UnlimitedCharacterGame() {
                     <CharacterSummaryGuess isOpen={showSummary} onClose={handleCloseModal} guesses={guesses} targetId={target.id} isWin={isWin} mode="unlimited" stats={stats} />
                 ) : target ? (
                     <div className="w-full overflow-x-auto">
-                        <CharacterGuessTable guesses={guesses} />
+                        {guesses.length === 0 ? (
+                            <EmptyGuessState
+                                characters={characters}
+                                targetId={target.id}
+                                onRandomGuess={gameStore.addGuess}
+                                disabled={isGameOver}
+                            />
+                        ) : (
+                            <CharacterGuessTable guesses={guesses} />
+                        )}
                     </div>
                 ) : isGameCompleted ? (
                     <Central46ConfidentialArchive

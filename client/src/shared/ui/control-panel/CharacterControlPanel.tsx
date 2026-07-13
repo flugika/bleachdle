@@ -43,7 +43,7 @@ export function CharacterControlPanel({
     const hasGuesses = game?.guesses?.length > 0;
 
     return (
-        <div className="flex flex-col items-center">
+        <div className="flex flex-col items-center font-[family-name:var(--font-display)]">
             {/* Search Section */}
             {target && (
                 <div className="flex justify-center w-full mb-6">

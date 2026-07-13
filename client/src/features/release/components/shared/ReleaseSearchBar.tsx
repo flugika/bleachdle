@@ -176,7 +176,7 @@ export const ReleaseSearchBar = ({ releases, disabled = false, game }: ReleaseSe
         <div ref={wrapRef} className="relative w-full max-w-md mx-auto">
             {/* INPUT BOX - TYBW STYLING */}
             <div className="relative group/input">
-                <div className="absolute -inset-px bg-gradient-to-r from-red-900/0 via-red-600/0 to-red-900/0 group-focus-within/input:via-red-600/40 transition-all duration-500" />
+                <div className="absolute -inset-px font-[family-name:var(--font-display)] bg-gradient-to-r from-red-900/0 via-red-600/0 to-red-900/0 group-focus-within/input:via-red-600/40 transition-all duration-500" />
 
                 <input
                     ref={inputRef}
@@ -236,14 +236,14 @@ export const ReleaseSearchBar = ({ releases, disabled = false, game }: ReleaseSe
                                 {/* STACKED TYPOGRAPHY — technique_name เป็นหลัก, technique_translation เป็น subtitle */}
                                 <div className="flex flex-col min-w-0 pr-4 transition-transform duration-200 group-hover:translate-x-1">
                                     <span className={[
-                                        'text-xs font-semibold tracking-wider uppercase truncate transition-colors duration-200',
+                                        'text-xs font-semibold tracking-wider uppercase truncate transition-colors duration-200 font-[family-name:var(--font-display)]',
                                         isActive
                                             ? 'text-red-500'
                                             : isGuessed
                                                 ? 'text-[#916564] line-through'
                                                 : 'text-[#d1d1d6]'
                                     ].join(' ')}>
-                                        {item.trigger_phrase}, {item.technique_name}
+                                        {item.technique_name}
                                     </span>
 
                                     {item.technique_translation && (

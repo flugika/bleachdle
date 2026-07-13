@@ -237,7 +237,7 @@ export function ReleaseTestimonyDisplay({ target, revealed = null, isSolved = fa
     const typeAccent = typeTheme(target.release_type).c; // 🎨 สีตาม release_type จริง (เหมือน ReleaseTypeBadge)
 
     return (
-        <div id="release-audio-player" className="w-full max-w-2xl mx-auto py-4 animate-fade-in relative">
+        <div id="release-audio-player" className="w-full max-w-2xl mx-auto py-4 animate-fade-in relative font-[family-name:var(--font-display)]">
             <div
                 className="relative overflow-hidden flex flex-col shadow-[0_25px_60px_rgba(0,0,0,0.8)] p-6 md:p-9"
                 style={{

@@ -58,7 +58,7 @@ export function DailyHubModalFooter({ activeMode }: DailyHubModalFooterProps) {
                         {/* Sweeping Shimmer Line */}
                         <span className="absolute inset-0 -translate-x-full group-hover:translate-x-full bg-gradient-to-r from-transparent via-[#f5e6cc]/10 to-transparent transition-transform duration-[1500ms] ease-out" />
 
-                        <div className="relative flex items-center justify-center gap-3">
+                        <div className="relative flex items-center justify-center gap-3 ">
                             <span className="text-[15px] leading-none text-[#c8a96e] filter drop-shadow-[0_0_8px_rgba(200,169,110,0.8)] group-hover:scale-110 transition-transform duration-300">{nextMode.icon}</span>
                             <span className="text-[10px] font-bold uppercase tracking-[0.35em] text-[#f5e6cc] pt-0.5 group-hover:text-white transition-colors duration-300">
                                 Initialize: <span className="text-[#c8a96e] tracking-[0.4em] ml-1">{nextMode.label}</span>

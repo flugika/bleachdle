@@ -60,7 +60,7 @@ export function PortfolioCard() {
                     href={PORTFOLIO_URL}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="group relative font-black inline-flex items-center gap-2 border border-[#c8a96e]/50 px-6 py-2.5 text-[12px] uppercase tracking-[0.25em] font-mono text-[#c8a96e] transition-all duration-300 hover:border-[#c8a96e] hover:bg-[#c8a96e]/10 hover:shadow-[0_0_27px_rgba(200,169,110,0.35)]"
+                    className="group relative font-black font-[family-name:var(--font-display)] inline-flex items-center gap-2 border border-[#c8a96e]/50 px-6 py-2.5 text-[12px] uppercase tracking-[0.25em] text-[#c8a96e] transition-all duration-300 hover:border-[#c8a96e] hover:bg-[#c8a96e]/10 hover:shadow-[0_0_27px_rgba(200,169,110,0.35)]"
                 >
                     View My Portfolio
                     <ArrowUpRight className="w-3.5 h-3.5 transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />

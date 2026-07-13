@@ -129,7 +129,7 @@ export const EmojiSummaryGuess = ({
 
                     <div className="relative z-10 pointer-events-auto">
                         <div className="relative bg-[#c8a96e]/5 px-4 py-2 border-b border-[#c8a96e]/10 flex items-center justify-between backdrop-blur-[1px]">
-                            <p className="text-[12px] font-bold uppercase tracking-[0.3em] text-[#c8a96e]/70">
+                            <p className="text-[12px] font-bold uppercase tracking-[0.3em] text-[#c8a96e]/70 font-[family-name:var(--font-display)]">
                                 {isWin ? "Identity Verified" : "Data Analysis Report"}
                             </p>
                             <div className="w-1.5 h-1.5 rounded-full bg-[#c8a96e] animate-pulse shadow-[0_0_10px_#c8a96e] pointer-events-none" />
@@ -145,7 +145,7 @@ export const EmojiSummaryGuess = ({
                                 />
                             </div>
                             <div className="flex flex-col text-left overflow-hidden pt-1 z-10">
-                                <h2 className="text-xl text-[#f5ebd5] tracking-wide truncate">{answerCharacter.name}</h2>
+                                <h2 className="text-xl text-[#f5ebd5] tracking-wide font-black truncate font-[family-name:var(--font-display)]">{answerCharacter.name}</h2>
                                 <div className="flex flex-wrap gap-2 mt-2">
                                     {answerCharacter.gender && (
                                         <span className="px-2 py-0.5 text-[12px] text-[#c8a96e]/80 border border-[#c8a96e]/20 bg-[#c8a96e]/5 font-mono">

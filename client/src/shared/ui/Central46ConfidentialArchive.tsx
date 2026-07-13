@@ -488,22 +488,11 @@ export default function Central46ConfidentialArchive({
     if (!mounted) return null;
 
     return (
-        <div style={{ width: "100%", display: "flex", justifyContent: "center", padding: "40px 18px 0", userSelect: "none" }}>
-            <style>{`
-                @keyframes c46-input-glow {
-                    0%, 100% { box-shadow: 0 0 0px rgba(200,169,110,0); border-color: ${T.border}; }
-                    50% { box-shadow: 0 0 16px rgba(200,169,110,0.35); border-color: ${T.gold}; }
-                }
-                @keyframes c46-etched-pulse {
-                    0% { box-shadow: 0 0 0 rgba(200,169,110,0); background: rgba(200,169,110,0); }
-                    25% { box-shadow: 0 0 22px rgba(200,169,110,0.5); background: rgba(200,169,110,0.08); }
-                    100% { box-shadow: 0 0 0 rgba(200,169,110,0); background: rgba(200,169,110,0); }
-                }
-                @keyframes c46-hint-blink {
-                    0%, 100% { opacity: 0.35; }
-                    50% { opacity: 1; }
-                }
-            `}</style>
+        <div style={{
+            width: "100%", display: "flex", justifyContent: "center", padding: "40px 18px 0", userSelect: "none",
+            ['--c46-border' as any]: T.border,
+            ['--c46-gold' as any]: T.gold
+        }}>
             <div
                 role="document"
                 aria-label="Central 46 Classified Archive"
@@ -612,6 +601,7 @@ export default function Central46ConfidentialArchive({
                                         onBlur={() => setNameFocused(false)}
                                         placeholder="ENTER YOUR SOUL NAME"
                                         autoComplete="off"
+                                        className={!inputName && !nameFocused ? 'c46-input-glow' : ''}
                                         style={{
                                             width: "100%",
                                             boxSizing: "border-box",
@@ -623,13 +613,13 @@ export default function Central46ConfidentialArchive({
                                             textTransform: "uppercase",
                                             color: T.value,
                                             outline: "none",
-                                            animation: !inputName && !nameFocused ? "c46-input-glow 2.4s ease-in-out infinite" : "none",
                                             transition: "border-color 0.2s ease",
                                         }}
                                     />
                                     {!inputName && !nameFocused && (
                                         <span
                                             aria-hidden="true"
+                                            className="c46-hint-blink"
                                             style={{
                                                 position: "absolute",
                                                 right: "18px",
@@ -640,7 +630,6 @@ export default function Central46ConfidentialArchive({
                                                 color: T.gold,
                                                 textTransform: "uppercase",
                                                 pointerEvents: "none",
-                                                animation: "c46-hint-blink 1.6s ease-in-out infinite",
                                             }}
                                         >
                                             TYPE HERE ✎
@@ -664,6 +653,7 @@ export default function Central46ConfidentialArchive({
                                  bordered/glowing band instead of sitting in the same grid
                                  rhythm as location/threat/timestamp filler fields. ── */}
                             <div
+                                className={justEtched ? 'c46-etched-pulse' : ''}
                                 style={{
                                     border: `1px solid ${T.borderDim}`,
                                     background: "rgba(200,169,110,0.04)",
@@ -673,7 +663,6 @@ export default function Central46ConfidentialArchive({
                                     gridTemplateColumns: "1fr auto",
                                     alignItems: "center",
                                     gap: "20px",
-                                    animation: justEtched ? "c46-etched-pulse 1.5s ease-out" : "none",
                                 }}
                             >
                                 <div style={{ minWidth: 0 }}>

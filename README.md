@@ -2,7 +2,7 @@
 
 > A Wordle-style character guessing game for Bleach fans — unlimited mode, attribute-based feedback, Soul Society aesthetic.
 
-**Last Updated:** 13 July 2026, 8:09 AM.
+**Last Updated:** 13 July 2026, 6:39 PM.
 
 [![Next.js](https://img.shields.io/badge/Next.js-15-black?logo=next.js)](https://nextjs.org/)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5-blue?logo=typescript)](https://www.typescriptlang.org/)
@@ -305,6 +305,8 @@ bleachdle
 │  │  │  │     └─ [id]
 │  │  │  │        └─ route.ts
 │  │  │  ├─ monitor
+│  │  │  │  ├─ feedback
+│  │  │  │  │  └─ route.ts
 │  │  │  │  └─ health
 │  │  │  │     └─ route.ts
 │  │  │  ├─ stats
@@ -438,6 +440,7 @@ bleachdle
 │  │  ├─ features
 │  │  │  ├─ admin
 │  │  │  │  ├─ components
+│  │  │  │  │  ├─ FeedbackPanel.tsx
 │  │  │  │  │  └─ MonitorClient.tsx
 │  │  │  │  └─ monitorAuth.ts
 │  │  │  ├─ character
@@ -449,7 +452,8 @@ bleachdle
 │  │  │  │  │  └─ shared
 │  │  │  │  │     ├─ CharacterGuessTable.tsx
 │  │  │  │  │     ├─ CharacterHowToPlayModal.tsx
-│  │  │  │  │     └─ CharacterSummaryGuess.tsx
+│  │  │  │  │     ├─ CharacterSummaryGuess.tsx
+│  │  │  │  │     └─ EmptyGuessState.tsx
 │  │  │  │  ├─ hooks
 │  │  │  │  │  ├─ daily
 │  │  │  │  │  │  └─ useCharacterGame.ts

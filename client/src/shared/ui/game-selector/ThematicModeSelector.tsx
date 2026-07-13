@@ -55,7 +55,7 @@ export const ThematicModeSelector: React.FC<ThematicModeSelectorProps> = ({
     };
 
     return (
-        <div className="relative w-full bleach-grid overflow-hidden flex flex-col items-center justify-start px-4 py-20 selection:bg-[#c8a96e]/50">
+        <div className="relative w-full bleach-grid overflow-hidden flex flex-col items-center justify-start px-4 py-20 selection:bg-[#c8a96e]/50 font-[family-name:var(--font-display)]">
             {/* 卍解 Huge Kanji Background Watermark */}
             <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-[28vw] font-bold text-kanji-watermark pointer-events-none select-none z-0 leading-none">
                 {modeType === "daily" ? "日常" : "無限"}
@@ -150,7 +150,7 @@ export const ThematicModeSelector: React.FC<ThematicModeSelectorProps> = ({
                                     <h2 className="text-xl font-extrabold tracking-[0.25em] text-white drop-shadow-[0_4px_6px_rgba(0,0,0,0.8)] group-hover:text-[#c8a96e] group-hover:tracking-[0.28em] transition-all duration-500">
                                         {config.title}
                                     </h2>
-                                    <p className="text-[11px] uppercase tracking-[0.18em] leading-relaxed mt-4 text-white/50 group-hover:text-white/90 transition-all duration-500">
+                                    <p className="text-[11px] uppercase tracking-[0.18em] leading-relaxed mt-4 text-white/50 group-hover:text-white/90 transition-all duration-500 font-[family-name:var(--font-body)]">
                                         {config.desc}
                                     </p>
                                 </div>

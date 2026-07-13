@@ -80,8 +80,8 @@ export function ModeSelectorModal({
             maxWidth="max-w-[500px]"
             variant="default"
         >
-            <div className="flex flex-col gap-4 mt-2">
-                <p className="text-[12px] uppercase tracking-[0.25em] text-[#777796] text-center mb-4 font-mono select-none">
+            <div className="flex flex-col gap-4 mt-2 font-[family-name:var(--font-body)]">
+                <p className="text-[12px] uppercase tracking-[0.25em] text-[#777796] text-center mb-4 select-none font-black font-[family-name:var(--font-display)]">
                     Target: {activeSubFeature ? activeSubFeature.toUpperCase() : "AWAITING SELECTION"} // Select Destination
                 </p>
 
@@ -112,26 +112,26 @@ export function ModeSelectorModal({
                                 <div className="flex flex-col">
                                     <div className="flex items-center gap-2">
                                         <span
-                                            className="font-bold text-xs tracking-[0.2em] uppercase transition-colors duration-300"
+                                            className="font-bold text-xs tracking-[0.2em] uppercase transition-colors duration-300 font-[family-name:var(--font-display)]"
                                             style={{ color: config.color }}
                                         >
                                             {config.label}
                                         </span>
                                         <span
-                                            className="text-[12px] font-mono transition-transform duration-300 group-hover:scale-110"
+                                            className="text-[12px] transition-transform duration-300 group-hover:scale-110"
                                             style={{ color: `${config.color}90` }}
                                         >
                                             {config.kanji}
                                         </span>
                                     </div>
-                                    <p className="text-[11px] text-[#eed9c4]/50 font-mono mt-1.5 tracking-wide uppercase select-none">
+                                    <p className="text-[11px] text-[#eed9c4]/50 mt-1.5 tracking-wide uppercase select-none">
                                         {config.subText}
                                     </p>
                                 </div>
 
                                 {isActive ? (
                                     <span
-                                        className="text-[11px] font-mono tracking-[0.15em] px-2 py-0.5 font-black uppercase text-black animate-pulse shadow-md"
+                                        className="text-[11px] tracking-[0.15em] px-2 py-0.5 font-black uppercase text-black animate-pulse shadow-md font-[family-name:var(--font-display)]"
                                         style={{
                                             backgroundColor: config.color,
                                             boxShadow: `0 0 14px ${config.glowColor}`
@@ -140,7 +140,7 @@ export function ModeSelectorModal({
                                         CURRENT
                                     </span>
                                 ) : (
-                                    <span className="text-[10px] font-mono tracking-[0.1em] px-2 py-0.5 text-[#777796] opacity-0 group-hover:opacity-100 transition-opacity duration-300 uppercase">
+                                    <span className="text-[10px] tracking-[0.1em] px-2 py-0.5 text-[#777796] opacity-0 group-hover:opacity-100 transition-opacity duration-300 uppercase">
                                         {/* ถ้าหน้าปัจจุบันคือ /unlimited/character แล้วปุ่มนี้คือ Daily ให้เขียนว่า SWITCH TO DAILY */}
                                         {activeBaseMode ? "SWITCH MODE \u2192" : "CONNECT \u2192"}
                                     </span>
