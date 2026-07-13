@@ -40,7 +40,7 @@ export function EmptyGuessState({ characters, targetId, onRandomGuess, disabled 
                     'hover:shadow-[0_0_18px_rgba(200,169,110,0.5),inset_0_0_12px_rgba(200,169,110,0.15)]',
                     'hover:scale-105 active:scale-95',
                     'disabled:opacity-40 disabled:hover:scale-100 disabled:hover:shadow-none',
-                    disabled ? 'cursor-not-allowed' : 'cursor-pointer',
+                    'hover:cursor-pointer',
                 ].join(' ')}
             >
                 🎲 Random Guess
