@@ -293,18 +293,28 @@ export function SongAudioPlayer({
             const playPromise = audio.play();
             if (playPromise) {
                 playPromise
-                    .then(() => setIsPlaying(true))
+                    .then(() => {
+                        setIsPlaying(true);
+                        // 🆕 เริ่มนับเวลาตัด (revealMs) ต่อเมื่อเสียงเริ่มเล่นจริงแล้วเท่านั้น
+                        // ไม่ใช่ตอนที่เรียก play() ซึ่งยังมี buffering delay อยู่
+                        stopTimerRef.current = setTimeout(() => {
+                            audio.pause();
+                            setIsPlaying(false);
+                            setPreviewElapsedMs(0);
+                        }, revealMs);
+                    })
                     .catch(() => {
                         setStatus('error');
                         setIsPlaying(false);
                     });
+            } else {
+                // fallback เผื่อเบราว์เซอร์เก่าไม่คืน promise จาก play()
+                stopTimerRef.current = setTimeout(() => {
+                    audio.pause();
+                    setIsPlaying(false);
+                    setPreviewElapsedMs(0);
+                }, revealMs);
             }
-
-            stopTimerRef.current = setTimeout(() => {
-                audio.pause();
-                setIsPlaying(false);
-                setPreviewElapsedMs(0);
-            }, revealMs);
         };
 
         if (Math.abs(audio.currentTime - startSec) < 0.03) {
