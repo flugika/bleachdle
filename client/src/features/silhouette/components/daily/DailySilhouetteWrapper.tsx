@@ -22,6 +22,7 @@ import { BL_MODES_METADATA } from '@/src/config/mode';
 import { DailyHubModalFooter } from '@/src/shared/ui/daily-hub/DailyHubModalFooter';
 import { useDailyHub } from '@/src/shared/hooks/useDailyHub';
 import { logFullTarget } from '@/src/lib/debug/logFullTarget';
+import { Legend } from '@/src/shared/ui/Legend';
 
 /**
  * ⚠️ ต่างจาก DailyQuoteWrapper ตรงที่ SilhouetteControlPanel ตัวจริง**ไม่มี** prop `mode`/`timeLeft`/
@@ -188,17 +189,7 @@ export default function DailySilhouetteWrapper({ initialTarget }: { initialTarge
                 {(guesses.length > 0 && !showSummary) && (
                     <div className="w-full max-w-xl mx-auto">
                         <Divider />
-                        <div className="flex flex-wrap justify-center gap-x-5 gap-y-1.5 py-1 mb-2">
-                            {([
-                                ['correct', '#0d2918', '#1a5530', 'Correct Match'],
-                                ['wrong', '#590e0e', '#a64747', 'Incorrect'],
-                            ] as const).map(([key, bg, border, label]) => (
-                                <div key={key} className="flex items-center gap-2">
-                                    <span className="inline-block w-[10px] h-[10px] shrink-0" style={{ background: bg, border: `1px solid ${border}` }} />
-                                    <span className="text-[11px] font-mono tracking-wider opacity-60">{label}</span>
-                                </div>
-                            ))}
-                        </div>
+                        <Legend variant="simple" />
                     </div>
                 )}
 

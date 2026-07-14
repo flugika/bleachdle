@@ -691,6 +691,7 @@ bleachdle
 │  │  │     │  ├─ HeaderDivider.tsx
 │  │  │     │  ├─ ReiatsuAmbientSides.tsx
 │  │  │     │  └─ SubHeader.tsx
+│  │  │     ├─ Legend.tsx
 │  │  │     ├─ loader
 │  │  │     │  ├─ SenkaimonTransition.tsx
 │  │  │     │  ├─ SoulSyncLoader.tsx

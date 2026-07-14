@@ -23,6 +23,7 @@ import { DailyHubModalFooter } from '@/src/shared/ui/daily-hub/DailyHubModalFoot
 import { useDailyHub } from '@/src/shared/hooks/useDailyHub';
 import { EmptyGuessState } from '@/src/features/character/components/shared/EmptyGuessState';
 import { logFullTarget } from '@/src/lib/debug/logFullTarget';
+import { Legend } from '@/src/shared/ui/Legend';
 
 export default function DailyCharacterWrapper({ initialTarget }: { initialTarget: Character | null }) {
     const { navigate, state, reportReady } = useSenkaimon();
@@ -197,19 +198,7 @@ export default function DailyCharacterWrapper({ initialTarget }: { initialTarget
                 {(guesses.length > 0 && !showSummary) && (
                     <>
                         <Divider />
-                        <div className="flex flex-wrap justify-center gap-x-5 gap-y-1.5">
-                            {([
-                                ['correct', '#0d2918', '#1a5530', 'Correct'],
-                                ['partial', '#2a1f00', '#5a4000', 'Partial'],
-                                ['wrong', '#590e0e', '#a64747', 'Wrong'],
-                                ['dir', '#0a0a22', '#3a3a7a', 'Higher ▲ / Lower ▼'],
-                            ] as const).map(([key, bg, border, label]) => (
-                                <div key={key} className="flex items-center gap-1.5">
-                                    <span className="inline-block w-2.5 h-2.5 shrink-0" style={{ background: bg, border: `1px solid ${border}` }} />
-                                    <span className="text-[12px] tracking-wide text-[#d1a9a9]">{label}</span>
-                                </div>
-                            ))}
-                        </div>
+                        <Legend variant="full" />
                     </>
                 )}
 

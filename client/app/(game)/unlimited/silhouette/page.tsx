@@ -32,6 +32,7 @@ import { MAX_UNLIMITED_SILHOUETTE_GUESSES } from '@/src/const/guess';
 import { STORAGE_KEYS } from '@/src/const/localStorage';
 import { BL_MODES_METADATA } from '@/src/config/mode';
 import { logFullTarget } from '@/src/lib/debug/logFullTarget';
+import { Legend } from '@/src/shared/ui/Legend';
 
 export default function UnlimitedSilhouetteGame() {
     const { navigate, state, reportReady } = useSenkaimon();
@@ -223,17 +224,7 @@ export default function UnlimitedSilhouetteGame() {
                     {(guesses.length > 0 && !showSummary) && (
                         <div className="w-full max-w-xl mx-auto">
                             <Divider />
-                            <div className="flex flex-wrap justify-center gap-x-5 gap-y-1.5 py-1 mb-2">
-                                {([
-                                    ['correct', '#0d2918', '#1a5530', 'Correct Match'],
-                                    ['wrong', '#590e0e', '#a64747', 'Incorrect'],
-                                ] as const).map(([key, bg, border, label]) => (
-                                    <div key={key} className="flex items-center gap-2">
-                                        <span className="inline-block w-[10px] h-[10px] shrink-0" style={{ background: bg, border: `1px solid ${border}` }} />
-                                        <span className="text-[11px] font-mono tracking-wider opacity-60">{label}</span>
-                                    </div>
-                                ))}
-                            </div>
+                            <Legend variant="simple" />
                         </div>
                     )}
 

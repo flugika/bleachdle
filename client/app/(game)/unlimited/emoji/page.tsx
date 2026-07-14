@@ -21,6 +21,7 @@ import { MAX_UNLIMITED_EMOJI_GUESSES } from '@/src/const/guess';
 import { STORAGE_KEYS } from '@/src/const/localStorage';
 import { BL_MODES_METADATA } from '@/src/config/mode';
 import { logFullTarget } from '@/src/lib/debug/logFullTarget';
+import { Legend } from '@/src/shared/ui/Legend';
 
 export default function UnlimitedEmojiGame() {
     const { navigate, state, reportReady } = useSenkaimon();
@@ -200,17 +201,7 @@ export default function UnlimitedEmojiGame() {
                 {(guesses.length > 0 && !showSummary) && (
                     <>
                         <Divider />
-                        <div className="flex flex-wrap justify-center gap-x-5 gap-y-1.5">
-                            {([
-                                ['correct', '#0d2918', '#1a5530', 'Correct'],
-                                ['wrong', '#590e0e', '#a64747', 'Wrong'],
-                            ] as const).map(([key, bg, border, label]) => (
-                                <div key={key} className="flex items-center gap-1.5">
-                                    <span className="inline-block w-2.5 h-2.5 shrink-0" style={{ background: bg, border: `1px solid ${border}` }} />
-                                    <span className="text-[12px] tracking-wide text-[#d1a9a9]">{label}</span>
-                                </div>
-                            ))}
-                        </div>
+                        <Legend variant="simple" />
                     </>
                 )}
 
