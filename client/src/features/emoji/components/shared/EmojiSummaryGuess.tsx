@@ -18,6 +18,7 @@ import {
 } from '@/src/shared/ui/summary';
 import { Stats } from '@/src/lib/guessGame/types';
 import { Character } from '@/src/entities/character/schema';
+import { getEmojiSetById } from '@/src/features/emoji/emoji';
 
 interface EmojiSummaryGuessProps {
     isOpen: boolean;
@@ -50,6 +51,7 @@ export const EmojiSummaryGuess = ({
     const answerCharacter = revealedCharacter;
 
     const activeTier = useCharacterTier(stats.maxStreak);
+    const fullEmojiSet = target ? getEmojiSetById(target.id) : null;
 
     // 🔮 Same watermark effect as QuoteSummaryGuess, driven by the revealed
     // speaker's race instead of the guessed target directly.
@@ -94,12 +96,14 @@ export const EmojiSummaryGuess = ({
                 <div className="relative z-10">
                     {/* isSolved is always true here: by the time the summary shows,
                        the game is over — win or lose — so every emoji is unsealed. */}
-                    <EmojiTestimonyDisplay
-                        target={target}
-                        revealedCount={target.emoji_list.length}
-                        isSolved={isWin}
-                        speakerName={answerCharacter?.name}
-                    />
+                    {fullEmojiSet && (
+                        <EmojiTestimonyDisplay
+                            target={fullEmojiSet}
+                            revealedCount={fullEmojiSet.emoji_list.length}
+                            isSolved={isWin}
+                            speakerName={answerCharacter?.name}
+                        />
+                    )}
                 </div>
             </div>
 

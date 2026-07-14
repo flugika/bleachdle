@@ -19,6 +19,15 @@ const MONITOR_SECRET = process.env.MONITOR_SECRET;
 const MONITOR_COOKIE_NAME = 'mntr_key';
 const MONITOR_HEADER_NAME = 'x-monitor-key';
 
+// กฎใหม่ของ Next.js ตัวจับคู่ย้ายกลับมาอยู่ที่นี่
+export const config = {
+    matcher: [
+        '/api/:path*',
+        '/soul-society-archives/:path*',
+        '/monitor/:path*',
+    ],
+};
+
 export async function proxy(req: NextRequest) {
     const url = req.nextUrl;
     const pathname = url.pathname;
@@ -151,11 +160,3 @@ export async function proxy(req: NextRequest) {
 
     return NextResponse.next();
 }
-
-export const config = {
-    matcher: [
-        '/api/:path*',
-        '/soul-society-archives/:path*',
-        '/monitor/:path*',
-    ],
-};

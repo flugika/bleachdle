@@ -16,6 +16,11 @@ const eslintConfig = defineConfig([
   // 🎯 Custom rule overrides — กรอง noise ออก เหลือแต่ error ที่กระทบจริง
   {
     files: ["**/*.{js,jsx,ts,tsx}"],
+    settings: {
+      next: {
+        rootDir: "./",
+      },
+    },
     rules: {
       // ═══════════════════════════════════════════════
       // ปิด — ไม่กระทบ runtime, เป็นแค่ style/pattern preference

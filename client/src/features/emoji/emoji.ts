@@ -5,6 +5,8 @@ import { BleachEmojiSet, EmojiSetSchema } from '@/src/entities/emoji/schema';
 import { Character } from '@/src/entities/character/schema';
 import { getCharacterById } from '@/src/features/character/character';
 import { EmojiTarget } from '@/src/features/emoji/types';
+import { EmojiTargetHidden } from '@/src/features/emoji/types';
+import { TOTAL_EMOJI_COUNT } from '@/src/features/emoji/emojiRevealedCounter';
 
 export const getEmojiSets = (): BleachEmojiSet[] => {
     return rawEmojiSets as BleachEmojiSet[];
@@ -54,3 +56,25 @@ export const getEmojiGuessableCharacters = (): Character[] => {
 
     return result;
 };
+
+export type EmojiTile = { emoji: string | null; isRevealed: boolean };
+
+/**
+ * target มีแค่ id/character_id (จาก server) → หา emoji_list ตัวเต็มจาก
+ * emojiSets (bundle เดียวกับ client, ไม่ผ่าน network) แล้ว slice ตาม
+ * revealedCount เท่านั้น ที่เหลือ mask เป็น null กัน component เผลอ
+ * .map(e => e.emoji) ทั้ง array แล้วเห็นครบ 4 ตัวก่อนเวลา
+ */
+export function getRevealedEmojiTiles(
+    target: EmojiTargetHidden | null,
+    emojiSets: BleachEmojiSet[],
+    revealedCount: number
+): EmojiTile[] {
+    const fullSet = target ? emojiSets.find((s) => s.id === target.id) : undefined;
+    const emojiList = fullSet?.emoji_list ?? [];
+
+    return Array.from({ length: TOTAL_EMOJI_COUNT }, (_, i) => {
+        const isRevealed = i < revealedCount;
+        return { emoji: isRevealed ? (emojiList[i] ?? null) : null, isRevealed };
+    });
+}

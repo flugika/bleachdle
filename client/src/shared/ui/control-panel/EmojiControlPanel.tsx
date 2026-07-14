@@ -2,14 +2,14 @@
 import { useState } from 'react';
 import { SearchBar } from '@/src/shared/ui/SearchBar'; // ⚠️ reuse ของเดิม เพราะเดา Character เหมือนกัน
 import { BleachEmojiSet } from '@/src/entities/emoji/schema';
-import { EmojiGuessable } from '@/src/features/emoji/types';
+import { EmojiGuessable, EmojiTargetHidden } from '@/src/features/emoji/types';
 import { Modal } from '../modal';
 import { EmojiTestimonyDisplay } from '@/src/features/emoji/components/shared/EmojiTestimonyDisplay';
 import { getEmojiGuessableCharacters } from '@/src/features/emoji/emoji';
 
 interface EmojiControlPanelProps {
     mode: 'daily' | 'unlimited';
-    target: BleachEmojiSet | null;
+    target: EmojiTargetHidden | null;
     emojiSets: BleachEmojiSet[];
     revealedCount: number;
     remainingGuesses?: number;
@@ -37,6 +37,8 @@ export function EmojiControlPanel({
     const [isConfirmOpen, setIsConfirmOpen] = useState(false);
     const characters = getEmojiGuessableCharacters();
 
+    const fullTarget = target ? emojiSets.find((s) => s.id === target.id) ?? null : null;
+
     let isLimitReached = false;
     if (mode === 'unlimited') {
         isLimitReached = remainingGuesses !== undefined && remainingGuesses <= 0;
@@ -47,8 +49,8 @@ export function EmojiControlPanel({
     return (
         <div className="flex flex-col items-center font-[family-name:var(--font-display)]">
             {/* Emoji dossier card */}
-            {target && (
-                <EmojiTestimonyDisplay target={target} revealedCount={revealedCount} isSolved={isGameOver} />
+            {fullTarget && (
+                <EmojiTestimonyDisplay target={fullTarget} revealedCount={revealedCount} isSolved={isGameOver} />
             )}
 
             {/* Search Section */}

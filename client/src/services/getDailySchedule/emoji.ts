@@ -1,3 +1,6 @@
+// src/services/quote.ts
+import 'server-only'
+
 import { supabaseServer } from '@/src/lib/supabase/supabase-server';
 import { EmojiTargetHidden } from '@/src/features/emoji/types';
 import { getTodayStr } from '@/src/lib/utils/format';
@@ -14,7 +17,7 @@ export async function getDailyEmoji(): Promise<EmojiTargetHidden | null> {
         .from('daily_schedule')
         .select(`
             emojis:emoji_id (
-                id, character_id, emoji_list
+                id, character_id
             )
         `)
         .eq('date', todayStr)

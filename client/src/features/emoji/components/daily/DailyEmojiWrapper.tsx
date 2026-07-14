@@ -44,7 +44,7 @@ export default function DailyEmojiWrapper({ initialTarget }: { initialTarget: Em
         if (initialTarget !== null) {
             setTarget(initialTarget);
 
-            logFullTarget(target);
+            logFullTarget(target, emojiSets);
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps -- run once on mount with server-provided target only
     }, [initialTarget, _hasHydrated]);

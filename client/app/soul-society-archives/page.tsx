@@ -16,6 +16,7 @@ import { ArchiveCharacterCard } from '@/src/features/soul-society-archives/compo
 import { ReleaseTestimonyDisplay } from '@/src/features/release/components/shared/ReleaseTestimonyDisplay';
 import Image from 'next/image';
 import { getReleaseById } from '@/src/features/release/release';
+import { getEmojiSetById } from '@/src/features/emoji/emoji';
 
 export const dynamic = 'force-dynamic';
 
@@ -128,6 +129,7 @@ export default async function ArchivePage() {
     const character = characterObj ? getCharacterById(characterObj.id) ?? null : null;
     const quoteCharacter = quote ? getCharacterById(quote.character_id) ?? null : null;
     const emojiCharacter = emoji ? getCharacterById(emoji.character_id) ?? null : null;
+    const fullEmojiSet = emoji ? getEmojiSetById(emoji.id) ?? null : null;
     const releaseCharacter = release ? getCharacterById(release.character_id) ?? null : null;
     const fullRelease = release ? getReleaseById(release.id) ?? null : null; // 🆕 คำตอบเต็ม สำหรับ prop `revealed`
     const silhouetteCharacter = silhouette ? getCharacterById(silhouette.character_id) ?? null : null;
@@ -225,11 +227,11 @@ export default async function ArchivePage() {
                         name={emojiCharacter?.name}
                         imageUrl={emojiCharacter?.image ? `/api/asset/character/${emojiCharacter.id}` : null}
                     />
-                    {emoji ? (
+                    {emoji && fullEmojiSet ? (
                         <div className="flex-1 min-h-0 min-w-0">
                             <ScaleFit referenceWidth={460} maxScale={1.3}>
                                 <EmojiTestimonyDisplay
-                                    target={emoji}
+                                    target={fullEmojiSet}
                                     revealedCount={0}
                                     forceRevealAll
                                     isSolved

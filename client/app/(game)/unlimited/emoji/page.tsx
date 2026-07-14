@@ -46,7 +46,7 @@ export default function UnlimitedEmojiGame() {
 
     useEffect(() => {
         setManuallyClosed(false);
-        logFullTarget(target);
+        logFullTarget(target, emojiSets);
         setRevealDelayDone(false);
     }, [target]);
 

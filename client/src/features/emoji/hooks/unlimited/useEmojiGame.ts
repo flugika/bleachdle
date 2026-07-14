@@ -19,7 +19,11 @@ export const useEmojiGame = createUnlimitedGuessGameStore<BleachEmojiSet, Charac
     maxGuesses: () => MAX_UNLIMITED_EMOJI_GUESSES,
     getCharacterById,
     getAllItems: getEmojiSets,
-    attachCharacter: (item) => item,
+    attachCharacter: (item) => {
+        const character = getCharacterById(item.character_id);
+        if (!character) return undefined;
+        return { id: item.id, character_id: item.character_id } as EmojiTargetHidden; // ไม่แนบ emoji_list
+    },
     // 🎯 นับความจบเป็นราย emoji set (target.id) เหมือนของเดิม ไม่ใช่รายตัวละคร
     // (โค้ดเดิมเช็ค !completedIds.includes(s.id) และ mark completedData.unlimited ด้วย target.id)
     getCompletionKey: (target) => target.id,
