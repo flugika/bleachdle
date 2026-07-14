@@ -1,7 +1,5 @@
 // src/lib/utils/format.ts
 
-import { CharacterRace, MatchResult } from "@/src/features/character";
-
 export const formatAge = (age: number): string => {
     if (age === -1) return "Unknow";
     if (age < 100) return String(age);

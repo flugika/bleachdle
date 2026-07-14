@@ -42,9 +42,7 @@ export interface GuessGameStorageKeys {
 
 export interface ExtraTargetFieldConfig<TTarget> {
     key: string;
-    /** ดึงค่า extra field จาก target ตอน setTarget ถูกเรียก (เช่น segmentId มาคู่กับ target) */
-    deriveFromSetTargetArgs: (target: TTarget, ...rest: any[]) => unknown;
-    /** เช็คว่า "รอบเดิม" หรือ "รอบใหม่" — daily ใช้เทียบแทน target.id ปกติ (song เทียบด้วย segmentId) */
+    deriveFromSetTargetArgs: (target: TTarget, ...rest: unknown[]) => unknown;
     isSameRound: (prevValue: unknown, nextValue: unknown) => boolean;
 }
 

@@ -1,6 +1,6 @@
 // src/features/quote/hooks/unlimited/useQuoteGame.ts
 import { getCharacterById } from '@/src/features/character/character';
-import { getQuotes, attachCharacter } from '@/src/features/quote/quote';
+import { getQuotes } from '@/src/features/quote/quote';
 import { STORAGE_KEYS } from '@/src/const/localStorage';
 import { MAX_UNLIMITED_QUOTE_GUESSES } from '@/src/const/guess';
 import { createUnlimitedGuessGameStore } from '@/src/lib/guessGame/createUnlimitedGuessGameStore';

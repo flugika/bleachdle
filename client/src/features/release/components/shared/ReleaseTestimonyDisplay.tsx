@@ -5,6 +5,7 @@ import { useEffect, useRef, useState } from 'react';
 import { BleachRelease } from '@/src/entities/release/schema';
 import { generateCaseFileId } from '@/src/lib/utils/generateCaseFileId';
 import { ReleaseTargetHidden } from '@/src/features/release/types';
+import Image from 'next/image';
 
 interface ReleaseTestimonyDisplayProps {
     // 🩹 SECURITY FIX: เดิม type นี้เป็น `ReleaseTarget` (ข้อมูลเต็มรวมคำเฉลย) แบบบังคับ
@@ -101,7 +102,7 @@ function TextureOverlay() {
 
 function CornerFret({ pos }: { pos: 'tl' | 'tr' | 'bl' | 'br' }) {
     const rot = { tl: 0, tr: 90, bl: -90, br: 180 }[pos];
-    const side: any = {};
+    const side: Pick<React.CSSProperties, 'top' | 'left' | 'bottom' | 'right'> = {};
     if (pos === 'tl') { side.top = 10; side.left = 10; }
     if (pos === 'tr') { side.top = 10; side.right = 10; }
     if (pos === 'bl') { side.bottom = 10; side.left = 10; }
@@ -157,6 +158,7 @@ function ReleaseTypeBadge({ type }: { type: string }) {
 function InvokeWardPlayer({ releaseId, clipEndMs, layout = 'vertical' }: { releaseId: string; clipEndMs?: number | null; layout?: 'vertical' | 'horizontal' }) {
     const audioRef = useRef<HTMLAudioElement>(null);
     const [playing, setPlaying] = useState(false);
+    const [barHeight, setBarHeight] = useState(4);
 
     useEffect(() => {
         const el = audioRef.current;
@@ -176,6 +178,11 @@ function InvokeWardPlayer({ releaseId, clipEndMs, layout = 'vertical' }: { relea
 
     const isHz = layout === 'horizontal';
     const btnSize = isHz ? 34 : 64; // ย่อปุ่มลงให้กระทัดรัดเหมือนตราประทับเล็กๆ
+    useEffect(() => {
+        if (!playing) { setBarHeight(4); return; }
+        const id = setInterval(() => setBarHeight(Math.random() * 12), 150);
+        return () => clearInterval(id);
+    }, [playing]);
 
     return (
         <div className={`relative z-10 flex ${isHz ? 'flex-row items-center gap-1 px-6' : 'flex-col items-center justify-center'}`}>
@@ -195,9 +202,7 @@ function InvokeWardPlayer({ releaseId, clipEndMs, layout = 'vertical' }: { relea
                         key={i}
                         className={`w-[2px] bg-[#c9a45e] transition-all duration-75 ${isHz ? 'rounded-full' : 'rounded-t-sm'}`}
                         style={{
-                            height: playing
-                                ? `${Math.max(isHz ? 4 : 4, Math.random() * (isHz ? 14 : 12))}px`
-                                : (isHz ? '4px' : '3px'),
+                            height: `${barHeight}px`,
                             opacity: playing ? 0.9 : 0.3
                         }}
                     />
@@ -257,7 +262,14 @@ export function ReleaseTestimonyDisplay({ target, revealed = null, isSolved = fa
                     style={{ maskImage: 'linear-gradient(to right, transparent, black 60%)', WebkitMaskImage: 'linear-gradient(to right, transparent, black 60%)' }}
                 >
                     {characterImage ? (
-                        <img src={characterImage} alt="wielder bg" className="absolute right-0 top-1/2 -translate-y-1/2 h-[150%] object-cover opacity-60 filter grayscale brightness-125 contrast-150" />
+                        <Image
+                            src={characterImage}
+                            alt="wielder bg"
+                            fill
+                            sizes="66vw"
+                            className="object-cover opacity-60 filter grayscale brightness-125 contrast-150"
+                            style={{ objectPosition: 'right center' }}
+                        />
                     ) : (
                         <span className="absolute right-4 bottom-[-10%] text-[150px] font-black opacity-10" style={{ color: accent }}>卍</span>
                     )}

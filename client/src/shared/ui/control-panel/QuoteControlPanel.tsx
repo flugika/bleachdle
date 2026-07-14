@@ -16,7 +16,6 @@ interface QuoteControlPanelProps {
     timeLeft?: string;
     game: QuoteGuessable;
     disabled?: boolean;
-    maxGuesses?: number;
     isGameOver?: boolean;
     onSurrender?: () => void;
 }
@@ -30,7 +29,6 @@ export function QuoteControlPanel({
     timeLeft,
     game,
     disabled = false,
-    maxGuesses,
     isGameOver = false,
     onSurrender,
 }: QuoteControlPanelProps) {

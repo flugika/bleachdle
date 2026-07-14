@@ -2,7 +2,7 @@
 
 > A Wordle-style character guessing game for Bleach fans — unlimited mode, attribute-based feedback, Soul Society aesthetic.
 
-**Last Updated:** 14 July 2026, 12:00 AM.
+**Last Updated:** 14 July 2026, 8:04 PM.
 
 [![Next.js](https://img.shields.io/badge/Next.js-15-black?logo=next.js)](https://nextjs.org/)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5-blue?logo=typescript)](https://www.typescriptlang.org/)
@@ -375,12 +375,6 @@ bleachdle
 │  │  │  ├─ Abirama_Redder.webp
 │  │  │  ├─ Aisslinger_Wernarr.webp
 │  │  │  ├─ Akon.webp
-│  │  │  └─ ...
-│  │  └─ character_silhouette
-│  │     ├─ Aaroniero_Arruruerie_cutout_silhouette.webp
-│  │     ├─ Abirama_Redder_cutout_silhouette.webp
-│  │     ├─ Aisslinger_Wernarr_cutout_silhouette.webp
-│  │     ├─ Akon_cutout_silhouette.webp
 │  │     └─ ...
 │  ├─ CLAUDE.md
 │  ├─ eslint.config.mjs
@@ -569,8 +563,9 @@ bleachdle
 │  │  │  │  └─ components
 │  │  │  │     └─ ArchiveCharacterCard.tsx
 │  │  │  ├─ stats
-│  │  │  │  └─ components
-│  │  │  │     └─ StatsHubPage.tsx
+│  │  │  │  ├─ components
+│  │  │  │  │  └─ StatsHubPage.tsx
+│  │  │  │  └─ types.ts
 │  │  │  └─ support
 │  │  │     ├─ KidoSeal.tsx
 │  │  │     ├─ PortfolioCard.tsx
@@ -607,6 +602,7 @@ bleachdle
 │  │  │     ├─ format.ts
 │  │  │     ├─ generateCaseFileId.ts
 │  │  │     ├─ sanitize.ts
+│  │  │     ├─ time.ts
 │  │  │     └─ ui.ts
 │  │  ├─ scripts
 │  │  │  ├─ check-assets.js
@@ -621,13 +617,6 @@ bleachdle
 │  │  │  ├─ generate-silhouettes.js
 │  │  │  ├─ generate-wallpapers.js
 │  │  │  ├─ map-character-quote.js
-│  │  │  ├─ migrations
-│  │  │  │  ├─ 0001_support_tickets.sql
-│  │  │  │  ├─ 01_type.sql
-│  │  │  │  ├─ 02_table.sql
-│  │  │  │  ├─ 03_index.sql
-│  │  │  │  ├─ 04_function.sql
-│  │  │  │  └─ 05_cronjob.sql
 │  │  │  ├─ precompute-silhouette-cells.mjs
 │  │  │  └─ seeds
 │  │  │     ├─ daily
@@ -723,6 +712,26 @@ bleachdle
 │  │  │     └─ WallpaperInitializer.tsx
 │  │  └─ styles
 │  │     └─ globals.css
+│  ├─ supabase
+│  │  ├─ .temp
+│  │  │  ├─ cli-latest
+│  │  │  ├─ gotrue-version
+│  │  │  ├─ linked-project.json
+│  │  │  ├─ pooler-url
+│  │  │  ├─ postgres-version
+│  │  │  ├─ project-ref
+│  │  │  ├─ rest-version
+│  │  │  ├─ storage-migration
+│  │  │  └─ storage-version
+│  │  └─ migrations
+│  │     ├─ 0001_support_tickets.sql
+│  │     ├─ 01_type.sql
+│  │     ├─ 02_table.sql
+│  │     ├─ 03_index.sql
+│  │     ├─ 04_function.sql
+│  │     ├─ 05_cronjob.sql
+│  │     ├─ 06_new_schema_dump.sql
+│  │     └─ 07_rls_policies.sql
 │  └─ tsconfig.json
 └─ README.md
 

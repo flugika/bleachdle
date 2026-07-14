@@ -18,7 +18,7 @@ import { ModeBadge } from '@/src/shared/ui/game-selector/ModeBadge';
 import { ModeSelectorModal } from '@/src/shared/ui/game-selector/ModeSelectorModal';
 import { useSenkaimon } from '@/src/shared/ui/context/NavigationContext';
 import { BL_MODES_METADATA } from '@/src/config/mode';
-import { MAX_DAILY_SONG_GUESSES } from '@/src/const/guess'; 
+import { MAX_DAILY_SONG_GUESSES } from '@/src/const/guess';
 import { DailyHubModalFooter } from '@/src/shared/ui/daily-hub/DailyHubModalFooter';
 import { useDailyHub } from '@/src/shared/hooks/useDailyHub';
 import { logFullTarget } from '@/src/lib/debug/logFullTarget';
@@ -29,10 +29,6 @@ interface DailySongWrapperProps {
 }
 
 export default function DailySongWrapper({ initialTarget, initialSegmentId }: DailySongWrapperProps) {
-    if (!FEATURE_FLAGS.daily?.song) {
-        return <Sealed />;
-    }
-
     const { navigate, state, reportReady } = useSenkaimon();
 
     const gameStore = useSongGame();
@@ -47,7 +43,12 @@ export default function DailySongWrapper({ initialTarget, initialSegmentId }: Da
             initializeGame(initialTarget, initialSegmentId);
 
             logFullTarget(target);
-        }
+    }
+        // 🔧 อ่านค่า `target` ก่อนหน้า (ยังไม่ถูก initializeGame อัปเดต) โดยตั้งใจ
+        // เพื่อ log เทียบค่าเก่ากับ initialTarget ใหม่ — ถ้าใส่ target/initializeGame
+        // เข้า deps จะ loop เพราะ initializeGame เปลี่ยน target เอง แล้ว effect
+        // จะ trigger ซ้ำจากการเปลี่ยนแปลงของตัวมันเอง
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [initialTarget, _hasHydrated]);
 
     // 🆕 นำสเตตและเงื่อนไขแบบ Silhouette มาใช้งานควบคุมแทนตำแหน่งเดิม
@@ -110,10 +111,6 @@ export default function DailySongWrapper({ initialTarget, initialSegmentId }: Da
     }, [initializeGame, songs.length, _hasHydrated, loadStats]);
 
     useEffect(() => {
-        loadStats();
-    }, [loadStats]);
-
-    useEffect(() => {
         if (isReady) {
             reportReady();
         }
@@ -168,9 +165,13 @@ export default function DailySongWrapper({ initialTarget, initialSegmentId }: Da
         return () => clearInterval(timer);
     }, []);
 
+    if (!FEATURE_FLAGS.daily?.song) {
+        return <Sealed />;
+    }
+
     return (
         <div className="min-h-screen text-[#d8d0c8] overflow-x-hidden">
-            <Header onOpenHowTo={() => setIsHowToOpen(true)} />
+            <Header />
 
             <main className="max-w-[80%] mx-auto px-4 pb-24">
                 <ModeBadge mode="daily" onClick={() => setIsModeSelectorOpen(true)} />
@@ -196,9 +197,9 @@ export default function DailySongWrapper({ initialTarget, initialSegmentId }: Da
                         <Divider />
                         <div className="flex flex-wrap justify-center gap-x-5 gap-y-1.5">
                             {([
-                                ['correct', '#0d2918', '#1a5530', '#4de880', 'Correct'],
-                                ['wrong', '#590e0e', '#a64747', '#3a2828', 'Wrong'],
-                            ] as const).map(([key, bg, border, fg, label]) => (
+                                ['correct', '#0d2918', '#1a5530', 'Correct'],
+                                ['wrong', '#590e0e', '#a64747', 'Wrong'],
+                            ] as const).map(([key, bg, border, label]) => (
                                 <div key={key} className="flex items-center gap-1.5">
                                     <span className="inline-block w-2.5 h-2.5 shrink-0" style={{ background: bg, border: `1px solid ${border}` }} />
                                     <span className="text-[12px] tracking-wide text-[#d1a9a9]">{label}</span>

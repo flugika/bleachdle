@@ -3,7 +3,10 @@ import 'server-only';
 import { supabaseServer } from '@/src/lib/supabase/supabase-server';
 import { getTodayStr } from '@/src/lib/utils/format';
 import { ReleaseTargetHidden } from '@/src/features/release/types';
-import { getCharacterById } from '@/src/features/character/character';
+
+type ReleaseJoinResult = {
+    releases: ReleaseTargetHidden | ReleaseTargetHidden[] | null;
+};
 
 export async function getDailyRelease(): Promise<ReleaseTargetHidden | null> {
     const todayStr = getTodayStr();
@@ -20,9 +23,10 @@ export async function getDailyRelease(): Promise<ReleaseTargetHidden | null> {
 
     if (error || !data) return null;
 
-    const releaseRow: any = Array.isArray((data as any).releases)
-        ? (data as any).releases[0]
-        : (data as any).releases;
+    const typedData = data as ReleaseJoinResult;
+    const releaseRow = Array.isArray(typedData.releases)
+        ? typedData.releases[0]
+        : typedData.releases;
 
     if (!releaseRow) return null;
 

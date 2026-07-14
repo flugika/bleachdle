@@ -698,7 +698,6 @@ function reiatsuParticleStyle(rank: number, i: number): React.CSSProperties {
         height: `${size}px`,
         animationDelay: `${delay}s`,
         animationDuration: `${duration}s`,
-        // @ts-ignore custom property read by the keyframe via CSS var
         "--bd-drift": `${drift}px`,
     } as React.CSSProperties;
 }
@@ -800,7 +799,7 @@ function DisciplineRegistryCell({
                     ? `0 0 ${shadowSpread}px -4px ${accent.glow}, inset 0 0 ${10 + rank * 6}px -6px ${accent.glow}`
                     : "none",
                 cursor: canEdit && !editing ? "pointer" : "default",
-                // @ts-ignore custom property read by the pulse keyframe
+                // @ts-expect-error custom property read by the pulse keyframe
                 "--bd-pulse-color": accent.bright,
             }}
         >
@@ -951,7 +950,7 @@ function BadgeCell({ badge, rank }: { badge: BadgeTier; rank: number }) {
                 boxShadow: badge.unlocked
                     ? `0 0 ${shadowSpread}px -4px ${glow.core}, inset 0 0 ${10 + rank * 6}px -6px ${glow.core}`
                     : "none",
-                // @ts-ignore custom property read by the pulse keyframe
+                // @ts-expect-error custom property read by the pulse keyframe
                 "--bd-pulse-color": glow.spark,
             }}
         >

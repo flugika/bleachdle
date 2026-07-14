@@ -23,12 +23,6 @@ import { BL_MODES_METADATA } from '@/src/config/mode';
 import { logFullTarget } from '@/src/lib/debug/logFullTarget';
 
 export default function UnlimitedSongGame() {
-    // 🛡️ TODO: เพิ่ม key `song: { daily: boolean; unlimited: boolean }` ใน feature.flags.ts
-    // ถ้ายังไม่มี ให้ลบ optional chaining (?.) ออกแล้วใส่ FEATURE_FLAGS.unlimited.song ตรงๆ
-    if (!FEATURE_FLAGS.unlimited?.song) {
-        return <Sealed />;
-    }
-
     const { navigate, state, reportReady } = useSenkaimon(); // 👈 pattern เดียวกับหน้า character unlimited เป๊ะ
 
     // 🛡️ subscribe store ครั้งเดียว แล้วส่ง object เดิมต่อให้ SongSearchBar ผ่าน prop `game`
@@ -93,7 +87,7 @@ export default function UnlimitedSongGame() {
             setFinalRoundGuesses(guesses);
             finalizeGame(isWin);
         }
-    }, [isGameOver, hasFinalized, isWin, _hasHydrated, finalizeGame]);
+    }, [guesses, isGameOver, hasFinalized, isWin, _hasHydrated, finalizeGame]);
 
     // 🛡️ รอ _hasHydrated (persist rehydrate จาก localStorage) ก่อนอ่าน/เขียนอะไรทั้งนั้น
     useEffect(() => {
@@ -186,9 +180,13 @@ export default function UnlimitedSongGame() {
         }
     }, [showSummary]);
 
+    if (!FEATURE_FLAGS.unlimited?.song) {
+        return <Sealed />;
+    }
+
     return (
         <div className="min-h-screen text-[#d8d0c8] overflow-x-hidden">
-            <Header onOpenHowTo={() => setIsHowToOpen(true)} />
+            <Header />
 
             <main className="max-w-[80%] mx-auto px-4 pb-24">
                 {/* mode ยังคง "unlimited" เพราะ /song อยู่ใต้มิติ unlimited เดิม แค่คนละประเภทเกม */}
@@ -208,7 +206,6 @@ export default function UnlimitedSongGame() {
                         remainingGuesses={remainingGuesses}
                         stats={stats}
                         game={gameStore}
-                        maxGuesses={MAX_UNLIMITED_SONG_GUESSES}
                         isGameOver={isGameOver}
                     />
                 )}
@@ -218,10 +215,9 @@ export default function UnlimitedSongGame() {
                         <Divider />
                         <div className="flex flex-wrap justify-center gap-x-5 gap-y-1.5">
                             {([
-                                ['correct', '#0d2918', '#1a5530', '#4de880', 'Correct'],
-                                // 🛡️ นำสถานะ partial ออกจากตรงนี้ เพื่อให้สอดคล้องกับระบบเสียงReiatsu
-                                ['wrong', '#590e0e', '#a64747', '#3a2828', 'Wrong'],
-                            ] as const).map(([key, bg, border, fg, label]) => (
+                                ['correct', '#0d2918', '#1a5530', 'Correct'],
+                                ['wrong', '#590e0e', '#a64747', 'Wrong'],
+                            ] as const).map(([key, bg, border, label]) => (
                                 <div key={key} className="flex items-center gap-1.5">
                                     <span className="inline-block w-2.5 h-2.5 shrink-0" style={{ background: bg, border: `1px solid ${border}` }} />
                                     <span className="text-[12px] tracking-wide text-[#d1a9a9]">{label}</span>

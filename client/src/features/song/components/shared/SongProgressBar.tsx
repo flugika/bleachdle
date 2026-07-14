@@ -110,8 +110,8 @@ export const SongProgressBar = ({
                         className="absolute inset-0 pointer-events-none overflow-hidden"
                         style={{
                             clipPath: `inset(0 ${100 - currentPercent}% 0 0)`,
-                            ['--reveal-percent' as any]: `${revealPercent}%`,
-                        }}
+                            '--reveal-percent': `${revealPercent}%`,
+                        } as React.CSSProperties & Record<'--reveal-percent', string>}
                     >
                         <div className="absolute top-0 h-full bg-gradient-to-r from-transparent via-white/30 to-transparent w-[100px] animate-[song-shimmer_1.3s_linear_infinite]" />
                     </div>

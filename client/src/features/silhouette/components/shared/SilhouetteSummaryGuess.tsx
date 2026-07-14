@@ -4,7 +4,7 @@
 import { useState, useEffect } from 'react';
 import Image from 'next/image';
 import { DailyResetTimer } from '@/src/shared/ui/DailyResetTimer';
-import { SilhouetteGuessEntry, SilhouetteTarget, SilhouetteTargetHidden } from '@/src/features/silhouette/types';
+import { SilhouetteGuessEntry, SilhouetteTargetHidden } from '@/src/features/silhouette/types';
 import { SilhouetteImage } from './SilhouetteImage';
 import { useCharacterTier } from '@/src/shared/hooks/useBadgeTier';
 import {
@@ -55,14 +55,9 @@ export const SilhouetteSummaryGuess = ({
     // 🎯 คำนวณ Active Tier ประจำยศของผู้เล่น
     const activeTier = useCharacterTier(stats.maxStreak);
 
-    if (!isOpen || !target) return null;
-
     const answerCharacter = revealedCharacter;
 
-    // การกำหนดค่า Color Scheme ประจำผลลัพธ์
-    const cardBgStyle = isWin
-        ? "bg-gradient-to-b from-[#1c1107] via-[#090604] to-[#040302] border-[#d47a2a]/40 shadow-[0_0_60px_rgba(212,122,42,0.18)] ring-1 ring-[#d47a2a]/10"
-        : "bg-gradient-to-b from-[#0a0a12] via-[#040408] to-[#020204] border-[#c8a96e]/30 shadow-[0_0_40px_rgba(200,169,110,0.08)] ring-1 ring-[#c8a96e]/5";
+    if (!isOpen || !target) return null;
 
     return (
         <SummaryCardShell

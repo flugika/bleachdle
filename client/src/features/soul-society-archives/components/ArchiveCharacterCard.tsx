@@ -1,11 +1,9 @@
 // src/features/soul-society-archives/components/ArchiveCharacterCard.tsx
 'use client';
 
-import { generateCaseFileId } from '@/src/lib/utils/generateCaseFileId';
 import Image from 'next/image';
 
 interface ArchiveCharacterCardProps {
-    characterId: string;
     name: string;
     imageUrl: string | null;
     affiliation?: string | null;
@@ -25,8 +23,7 @@ const T = {
     green: '#7ab85a',
 };
 
-export function ArchiveCharacterCard({ characterId, name, imageUrl, affiliation, race }: ArchiveCharacterCardProps) {
-    const caseNo = generateCaseFileId(characterId);
+export function ArchiveCharacterCard({ name, imageUrl, affiliation, race }: ArchiveCharacterCardProps) {
     const tags = [affiliation, ...(race ?? [])].filter(Boolean) as string[];
 
     return (

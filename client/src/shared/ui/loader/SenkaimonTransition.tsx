@@ -1,7 +1,7 @@
 // src/shared/ui/SenkaimonTransition.tsx
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { useSenkaimon } from "@/src/shared/ui/context/NavigationContext";
 
 // ระยะเวลาเต็มของอนิเมชันชุดเดิม (ประตู + คันจิ + วงแหวน + แสง ฯลฯ)
@@ -26,12 +26,15 @@ export function SenkaimonTransition() {
     // 🔑 นับรอบทุกครั้งที่ NavigationContext เริ่ม "closing" รอบใหม่
     // ใช้เป็น React key เพื่อบังคับ remount แล้วอนิเมชัน CSS เดิมทั้งชุดจะเริ่มเล่นใหม่ตั้งแต่ 0ms
     // (ไม่ต้องมี setTimeout ของตัวเองอีกต่อไป เพราะ NavigationContext เป็นคนคุมวงจร idle → closing → closed → opening → idle)
-    const cycleRef = useRef(0);
-    const prevStateRef = useRef(state);
-    if (prevStateRef.current === "idle" && state === "closing") {
-        cycleRef.current += 1;
+    const [cycle, setCycle] = useState(0);
+    const [prevState, setPrevState] = useState(state);
+
+    if (prevState === "idle" && state === "closing") {
+        setCycle((c) => c + 1);
     }
-    prevStateRef.current = state;
+    if (prevState !== state) {
+        setPrevState(state);
+    }
 
     // หากระบบแอปไม่ได้กำลัง Navigate ใดๆ ให้ถอด Element ออกจาก DOM ทันที ไม่กิน Performance หน้าจอ
     if (state === "idle") return null;
@@ -39,7 +42,7 @@ export function SenkaimonTransition() {
     if (reducedMotion) {
         return (
             <div
-                key={cycleRef.current}
+                key={cycle}
                 aria-hidden="true"
                 role="presentation"
                 className="fixed inset-0 z-[9999] select-none bg-[#040406]"
@@ -50,7 +53,7 @@ export function SenkaimonTransition() {
 
     return (
         <div
-            key={cycleRef.current}
+            key={cycle}
             aria-hidden="true"
             role="presentation"
             className="fixed inset-0 z-[9999] select-none overflow-hidden bg-transparent font-[family-name:var(--font-display)]"

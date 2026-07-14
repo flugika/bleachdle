@@ -89,4 +89,5 @@ export interface GuessEntry {
  * The name is kept for backward compatibility with every existing import
  * of `CharacterGameController` across the codebase — nothing else needs to change.
  */
-export interface CharacterGameController extends GuessGameController { }
+export type CharacterGameController = GuessGameController;
+export type CharacterGuessable = Pick<CharacterGameController, 'addGuess' | 'guesses'>;

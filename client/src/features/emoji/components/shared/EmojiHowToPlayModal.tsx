@@ -13,13 +13,6 @@ interface EmojiHowToPlayModalProps {
     mode: 'daily' | 'unlimited';
 }
 
-const T = {
-    border: '#2b2534',
-    gold: '#c8a96e',
-    reiatsu: '#8a6bf2',
-    reiatsuBright: '#b39cff',
-};
-
 const EXAMPLE_WRONG_CHARACTER = {
     id: 'ef5ac1b1-6858-4880-b62f-f4d878d1edf3',
     name: 'Kon',

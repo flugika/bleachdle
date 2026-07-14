@@ -28,9 +28,6 @@ const T = {
     reiatsuBright: '#b39cff',
 };
 
-const OCTAGON_CLIP =
-    'polygon(28px 0, calc(100% - 28px) 0, 100% 28px, 100% calc(100% - 28px), calc(100% - 28px) 100%, 28px 100%, 0 calc(100% - 28px), 0 28px)';
-
 function WardStrip({ bottom = false }: { bottom?: boolean }) {
     const label = '封印術式 · SPIRIT SEAL PROTOCOL · ';
     return (
@@ -104,7 +101,7 @@ function useTalismanBurst(ref: React.RefObject<HTMLDivElement | null>, fire: boo
             p.style.opacity = '0';
             setTimeout(() => p.remove(), duration * 1000 + 60);
         }
-    }, [fire]);
+    }, [fire, ref]);
 }
 
 // 🆕 เปลี่ยน props เป็นรับ status แบบเจาะจงแทน

@@ -58,23 +58,19 @@ export const QuoteSummaryGuess = ({
     mode,
     stats = { currentStreak: 0, maxStreak: 0, playedCount: 0, passedCount: 0, guessDistribution: {} },
 }: QuoteSummaryGuessProps) => {
-    if (!isOpen || !target) return null;
-
     const answerCharacter = revealedCharacter;
 
     // 🔓 เกมจบแล้ว โหลดเอกสาร quote เต็ม (episode/chapter/arc/context) มาโชว์ได้เต็มที่
-    const fullQuote = useMemo(() => getQuoteById(target.id), [target.id]);
+    const fullQuote = useMemo(() => (target ? getQuoteById(target.id) : null), [target]);
 
     const activeTier = useCharacterTier(stats.maxStreak);
 
     // 🔮 Watermark effect driven by the revealed speaker's race.
-    const emblem = useMemo(() => useRaceEmblem(answerCharacter), [answerCharacter]);
-
-    const cardBgStyle = isWin
-        ? "bg-gradient-to-b from-[#281508] via-[#0f0a07] to-[#0a0705] border-[#d47a2a]/45 shadow-[0_0_50px_rgba(212,122,42,0.25)] ring-1 ring-[#d47a2a]/10"
-        : "bg-gradient-to-b from-[#0f0e1a] via-[#090912] to-[#05050a] border-[#c8a96e]/50 shadow-[0_0_37px_rgba(200,169,110,0.1)] ring-1 ring-[#c8a96e]/10";
+    const emblem = useRaceEmblem(answerCharacter);
 
     const hasMeta = fullQuote?.episode != null || fullQuote?.chapter != null || fullQuote?.arc || fullQuote?.context;
+
+    if (!isOpen || !target) return null;
 
     return (
         <SummaryCardShell isWin={isWin} kanji={activeTier.kanji} kanjiColor={activeTier.color}>

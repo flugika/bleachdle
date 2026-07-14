@@ -1,6 +1,6 @@
 // src/features/silhouette/hooks/unlimited/useSilhouetteGame.ts
 import { getCharacterById } from '@/src/features/character/character';
-import { getSilhouettes, attachCharacter } from '@/src/features/silhouette/silhouette';
+import { getSilhouettes } from '@/src/features/silhouette/silhouette';
 import { STORAGE_KEYS } from '@/src/const/localStorage';
 import { MAX_UNLIMITED_SILHOUETTE_GUESSES } from '@/src/const/guess';
 import { createUnlimitedGuessGameStore } from '@/src/lib/guessGame/createUnlimitedGuessGameStore';

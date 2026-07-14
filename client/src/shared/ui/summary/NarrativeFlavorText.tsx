@@ -17,7 +17,7 @@ export const NarrativeFlavorText = ({
 }: NarrativeFlavorTextProps) => {
     return (
         <div className={`text-center italic ${textColorClassName} text-xs leading-relaxed px-2 my-5 border-l-2 border-[#c8a96e]/50`}>
-            "{flavor}"
+            &quot;{flavor}&quot;
         </div>
     );
 };

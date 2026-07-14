@@ -15,7 +15,6 @@ import { FEATURE_FLAGS } from '@/src/config/feature.flags';
 import { Character } from '@/src/entities/character/schema';
 import { CharacterControlPanel } from '@/src/shared/ui/control-panel/CharacterControlPanel';
 import { ModeBadge } from '@/src/shared/ui/game-selector/ModeBadge';
-import { usePathname, useRouter } from 'next/navigation';
 import { ModeSelectorModal } from '@/src/shared/ui/game-selector/ModeSelectorModal';
 import { useSenkaimon } from '@/src/shared/ui/context/NavigationContext';
 import { BL_MODES_METADATA } from '@/src/config/mode';
@@ -26,12 +25,6 @@ import { EmptyGuessState } from '@/src/features/character/components/shared/Empt
 import { logFullTarget } from '@/src/lib/debug/logFullTarget';
 
 export default function DailyCharacterWrapper({ initialTarget }: { initialTarget: Character | null }) {
-    if (!FEATURE_FLAGS.daily.character) {
-        return <Sealed />;
-    }
-
-    const router = useRouter();
-    const pathname = usePathname();
     const { navigate, state, reportReady } = useSenkaimon();
 
     const gameStore = useCharacterGame();
@@ -48,6 +41,11 @@ export default function DailyCharacterWrapper({ initialTarget }: { initialTarget
 
             logFullTarget(target);
         }
+        // 🔧 อ่านค่า `target` ก่อนหน้า (ยังไม่ถูก initializeGame อัปเดต) โดยตั้งใจ
+        // เพื่อ log เทียบค่าเก่ากับ initialTarget ใหม่ — ถ้าใส่ target/initializeGame
+        // เข้า deps จะ loop เพราะ initializeGame เปลี่ยน target เอง แล้ว effect
+        // จะ trigger ซ้ำจากการเปลี่ยนแปลงของตัวมันเอง
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [initialTarget, _hasHydrated]);
 
     // 🆕 เปลี่ยนจากสเตตเปิด/ปิดกล่องสรุปแบบเดิม มาใช้คู่สเตตควบคุมรอบสรุปผลของ Silhouette
@@ -76,7 +74,7 @@ export default function DailyCharacterWrapper({ initialTarget }: { initialTarget
     const isWin = guesses.length > 0 &&
         (Object.entries(guesses[0].result)
             .filter(([key]) => key !== 'image')
-            .every(([_, status]) => status === 'correct')
+            .every(([, status]) => status === 'correct')
         );
     const isLoss = guesses.length >= MAX_DAILY_CHARACTER_GUESSES && !isWin;
     const isGameOver = isWin || isLoss;
@@ -100,10 +98,6 @@ export default function DailyCharacterWrapper({ initialTarget }: { initialTarget
         const timer = setTimeout(() => setRevealDelayDone(true), targetDelay);
         return () => clearTimeout(timer);
     }, [isGameOver, isFreshFinish]);
-
-    useEffect(() => {
-        loadStats();
-    }, [loadStats]);
 
     const handleSwitchDimension = (targetMode: 'daily' | 'unlimited') => {
         setIsModeSelectorOpen(false);
@@ -172,9 +166,13 @@ export default function DailyCharacterWrapper({ initialTarget }: { initialTarget
         }
     }, [showSummary]);
 
+    if (!FEATURE_FLAGS.daily.character) {
+        return <Sealed />;
+    }
+
     return (
         <div className="min-h-screen text-[#d8d0c8] overflow-x-hidden">
-            <Header onOpenHowTo={() => setIsHowToOpen(true)} />
+            <Header />
 
             <main className="max-w-[80%] mx-auto px-4 pb-24">
                 <ModeBadge mode="daily" onClick={() => setIsModeSelectorOpen(true)} />
@@ -201,11 +199,11 @@ export default function DailyCharacterWrapper({ initialTarget }: { initialTarget
                         <Divider />
                         <div className="flex flex-wrap justify-center gap-x-5 gap-y-1.5">
                             {([
-                                ['correct', '#0d2918', '#1a5530', '#4de880', 'Correct'],
-                                ['partial', '#2a1f00', '#5a4000', '#e8b830', 'Partial'],
-                                ['wrong', '#590e0e', '#a64747', '#3a2828', 'Wrong'],
-                                ['dir', '#0a0a22', '#3a3a7a', '#7090f0', 'Higher ▲ / Lower ▼'],
-                            ] as const).map(([key, bg, border, fg, label]) => (
+                                ['correct', '#0d2918', '#1a5530', 'Correct'],
+                                ['partial', '#2a1f00', '#5a4000', 'Partial'],
+                                ['wrong', '#590e0e', '#a64747', 'Wrong'],
+                                ['dir', '#0a0a22', '#3a3a7a', 'Higher ▲ / Lower ▼'],
+                            ] as const).map(([key, bg, border, label]) => (
                                 <div key={key} className="flex items-center gap-1.5">
                                     <span className="inline-block w-2.5 h-2.5 shrink-0" style={{ background: bg, border: `1px solid ${border}` }} />
                                     <span className="text-[12px] tracking-wide text-[#d1a9a9]">{label}</span>

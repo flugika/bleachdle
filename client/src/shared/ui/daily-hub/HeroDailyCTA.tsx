@@ -32,6 +32,7 @@ import { useEffect, useRef, useState } from "react";
 import { DailyCountdownBadge } from "@/src/shared/ui/daily-hub/DailyCountdownBadge";
 import { DailyStatsBar } from "@/src/shared/ui/daily-hub/DailyStatsBar";
 import { DIMENSION_ACCENT } from "@/src/config/mode";
+import type { DailyStats } from "@/src/shared/ui/daily-hub/DailyStatsBar";
 
 function useSealBurst(ref: React.RefObject<HTMLDivElement | null>) {
     return () => {
@@ -92,8 +93,8 @@ export function HeroDailyCTA({
     handleNavigation,
     initialStats,
 }: {
-    handleNavigation: (e: React.MouseEvent, href: string) => void;
-    initialStats: Record<string, any>;
+    handleNavigation: (e: React.MouseEvent<HTMLAnchorElement>, href: string) => void
+    initialStats: DailyStats;
 }) {
     const btnRef = useRef<HTMLDivElement>(null);
     const burst = useSealBurst(btnRef);

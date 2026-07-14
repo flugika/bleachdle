@@ -169,9 +169,10 @@ function useAudioEngine(cutoffMs: number) {
 
     // เคลียร์ timer + หยุดเสียงตอน unmount
     useEffect(() => {
+        const audioEl = audioRef.current;
         return () => {
             clearCutoffTimer();
-            audioRef.current?.pause();
+            audioEl?.pause();
         };
     }, []);
 
@@ -319,7 +320,6 @@ function StaticSegmentRow({
 // ============================================================================
 
 function LiveTuningWorkbench({
-    song,
     segmentId,
     startMs,
     name,
@@ -541,14 +541,9 @@ function LiveTuningWorkbench({
 // ============================================================================
 
 export default function MockupSongGame() {
-    if (!FEATURE_FLAGS.mockup.song) {
-        return <Sealed />;
-    }
-
     const songs = getSongs();
 
     const [selectedDuration, setSelectedDuration] = useState<number>(1000);
-    const [isHowToOpen, setIsHowToOpen] = useState(false);
 
     // 🔍 Filter State (ค้นหาเพื่อกรองรายการในตาราง — ไม่เกี่ยวกับกลไกทายเพลง)
     const [filterQuery, setFilterQuery] = useState('');
@@ -586,10 +581,14 @@ export default function MockupSongGame() {
         return searchEngine.search(trimmed).map((r) => r.item);
     }, [filterQuery, searchEngine, songs]);
 
+    if (!FEATURE_FLAGS.mockup.song) {
+        return <Sealed />;
+    }
+
     return (
         <div className="min-h-screen text-[#d8d0c8] overflow-x-hidden">
             <audio ref={audioRef} preload="auto" />
-            <Header onOpenHowTo={() => setIsHowToOpen(true)} />
+            <Header />
 
             <main className="max-w-[95%] mx-auto px-4 pb-16 mt-6">
                 <ModeBadge mode="unlimited" />

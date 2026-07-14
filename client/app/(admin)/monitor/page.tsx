@@ -3,6 +3,7 @@ import { Shippori_Mincho, Inter, JetBrains_Mono } from "next/font/google";
 import { supabaseServer } from "@/src/lib/supabase/supabase-server";
 import { getTodayStr } from "@/src/lib/utils/format";
 import MonitorClient from "@/src/features/admin/components/MonitorClient";
+import { requestTimestamp } from "@/src/lib/utils/time";
 
 export const revalidate = 0; // this page is live telemetry, never statically cached
 
@@ -20,10 +21,11 @@ export default async function MonitorPage({
 }) {
     const { hours: hoursParam } = await searchParams;
 
+    const now = requestTimestamp();
     const hours = Number(hoursParam) || 24;
     const today = getTodayStr();
-    const rangeStart = new Date(Date.now() - hours * 3600_000).toISOString();
-    const rangeEnd = new Date().toISOString();
+    const rangeStart = new Date(now - hours * 3600_000).toISOString();
+    const rangeEnd = new Date(now).toISOString();
 
     const [health, dailyStats, events, statsHistory] = await Promise.all([
         supabaseServer.rpc("get_api_health", { p_hours: hours }),

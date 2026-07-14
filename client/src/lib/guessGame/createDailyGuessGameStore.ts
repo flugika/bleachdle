@@ -31,10 +31,8 @@ export interface DailyGuessGameState<TCharacter, TTarget> {
 
 export function createDailyGuessGameStore<
     TCharacter extends { id: string },
-    // 🔧 FIX: ตัด `character: TCharacter` ออกจาก constraint — เหตุผลเดียวกับ
-    // createUnlimitedGuessGameStore ดู comment ที่นั่น
     TTarget extends { id: string; character_id: string },
-    TExtra extends Record<string, number> = {}
+    TExtra extends Record<string, number> = Record<string, never>
 >(
     config: GuessGameConfig<TCharacter, TTarget> & {
         derivedCounters?: (DerivedCounterConfig<TCharacter> & { key: keyof TExtra & string })[];
@@ -177,15 +175,17 @@ export function createDailyGuessGameStore<
                         return typeof val !== 'number' || !d.isValidRange(val);
                     });
 
+                    // 🔧 cast ครั้งเดียวตรงนี้แทนการ cast `as any` ซ้ำที่ทุกจุดเขียนค่า —
+                    // แคบกว่า any เพราะบังคับว่า key ที่เขียนต้องมี value เป็น number เท่านั้น
+                    const extra = state as unknown as Record<string, number>;
+
                     if (hasCorruptedGuesses || hasStaleTargetShape) {
                         state.guesses = [];
                         state.target = null;
                         state.hasFinalized = false;
-                        // 🔧 FIX: เปลี่ยนเป็น (state as any) เพื่อเลี่ยงข้อจำกัดการเขียนทับค่าของ Generic Type
-                        derivedCounters.forEach((d) => { (state as any)[d.key] = d.initial; });
+                        derivedCounters.forEach((d) => { extra[d.key] = d.initial; });
                     } else if (hasInvalidExtra) {
-                        // 🔧 FIX: เหมือนด้านบน
-                        derivedCounters.forEach((d) => { (state as any)[d.key] = d.initial; });
+                        derivedCounters.forEach((d) => { extra[d.key] = d.initial; });
                     }
                     state.setHasHydrated(true);
                 },

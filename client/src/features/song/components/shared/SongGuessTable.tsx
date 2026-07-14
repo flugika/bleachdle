@@ -270,6 +270,10 @@ export function SongGuessCard({ guess, status, isNew, attemptNumber }: SongGuess
 
 // ─── SongGuessTable (export) ─────────────────────────────────────────────────────────────────
 
+interface LegacySongGuessEntry {
+    result?: { title?: unknown };
+}
+
 export const SongGuessTable = ({ guesses }: { guesses: SongGuessEntry[] }) => {
     if (!guesses.length) return null;
 
@@ -279,7 +283,7 @@ export const SongGuessTable = ({ guesses }: { guesses: SongGuessEntry[] }) => {
                 {guesses.map((entry, idx) => {
                     // 🛡️ Layer 2: Runtime Data Normalizer Level — สกัดโครงสร้างข้อมูลเก่า (Legacy State) 
                     // ถ้าตรวจเจอ .result.title จากเซฟเวอร์ชันเก่า ให้แมปแปลงร่างเป็น .status ณ ตอน Render ทันที
-                    const legacyStatus = (entry as any).result?.title;
+                    const legacyStatus = (entry as unknown as LegacySongGuessEntry).result?.title;
                     const resolvedStatus: SongGuessStatus =
                         (entry.status === 'correct' || entry.status === 'wrong')
                             ? entry.status

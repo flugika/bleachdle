@@ -5,19 +5,10 @@ import { supabaseServer } from '@/src/lib/supabase/supabase-server';
 import { SilhouetteTargetHidden } from '@/src/features/silhouette/types';
 import { getTodayStr } from '@/src/lib/utils/format';
 
-/**
- * 🗓️ Mirrors getDailyQuote() 1:1 — เปลี่ยนแค่ตารางลูกจาก `quotes` เป็น `silhouettes`
- * และ field set ให้ตรงกับ DDL จริง (id, character_id, image) แทน text/episode/chapter/arc/context.
- *
- * ผลลัพธ์ SilhouetteTargetHidden = silhouette row + .character แนบมาให้เลย เพื่อให้ consumer
- * ฝั่ง client (SilhouetteSummaryGuess, SilhouetteImage ผ่าน control panel, ฯลฯ)
- * อ่าน target.character ได้ทันทีโดยไม่ต้อง round-trip หา character อีกรอบ
- *
- * ⚠️ ASSUMPTION (เหมือน quote เป๊ะ): ใช้ตาราง `daily_schedule` เดิมร่วมกับ character/quote
- * โดยเติมคอลัมน์ nullable `silhouette_id` เข้าไป (ดู sql/2026_add_silhouette_daily_schedule.sql)
- * ถ้าโปรเจกต์จริงแยกตาราง `silhouette_daily_schedule` ต่างหาก ให้สลับ `.from('daily_schedule')`
- * เป็น `.from('silhouette_daily_schedule')` ด้านล่างแทน — โครงที่เหลือเหมือนเดิมทุกอย่าง
- */
+type SilhouetteJoinResult = {
+    silhouettes: SilhouetteTargetHidden | SilhouetteTargetHidden[] | null;
+};
+
 export async function getDailySilhouette(): Promise<SilhouetteTargetHidden | null> {
     const todayStr = getTodayStr();
 
@@ -33,9 +24,10 @@ export async function getDailySilhouette(): Promise<SilhouetteTargetHidden | nul
 
     // 🛡️ เหมือน getDailyQuote/getDailyCharacter เป๊ะ: Supabase อาจคืน relation ที่ join
     // มาเป็น array ขึ้นอยู่กับวิธี infer FK เลยต้องกัน 1-vs-many ไว้เสมอ
-    const silhouetteRow: any = Array.isArray((data as any).silhouettes)
-        ? (data as any).silhouettes[0]
-        : (data as any).silhouettes;
+    const typedData = data as SilhouetteJoinResult;
+    const silhouetteRow = Array.isArray(typedData.silhouettes)
+        ? typedData.silhouettes[0]
+        : typedData.silhouettes;
 
     if (!silhouetteRow) return null;
 

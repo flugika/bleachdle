@@ -43,9 +43,8 @@ export const SongSummaryGuess = ({
     mode,
     stats = { currentStreak: 0, maxStreak: 0, playedCount: 0, passedCount: 0, guessDistribution: {} },
 }: SongSummaryGuessProps) => {
-    if (!isOpen) return null;
-
     const activeTier = useSongTier(stats.maxStreak);
+    if (!isOpen || !target) return null;
 
     return (
         <SummaryCardShell isWin={isWin} kanji={activeTier.kanji} kanjiColor={activeTier.color}>

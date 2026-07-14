@@ -4,6 +4,7 @@
 
 import { useEffect, useMemo, useState, useCallback } from "react";
 import FeedbackPanel from "./FeedbackPanel";
+import type { DailyStats } from "@/src/shared/ui/daily-hub/DailyStatsBar";
 
 type HourBucket = { hour: string; success: number; warning: number; error: number };
 type EndpointRow = { endpoint: string; total: number; success: number; warning: number; error: number };
@@ -17,8 +18,6 @@ type Health = {
     timeline: HourBucket[];
     endpoints: EndpointRow[];
 };
-type ModeStat = { played: number; passed: number; win_rate: number; avg_guesses: number | null };
-type DailyStats = Record<string, ModeStat>;
 
 type EventLevel = "success" | "warning" | "error";
 type ApiEvent = {
@@ -315,244 +314,244 @@ export default function MonitorClient({
             {view === "feedback" ? (
                 <FeedbackPanel monitorKey={monitorKey} />
             ) : (
-            <>
-            {/* Status cards */}
-            <div className="relative grid grid-cols-1 md:grid-cols-3 gap-5 mb-4">
-                <StatusCard
-                    label="Passed clean"
-                    kanji="成功"
-                    value={health?.success ?? 0}
-                    color={COLORS.jade}
-                    timeline={health?.timeline ?? []}
-                    field="success"
-                    max={maxBucket}
-                />
-                <StatusCard
-                    label="Warnings"
-                    kanji="警告"
-                    value={health?.warning ?? 0}
-                    color={COLORS.amber}
-                    timeline={health?.timeline ?? []}
-                    field="warning"
-                    max={maxBucket}
-                />
-                <StatusCard
-                    label="Errors"
-                    kanji="破損"
-                    value={health?.error ?? 0}
-                    color={COLORS.crimson}
-                    timeline={health?.timeline ?? []}
-                    field="error"
-                    max={maxBucket}
-                />
-            </div>
-
-            <div className="relative flex items-center justify-between mb-10 px-1">
-                <p className="font-[family-name:var(--font-mono)] text-[11px]" style={{ color: COLORS.muted }}>
-                    <span className="font-[family-name:var(--font-mono)]" style={{ color: COLORS.bone }}>
-                        {(health?.total ?? 0).toLocaleString()}
-                    </span>{" "}
-                    requests total · last {hours}h
-                </p>
-                <p
-                    className="font-[family-name:var(--font-mono)] text-[11px]"
-                    style={{ color: COLORS.muted }}
-                    suppressHydrationWarning
-                >
-                    {lastUpdated ? `updated ${lastUpdated.toLocaleTimeString()}` : "\u00A0"}
-                </p>
-            </div>
-
-            {/* Endpoint breakdown */}
-            <section className="relative mb-14">
-                <SectionHeading kanji="経" title="Roll call by route" />
-                <div
-                    className="relative rounded-sm overflow-hidden"
-                    style={{ border: `1px solid ${COLORS.hairline}`, background: COLORS.surface }}
-                >
-                    <CornerSeal color={COLORS.gold} />
-                    {(health?.endpoints?.length ?? 0) === 0 ? (
-                        <p className="font-[family-name:var(--font-display)] text-sm px-5 py-10 text-center" style={{ color: COLORS.muted }}>
-                            No events logged in this window yet.
-                        </p>
-                    ) : (
-                        health!.endpoints.map((row, i) => (
-                            <EndpointRowView key={row.endpoint} row={row} isLast={i === health!.endpoints.length - 1} />
-                        ))
-                    )}
-                </div>
-            </section>
-
-            {/* Event log: level + custom date range filter */}
-            <section className="relative mb-14">
-                <SectionHeading kanji="録" title="Event log" />
-
-                <div className="flex flex-col md:flex-row md:items-center gap-4 mb-4">
-                    <div className="flex rounded-sm overflow-hidden" style={{ border: `1px solid ${COLORS.hairline}` }}>
-                        {LEVEL_OPTIONS.map((opt) => {
-                            const active = levelFilter === opt.value;
-                            const color = opt.value ? levelColor(opt.value) : COLORS.gold;
-                            return (
-                                <button
-                                    key={opt.label}
-                                    onClick={() => {
-                                        setLevelFilter(opt.value);
-                                        refresh(hours, opt.value, customRange);
-                                    }}
-                                    className="font-[family-name:var(--font-mono)] text-xs px-3 py-2 transition-colors flex items-center gap-1.5"
-                                    style={{
-                                        background: active ? COLORS.raised : "transparent",
-                                        color: active ? color : COLORS.muted,
-                                    }}
-                                >
-                                    <span className="font-[family-name:var(--font-display)]">{opt.kanji}</span>
-                                    {opt.label}
-                                </button>
-                            );
-                        })}
+                <>
+                    {/* Status cards */}
+                    <div className="relative grid grid-cols-1 md:grid-cols-3 gap-5 mb-4">
+                        <StatusCard
+                            label="Passed clean"
+                            kanji="成功"
+                            value={health?.success ?? 0}
+                            color={COLORS.jade}
+                            timeline={health?.timeline ?? []}
+                            field="success"
+                            max={maxBucket}
+                        />
+                        <StatusCard
+                            label="Warnings"
+                            kanji="警告"
+                            value={health?.warning ?? 0}
+                            color={COLORS.amber}
+                            timeline={health?.timeline ?? []}
+                            field="warning"
+                            max={maxBucket}
+                        />
+                        <StatusCard
+                            label="Errors"
+                            kanji="破損"
+                            value={health?.error ?? 0}
+                            color={COLORS.crimson}
+                            timeline={health?.timeline ?? []}
+                            field="error"
+                            max={maxBucket}
+                        />
                     </div>
 
-                    <DateRangeFields
-                        hours={hours}
-                        value={customRange}
-                        onApply={(range) => {
-                            setCustomRange(range);
-                            refresh(hours, levelFilter, range);
-                        }}
-                        onClear={() => {
-                            setCustomRange(null);
-                            refresh(hours, levelFilter, null);
-                        }}
-                    />
-                </div>
-
-                <div
-                    className="relative rounded-sm overflow-hidden"
-                    style={{ border: `1px solid ${COLORS.hairline}`, background: COLORS.surface }}
-                >
-                    <CornerSeal color={COLORS.gold} />
-                    {events.length === 0 ? (
-                        <p className="font-[family-name:var(--font-display)] text-sm px-5 py-10 text-center" style={{ color: COLORS.muted }}>
-                            No events match this filter.
+                    <div className="relative flex items-center justify-between mb-10 px-1">
+                        <p className="font-[family-name:var(--font-mono)] text-[11px]" style={{ color: COLORS.muted }}>
+                            <span className="font-[family-name:var(--font-mono)]" style={{ color: COLORS.bone }}>
+                                {(health?.total ?? 0).toLocaleString()}
+                            </span>{" "}
+                            requests total · last {hours}h
                         </p>
-                    ) : (
-                        <div className="max-h-[420px] overflow-y-auto">
-                            {events.map((ev, i) => (
-                                <EventRow key={ev.id} event={ev} isLast={i === events.length - 1} />
-                            ))}
-                        </div>
-                    )}
-                </div>
-                <p className="font-[family-name:var(--font-mono)] text-[11px] mt-2 px-1" style={{ color: COLORS.muted }}>
-                    showing <span style={{ color: COLORS.bone }}>{events.length}</span> events (max 200 per fetch)
-                </p>
-            </section>
+                        <p
+                            className="font-[family-name:var(--font-mono)] text-[11px]"
+                            style={{ color: COLORS.muted }}
+                            suppressHydrationWarning
+                        >
+                            {lastUpdated ? `updated ${lastUpdated.toLocaleTimeString()}` : "\u00A0"}
+                        </p>
+                    </div>
 
-            {/* Daily puzzle stats — today */}
-            {activeModes.length > 0 && (
-                <section className="relative mb-14">
-                    <SectionHeading kanji="陣" title="Today's puzzles" />
-                    <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3">
-                        {activeModes.map(([mode, s]) => (
+                    {/* Endpoint breakdown */}
+                    <section className="relative mb-14">
+                        <SectionHeading kanji="経" title="Roll call by route" />
+                        <div
+                            className="relative rounded-sm overflow-hidden"
+                            style={{ border: `1px solid ${COLORS.hairline}`, background: COLORS.surface }}
+                        >
+                            <CornerSeal color={COLORS.gold} />
+                            {(health?.endpoints?.length ?? 0) === 0 ? (
+                                <p className="font-[family-name:var(--font-display)] text-sm px-5 py-10 text-center" style={{ color: COLORS.muted }}>
+                                    No events logged in this window yet.
+                                </p>
+                            ) : (
+                                health!.endpoints.map((row, i) => (
+                                    <EndpointRowView key={row.endpoint} row={row} isLast={i === health!.endpoints.length - 1} />
+                                ))
+                            )}
+                        </div>
+                    </section>
+
+                    {/* Event log: level + custom date range filter */}
+                    <section className="relative mb-14">
+                        <SectionHeading kanji="録" title="Event log" />
+
+                        <div className="flex flex-col md:flex-row md:items-center gap-4 mb-4">
+                            <div className="flex rounded-sm overflow-hidden" style={{ border: `1px solid ${COLORS.hairline}` }}>
+                                {LEVEL_OPTIONS.map((opt) => {
+                                    const active = levelFilter === opt.value;
+                                    const color = opt.value ? levelColor(opt.value) : COLORS.gold;
+                                    return (
+                                        <button
+                                            key={opt.label}
+                                            onClick={() => {
+                                                setLevelFilter(opt.value);
+                                                refresh(hours, opt.value, customRange);
+                                            }}
+                                            className="font-[family-name:var(--font-mono)] text-xs px-3 py-2 transition-colors flex items-center gap-1.5"
+                                            style={{
+                                                background: active ? COLORS.raised : "transparent",
+                                                color: active ? color : COLORS.muted,
+                                            }}
+                                        >
+                                            <span className="font-[family-name:var(--font-display)]">{opt.kanji}</span>
+                                            {opt.label}
+                                        </button>
+                                    );
+                                })}
+                            </div>
+
+                            <DateRangeFields
+                                hours={hours}
+                                value={customRange}
+                                onApply={(range) => {
+                                    setCustomRange(range);
+                                    refresh(hours, levelFilter, range);
+                                }}
+                                onClear={() => {
+                                    setCustomRange(null);
+                                    refresh(hours, levelFilter, null);
+                                }}
+                            />
+                        </div>
+
+                        <div
+                            className="relative rounded-sm overflow-hidden"
+                            style={{ border: `1px solid ${COLORS.hairline}`, background: COLORS.surface }}
+                        >
+                            <CornerSeal color={COLORS.gold} />
+                            {events.length === 0 ? (
+                                <p className="font-[family-name:var(--font-display)] text-sm px-5 py-10 text-center" style={{ color: COLORS.muted }}>
+                                    No events match this filter.
+                                </p>
+                            ) : (
+                                <div className="max-h-[420px] overflow-y-auto">
+                                    {events.map((ev, i) => (
+                                        <EventRow key={ev.id} event={ev} isLast={i === events.length - 1} />
+                                    ))}
+                                </div>
+                            )}
+                        </div>
+                        <p className="font-[family-name:var(--font-mono)] text-[11px] mt-2 px-1" style={{ color: COLORS.muted }}>
+                            showing <span style={{ color: COLORS.bone }}>{events.length}</span> events (max 200 per fetch)
+                        </p>
+                    </section>
+
+                    {/* Daily puzzle stats — today */}
+                    {activeModes.length > 0 && (
+                        <section className="relative mb-14">
+                            <SectionHeading kanji="陣" title="Today's puzzles" />
+                            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3">
+                                {activeModes.map(([mode, s]) => (
+                                    <div
+                                        key={mode}
+                                        className="relative rounded-sm px-4 py-4"
+                                        style={{ border: `1px solid ${COLORS.hairline}`, background: COLORS.surface }}
+                                    >
+                                        <CornerSeal color={COLORS.gold} />
+                                        <p className="font-[family-name:var(--font-mono)] text-[10px] uppercase tracking-[0.25em] mb-2" style={{ color: COLORS.muted }}>
+                                            {mode}
+                                        </p>
+                                        <p className="font-[family-name:var(--font-mono)] text-2xl" style={{ color: COLORS.bone }}>
+                                            {s.win_rate}%
+                                        </p>
+                                        <p className="font-[family-name:var(--font-display)] text-xs mt-1" style={{ color: COLORS.muted }}>
+                                            <span className="font-[family-name:var(--font-mono)]">
+                                                {s.passed}/{s.played}
+                                            </span>{" "}
+                                            passed
+                                            {s.avg_guesses != null ? (
+                                                <>
+                                                    {" · avg "}
+                                                    <span className="font-[family-name:var(--font-mono)]">{s.avg_guesses}</span>
+                                                </>
+                                            ) : (
+                                                ""
+                                            )}
+                                        </p>
+                                    </div>
+                                ))}
+                            </div>
+                        </section>
+                    )}
+
+                    {/* Daily history summary — last N days, per mode */}
+                    {statsHistory.length > 0 && (
+                        <section className="relative">
+                            <SectionHeading kanji="暦" title={`Daily recap · last ${statsHistory.length} days`} />
+                            <p className="font-[family-name:var(--font-display)] text-xs mb-4" style={{ color: COLORS.muted }}>
+                                <span className="font-[family-name:var(--font-mono)]" style={{ color: COLORS.bone }}>
+                                    {historyTotals.played.toLocaleString()}
+                                </span>{" "}
+                                plays total ·{" "}
+                                <span className="font-[family-name:var(--font-mono)]" style={{ color: COLORS.bone }}>
+                                    {historyTotals.passed.toLocaleString()}
+                                </span>{" "}
+                                passed across the window
+                            </p>
                             <div
-                                key={mode}
-                                className="relative rounded-sm px-4 py-4"
+                                className="relative rounded-sm overflow-hidden"
                                 style={{ border: `1px solid ${COLORS.hairline}`, background: COLORS.surface }}
                             >
                                 <CornerSeal color={COLORS.gold} />
-                                <p className="font-[family-name:var(--font-mono)] text-[10px] uppercase tracking-[0.25em] mb-2" style={{ color: COLORS.muted }}>
-                                    {mode}
-                                </p>
-                                <p className="font-[family-name:var(--font-mono)] text-2xl" style={{ color: COLORS.bone }}>
-                                    {s.win_rate}%
-                                </p>
-                                <p className="font-[family-name:var(--font-display)] text-xs mt-1" style={{ color: COLORS.muted }}>
-                                    <span className="font-[family-name:var(--font-mono)]">
-                                        {s.passed}/{s.played}
-                                    </span>{" "}
-                                    passed
-                                    {s.avg_guesses != null ? (
-                                        <>
-                                            {" · avg "}
-                                            <span className="font-[family-name:var(--font-mono)]">{s.avg_guesses}</span>
-                                        </>
-                                    ) : (
-                                        ""
-                                    )}
-                                </p>
-                            </div>
-                        ))}
-                    </div>
-                </section>
-            )}
-
-            {/* Daily history summary — last N days, per mode */}
-            {statsHistory.length > 0 && (
-                <section className="relative">
-                    <SectionHeading kanji="暦" title={`Daily recap · last ${statsHistory.length} days`} />
-                    <p className="font-[family-name:var(--font-display)] text-xs mb-4" style={{ color: COLORS.muted }}>
-                        <span className="font-[family-name:var(--font-mono)]" style={{ color: COLORS.bone }}>
-                            {historyTotals.played.toLocaleString()}
-                        </span>{" "}
-                        plays total ·{" "}
-                        <span className="font-[family-name:var(--font-mono)]" style={{ color: COLORS.bone }}>
-                            {historyTotals.passed.toLocaleString()}
-                        </span>{" "}
-                        passed across the window
-                    </p>
-                    <div
-                        className="relative rounded-sm overflow-hidden"
-                        style={{ border: `1px solid ${COLORS.hairline}`, background: COLORS.surface }}
-                    >
-                        <CornerSeal color={COLORS.gold} />
-                        <table className="w-full min-w-[640px] border-collapse">
-                            <thead>
-                                <tr style={{ borderBottom: `1px solid ${COLORS.hairline}` }}>
-                                    <th className="text-left px-4 py-3 font-[family-name:var(--font-display)] text-xs tracking-wide" style={{ color: COLORS.muted }}>
-                                        Date
-                                    </th>
-                                    <th className="text-right px-4 py-3 font-[family-name:var(--font-display)] text-xs tracking-wide" style={{ color: COLORS.muted }}>
-                                        Total
-                                    </th>
-                                    {historyModes.map((mode) => (
-                                        <th
-                                            key={mode}
-                                            className="text-right px-4 py-3 font-[family-name:var(--font-mono)] text-[10px] uppercase tracking-[0.2em]"
-                                            style={{ color: COLORS.muted }}
-                                        >
-                                            {mode}
-                                        </th>
-                                    ))}
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {[...statsHistory].reverse().map((day, i) => (
-                                    <tr
-                                        key={day.date}
-                                        style={{ borderBottom: i === statsHistory.length - 1 ? "none" : `1px solid ${COLORS.hairline}` }}
-                                    >
-                                        <td className="px-4 py-3 font-[family-name:var(--font-mono)] text-sm" style={{ color: COLORS.bone }}>
-                                            {day.date}
-                                        </td>
-                                        <td className="px-4 py-3 text-right font-[family-name:var(--font-mono)] text-sm" style={{ color: COLORS.gold }}>
-                                            {day.total_played.toLocaleString()}
-                                        </td>
-                                        {historyModes.map((mode) => {
-                                            const s = day.modes[mode];
-                                            return (
-                                                <td key={mode} className="px-4 py-3 text-right font-[family-name:var(--font-mono)] text-xs" style={{ color: s ? COLORS.muted : COLORS.hairline }}>
-                                                    {s ? `${s.passed}/${s.played}` : "—"}
+                                <table className="w-full min-w-[640px] border-collapse">
+                                    <thead>
+                                        <tr style={{ borderBottom: `1px solid ${COLORS.hairline}` }}>
+                                            <th className="text-left px-4 py-3 font-[family-name:var(--font-display)] text-xs tracking-wide" style={{ color: COLORS.muted }}>
+                                                Date
+                                            </th>
+                                            <th className="text-right px-4 py-3 font-[family-name:var(--font-display)] text-xs tracking-wide" style={{ color: COLORS.muted }}>
+                                                Total
+                                            </th>
+                                            {historyModes.map((mode) => (
+                                                <th
+                                                    key={mode}
+                                                    className="text-right px-4 py-3 font-[family-name:var(--font-mono)] text-[10px] uppercase tracking-[0.2em]"
+                                                    style={{ color: COLORS.muted }}
+                                                >
+                                                    {mode}
+                                                </th>
+                                            ))}
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {[...statsHistory].reverse().map((day, i) => (
+                                            <tr
+                                                key={day.date}
+                                                style={{ borderBottom: i === statsHistory.length - 1 ? "none" : `1px solid ${COLORS.hairline}` }}
+                                            >
+                                                <td className="px-4 py-3 font-[family-name:var(--font-mono)] text-sm" style={{ color: COLORS.bone }}>
+                                                    {day.date}
                                                 </td>
-                                            );
-                                        })}
-                                    </tr>
-                                ))}
-                            </tbody>
-                        </table>
-                    </div>
-                </section>
-            )}
-            </>
+                                                <td className="px-4 py-3 text-right font-[family-name:var(--font-mono)] text-sm" style={{ color: COLORS.gold }}>
+                                                    {day.total_played.toLocaleString()}
+                                                </td>
+                                                {historyModes.map((mode) => {
+                                                    const s = day.modes[mode];
+                                                    return (
+                                                        <td key={mode} className="px-4 py-3 text-right font-[family-name:var(--font-mono)] text-xs" style={{ color: s ? COLORS.muted : COLORS.hairline }}>
+                                                            {s ? `${s.passed}/${s.played}` : "—"}
+                                                        </td>
+                                                    );
+                                                })}
+                                            </tr>
+                                        ))}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </section>
+                    )}
+                </>
             )}
         </div>
     );
@@ -569,9 +568,10 @@ function DateRangeFields({
     onApply: (range: { from: string; to: string }) => void;
     onClear: () => void;
 }) {
-    const defaultFrom = useMemo(() => toLocalInputValue(new Date(Date.now() - hours * 3600_000).toISOString()), [hours]);
+    const [from, setFrom] = useState(() =>
+        value?.from ?? toLocalInputValue(new Date(Date.now() - hours * 3600_000).toISOString())
+    );
     const defaultTo = useMemo(() => toLocalInputValue(new Date().toISOString()), []);
-    const [from, setFrom] = useState(value?.from ?? defaultFrom);
     const [to, setTo] = useState(value?.to ?? defaultTo);
 
     return (

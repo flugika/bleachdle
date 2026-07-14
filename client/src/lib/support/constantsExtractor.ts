@@ -6,19 +6,17 @@ import * as guessConfig from '@/src/const/guess';
  * เผื่อนำไปประยุกต์ใช้กับ Pattern คอนสแตนต์อื่นๆ ในอนาคต
  */
 export function getConstantByPattern(
-    moduleObj: Record<string, any>,
+    moduleObj: Record<string, unknown>,
     prefix: string,
     suffix: string,
     keywords: string[]
-): any {
+): unknown {
     const upperKeywords = keywords.map(kw => kw.toUpperCase());
 
-    // วนลูปหาคีย์ที่ตรงตามเงื่อนไขทั้งหมด
     const targetKey = Object.keys(moduleObj).find((key) => {
         const matchPattern = key.startsWith(prefix) && key.endsWith(suffix);
         if (!matchPattern) return false;
 
-        // ต้องมีกลุ่มคำสำคัญครบทุกคำ (เช่น 'DAILY' และ 'CHARACTER')
         return upperKeywords.every(kw => key.toUpperCase().includes(kw));
     });
 
@@ -31,11 +29,10 @@ export function getConstantByPattern(
 export function getMaxGuessLimit(mode: string, type: 'DAILY' | 'UNLIMITED' = 'DAILY'): number {
     const maxGuesses = getConstantByPattern(
         guessConfig,
-        'MAX_',       // 🔎 ขึ้นต้นด้วย MAX_
-        '_GUESSES',   // 🔎 ลงท้ายด้วย _GUESSES
-        [type, mode]  // 🔎 มีคำว่า DAILY/UNLIMITED และชื่อโหมดผสมอยู่ด้านใน
+        'MAX_',
+        '_GUESSES',
+        [type, mode]
     );
 
-    // Fallback เผื่อหาคอนสแตนต์ไม่เจอ ป้องกันเซิร์ฟเวอร์พัง (Defensive Programming)
     return typeof maxGuesses === 'number' ? maxGuesses : 15;
 }

@@ -92,7 +92,7 @@ export const Modal = ({
         return () => {
             document.body.style.overflow = '';
         };
-    }, [isOpen]);
+    }, [isOpen, shouldRender]);
 
     useEffect(() => {
         const handleClickOutside = (event: MouseEvent) => {

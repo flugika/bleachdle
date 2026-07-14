@@ -5,7 +5,6 @@ import { useEffect, useMemo, useState } from 'react';
 import { getCellWeights, getOccupiedCells, getRevealedCellIndices, GRID_SIZE } from '@/src/features/silhouette/silhouette';
 import { STORAGE_KEYS } from '@/src/const/localStorage';
 import SoulSyncLoader from '@/src/shared/ui/loader/SoulSyncLoader';
-import { MAX_DAILY_SILHOUETTE_GUESSES, MAX_UNLIMITED_SILHOUETTE_GUESSES } from '@/src/const/guess';
 import Image from 'next/image';
 
 interface Props {

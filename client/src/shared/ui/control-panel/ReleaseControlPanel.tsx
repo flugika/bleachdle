@@ -17,7 +17,6 @@ interface ReleaseControlPanelProps {
     timeLeft?: string;
     game: ReleaseGuessable;
     disabled?: boolean;
-    maxGuesses?: number;
     isGameOver?: boolean;
     onSurrender?: () => void;
 }
@@ -31,7 +30,6 @@ export function ReleaseControlPanel({
     timeLeft,
     game,
     disabled = false,
-    maxGuesses,
     isGameOver = false,
     onSurrender,
 }: ReleaseControlPanelProps) {

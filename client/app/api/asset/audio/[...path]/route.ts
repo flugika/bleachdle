@@ -72,8 +72,8 @@ export async function GET(
             const startStr = match[1];
             const endStr = match[2];
 
-            let start = startStr ? parseInt(startStr, 10) : 0;
-            let end = endStr ? parseInt(endStr, 10) : fileSize - 1;
+            const start = startStr ? parseInt(startStr, 10) : 0;
+            const end = endStr ? parseInt(endStr, 10) : fileSize - 1;
 
             if (Number.isNaN(start) || Number.isNaN(end) || start > end || start < 0 || end >= fileSize) {
                 return new NextResponse('Invalid Range', {

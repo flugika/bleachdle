@@ -327,7 +327,7 @@ const ZangetsuLoader: React.FC = () => {
         const radiusNoise = Math.sin(timeScalar * dot.waveFreqRadius) * Math.cos(timeScalar * dot.waveFreqRadius * 0.45);
         const angleNoise = Math.cos(timeScalar * dot.waveFreqAngle) * Math.sin(timeScalar * dot.waveFreqAngle * 0.65);
 
-        let calculatedRadius = dot.baseRadius + (radiusNoise * dot.ampRadius);
+        const calculatedRadius = dot.baseRadius + (radiusNoise * dot.ampRadius);
         let calculatedAngle = dot.currentAngle + (angleNoise * dot.ampAngle);
 
         if (dot.type === 'zangetsu-core') {

@@ -1,10 +1,9 @@
 // src/features/emoji/components/shared/EmojiSummaryGuess.tsx
 "use client";
 
-import { useMemo } from 'react';
 import Image from 'next/image';
 import { DailyResetTimer } from '@/src/shared/ui/DailyResetTimer';
-import { EmojiGuessEntry, EmojiTarget, EmojiTargetHidden } from '@/src/features/emoji/types';
+import { EmojiGuessEntry, EmojiTargetHidden } from '@/src/features/emoji/types';
 import { EmojiTestimonyDisplay } from './EmojiTestimonyDisplay';
 import { useRaceEmblem } from '@/src/shared/hooks/useRaceEmblem';
 import { useCharacterTier } from '@/src/shared/hooks/useBadgeTier';
@@ -48,15 +47,15 @@ export const EmojiSummaryGuess = ({
     mode,
     stats = { currentStreak: 0, maxStreak: 0, playedCount: 0, passedCount: 0, guessDistribution: {} },
 }: EmojiSummaryGuessProps) => {
-    if (!isOpen || !target) return null;
-
     const answerCharacter = revealedCharacter;
 
     const activeTier = useCharacterTier(stats.maxStreak);
 
     // 🔮 Same watermark effect as QuoteSummaryGuess, driven by the revealed
     // speaker's race instead of the guessed target directly.
-    const emblem = useMemo(() => useRaceEmblem(answerCharacter), [answerCharacter]);
+    const emblem = useRaceEmblem(answerCharacter);
+
+    if (!isOpen || !target) return null;
 
     return (
         <SummaryCardShell isWin={isWin} kanji={activeTier.kanji} kanjiColor={activeTier.color}>

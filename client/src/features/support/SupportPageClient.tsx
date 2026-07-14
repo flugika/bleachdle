@@ -4,7 +4,6 @@
 import { useRouter } from "next/navigation";
 import { PortfolioCard } from "./PortfolioCard";
 import { SupportForm } from "./SupportForm";
-import { BleachReiatsuCursor } from "@/src/shared/ui/BleachReiatsuCursor"; // adjust path to match your project
 
 export default function SupportPageClient() {
     const router = useRouter();

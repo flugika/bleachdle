@@ -24,10 +24,6 @@ import { getReleases } from '../../release';
 import { logFullTarget } from '@/src/lib/debug/logFullTarget';
 
 export default function DailyReleaseWrapper({ initialTarget }: { initialTarget: ReleaseTargetHidden | null }) {
-    if (!FEATURE_FLAGS.daily?.release) {
-        return <Sealed />;
-    }
-
     const { navigate, state, reportReady } = useSenkaimon();
 
     const gameStore = useReleaseGame();
@@ -45,7 +41,8 @@ export default function DailyReleaseWrapper({ initialTarget }: { initialTarget: 
 
             logFullTarget(target);
         }
-    }, [initialTarget, _hasHydrated, setTarget]);
+        // eslint-disable-next-line react-hooks/exhaustive-deps -- run once on mount with server-provided target only
+    }, [initialTarget, _hasHydrated]);
 
     const [manuallyClosed, setManuallyClosed] = useState(false);
     const [revealDelayDone, setRevealDelayDone] = useState(false);
@@ -137,9 +134,13 @@ export default function DailyReleaseWrapper({ initialTarget }: { initialTarget: 
         }
     }, [showSummary]);
 
+    if (!FEATURE_FLAGS.daily?.release) {
+        return <Sealed />;
+    }
+
     return (
         <div className="min-h-screen text-[#d8d0c8] overflow-x-hidden">
-            <Header onOpenHowTo={() => setIsHowToOpen(true)} />
+            <Header />
 
             <main className="max-w-[80%] mx-auto px-4 pb-24">
                 <ModeBadge mode="daily" onClick={() => setIsModeSelectorOpen(true)} />
@@ -165,9 +166,9 @@ export default function DailyReleaseWrapper({ initialTarget }: { initialTarget: 
                         <Divider />
                         <div className="flex flex-wrap justify-center gap-x-5 gap-y-1.5">
                             {([
-                                ['correct', '#0d2918', '#1a5530', '#4de880', 'Correct'],
-                                ['wrong', '#590e0e', '#a64747', '#3a2828', 'Wrong'],
-                            ] as const).map(([key, bg, border, fg, label]) => (
+                                ['correct', '#0d2918', '#1a5530', 'Correct'],
+                                ['wrong', '#590e0e', '#a64747', 'Wrong'],
+                            ] as const).map(([key, bg, border, label]) => (
                                 <div key={key} className="flex items-center gap-1.5">
                                     <span className="inline-block w-2.5 h-2.5 shrink-0" style={{ background: bg, border: `1px solid ${border}` }} />
                                     <span className="text-[12px] tracking-wide text-[#d1a9a9]">{label}</span>

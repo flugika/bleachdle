@@ -4,7 +4,6 @@ import { STORAGE_KEYS } from '@/src/const/localStorage';
 import { MAX_UNLIMITED_RELEASE_GUESSES } from '@/src/const/guess';
 import { createUnlimitedGuessGameStore } from '@/src/lib/guessGame/createUnlimitedGuessGameStore';
 import { BleachRelease } from '@/src/entities/release/schema';
-import { getCharacterById } from '@/src/features/character/character';
 import { ReleaseTargetHidden } from '@/src/features/release/types';
 
 export const useReleaseGame = createUnlimitedGuessGameStore<

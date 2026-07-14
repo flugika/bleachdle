@@ -19,7 +19,7 @@ async function seedReleases() {
         // แนบมา (เช่น copy จาก getReleasableItems() output) — ตาราง `releases` เก็บแค่
         // character_id (FK) ไม่มีคอลัมน์ character เป็น jsonb ดังนั้นถ้าส่ง key นี้ไปด้วย
         // Supabase จะ error ทันที ("Could not find the 'character' column of 'releases'")
-        const rows = releases.map(({ character, ...rest }) => rest);
+        const rows = releases.map(({ ...rest }) => rest);
 
         console.log(`📡 Connecting to Supabase... Preparing to upload ${rows.length} releases.`);
 

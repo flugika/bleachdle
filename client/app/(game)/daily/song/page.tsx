@@ -1,4 +1,3 @@
-import { BleachSong } from "@/src/entities/song/schema";
 import DailySongWrapper from "@/src/features/song/components/daily/DailySongWrapper";
 import { getDailySong } from "@/src/services/getDailySchedule/song";
 

@@ -17,7 +17,6 @@ interface EmojiControlPanelProps {
     timeLeft?: string;
     game: EmojiGuessable;
     disabled?: boolean;
-    maxGuesses?: number;
     isGameOver?: boolean;
     onSurrender?: () => void;
 }
@@ -32,7 +31,6 @@ export function EmojiControlPanel({
     timeLeft,
     game,
     disabled = false,
-    maxGuesses,
     isGameOver = false,
     onSurrender,
 }: EmojiControlPanelProps) {

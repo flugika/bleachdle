@@ -5,12 +5,13 @@ import { useRouter } from "next/navigation";
 import { useSenkaimon } from "@/src/shared/ui/context/NavigationContext";
 import { ArrowUpRight } from "lucide-react";
 import { BL_MODES_METADATA, MODE_ORDER } from "@/src/config/mode";
+import Image from "next/image";
+import Link from "next/link";
 
 // ================= 🎨 SHARED DESIGN TOKENS =================
 // Kept local so this page never drifts from the Kido card language used on
 // /support (corner brackets, gold accent, Cinzel kanji headers). If those
 // primitives ever get extracted into a shared component, swap these for it.
-const GOLD = "#c8a96e";
 
 // Set NEXT_PUBLIC_PORTFOLIO_URL in your .env — same variable PortfolioCard.tsx
 // reads, so both places always point at the same link.
@@ -111,9 +112,11 @@ export default function AboutPageClient() {
                     {/* ================= WHAT IS A "DLE"? ================= */}
                     <KidoCard kanji="遊戯" eyebrow="For First-Time Visitors">
                         <h2 className="flex gap-2 text-xl font-bold text-white mb-4 tracking-wide font-[family-name:var(--font-display)]">
-                            <img
+                            <Image
                                 src="/icon.svg"
                                 alt=""
+                                width={24}
+                                height={24}
                                 className="w-5 h-5 md:w-6 md:h-6 bd-anim"
                                 style={{
                                     animation: "icon-reiatsu-breathe 3.2s ease-in-out infinite",
@@ -339,7 +342,7 @@ export default function AboutPageClient() {
                             <span className="italic">someone else&apos;s IP</span>.
                         </p>
                         <div className="flex justify-center">
-                            <a
+                            <Link
                                 href={PORTFOLIO_URL}
                                 target="_blank"
                                 rel="noopener noreferrer"
@@ -347,7 +350,7 @@ export default function AboutPageClient() {
                             >
                                 View My Portfolio
                                 <ArrowUpRight className="w-3.5 h-3.5 transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
-                            </a>
+                            </Link>
                         </div>
                     </KidoCard>
 
@@ -356,14 +359,14 @@ export default function AboutPageClient() {
                         <p className="text-[11px] uppercase tracking-[0.3em] text-[#eed9c4]/40 font-mono">
                             Found a bug, or have feedback?
                         </p>
-                        <a
+                        <Link
                             href="/support"
                             onClick={(e) => handleGateNavigate(e, "/support")}
                             className="group font-black relative font-[family-name:var(--font-display)] inline-flex items-center gap-2 border border-[#c8a96e]/50 px-7 py-3 text-[12px] uppercase tracking-[0.25em] text-[#c8a96e] transition-all duration-300 hover:border-[#c8a96e] hover:bg-[#c8a96e] hover:text-[#0a0a0f] hover:shadow-[0_0_27px_rgba(200,169,110,0.5)]"
                         >
                             Go To Support &amp; Reports
                             <ArrowUpRight className="w-3.5 h-3.5 transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
-                        </a>
+                        </Link>
                     </div>
                 </div>
             </div>

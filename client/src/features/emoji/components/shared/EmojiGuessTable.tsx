@@ -98,7 +98,7 @@ function useVerdictBurst(ref: React.RefObject<HTMLDivElement | null>, fire: bool
             p.style.opacity = '0';
             setTimeout(() => p.remove(), duration * 1000 + 50);
         }
-    }, [fire]);
+    }, [fire, ref]);
 }
 
 export interface EmojiGuessCardProps extends EmojiGuessEntry {

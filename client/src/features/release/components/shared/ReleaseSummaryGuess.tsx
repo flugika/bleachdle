@@ -60,8 +60,6 @@ export const ReleaseSummaryGuess = ({
     mode,
     stats = { currentStreak: 0, maxStreak: 0, playedCount: 0, passedCount: 0, guessDistribution: {} },
 }: ReleaseSummaryGuessProps) => {
-    if (!isOpen || !target) return null;
-
     // 🩹 ก่อนหน้านี้ resolve character จาก `target` ตรงๆ (ซึ่งมีแค่ character_id
     // ไม่มีคำตอบเต็ม) ตอนนี้ resolve จาก `revealedCharacter` (เฉลยเต็มจาก store)
     // แทน — ถ้า store ยังไม่ populate (เช่น กำลังโหลด) จะได้ null อย่างปลอดภัย
@@ -72,9 +70,11 @@ export const ReleaseSummaryGuess = ({
 
     const activeTier = useCharacterTier(stats.maxStreak);
 
-    const emblem = useMemo(() => useRaceEmblem(answerCharacter), [answerCharacter]);
+    const emblem = useRaceEmblem(answerCharacter);
 
     const hasMeta = revealedCharacter?.source_episode != null;
+
+    if (!isOpen || !target) return null;
 
     return (
         <SummaryCardShell

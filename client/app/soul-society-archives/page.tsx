@@ -80,7 +80,7 @@ function AnswerHeader({ name, imageUrl }: { name?: string | null; imageUrl?: str
                 style={{ background: '#111' }}
             >
                 {imageUrl ? (
-                    // eslint-disable-next-line @next/next/no-img-element
+                     
                     <Image src={imageUrl} alt={name} className="w-full h-full object-cover" fill sizes="w-12 h-12" draggable={false} />
                 ) : (
                     <p className='flex w-full h-full justify-center items-center text-xl font-black' style={{ color: T.gold, opacity: 0.5 }}>
@@ -163,7 +163,6 @@ export default async function ArchivePage() {
                     {character ? (
                         <ScaleFit referenceWidth={340}>
                             <ArchiveCharacterCard
-                                characterId={character.id}
                                 name={character.name}
                                 imageUrl={character.image ? `/api/asset/character/${character.id}` : null}
                                 affiliation={character.affiliation}

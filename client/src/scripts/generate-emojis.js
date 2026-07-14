@@ -43,7 +43,8 @@ function loadCharacters() {
 }
 
 // ─────────────────────────────────────────────────────────────
-// 🆕 ฟังก์ชันดูดข้อมูลจาก emoji-list.json (ปรับปรุงการเทียบชื่อให้ยืดหยุ่นขึ้น)
+// 🆕 Pulls curated emoji data in from emoji-list.json (name matching
+// is fuzzy/flexible on purpose so minor formatting differences don't break it)
 // ─────────────────────────────────────────────────────────────
 function applyCuratedEmojis(emojiSets) {
     if (!fs.existsSync(EMOJI_LIST_FILE)) return emojiSets;
@@ -51,35 +52,36 @@ function applyCuratedEmojis(emojiSets) {
     const raw = fs.readFileSync(EMOJI_LIST_FILE, 'utf8');
     const curatedMap = new Map();
 
-    // Regex ค้นหาชื่อและ Array อีโมจิ
+    // Regex that finds a name and its emoji array
     const blockRegex = /(?:"([^"]+)"|([^:\n]+))\s*:\s*\[([\s\S]*?)\]/g;
     let match;
 
     while ((match = blockRegex.exec(raw)) !== null) {
-        // ดึงชื่อออกมา ลบเครื่องหมายคำพูดส่วนเกินออกถ้ามี
+        // Extract the name, stripping any extra surrounding quotes
         let name = (match[1] || match[2]).trim();
         name = name.replace(/^["']|["']$/g, '').trim();
 
         const content = match[3];
-        // ดึงเอาเฉพาะตัว emoji ข้างในเครื่องหมายคำพูด
+        // Pull out just the emoji strings inside quotes
         const emojis = [...content.matchAll(/"([^"]+)"/g)].map(m => m[1]);
 
         if (emojis.length > 0) {
-            // เพื่อความชัวร์: ใช้ คีย์เป็นตัวพิมพ์เล็ก (Normalized Key) เพื่อให้แมตช์ง่ายขึ้น
+            // Normalize the key to lowercase to make matching more forgiving
             curatedMap.set(name.toLowerCase(), emojis);
         }
     }
 
     if (curatedMap.size === 0) {
-        console.warn(`⚠️ ไม่สามารถดึงข้อมูลอีโมจิจากไฟล์ emoji-list.json ได้เลย ตรวจสอบฟอร์แมตไฟล์อีกครั้ง`);
+        console.warn(`⚠️ Could not extract any emoji data from emoji-list.json — check the file format again`);
         return emojiSets;
     }
 
-    console.log(`📥 เจอข้อมูลเตรียมไว้ใน emoji-list.json จำนวน ${curatedMap.size} ตัวละคร`);
+    console.log(`📥 Found curated data in emoji-list.json for ${curatedMap.size} character(s)`);
     let appliedCount = 0;
 
     const updatedSets = emojiSets.map(entry => {
-        // ชื่อตัวละครจากฟิลด์ character_id (ตอนอยู่ในโหมด Scaffold จะเป็นชื่อ เช่น "Orihime Inoue")
+        // Character name from the character_id field (in Scaffold mode this is
+        // a display name like "Orihime Inoue", not a UUID yet)
         const currentName = String(entry.character_id || '').trim().toLowerCase();
 
         if (curatedMap.has(currentName)) {
@@ -89,7 +91,7 @@ function applyCuratedEmojis(emojiSets) {
         return entry;
     });
 
-    console.log(`✨ ยัด Emoji ใส่สำเร็จ ${appliedCount} รายการ\n`);
+    console.log(`✨ Applied emoji sets successfully: ${appliedCount} entr${appliedCount === 1 ? 'y' : 'ies'}\n`);
     return updatedSets;
 }
 
@@ -109,9 +111,6 @@ function runScaffold() {
 
     let createdCount = 0;
     let keptCount = 0;
-    let backfilledIdCount = 0;
-    let fixedLengthCount = 0;
-    let renamedCount = 0;
     const needsCuration = [];
 
     const nextEmojiSets = characters.map(char => {
@@ -121,7 +120,6 @@ function runScaffold() {
             keptCount++;
             let list = Array.isArray(existing.emoji_list) ? [...existing.emoji_list] : [];
             if (list.length !== EMOJI_COUNT) {
-                fixedLengthCount++;
                 while (list.length < EMOJI_COUNT) list.push('❓');
                 list = list.slice(0, EMOJI_COUNT);
             }
@@ -130,9 +128,6 @@ function runScaffold() {
             if (isPlaceholder) needsCuration.push(char.name);
 
             const hasValidId = existing.id && UUID_RE.test(existing.id);
-            if (!hasValidId) backfilledIdCount++;
-
-            if (existing.character_id !== char.name) renamedCount++;
 
             return {
                 id: hasValidId ? existing.id : randomUUID(),
@@ -156,13 +151,13 @@ function runScaffold() {
 
     fs.writeFileSync(EMOJIS_FILE, JSON.stringify(nextEmojiSets, null, 4), 'utf8');
 
-    console.log('✅ ประมวลผลเสร็จสิ้น เขียนไฟล์ emojis.json แล้ว! (MOCK MODE)');
-    console.log(`สร้างใหม่: ${createdCount} | คงเดิม: ${keptCount}`);
-    if (orphanedCount > 0) console.warn(`⚠️ พบ ${orphanedCount} entry orphan — ถูกตัดออก`);
+    console.log('✅ Done — emojis.json has been written! (MOCK MODE)');
+    console.log(`Created: ${createdCount} | Kept: ${keptCount}`);
+    if (orphanedCount > 0) console.warn(`⚠️ Found ${orphanedCount} orphaned entr${orphanedCount === 1 ? 'y' : 'ies'} — removed`);
     if (needsCuration.length > 0) {
-        console.warn(`\n📝 ต้อง curate emoji_list เอง จำนวน ${needsCuration.length} ตัวละคร`);
+        console.warn(`\n📝 ${needsCuration.length} character(s) still need their emoji_list curated`);
     }
-    console.log(`\n⚠️ ไฟล์นี้ยังใช้เล่นจริงไม่ได้ — ให้โยนข้อมูลลง emoji-list.json แล้วรัน --commit`);
+    console.log(`\n⚠️ This file is not yet playable — fill in emoji-list.json, then run with --commit`);
 }
 
 // ─────────────────────────────────────────────────────────────
@@ -175,23 +170,21 @@ function runCommit() {
 
     let existingEmojiSets = loadEmojiSets();
     if (existingEmojiSets.length === 0) {
-        console.warn('⚠️ emojis.json ว่างเปล่าหรือไม่พบไฟล์ — ไม่มีอะไรให้ commit');
+        console.warn('⚠️ emojis.json is empty or missing — nothing to commit');
         return;
     }
 
-    // 🛟 backup ไว้ก่อน
+    // 🛟 back it up first
     fs.writeFileSync(EMOJIS_BACKUP_FILE, JSON.stringify(existingEmojiSets, null, 4), 'utf8');
 
-    // 1. นำข้อมูลจาก emoji-list.json มาแมตช์และอัปเดตลงตระกูลสแกฟโฟลด์ก่อน
+    // 1. Pull in data from emoji-list.json and apply it to the scaffolded sets first
     existingEmojiSets = applyCuratedEmojis(existingEmojiSets);
 
     let committedCount = 0;
-    let alreadyCommittedCount = 0;
-    let unresolvedCount = 0;
     let skippedPlaceholderCount = 0;
     const removedNames = [];
 
-    // 2. คัดกรอง: ตัวไหนที่อัปเดตแล้ว แต่ยังคงเป็น ❓ ทั้งหมด (ไม่ได้รับการอัปเดตจากขั้นตอนที่ 1) ให้คัดออก
+    // 2. Filter out: anything still all-❓ after step 1 (i.e. never got curated)
     const filteredSets = existingEmojiSets.filter(entry => {
         const list = Array.isArray(entry.emoji_list) ? entry.emoji_list : [];
         const isPlaceholder = list.every(e => e === '❓') || list.length === 0;
@@ -207,35 +200,34 @@ function runCommit() {
         return true;
     });
 
-    // 3. แปลงโครงสร้างเปลี่ยนจากชื่อตัวละครมาใช้ _character_ref_id (UUID จริง)
+    // 3. Swap the display-name character_id over to the real UUID
     const committed = filteredSets.map(entry => {
         const realId = resolveRealCharacterId(entry, validCharacterIds);
 
         if (!realId) {
-            unresolvedCount++;
-            console.warn(`⚠️ ข้าม entry id=${entry.id} — หา real character_id ไม่เจอ`);
+            console.warn(`⚠️ Skipping entry id=${entry.id} — couldn't resolve a real character_id`);
             return entry;
         }
 
         const hadRefField = Object.prototype.hasOwnProperty.call(entry, REF_ID_FIELD);
         if (hadRefField) committedCount++;
-        else alreadyCommittedCount++;
 
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars -- destructuring here is how we drop this key from `rest`
         const { [REF_ID_FIELD]: _drop, ...rest } = entry;
         return { ...rest, character_id: realId };
     });
 
     fs.writeFileSync(EMOJIS_FILE, JSON.stringify(committed, null, 4), 'utf8');
 
-    console.log('✅ Commit เสร็จสิ้น — นำเข้า Emoji, ลบตัวที่ยังไม่พร้อม และสลับกลับเป็น UUID แล้ว');
-    console.log(`ประมวลผลเป็น real id สำเร็จ: ${committedCount} รายการ`);
+    console.log('✅ Commit complete — emojis imported, unfinished entries dropped, and IDs swapped back to UUIDs');
+    console.log(`Successfully resolved to real ids: ${committedCount} entr${committedCount === 1 ? 'y' : 'ies'}`);
 
     if (skippedPlaceholderCount > 0) {
-        console.log(`\n🛑 ตัดข้อมูลที่เป็น placeholder ❓ ออกชั่วคราว: ${skippedPlaceholderCount} รายการ`);
+        console.log(`\n🛑 Temporarily dropped ${skippedPlaceholderCount} placeholder (❓) entr${skippedPlaceholderCount === 1 ? 'y' : 'ies'}`);
         if (removedNames.length <= 10) {
             console.log(`[ ${removedNames.join(', ')} ]`);
         } else {
-            console.log(`(ซ่อนรายชื่อที่เหลือเนื่องจากยาวเกินไป...)`);
+            console.log(`(hiding the rest of the list — too many to show)`);
         }
     }
 }
@@ -249,7 +241,7 @@ function run() {
             runScaffold();
         }
     } catch (error) {
-        console.error('❌ เกิดข้อผิดพลาด:', error.message);
+        console.error('❌ Error:', error.message);
     }
 }
 

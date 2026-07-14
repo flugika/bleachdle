@@ -15,7 +15,6 @@ interface SongControlPanelProps {
     timeLeft?: string; // ใส่เฉพาะโหมด daily
     game: SongGuessable;
     disabled?: boolean;
-    maxGuesses?: number;
     isGameOver?: boolean;
     onSurrender?: () => void;
 }
@@ -29,7 +28,6 @@ export function SongControlPanel({
     timeLeft,
     game,
     disabled = false,
-    maxGuesses,
     isGameOver = false,
     onSurrender
 }: SongControlPanelProps) {

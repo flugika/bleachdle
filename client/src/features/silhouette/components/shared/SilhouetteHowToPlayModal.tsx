@@ -6,7 +6,6 @@ import { Button } from '@/src/shared/ui/button';
 import { MAX_DAILY_SILHOUETTE_GUESSES, MAX_UNLIMITED_SILHOUETTE_GUESSES } from '@/src/const/guess';
 import { SilhouetteImage } from './SilhouetteImage';
 import { SilhouetteGuessTable } from './SilhouetteGuessTable';
-import { useEffect, useState } from 'react';
 import { Character } from '@/src/entities/character/schema';
 import { SilhouetteGuessEntry } from '@/src/features/silhouette/types';
 
@@ -92,17 +91,6 @@ const MOCK_GUESSES: SilhouetteGuessEntry[] = [
 ];
 
 export const SilhouetteHowToPlayModal = ({ isOpen, onClose, mode }: SilhouetteHowToPlayModalProps) => {
-    // 🌟 ใช้ State ง่ายๆ เพื่อสลับแค่ โชว์เงา <-> โชว์รูปจริง
-    const [forceRevealDemo, setForceRevealDemo] = useState(false);
-
-    useEffect(() => {
-        // สลับสถานะทุกๆ 2.5 วินาที
-        const interval = setInterval(() => {
-            setForceRevealDemo((prev) => !prev);
-        }, 2500);
-
-        return () => clearInterval(interval);
-    }, []);
 
     const isDaily = mode === 'daily';
     const MAX_SILHOUETTE_GUESSES = isDaily ? MAX_DAILY_SILHOUETTE_GUESSES : MAX_UNLIMITED_SILHOUETTE_GUESSES;

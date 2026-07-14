@@ -2,7 +2,7 @@
 "use client"; // ประกาศว่าอันนี้คือ Client Component
 
 import { useDailyWallpaper } from "@/src/shared/hooks/useDailyWallpaper"; // ปรับ path ให้ถูกนะครับ
-import { useTestWallpaper } from "@/src/shared/hooks/useTestWallpaper";
+// import { useTestWallpaper } from "@/src/shared/hooks/useTestWallpaper";
 
 export const WallpaperInitializer = () => {
     // useTestWallpaper();

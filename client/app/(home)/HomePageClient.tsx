@@ -2,13 +2,13 @@
 "use client";
 
 import React, { useEffect, useRef, useState } from "react";
-import Link from "next/link";
 import { useSenkaimon } from "@/src/shared/ui/context/NavigationContext";
 import { HeaderDivider } from "@/src/shared/ui/layout/HeaderDivider";
 import SoulSyncLoader from "@/src/shared/ui/loader/SoulSyncLoader";
 import { ModeSelectorModal, GameMode } from "@/src/shared/ui/game-selector/ModeSelectorModal";
 import { MODE_ACCENT, BL_MODES_METADATA } from "@/src/config/mode";
 import { HeroDailyCTA } from "@/src/shared/ui/daily-hub/HeroDailyCTA";
+import type { DailyStats } from "@/src/shared/ui/daily-hub/DailyStatsBar";
 
 // ================= 📖 GAME MODE DATABASE =================
 // Accent colors pull from MODE_ACCENT, and kanji pulls from BL_MODES_METADATA
@@ -82,7 +82,7 @@ const PARTICLES = [
 ];
 
 interface HomePageClientProps {
-    initialStats: Record<string, any>;
+    initialStats: DailyStats;
 }
 
 export default function HomePageClient({ initialStats }: HomePageClientProps) {
@@ -283,7 +283,7 @@ export default function HomePageClient({ initialStats }: HomePageClientProps) {
                     卍
                 </div>
 
-                <HeroDailyCTA handleNavigation={(e: any, path) => handleNavigation(e, path)} initialStats={initialStats} />
+                <HeroDailyCTA handleNavigation={handleNavigation} initialStats={initialStats} />
             </div>
 
             {/* ================= ⚖️ MODE HIERARCHY: DAILY (featured) + UNLIMITED (secondary) =================

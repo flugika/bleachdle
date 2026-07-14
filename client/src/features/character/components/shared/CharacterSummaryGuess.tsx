@@ -18,8 +18,9 @@ import {
 } from '@/src/shared/ui/summary';
 import { formatAge, formatHeight } from '@/src/lib/utils/format';
 import { Stats } from '@/src/lib/guessGame/types';
-import { Character } from '@/src/entities/character/schema';
 import { getCharacterById } from '../../character';
+
+const SUBSTITUTE_SHINIGAMI_NAMES = ["Ichigo Kurosaki", "Kugo Ginjo"];
 
 // 🗺️ 1. TYBW LORE LOOKUP DICTIONARY (ทำหน้าที่เป็น Whitelist & อัปเดตชื่อไฟล์จริง)
 const EMBLEM_DATA: Record<string, { file: string; color: string }> = {
@@ -47,14 +48,9 @@ interface CharacterSummaryGuessProps {
 }
 
 export const CharacterSummaryGuess = ({ isOpen, onClose, guesses, targetId, isWin, mode, stats = { currentStreak: 0, maxStreak: 0, playedCount: 0, passedCount: 0, guessDistribution: {} }, }: CharacterSummaryGuessProps) => {
-    if (!isOpen) return null;
-
     const target = getCharacterById(targetId);
 
     const activeTier = useCharacterTier(stats.maxStreak);
-
-    // 🗺️ Whitelist ตัวละครที่เป็น Substitute Shinigami โดยตำแหน่งจริงตาม Lore
-    const SUBSTITUTE_SHINIGAMI_NAMES = ["Ichigo Kurosaki", "Kugo Ginjo"];
 
     const emblem = useMemo(() => {
         if (!target) return null;
@@ -81,6 +77,8 @@ export const CharacterSummaryGuess = ({ isOpen, onClose, guesses, targetId, isWi
 
         return matchedRace ? EMBLEM_DATA[matchedRace] : EMBLEM_DATA["unknown"];
     }, [target]);
+
+    if (!isOpen || !target) return null;
 
     return (
         <SummaryCardShell isWin={isWin} kanji={activeTier.kanji} kanjiColor={activeTier.color}>
@@ -184,7 +182,7 @@ export const CharacterSummaryGuess = ({ isOpen, onClose, guesses, targetId, isWi
             <IdentificationHistoryPanel
                 guessCount={guesses.length}
                 chronicleLabel="Reiatsu Chronicle // View Logs"
-                matrix={guesses.map((guess: any, i: number) => (
+                matrix={guesses.map((guess: GuessEntry, i: number) => (
                     <div key={i} className="flex gap-1">
                         {RESULT_KEYS.map((key) => {
                             const status = guess.result[key] as MatchResult;

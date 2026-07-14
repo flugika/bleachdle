@@ -9,7 +9,6 @@ import { createSearchEngine } from '@/src/lib/search/fuzzy';
 import { Header } from '@/src/shared/ui/layout/Header';
 import { Divider } from '@/src/shared/ui/layout/Divider';
 import { SubHeader } from '@/src/shared/ui/layout/SubHeader';
-import { ModeBadge } from '@/src/shared/ui/game-selector/ModeBadge';
 import Sealed from '@/src/shared/ui/Sealed';
 import { FEATURE_FLAGS } from '@/src/config/feature.flags';
 
@@ -45,16 +44,6 @@ const COLOR = {
 // ============================================================================
 
 const formatSeconds = (ms: number) => (ms / 1000).toFixed(2);
-
-/** สร้าง UUID v4 (ใช้ Web Crypto API ที่มีในเบราว์เซอร์ยุคใหม่ทุกตัว) */
-const generateUuid = (): string =>
-    typeof crypto !== 'undefined' && 'randomUUID' in crypto
-        ? crypto.randomUUID()
-        : 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, (c) => {
-            const r = (Math.random() * 16) | 0;
-            const v = c === 'x' ? r : (r & 0x3) | 0x8;
-            return v.toString(16);
-        });
 
 /**
  * สร้าง linear-gradient สำหรับพื้นหลัง <input type="range"> — release เล่นจาก 0 เสมอ
@@ -190,9 +179,10 @@ function useAudioEngine() {
 
     // เคลียร์ timer + หยุดเสียงตอน unmount
     useEffect(() => {
+        const audioEl = audioRef.current;
         return () => {
             clearCutoffTimer();
-            audioRef.current?.pause();
+            audioEl?.pause();
         };
     }, []);
 
@@ -551,13 +541,7 @@ function LiveTuningWorkbench({
 // ============================================================================
 
 export default function MockupReleaseGame() {
-    if (!FEATURE_FLAGS.mockup.release) {
-        return <Sealed />;
-    }
-
     const releases = getReleases();
-
-    const [isHowToOpen, setIsHowToOpen] = useState(false);
 
     // 🔍 Filter State (ค้นหาเพื่อกรองรายการในตาราง — ไม่เกี่ยวกับกลไกทาย release)
     const [filterQuery, setFilterQuery] = useState('');
@@ -613,10 +597,14 @@ export default function MockupReleaseGame() {
         return searchEngine.search(trimmed).map((r) => r.item);
     }, [filterQuery, searchEngine, releases]);
 
+    if (!FEATURE_FLAGS.mockup.release) {
+        return <Sealed />;
+    }
+
     return (
         <div className="min-h-screen text-[#d8d0c8] overflow-x-hidden">
             <audio ref={audioRef} preload="auto" />
-            <Header onOpenHowTo={() => setIsHowToOpen(true)} />
+            <Header />
 
             <main className="max-w-[95%] mx-auto px-4 pb-16">
                 <SubHeader title="ZANPAKUTO RESONANCE CALIBRATION" subtitle="SDRI // Gotei 13 Division 12 Audio Testing Laboratory & Live JSON Tuner Bench" />

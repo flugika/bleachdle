@@ -57,7 +57,7 @@ export const ReleaseSearchBar = ({ releases, disabled = false, game }: ReleaseSe
                 { name: 'trigger_phrase', weight: 0.7 },
                 { name: 'technique_translation', weight: 0.7 },
                 { name: ['character', 'name'], weight: 0.8 }
-            ] as any
+            ]
         }),
         [releases]
     );

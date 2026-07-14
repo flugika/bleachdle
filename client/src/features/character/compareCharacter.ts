@@ -65,7 +65,7 @@ const compareArray = (guess: string[], target: string[]): MatchResult => {
 };
 
 // Helper: เปรียบเทียบ String พื้นฐาน
-const compareBasic = (guess: any, target: any): MatchResult =>
+const compareBasic = <T,>(guess: T, target: T): MatchResult =>
     guess === target ? 'correct' : 'wrong';
 
 // ใน compare.ts

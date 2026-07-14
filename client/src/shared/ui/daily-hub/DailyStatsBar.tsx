@@ -3,13 +3,13 @@
 
 import { MODE_ACCENT, SubFeatureKey } from "@/src/config/mode";
 
-interface ModeStat {
+export interface ModeStat {
     played: number;
     passed: number;
     win_rate: number;
     avg_guesses: number | null;
 }
-type DailyStats = Record<string, ModeStat>;
+export type DailyStats = Record<string, ModeStat>;
 
 const MODE_LABELS: Record<string, string> = {
     character: "Character",

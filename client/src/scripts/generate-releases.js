@@ -91,18 +91,11 @@ function run() {
 
         const mergedReleases = [...existingReleases, ...generatedStubs];
 
-        // Validation & Cleanup phase
-        let backfilledIdCount = 0;
-        let invalidTypeCount = 0;
-        let missingFieldCount = 0;
-
         const nextReleases = mergedReleases.map((r) => {
             let entry = r;
             if (!entry.id || !UUID_RE.test(entry.id)) {
-                backfilledIdCount++;
                 entry = { id: randomUUID(), ...entry };
             }
-            if (!VALID_RELEASE_TYPES.includes(entry.release_type)) invalidTypeCount++;
 
             return entry;
         });

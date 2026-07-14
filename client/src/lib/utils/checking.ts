@@ -22,5 +22,5 @@ export const getDuplicateItems = <T extends { id: string }>(items: T[]): Map<str
     }
 
     // กรองเอาเฉพาะ ID ที่มีรายการมากกว่า 1
-    return new Map([...map].filter(([_, items]) => items.length > 1));
+    return new Map([...map].filter(([, items]) => items.length > 1));
 };

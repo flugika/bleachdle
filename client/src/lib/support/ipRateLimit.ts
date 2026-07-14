@@ -9,8 +9,13 @@ import crypto from 'crypto';
 const ipCache = new Map<string, { count: number; resetAt: number }>();
 
 // สั่งล้างหน่วยความจำที่หมดอายุทุกๆ 1 นาที เพื่อไม่ให้เกิด Memory Leak
-if (typeof global !== 'undefined' && !(global as any)._ipCleanupInterval) {
-    (global as any)._ipCleanupInterval = setInterval(() => {
+declare global {
+     
+    var _ipCleanupInterval: ReturnType<typeof setInterval> | undefined;
+}
+
+if (typeof global !== 'undefined' && !global._ipCleanupInterval) {
+    global._ipCleanupInterval = setInterval(() => {
         const now = Date.now();
         for (const [key, value] of ipCache.entries()) {
             if (now > value.resetAt) {

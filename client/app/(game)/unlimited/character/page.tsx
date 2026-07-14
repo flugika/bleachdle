@@ -23,10 +23,6 @@ import { EmptyGuessState } from '@/src/features/character/components/shared/Empt
 import { logFullTarget } from '@/src/lib/debug/logFullTarget';
 
 export default function UnlimitedCharacterGame() {
-    if (!FEATURE_FLAGS.unlimited.character) {
-        return <Sealed />;
-    }
-
     const { navigate, state, reportReady } = useSenkaimon();
 
     // 🛡️ Subscribe Store เพียงครั้งเดียวเพื่อป้องกันปัญหา Re-render ซ้ำซ้อน
@@ -57,7 +53,7 @@ export default function UnlimitedCharacterGame() {
     const isWin = guesses.length > 0 &&
         Object.entries(latestGuess.result)
             .filter(([key]) => key !== 'image')
-            .every(([_, status]) => status === 'correct');
+            .every(([, status]) => status === 'correct');
 
     const isLoss = guesses.length >= MAX_UNLIMITED_CHARACTER_GUESSES && !isWin;
     const isGameOver = isWin || isLoss;
@@ -192,9 +188,13 @@ export default function UnlimitedCharacterGame() {
         navigate(targetMode);
     };
 
+    if (!FEATURE_FLAGS.unlimited.character) {
+        return <Sealed />;
+    }
+
     return (
         <div className="min-h-screen text-[#d8d0c8] overflow-x-hidden">
-            <Header onOpenHowTo={() => setIsHowToOpen(true)} />
+            <Header />
 
             <main className="max-w-[80%] mx-auto px-4 pb-24">
                 <ModeBadge mode="unlimited" onClick={() => setIsModeSelectorOpen(true)} />
@@ -212,7 +212,6 @@ export default function UnlimitedCharacterGame() {
                         remainingGuesses={remainingGuesses}
                         stats={stats}
                         game={gameStore}
-                        maxGuesses={MAX_UNLIMITED_CHARACTER_GUESSES}
                         isGameOver={isGameOver}
                     />
                 )}
@@ -222,11 +221,11 @@ export default function UnlimitedCharacterGame() {
                         <Divider />
                         <div className="flex flex-wrap justify-center gap-x-5 gap-y-1.5">
                             {([
-                                ['correct', '#0d2918', '#1a5530', '#4de880', 'Correct'],
-                                ['partial', '#2a1f00', '#5a4000', '#e8b830', 'Partial'],
-                                ['wrong', '#590e0e', '#a64747', '#3a2828', 'Wrong'],
-                                ['dir', '#0a0a22', '#3a3a7a', '#7090f0', 'Higher ▲ / Lower ▼'],
-                            ] as const).map(([key, bg, border, fg, label]) => (
+                                ['correct', '#0d2918', '#1a5530', 'Correct'],
+                                ['partial', '#2a1f00', '#5a4000', 'Partial'],
+                                ['wrong', '#590e0e', '#a64747', 'Wrong'],
+                                ['dir', '#0a0a22', '#3a3a7a', 'Higher ▲ / Lower ▼'],
+                            ] as const).map(([key, bg, border, label]) => (
                                 <div key={key} className="flex items-center gap-1.5">
                                     <span className="inline-block w-2.5 h-2.5 shrink-0" style={{ background: bg, border: `1px solid ${border}` }} />
                                     <span className="text-[12px] tracking-wide text-[#d1a9a9]">{label}</span>

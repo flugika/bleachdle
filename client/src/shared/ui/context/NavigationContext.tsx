@@ -169,7 +169,7 @@ export function useSenkaimon() {
         if (typeof window === "undefined") {
             return {
                 state: "idle" as SenkaimonState,
-                navigate: async (href: string) => { },
+                navigate: async () => { },
                 reportReady: () => { },
             };
         }

@@ -18,7 +18,7 @@ async function seedSongs() {
         console.log(`📡 Connecting to Supabase... Preparing to process ${songsData.length} songs.`);
 
         // 1. เตรียมข้อมูลเพื่อบันทึกลงตาราง 'songs' (ลบคีย์ segments ออกก่อนเพราะไม่มีคอลัมน์นี้ในเบส)
-        const songsToInsert = songsData.map(({ segments, ...songProperties }) => songProperties);
+        const songsToInsert = songsData.map(({ ...songProperties }) => songProperties);
 
         // 2. เตรียมข้อมูลเพื่อบันทึกลงตาราง 'song_segments'
         const segmentsToInsert = [];

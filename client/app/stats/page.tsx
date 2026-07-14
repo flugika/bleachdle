@@ -268,7 +268,6 @@ function TabBar({ active, onChange }: { active: Tab; onChange: (t: Tab) => void 
 
 export default function StatsPage() {
     const [tab, setTab] = useState<Tab>("daily");
-    const [loading, setLoading] = useState(true);
     const [soulName, setSoulName] = useState<string | null>(null);
     const [nameMismatch, setNameMismatch] = useState(false);
     const [reincarnationCount, setReincarnationCount] = useState(0);
@@ -341,7 +340,6 @@ export default function StatsPage() {
             if (cancelled) return;
             setDailyGlobal(daily);
             setUnlimitedGlobal(unlimited);
-            setLoading(false);
         });
 
         return () => {

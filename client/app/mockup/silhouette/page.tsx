@@ -29,9 +29,6 @@ const PREVIEW_STEPS = [
     { label: '🔥 Full (10)', value: 10 },
 ] as const;
 
-const DEFAULT_SCALE = 2.5;
-const DEFAULT_FOCUS = 50;
-
 // ============================================================================
 // Helpers
 // ============================================================================
@@ -139,7 +136,6 @@ function PreviewControlPanel({
 //    เพราะ initial reveal ถูก gen อัตโนมัติจาก characterId + วันที่ + occupiedCells)
 interface SilhouettePreviewBoxProps {
     characterId: string;         // 🆔 effective id (รวม override) ใช้เป็น seed จริงตอนเล่นเกม
-    originalCharacterId: string; // ไอดีต้นฉบับ ใช้หา occupiedCells / silhouette record
     image: string;
     guessCount: number;          // จำนวนเดาผิดที่ simulate จาก PreviewControlPanel
     forceReveal?: boolean;
@@ -148,19 +144,17 @@ interface SilhouettePreviewBoxProps {
 
 function SilhouettePreviewBox({
     characterId,
-    originalCharacterId,
     image,
     guessCount,
     forceReveal = false,
     isLoading = false,
 }: SilhouettePreviewBoxProps) {
 
-    const sil = useMemo(() => getSilhouettes().find(s => s.character_id === originalCharacterId), [originalCharacterId]);
     const occupiedCells = useMemo(() => getOccupiedCells(image), [image]);
     const weightCells = useMemo(() => getCellWeights(image), [image]);
     const revealed = useMemo(
         () => getRevealedCellIndices(characterId, guessCount, "unlimited", occupiedCells, weightCells),
-        [characterId, guessCount, occupiedCells],
+        [characterId, guessCount, occupiedCells, weightCells],
     );
 
     return (
@@ -348,7 +342,6 @@ function LiveTuningWorkbench({
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 items-center">
                 <SilhouettePreviewBox
                     characterId={characterId}
-                    originalCharacterId={character.id}
                     image={image}
                     guessCount={previewGuessCount}
                     forceReveal={isFullyRevealed}
@@ -396,15 +389,10 @@ function LiveTuningWorkbench({
 // ============================================================================
 
 export default function MockupSilhouetteGame() {
-    if (!FEATURE_FLAGS.mockup.silhouette) {
-        return <Sealed />;
-    }
-
     const characters = getCharacters();
     const silhouettes = getSilhouettes();
 
     const [previewGuessCount, setPreviewGuessCount] = useState<number>(0);
-    const [isHowToOpen, setIsHowToOpen] = useState(false);
     const [filterQuery, setFilterQuery] = useState('');
 
     const [customImages, setCustomImages] = useState<Record<string, string>>({});
@@ -424,7 +412,7 @@ export default function MockupSilhouetteGame() {
         setIdOverrides((prev) => ({ ...prev, [charId]: generateUuid() }));
 
     const searchEngine = useMemo(
-        () => createSearchEngine(characters, { keys: ['name'] } as any),
+        () => createSearchEngine(characters, { keys: ['name'] }),
         [characters],
     );
 
@@ -434,9 +422,13 @@ export default function MockupSilhouetteGame() {
         return searchEngine.search(trimmed).map((r) => r.item);
     }, [filterQuery, searchEngine, characters]);
 
+    if (!FEATURE_FLAGS.mockup.silhouette) {
+        return <Sealed />;
+    }
+
     return (
         <div className="min-h-screen text-[#d8d0c8] overflow-x-hidden">
-            <Header onOpenHowTo={() => setIsHowToOpen(true)} />
+            <Header />
 
             <main className="max-w-[95%] mx-auto px-4 pb-16 mt-6">
                 <ModeBadge mode="unlimited" />

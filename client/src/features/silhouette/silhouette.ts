@@ -31,7 +31,7 @@ const loadSilhouettes = (): BleachSilhouette[] => {
     if (!parsed.success) {
         const badEntries = parsed.error.issues.map((issue) => ({
             index: issue.path[0],
-            character_id: (rawSilhouettes as any[])[issue.path[0] as number]?.character_id,
+            character_id: (rawSilhouettes as { character_id?: string }[])[issue.path[0] as number]?.character_id,
             message: issue.message,
         }));
         console.error('[silhouette.ts] entries ที่ข้อมูลผิดพลาด:', badEntries);

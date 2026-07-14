@@ -24,65 +24,44 @@ interface CharacterHowToPlayModalProps {
     mode: 'daily' | 'unlimited';
 }
 
+const HOW_TO_PLAY_TARGET = {
+    "id": "e9a8f2c3-9d10-4f5a-8b2c-1d0e9f8a7b6c",
+    "name": "Byakuya Kuchiki",
+    "gender": "Male",
+    "race": ["Shinigami"],
+    "affiliation": "Gotei 13",
+    "height_cm": 180,
+    "age": 300,
+    "eye_color": "Grey",
+    "hair_color": "Black",
+    "first_appearance_chapter": "Soul Society",
+    "weapon": ["Weaponized"],
+    "release": ["Shikai", "Bankai"],
+    "primary_ability": ["Element", "Physical", "Kido"],
+    "image": "Byakuya_Kuchiki.webp"
+} as Character;
+
+const HOW_TO_PLAY_GUESS = {
+    "id": "c7a8b9d0-1e2f-4a3b-8c5d-6e7f8a9b0c1d",
+    "name": "Ichigo Kurosaki",
+    "gender": "Male",
+    "race": ["Shinigami", "Quincy", "Hollow", "Human", "Fullbringer"],
+    "affiliation": "Independent",
+    "height_cm": 181,
+    "age": 19,
+    "eye_color": "Brown",
+    "hair_color": "Orange",
+    "first_appearance_chapter": "Agent of the Shinigami",
+    "weapon": ["Weaponized"],
+    "release": ["Shikai", "Bankai"],
+    "primary_ability": ["Physical"],
+    "image": "Ichigo_Kurosaki.webp"
+} as Character;
+
 export const CharacterHowToPlayModal = ({ isOpen, onClose, mode }: CharacterHowToPlayModalProps) => {
     // ── 🎯 1. ประกาศ Hooks ทั้งหมดไว้ที่ TOP LEVEL ──────────────────
-    const target = {
-        "id": "e9a8f2c3-9d10-4f5a-8b2c-1d0e9f8a7b6c",
-        "name": "Byakuya Kuchiki",
-        "gender": "Male",
-        "race": [
-            "Shinigami"
-        ],
-        "affiliation": "Gotei 13",
-        "height_cm": 180,
-        "age": 300,
-        "eye_color": "Grey",
-        "hair_color": "Black",
-        "first_appearance_chapter": "Soul Society",
-        "weapon": [
-            "Weaponized"
-        ],
-        "release": [
-            "Shikai",
-            "Bankai"
-        ],
-        "primary_ability": [
-            "Element",
-            "Physical",
-            "Kido"
-        ],
-        "image": "Byakuya_Kuchiki.webp"
-    } as Character;
-
-    const guess = {
-        "id": "c7a8b9d0-1e2f-4a3b-8c5d-6e7f8a9b0c1d",
-        "name": "Ichigo Kurosaki",
-        "gender": "Male",
-        "race": [
-            "Shinigami",
-            "Quincy",
-            "Hollow",
-            "Human",
-            "Fullbringer"
-        ],
-        "affiliation": "Independent",
-        "height_cm": 181,
-        "age": 19,
-        "eye_color": "Brown",
-        "hair_color": "Orange",
-        "first_appearance_chapter": "Agent of the Shinigami",
-        "weapon": [
-            "Weaponized"
-        ],
-        "release": [
-            "Shikai",
-            "Bankai"
-        ],
-        "primary_ability": [
-            "Physical"
-        ],
-        "image": "Ichigo_Kurosaki.webp"
-    } as Character;
+    const target = HOW_TO_PLAY_TARGET;
+    const guess = HOW_TO_PLAY_GUESS;
 
     const comparison = useMemo(() => {
         if (target && guess) {

@@ -59,21 +59,18 @@ function run() {
             let relationFixedCount = 0;
 
             const fixedEntries = entries.map((entry) => {
-                let isChanged = false;
                 let updatedEntry = { ...entry };
 
                 // 1. ตรวจสอบ id ของตัว entry เอง (ป้องกันเจอ Invalid UUID ที่ id เจ้าตัว)
                 if (!isValidUuid(updatedEntry.id)) {
                     updatedEntry.id = randomUUID();
                     idFixedCount++;
-                    isChanged = true;
                 }
 
                 // 2. ตรวจสอบการซิงค์ character_id กับไฟล์แม่
                 if (charIdMap.has(updatedEntry.character_id)) {
                     updatedEntry.character_id = charIdMap.get(updatedEntry.character_id);
                     relationFixedCount++;
-                    isChanged = true;
                 }
 
                 // [เคสพิเศษ] สำหรับ songs.json ที่มี nested segments id ด้านใน

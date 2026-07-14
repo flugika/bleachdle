@@ -33,10 +33,6 @@ import { logFullTarget } from '@/src/lib/debug/logFullTarget';
  * ไม่ใช่ pattern ของ quote daily (unlimited attempts + surrender) — เพื่อให้ streak มี stake จริง
  */
 export default function DailySilhouetteWrapper({ initialTarget }: { initialTarget: SilhouetteTargetHidden | null }) {
-    if (!FEATURE_FLAGS.daily?.silhouette) {
-        return <Sealed />;
-    }
-
     const { navigate, state, reportReady } = useSenkaimon();
 
     const gameStore = useSilhouetteGame();
@@ -56,6 +52,7 @@ export default function DailySilhouetteWrapper({ initialTarget }: { initialTarge
 
             logFullTarget(target);
         }
+        // eslint-disable-next-line react-hooks/exhaustive-deps -- run once on mount with server-provided target only
     }, [initialTarget, _hasHydrated]);
 
     const [manuallyClosed, setManuallyClosed] = useState(false);
@@ -113,10 +110,6 @@ export default function DailySilhouetteWrapper({ initialTarget }: { initialTarge
         setIsReady(true);
     }, [_hasHydrated, loadStats]);
 
-    useEffect(() => {
-        loadStats(); // โหลด stats จาก localStorage เข้า store ครั้งเดียวตอน mount
-    }, [loadStats]);
-
     // 🚪 แจ้ง NavigationContext กลับไปตอน "isReady" เป็น true จริงๆ (หลัง rehydrate เสร็จ)
     useEffect(() => {
         if (isReady) {
@@ -165,9 +158,13 @@ export default function DailySilhouetteWrapper({ initialTarget }: { initialTarge
         return () => clearInterval(timer);
     }, []);
 
+    if (!FEATURE_FLAGS.daily?.silhouette) {
+        return <Sealed />;
+    }
+
     return (
         <div className="min-h-screen text-[#d8d0c8] overflow-x-hidden">
-            <Header onOpenHowTo={() => setIsHowToOpen(true)} />
+            <Header />
 
             <main className="max-w-[80%] mx-auto px-4 pb-24">
                 <ModeBadge mode="daily" onClick={() => setIsModeSelectorOpen(true)} />
@@ -193,9 +190,9 @@ export default function DailySilhouetteWrapper({ initialTarget }: { initialTarge
                         <Divider />
                         <div className="flex flex-wrap justify-center gap-x-5 gap-y-1.5 py-1 mb-2">
                             {([
-                                ['correct', '#0d2918', '#1a5530', '#4de880', 'Correct Match'],
-                                ['wrong', '#590e0e', '#a64747', '#e8b4b4', 'Incorrect'],
-                            ] as const).map(([key, bg, border, fg, label]) => (
+                                ['correct', '#0d2918', '#1a5530', 'Correct Match'],
+                                ['wrong', '#590e0e', '#a64747', 'Incorrect'],
+                            ] as const).map(([key, bg, border, label]) => (
                                 <div key={key} className="flex items-center gap-2">
                                     <span className="inline-block w-[10px] h-[10px] shrink-0" style={{ background: bg, border: `1px solid ${border}` }} />
                                     <span className="text-[11px] font-mono tracking-wider opacity-60">{label}</span>

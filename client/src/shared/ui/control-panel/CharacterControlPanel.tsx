@@ -3,6 +3,7 @@ import { SearchBar } from '@/src/shared/ui/SearchBar';
 import { Character } from '@/src/entities/character/schema';
 import { useState } from 'react';
 import { Modal } from '../modal';
+import { CharacterGuessable } from '@/src/features/character';
 
 interface CharacterControlPanelProps {
     mode: 'daily' | 'unlimited'; // รับโหมดเพื่อเปลี่ยน Logic เล็กน้อย
@@ -11,9 +12,8 @@ interface CharacterControlPanelProps {
     remainingGuesses?: number;
     stats: { currentStreak: number; maxStreak: number };
     timeLeft?: string; // ใส่เฉพาะโหมด daily
-    game: any; // หรือระบุ interface ของ game object ให้ชัดเจน
+    game: CharacterGuessable;
     disabled?: boolean;
-    maxGuesses?: number;
     isGameOver?: boolean;
     onSurrender?: () => void;
 }
@@ -27,7 +27,6 @@ export function CharacterControlPanel({
     timeLeft,
     game,
     disabled = false,
-    maxGuesses,
     isGameOver = false,
     onSurrender
 }: CharacterControlPanelProps) {

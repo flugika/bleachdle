@@ -7,9 +7,13 @@ import { SubFeatureKey, BL_MODES_METADATA } from "@/src/config/mode";
 //  TYPE DEFINITIONS
 // ─────────────────────────────────────────────
 
+type CSSPropertiesWithVars = React.CSSProperties & {
+    [key: `--${string}`]: string | number;
+};
+
 interface Central46ArchiveProps {
     mode?: SubFeatureKey; // รองรับการขยายไปโหมดอื่นๆ (Default: "character")
-    guesses: any[];
+    guesses: unknown[];
     soulName: string;
     inputName: string;
     setInputName: (value: string) => void;
@@ -490,9 +494,9 @@ export default function Central46ConfidentialArchive({
     return (
         <div style={{
             width: "100%", display: "flex", justifyContent: "center", padding: "40px 18px 0", userSelect: "none",
-            ['--c46-border' as any]: T.border,
-            ['--c46-gold' as any]: T.gold
-        }}>
+            '--c46-border': T.border,
+            '--c46-gold': T.gold,
+        } as CSSPropertiesWithVars}>
             <div
                 role="document"
                 aria-label="Central 46 Classified Archive"

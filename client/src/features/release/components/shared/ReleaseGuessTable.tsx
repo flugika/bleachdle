@@ -4,6 +4,7 @@
 import { AnimatePresence, motion } from 'framer-motion';
 import { ReleaseGuessEntry, ReleaseGuessStatus } from '@/src/features/release/types';
 import { attachReleaseCharacter } from '@/src/features/release/release';
+import Image from 'next/image';
 
 const T = {
     void: '#080605',
@@ -68,7 +69,7 @@ function MiniGuilloche({ opacity = 0.05 }: { opacity?: number }) {
     แทน "ลายน้ำสุ่มๆ" */
 function CardCornerFret({ pos, color }: { pos: 'tl' | 'tr' | 'bl' | 'br'; color: string }) {
     const rot = { tl: 0, tr: 90, bl: -90, br: 180 }[pos];
-    const side: any = {};
+    const side: Pick<React.CSSProperties, 'top' | 'left' | 'bottom' | 'right'> = {};
     if (pos === 'tl') { side.top = 6; side.left = 6; }
     if (pos === 'tr') { side.top = 6; side.right = 6; }
     if (pos === 'bl') { side.bottom = 6; side.left = 6; }
@@ -151,10 +152,10 @@ function CharacterAvatar({ image }: { image?: string | null }) {
     if (!image) return null;
     return (
         <span
-            className="inline-block w-4 h-4 rounded-full overflow-hidden shrink-0 border align-middle -mt-0.5"
+            className="relative inline-block w-4 h-4 rounded-full overflow-hidden shrink-0 border align-middle -mt-0.5"
             style={{ borderColor: `${T.gold}66` }}
         >
-            <img src={image} alt="" className="w-full h-full object-cover grayscale" />
+            <Image src={image} alt="" fill sizes='w-4 h-4 ' className="object-cover grayscale" />
         </span>
     );
 }

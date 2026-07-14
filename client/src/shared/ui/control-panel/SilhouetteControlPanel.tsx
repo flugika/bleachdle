@@ -7,7 +7,7 @@ import { Character } from '@/src/entities/character/schema';
 import { SilhouetteImage } from '@/src/features/silhouette/components/shared/SilhouetteImage';
 // 🆕 game: SilhouetteGuessable แทน SilhouetteGameController — panel นี้แค่โชว์รูป + ส่งเดา
 // ไม่เคยเรียก hardReset/initializeGame/resetStreakKeepMax เลย ไม่มีเหตุผลต้องบังคับรับ type เต็ม
-import { SilhouetteGuessable, SilhouetteTarget, SilhouetteTargetHidden } from '@/src/features/silhouette/types';
+import { SilhouetteGuessable, SilhouetteTargetHidden } from '@/src/features/silhouette/types';
 import { STORAGE_KEYS } from '@/src/const/localStorage';
 
 // 🎨 ปรับปรุงพาเลทสีใหม่: เน้นสีสว่าง/สดใส ที่ไม่ปนม่วงหรือดำ เพื่อให้ตัดกับเงาตัวละครสีดำได้คมชัดที่สุด

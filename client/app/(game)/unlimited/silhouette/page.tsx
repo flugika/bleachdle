@@ -34,11 +34,6 @@ import { BL_MODES_METADATA } from '@/src/config/mode';
 import { logFullTarget } from '@/src/lib/debug/logFullTarget';
 
 export default function UnlimitedSilhouetteGame() {
-    // ⚠️ TODO: เพิ่ม key `silhouette: { daily: boolean; unlimited: boolean }` ใน feature.flags.ts
-    if (!FEATURE_FLAGS.unlimited?.silhouette) {
-        return <Sealed />;
-    }
-
     const { navigate, state, reportReady } = useSenkaimon();
 
     const gameStore = useSilhouetteGame();
@@ -100,7 +95,7 @@ export default function UnlimitedSilhouetteGame() {
             setFinalRoundGuesses(guesses);
             finalizeGame(isWin);
         }
-    }, [isGameOver, hasFinalized, isWin, _hasHydrated, finalizeGame]);
+    }, [guesses, isGameOver, hasFinalized, isWin, _hasHydrated, finalizeGame]);
 
     useEffect(() => {
         if (!_hasHydrated) return;
@@ -124,7 +119,7 @@ export default function UnlimitedSilhouetteGame() {
 
         initializeGame();
         setIsReady(true);
-    }, [initializeGame, silhouettes.length, _hasHydrated, loadStats]);
+    }, [initializeGame, silhouettes, silhouettes.length, _hasHydrated, loadStats]);
 
     useEffect(() => {
         if (isReady) {
@@ -139,7 +134,7 @@ export default function UnlimitedSilhouetteGame() {
             const uniqueCharacterIds = new Set(silhouettes.map(s => s.character_id));
             setIsGameCompleted(uniqueCharacterIds.size > 0 && completed.length >= uniqueCharacterIds.size);
         }
-    }, [target, silhouettes.length, isReady]);
+    }, [target, silhouettes, silhouettes.length, isReady]);
 
     const handleCloseModal = () => {
         setManuallyClosed(true);
@@ -194,9 +189,13 @@ export default function UnlimitedSilhouetteGame() {
         }
     }, [showSummary]);
 
+    if (!FEATURE_FLAGS.unlimited?.silhouette) {
+        return <Sealed />;
+    }
+
     return (
         <div className="min-h-screen text-[#d8d0c8] overflow-x-hidden bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-[#13131c] via-[#0a0a0e] to-[#050507]">
-            <Header onOpenHowTo={() => setIsHowToOpen(true)} />
+            <Header />
 
             {/* 🌌 คุมระดับ Max-Width ของ Main ให้เท่ากับ Quote และเพิ่มมิติการจัดวาง */}
             <main className="max-w-[80%] mx-auto px-4 pb-24">
@@ -226,9 +225,9 @@ export default function UnlimitedSilhouetteGame() {
                             <Divider />
                             <div className="flex flex-wrap justify-center gap-x-5 gap-y-1.5 py-1 mb-2">
                                 {([
-                                    ['correct', '#0d2918', '#1a5530', '#4de880', 'Correct Match'],
-                                    ['wrong', '#590e0e', '#a64747', '#e8b4b4', 'Incorrect'],
-                                ] as const).map(([key, bg, border, fg, label]) => (
+                                    ['correct', '#0d2918', '#1a5530', 'Correct Match'],
+                                    ['wrong', '#590e0e', '#a64747', 'Incorrect'],
+                                ] as const).map(([key, bg, border, label]) => (
                                     <div key={key} className="flex items-center gap-2">
                                         <span className="inline-block w-[10px] h-[10px] shrink-0" style={{ background: bg, border: `1px solid ${border}` }} />
                                         <span className="text-[11px] font-mono tracking-wider opacity-60">{label}</span>

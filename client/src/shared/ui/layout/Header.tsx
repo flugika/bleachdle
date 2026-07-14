@@ -3,29 +3,21 @@
 import { HeaderDivider } from './HeaderDivider';
 import SoulSyncLoader from '../loader/SoulSyncLoader';
 import { useEffect, useState } from 'react';
-import { usePathname } from 'next/navigation'; // 🌟 1. Import usePathname เพิ่มเข้ามา
 
 interface HeaderProps {
     title?: string;
     subtitle?: string;
-    onOpenHowTo?: () => void;
 }
 
 export const Header = ({
     title = "BLEACHDLE",
     subtitle = "Soul Society Intelligence Division",
-    onOpenHowTo
 }: HeaderProps) => {
-    const pathname = usePathname(); // 🌟 2. เรียกใช้งาน hook เพื่อดึง path ปัจจุบัน (เช่น "/" หรือ "/daily/character")
     const [isMounted, setIsMounted] = useState(false);
 
     useEffect(() => {
         setIsMounted(true);
     }, []);
-
-    // 🎯 3. ตรวจสอบว่า Path ตรงกับ /daily/[mode] หรือ /unlimited/[mode] หรือไม่
-    // Regex ความหมาย: ขึ้นต้นด้วย /daily/ หรือ /unlimited/ และต้องมีชื่อโหมดตามหลังมาด้วย
-    const showHowToPlay = /^\/(daily|unlimited)\/[^/]+/.test(pathname);
 
     return (
         <header className="w-full relative">
