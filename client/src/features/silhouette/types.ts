@@ -7,7 +7,7 @@ import { GuessGameController, Stats } from '@/src/lib/guessGame/types';
  */
 export type SilhouetteGuessStatus = 'correct' | 'wrong';
 
-export type SilhouetteTargetHidden = BleachSilhouette;
+export type SilhouetteTargetHidden = Pick<BleachSilhouette, "id" | "character_id">;
 
 export type SilhouetteTarget = BleachSilhouette & { character: Character };
 

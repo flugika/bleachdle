@@ -1,9 +1,10 @@
+// app/(game)/daily/silhouette/page.tsx
+
 import DailySilhouetteWrapper from "@/src/features/silhouette/components/daily/DailySilhouetteWrapper";
 import { getDailySilhouette } from "@/src/services/getDailySchedule/silhouette";
 
 export const dynamic = 'force-dynamic';
 
-// src/app/(game)/daily/silhouette/page.tsx
 export default async function DailySilhouetteGame() {
     const dailySilhouette = await getDailySilhouette();
 

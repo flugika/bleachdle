@@ -1,9 +1,10 @@
+// app/(game)/daily/quote/page.tsx
+
 import DailyQuoteWrapper from "@/src/features/quote/components/daily/DailyQuoteWrapper";
 import { getDailyQuote } from "@/src/services/getDailySchedule/quote";
 
 export const dynamic = 'force-dynamic';
 
-// src/app/(game)/daily/quote/page.tsx
 export default async function DailyQuoteGame() {
     const dailyQuote = await getDailyQuote();
 

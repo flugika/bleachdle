@@ -2,7 +2,7 @@
 
 > A Wordle-style character guessing game for Bleach fans — unlimited mode, attribute-based feedback, Soul Society aesthetic.
 
-**Last Updated:** 14 July 2026, 8:04 PM.
+**Last Updated:** 15 July 2026, 8:58 AM.
 
 [![Next.js](https://img.shields.io/badge/Next.js-15-black?logo=next.js)](https://nextjs.org/)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5-blue?logo=typescript)](https://www.typescriptlang.org/)
@@ -221,7 +221,7 @@ Flags are nested per mode rather than a flat list, since a vertical can ship in 
 
 ### Data Model (new, supports the modes above)
 - [ ] **Character relationship / boundary table** — stores how one character relates to another. Rough shape so far: `id`, `character_id`, `related_character_id`, `type` (e.g. friend / family / rival / same-trait). Still deciding what else needs to be captured — directional vs. bidirectional, a strength/weight field, free-text notes, whether one row can represent multiple shared boundaries at once, etc.
-- [ ] **Emoji list anti-peek** — the full emoji clue array currently ships to the client up front, so opening dev tools reveals every clue immediately. Plan is to send emojis one at a time as the round progresses instead of the whole array at once.
+- [x] **Emoji list anti-peek** — the full emoji clue array currently ships to the client up front, so opening dev tools reveals every clue immediately. Plan is to send emojis one at a time as the round progresses instead of the whole array at once.
 
 ### Stats & Social
 - [x] **Global daily stats** — "X% of players solved it within N guesses," aggregated via Supabase on top of existing round/result tables
@@ -243,7 +243,7 @@ Flags are nested per mode rather than a flat list, since a vertical can ship in 
 - [ ] **Testing suite** (unit + integration) — still pending, blocked on schema stabilization, see note above
 
 ### Infra
-- [ ] **Supabase migration** — still pending. Persistent leaderboard and cross-session streaks
+- [x] **Supabase migration** — still pending. Persistent leaderboard and cross-session streaks
 - [ ] **Turnstile spam mitigation** — still paused. Legitimate traffic was being flagged as bot activity, needs a fix before re-enabling
 - [ ] **PWA + push notifications** — still pending, and tied to the Discord bot notifications below — both are further out since they depend on renting a domain first
 - [ ] **Discord integration** — bot-based notifications, blocked on renting a domain
@@ -375,11 +375,20 @@ bleachdle
 │  │  │  ├─ Abirama_Redder.webp
 │  │  │  ├─ Aisslinger_Wernarr.webp
 │  │  │  ├─ Akon.webp
+│  │  │  └─ ...
+│  │  └─ character_silhouette
+│  │     ├─ Aaroniero_Arruruerie_cutout_silhouette.webp
+│  │     ├─ Abirama_Redder_cutout_silhouette.webp
+│  │     ├─ Aisslinger_Wernarr_cutout_silhouette.webp
+│  │     ├─ Akon_cutout_silhouette.webp
 │  │     └─ ...
 │  ├─ CLAUDE.md
 │  ├─ eslint.config.mjs
 │  ├─ next.config.ts
 │  ├─ package.json
+│  ├─ playwright-report
+│  │  └─ index.html
+│  ├─ playwright.config.ts
 │  ├─ pnpm-lock.yaml
 │  ├─ pnpm-workspace.yaml
 │  ├─ postcss.config.mjs
@@ -460,12 +469,18 @@ bleachdle
 │  │  │  │  ├─ compareCharacter.ts
 │  │  │  │  ├─ components
 │  │  │  │  │  ├─ daily
-│  │  │  │  │  │  └─ DailyCharacterWrapper.tsx
-│  │  │  │  │  └─ shared
-│  │  │  │  │     ├─ CharacterGuessTable.tsx
-│  │  │  │  │     ├─ CharacterHowToPlayModal.tsx
-│  │  │  │  │     ├─ CharacterSummaryGuess.tsx
-│  │  │  │  │     └─ EmptyGuessState.tsx
+│  │  │  │  │  │  ├─ DailyCharacterWrapper.tsx
+│  │  │  │  │  │  └─ __tests__
+│  │  │  │  │  │     └─ DailyCharacterWrapper.test.tsx
+│  │  │  │  │  ├─ shared
+│  │  │  │  │  │  ├─ CharacterGuessTable.tsx
+│  │  │  │  │  │  ├─ CharacterHowToPlayModal.tsx
+│  │  │  │  │  │  ├─ CharacterSummaryGuess.tsx
+│  │  │  │  │  │  └─ EmptyGuessState.tsx
+│  │  │  │  │  └─ unlimited
+│  │  │  │  │     ├─ UnlimitedCharacterWrapper.tsx
+│  │  │  │  │     └─ __tests__
+│  │  │  │  │        └─ UnlimitedCharacterWrapper.test.tsx
 │  │  │  │  ├─ hooks
 │  │  │  │  │  ├─ daily
 │  │  │  │  │  │  └─ useCharacterGame.ts
@@ -473,16 +488,24 @@ bleachdle
 │  │  │  │  │     └─ useCharacterGame.ts
 │  │  │  │  ├─ index.ts
 │  │  │  │  ├─ types.ts
-│  │  │  │  └─ validGuessEntry.ts
+│  │  │  │  ├─ validGuessEntry.ts
+│  │  │  │  └─ __tests__
+│  │  │  │     └─ compareCharacter.test.ts
 │  │  │  ├─ emoji
 │  │  │  │  ├─ components
 │  │  │  │  │  ├─ daily
-│  │  │  │  │  │  └─ DailyEmojiWrapper.tsx
-│  │  │  │  │  └─ shared
-│  │  │  │  │     ├─ EmojiGuessTable.tsx
-│  │  │  │  │     ├─ EmojiHowToPlayModal.tsx
-│  │  │  │  │     ├─ EmojiSummaryGuess.tsx
-│  │  │  │  │     └─ EmojiTestimonyDisplay.tsx
+│  │  │  │  │  │  ├─ DailyEmojiWrapper.tsx
+│  │  │  │  │  │  └─ __tests__
+│  │  │  │  │  │     └─ DailyEmojiWrapper.test.tsx
+│  │  │  │  │  ├─ shared
+│  │  │  │  │  │  ├─ EmojiGuessTable.tsx
+│  │  │  │  │  │  ├─ EmojiHowToPlayModal.tsx
+│  │  │  │  │  │  ├─ EmojiSummaryGuess.tsx
+│  │  │  │  │  │  └─ EmojiTestimonyDisplay.tsx
+│  │  │  │  │  └─ unlimited
+│  │  │  │  │     ├─ UnlimitedEmojiWrapper.tsx
+│  │  │  │  │     └─ __tests__
+│  │  │  │  │        └─ UnlimitedEmojiWrapper.test.tsx
 │  │  │  │  ├─ emoji.ts
 │  │  │  │  ├─ emojiRevealedCounter.ts
 │  │  │  │  ├─ hooks
@@ -494,12 +517,18 @@ bleachdle
 │  │  │  ├─ quote
 │  │  │  │  ├─ components
 │  │  │  │  │  ├─ daily
-│  │  │  │  │  │  └─ DailyQuoteWrapper.tsx
-│  │  │  │  │  └─ shared
-│  │  │  │  │     ├─ QuoteGuessTable.tsx
-│  │  │  │  │     ├─ QuoteHowToPlayModal.tsx
-│  │  │  │  │     ├─ QuoteSummaryGuess.tsx
-│  │  │  │  │     └─ QuoteTestimonyDisplay.tsx
+│  │  │  │  │  │  ├─ DailyQuoteWrapper.tsx
+│  │  │  │  │  │  └─ __tests__
+│  │  │  │  │  │     └─ DailyQuoteWrapper.test.tsx
+│  │  │  │  │  ├─ shared
+│  │  │  │  │  │  ├─ QuoteGuessTable.tsx
+│  │  │  │  │  │  ├─ QuoteHowToPlayModal.tsx
+│  │  │  │  │  │  ├─ QuoteSummaryGuess.tsx
+│  │  │  │  │  │  └─ QuoteTestimonyDisplay.tsx
+│  │  │  │  │  └─ unlimited
+│  │  │  │  │     ├─ UnlimitedQuoteWrapper.tsx
+│  │  │  │  │     └─ __tests__
+│  │  │  │  │        └─ UnlimitedQuoteWrapper.test.tsx
 │  │  │  │  ├─ hooks
 │  │  │  │  │  ├─ daily
 │  │  │  │  │  │  └─ useQuoteGame.ts
@@ -510,13 +539,19 @@ bleachdle
 │  │  │  ├─ release
 │  │  │  │  ├─ components
 │  │  │  │  │  ├─ daily
-│  │  │  │  │  │  └─ DailyReleaseWrapper.tsx
-│  │  │  │  │  └─ shared
-│  │  │  │  │     ├─ ReleaseGuessTable.tsx
-│  │  │  │  │     ├─ ReleaseHowToPlayModal.tsx
-│  │  │  │  │     ├─ ReleaseSearchBar.tsx
-│  │  │  │  │     ├─ ReleaseSummaryGuess.tsx
-│  │  │  │  │     └─ ReleaseTestimonyDisplay.tsx
+│  │  │  │  │  │  ├─ DailyReleaseWrapper.tsx
+│  │  │  │  │  │  └─ __tests__
+│  │  │  │  │  │     └─ DailyReleaseWrapper.test.tsx
+│  │  │  │  │  ├─ shared
+│  │  │  │  │  │  ├─ ReleaseGuessTable.tsx
+│  │  │  │  │  │  ├─ ReleaseHowToPlayModal.tsx
+│  │  │  │  │  │  ├─ ReleaseSearchBar.tsx
+│  │  │  │  │  │  ├─ ReleaseSummaryGuess.tsx
+│  │  │  │  │  │  └─ ReleaseTestimonyDisplay.tsx
+│  │  │  │  │  └─ unlimited
+│  │  │  │  │     ├─ UnlimitedReleaseWrapper.tsx
+│  │  │  │  │     └─ __tests__
+│  │  │  │  │        └─ UnlimitedReleaseWrapper.test.tsx
 │  │  │  │  ├─ hooks
 │  │  │  │  │  ├─ daily
 │  │  │  │  │  │  └─ useReleaseGame.ts
@@ -527,12 +562,18 @@ bleachdle
 │  │  │  ├─ silhouette
 │  │  │  │  ├─ components
 │  │  │  │  │  ├─ daily
-│  │  │  │  │  │  └─ DailySilhouetteWrapper.tsx
-│  │  │  │  │  └─ shared
-│  │  │  │  │     ├─ SilhouetteGuessTable.tsx
-│  │  │  │  │     ├─ SilhouetteHowToPlayModal.tsx
-│  │  │  │  │     ├─ SilhouetteImage.tsx
-│  │  │  │  │     └─ SilhouetteSummaryGuess.tsx
+│  │  │  │  │  │  ├─ DailySilhouetteWrapper.tsx
+│  │  │  │  │  │  └─ __tests__
+│  │  │  │  │  │     └─ DailySilhouetteWrapper.test.tsx
+│  │  │  │  │  ├─ shared
+│  │  │  │  │  │  ├─ SilhouetteGuessTable.tsx
+│  │  │  │  │  │  ├─ SilhouetteHowToPlayModal.tsx
+│  │  │  │  │  │  ├─ SilhouetteImage.tsx
+│  │  │  │  │  │  └─ SilhouetteSummaryGuess.tsx
+│  │  │  │  │  └─ unlimited
+│  │  │  │  │     ├─ UnlimitedSilhouetteWrapper.tsx
+│  │  │  │  │     └─ __tests__
+│  │  │  │  │        └─ UnlimitedSilhouetteWrapper.test.tsx
 │  │  │  │  ├─ hooks
 │  │  │  │  │  ├─ daily
 │  │  │  │  │  │  └─ useSilhouetteGame.ts
@@ -543,14 +584,20 @@ bleachdle
 │  │  │  ├─ song
 │  │  │  │  ├─ components
 │  │  │  │  │  ├─ daily
-│  │  │  │  │  │  └─ DailySongWrapper.tsx
-│  │  │  │  │  └─ shared
-│  │  │  │  │     ├─ SongAudioPlayer.tsx
-│  │  │  │  │     ├─ SongGuessTable.tsx
-│  │  │  │  │     ├─ SongHowToPlayModal.tsx
-│  │  │  │  │     ├─ SongProgressBar.tsx
-│  │  │  │  │     ├─ SongSearchBar.tsx
-│  │  │  │  │     └─ SongSummaryGuess.tsx
+│  │  │  │  │  │  ├─ DailySongWrapper.tsx
+│  │  │  │  │  │  └─ __tests__
+│  │  │  │  │  │     └─ DailySongWrapper.test.tsx
+│  │  │  │  │  ├─ shared
+│  │  │  │  │  │  ├─ SongAudioPlayer.tsx
+│  │  │  │  │  │  ├─ SongGuessTable.tsx
+│  │  │  │  │  │  ├─ SongHowToPlayModal.tsx
+│  │  │  │  │  │  ├─ SongProgressBar.tsx
+│  │  │  │  │  │  ├─ SongSearchBar.tsx
+│  │  │  │  │  │  └─ SongSummaryGuess.tsx
+│  │  │  │  │  └─ unlimited
+│  │  │  │  │     ├─ UnlimitedSongWrapper.tsx
+│  │  │  │  │     └─ __tests__
+│  │  │  │  │        └─ UnlimitedSongWrapper.test.tsx
 │  │  │  │  ├─ constants.ts
 │  │  │  │  ├─ hooks
 │  │  │  │  │  ├─ daily
@@ -580,7 +627,9 @@ bleachdle
 │  │  │  │  ├─ compareBinaryGuess.ts
 │  │  │  │  ├─ createDailyGuessGameStore.ts
 │  │  │  │  ├─ createUnlimitedGuessGameStore.ts
-│  │  │  │  └─ types.ts
+│  │  │  │  ├─ types.ts
+│  │  │  │  └─ __tests__
+│  │  │  │     └─ compareBinaryGuess.test.ts
 │  │  │  ├─ rateLimit.ts
 │  │  │  ├─ search
 │  │  │  │  └─ fuzzy.ts
@@ -711,8 +760,10 @@ bleachdle
 │  │  │     │  └─ TierBadgeCard.tsx
 │  │  │     ├─ tooltip.tsx
 │  │  │     └─ WallpaperInitializer.tsx
-│  │  └─ styles
-│  │     └─ globals.css
+│  │  ├─ styles
+│  │  │  └─ globals.css
+│  │  └─ test
+│  │     └─ setup.ts
 │  ├─ supabase
 │  │  ├─ .temp
 │  │  │  ├─ cli-latest
@@ -733,7 +784,24 @@ bleachdle
 │  │     ├─ 05_cronjob.sql
 │  │     ├─ 06_new_schema_dump.sql
 │  │     └─ 07_rls_policies.sql
-│  └─ tsconfig.json
+│  ├─ test-results
+│  │  └─ .last-run.json
+│  ├─ tests
+│  │  └─ e2e
+│  │     ├─ daily-character-flow.spec.ts
+│  │     ├─ daily-emoji-flow.spec.ts
+│  │     ├─ daily-quote-flow.spec.ts
+│  │     ├─ daily-release-flow.spec.ts
+│  │     ├─ daily-silhouette-flow.spec.ts
+│  │     ├─ daily-song-flow.spec.ts
+│  │     ├─ unlimited-character-flow.spec.ts
+│  │     ├─ unlimited-emoji-flow.spec.ts
+│  │     ├─ unlimited-quote-flow.spec.ts
+│  │     ├─ unlimited-release-flow.spec.ts
+│  │     ├─ unlimited-silhouette-flow.spec.ts
+│  │     └─ unlimited-song-flow.spec.ts
+│  ├─ tsconfig.json
+│  └─ vitest.config.ts
 └─ README.md
 
 ```

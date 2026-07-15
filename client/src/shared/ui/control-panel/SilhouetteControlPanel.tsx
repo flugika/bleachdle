@@ -74,7 +74,7 @@ export function SilhouetteControlPanel({ target, characters, remainingGuesses, s
                 <SilhouetteImage
                     mode={mode}
                     characterId={target.character_id}
-                    image={target.image}
+                    image={target.id}
                     guessCount={game.guesses.length}
                     bgColor={currentBg}
                 />

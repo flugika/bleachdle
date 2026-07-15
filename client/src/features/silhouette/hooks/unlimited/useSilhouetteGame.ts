@@ -18,7 +18,7 @@ export const useSilhouetteGame = createUnlimitedGuessGameStore<BleachSilhouette,
     maxGuesses: () => MAX_UNLIMITED_SILHOUETTE_GUESSES,
     getCharacterById,
     getAllItems: getSilhouettes,
-    attachCharacter: (item) => item,
+    attachCharacter: (item) => ({ id: item.id, character_id: item.character_id }),
     // 🎯 silhouette นับความจบเป็นราย "ตัวละคร" (character_id) ไม่ใช่ราย entry
     // เพราะถ้าอนาคตมีหลาย silhouette ต่อ 1 ตัวละคร ไม่อยากให้ต้องเดาซ้ำตัวเดิม
     getCompletionKey: (target) => target.character_id,

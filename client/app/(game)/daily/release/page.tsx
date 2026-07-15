@@ -1,4 +1,5 @@
-// src/app/(game)/daily/release/page.tsx
+// app/(game)/daily/release/page.tsx
+
 import DailyReleaseWrapper from "@/src/features/release/components/daily/DailyReleaseWrapper";
 import { getDailyRelease } from "@/src/services/getDailySchedule/release";
 

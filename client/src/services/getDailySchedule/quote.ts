@@ -16,7 +16,7 @@ export async function getDailyQuote(): Promise<QuoteTargetHidden | null> {
         .from('daily_schedule')
         .select(`
             quotes:quote_id (
-                id, character_id, text, episode, chapter, arc, context
+                id, character_id, text
             )
         `)
         .eq('date', todayStr)

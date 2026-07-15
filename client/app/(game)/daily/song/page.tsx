@@ -1,9 +1,10 @@
+// app/(game)/daily/song/page.tsx
+
 import DailySongWrapper from "@/src/features/song/components/daily/DailySongWrapper";
 import { getDailySong } from "@/src/services/getDailySchedule/song";
 
 export const dynamic = 'force-dynamic';
 
-// src/app/(game)/daily/song/page.tsx
 export default async function DailySongGame() {
     const dailyData = await getDailySong();
 

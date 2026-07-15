@@ -1,9 +1,10 @@
+// app/(game)/daily/emoji/page.tsx
+
 import DailyEmojiWrapper from "@/src/features/emoji/components/daily/DailyEmojiWrapper";
 import { getDailyEmoji } from "@/src/services/getDailySchedule/emoji";
 
 export const dynamic = 'force-dynamic';
 
-// src/app/(game)/daily/emoji/page.tsx
 export default async function DailyEmojiGame() {
     const dailyEmoji = await getDailyEmoji();
     

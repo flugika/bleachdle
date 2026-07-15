@@ -18,7 +18,6 @@ import { ModeSelectorModal } from '@/src/shared/ui/game-selector/ModeSelectorMod
 import { useSenkaimon } from '@/src/shared/ui/context/NavigationContext';
 import { MAX_DAILY_SILHOUETTE_GUESSES } from '@/src/const/guess';
 import { BL_MODES_METADATA } from '@/src/config/mode';
-// 📅 Daily Hub: แถบ progress รวมทุกโหมด daily + CTA เล่นต่อ
 import { DailyHubModalFooter } from '@/src/shared/ui/daily-hub/DailyHubModalFooter';
 import { useDailyHub } from '@/src/shared/hooks/useDailyHub';
 import { logFullTarget } from '@/src/lib/debug/logFullTarget';

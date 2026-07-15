@@ -15,7 +15,7 @@ export async function getDailySilhouette(): Promise<SilhouetteTargetHidden | nul
     const { data, error } = await supabaseServer
         .from('daily_schedule')
         .select(`
-            silhouettes:silhouette_id (id, character_id, image)
+            silhouettes:silhouette_id (id, character_id)
         `)
         .eq('date', todayStr)
         .maybeSingle();
