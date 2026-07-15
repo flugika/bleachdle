@@ -4,14 +4,15 @@ import { supabaseServer } from '@/src/lib/supabase/supabase-server';
 import { packCookie, unpackCookie } from '@/src/lib/support/rateLimitCookie';
 import { VALID_STAT_MODES, type StatMode } from '@/src/entities/stats/types';
 import { checkIpRateLimit } from '@/src/lib/support/ipRateLimit';
-import { getMaxGuessLimit } from '@/src/lib/support/constantsExtractor'; // 🆕 นำเข้า Lib ตัวกรองไดนามิก
-import { getTodayStr } from '@/src/lib/utils/format';
+import { getMaxGuessLimit } from '@/src/lib/support/constantsExtractor';
+import { getTodayStr, getBangkokDateStr } from '@/src/lib/utils/format'; // 🆕 อัปเดตการ Import
 import { logApiEvent } from "@/src/services/monitor/logEvent";
 
 interface FinalizeStatBody {
     mode: StatMode;
     isWin: boolean;
     guessCount: number;
+    date?: string; // 🆕 รับค่าวันที่ที่ทายของ Target นั้นๆ มาจาก Client
 }
 
 const ENDPOINT = 'stats.finalize';
@@ -28,7 +29,7 @@ export async function POST(req: NextRequest) {
         return NextResponse.json({ error: 'Invalid JSON body' }, { status: 400 });
     }
 
-    const { mode, isWin, guessCount } = body;
+    const { mode, isWin, guessCount, date: clientSubmittedDate } = body;
 
     // ── ด่าน 1: Cheap, in-memory validation
     if (!VALID_STAT_MODES.includes(mode)) {
@@ -40,14 +41,34 @@ export async function POST(req: NextRequest) {
         return NextResponse.json({ error: 'isWin must be boolean' }, { status: 400 });
     }
 
-    // 🎯 ใช้ Lib ค้นหาเพดานสูงสุดที่กรองจาก MAX_..._GUESSES ของโหมดนั้นๆ
-    // เนื่องจาก API นี้เป็นสถิติประจำเป็นวัน (increment_daily_stat) จึงกำหนดเป็น 'DAILY'
     const dynamicMaxGuesses = getMaxGuessLimit(mode, 'DAILY');
-
-    // 🛡️ ตรวจสอบความถูกต้องโดยอิงจากค่าเพดานที่สแกนได้จริง
     if (!Number.isInteger(guessCount) || guessCount < 1 || guessCount > dynamicMaxGuesses) {
         logApiEvent(ENDPOINT, 'warning', 400, 'invalid_guessCount');
         return NextResponse.json({ error: 'Invalid guessCount' }, { status: 400 });
+    }
+
+    // ── ด่าน 1.5: Validate target date และป้องกันการสปูฟ (Enterprise Guard) 🆕
+    let targetDate = getTodayStr(); // Fallback เป็นวันนี้หาก client ไม่ได้ส่งมา
+
+    if (clientSubmittedDate) {
+        // ตรวจสอบ format เบื้องต้น (YYYY-MM-DD)
+        if (!/^\d{4}-\d{2}-\d{2}$/.test(clientSubmittedDate)) {
+            logApiEvent(ENDPOINT, 'warning', 400, 'invalid_date_format');
+            return NextResponse.json({ error: 'Invalid date format' }, { status: 400 });
+        }
+
+        const todayStr = getTodayStr();
+        const yesterdayStr = getBangkokDateStr(-1); // วันวานใน Asia/Bangkok
+
+        // 🛡️ จำกัดให้ส่งย้อนหลังได้แค่ "เมื่อวาน" เท่านั้น เพื่อความปลอดภัยของฐานข้อมูลสถิติ
+        if (clientSubmittedDate !== todayStr && clientSubmittedDate !== yesterdayStr) {
+            logApiEvent(ENDPOINT, 'warning', 400, 'date_out_of_allowed_window');
+            return NextResponse.json({
+                error: 'Stats can only be finalized for today or yesterday.'
+            }, { status: 400 });
+        }
+
+        targetDate = clientSubmittedDate;
     }
 
     // ── ด่าน 2: Cooldown check ด้วย Browser Cookie
@@ -75,10 +96,9 @@ export async function POST(req: NextRequest) {
         );
     }
 
-    // ผ่านทุกด่าน -> บันทึกข้อมูลลง Supabase
-    const todayStr = getTodayStr();
+    // ── ผ่านทุกด่าน -> บันทึกสถิติลงวันตาม targetDate จริงๆ! 🎯
     const { error } = await supabaseServer.rpc('increment_daily_stat', {
-        p_date: todayStr,
+        p_date: targetDate, // 👈 บันทึกลงวันตาม Target ไม่ใช่รันไทม์ปัจจุบัน
         p_mode: mode,
         p_passed: isWin,
         p_guess_count: isWin ? guessCount : null,

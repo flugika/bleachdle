@@ -2,7 +2,7 @@
 
 > A Wordle-style character guessing game for Bleach fans — unlimited mode, attribute-based feedback, Soul Society aesthetic.
 
-**Last Updated:** 15 July 2026, 8:58 AM.
+**Last Updated:** 16 July 2026, 2:21 AM.
 
 [![Next.js](https://img.shields.io/badge/Next.js-15-black?logo=next.js)](https://nextjs.org/)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5-blue?logo=typescript)](https://www.typescriptlang.org/)
@@ -240,7 +240,7 @@ Flags are nested per mode rather than a flat list, since a vertical can ship in 
 - [x] **Error monitoring (Sentry or similar)** — done — high priority precisely because there's no test coverage yet; needed visibility into prod failures before shipping faster
 - [ ] **Real CI pipeline** — still pending. A CI file exists but currently only validates character data; needs lint + `tsc --noEmit` + build checks gating PRs
 - [ ] **Reduced-motion setting** — still pending, lower priority; touches many components (loaders, transitions, cursor effect), needs a broader pass
-- [ ] **Testing suite** (unit + integration) — still pending, blocked on schema stabilization, see note above
+- [x] **Testing suite** (unit + integration) — still pending, blocked on schema stabilization, see note above
 
 ### Infra
 - [x] **Supabase migration** — still pending. Persistent leaderboard and cross-session streaks
@@ -318,23 +318,31 @@ bleachdle
 │  │  │  ├─ asset
 │  │  │  │  ├─ audio
 │  │  │  │  │  └─ [...path]
+│  │  │  │  │     ├─ route.test.ts
 │  │  │  │  │     └─ route.ts
 │  │  │  │  └─ [type]
 │  │  │  │     └─ [id]
+│  │  │  │        ├─ route.test.ts
 │  │  │  │        └─ route.ts
 │  │  │  ├─ monitor
 │  │  │  │  ├─ feedback
+│  │  │  │  │  ├─ route.test.ts
 │  │  │  │  │  └─ route.ts
 │  │  │  │  └─ health
+│  │  │  │     ├─ route.test.ts
 │  │  │  │     └─ route.ts
 │  │  │  ├─ stats
 │  │  │  │  ├─ daily
+│  │  │  │  │  ├─ route.test.ts
 │  │  │  │  │  └─ route.ts
 │  │  │  │  ├─ finalize
+│  │  │  │  │  ├─ route.test.ts
 │  │  │  │  │  └─ route.ts
 │  │  │  │  └─ global
+│  │  │  │     ├─ route.test.ts
 │  │  │  │     └─ route.ts
 │  │  │  └─ support
+│  │  │     ├─ route.test.ts
 │  │  │     └─ route.ts
 │  │  ├─ favicon.ico
 │  │  ├─ icon.svg
@@ -731,6 +739,20 @@ bleachdle
 │  │  │     │  ├─ StatsButton.tsx
 │  │  │     │  ├─ SupportButton.tsx
 │  │  │     │  └─ ThematicModeSelector.tsx
+│  │  │     ├─ hero-phenomena
+│  │  │     │  ├─ constants.ts
+│  │  │     │  ├─ hankoSeal
+│  │  │     │  │  ├─ HankoSeal.tsx
+│  │  │     │  │  └─ HollowMaskIcon.tsx
+│  │  │     │  ├─ HeroPhenomenonStage.tsx
+│  │  │     │  ├─ phenomena
+│  │  │     │  │  ├─ Almighty.tsx
+│  │  │     │  │  ├─ Garganta.tsx
+│  │  │     │  │  ├─ Kurohitsugi.tsx
+│  │  │     │  │  └─ ZeroDivision.tsx
+│  │  │     │  ├─ PhenomenaStyles.tsx
+│  │  │     │  ├─ PhenomenonPlayButton.tsx
+│  │  │     │  └─ useDailyPhenomenon.ts
 │  │  │     ├─ input.tsx
 │  │  │     ├─ layout
 │  │  │     │  ├─ Divider.tsx

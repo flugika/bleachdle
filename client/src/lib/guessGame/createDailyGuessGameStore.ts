@@ -29,6 +29,13 @@ export interface DailyGuessGameState<TCharacter, TTarget> {
     resetGame: () => void;
 }
 
+// 🆕 สร้าง Interface รองรับ Metadata ด้านวันที่แบบปลอดภัย เพื่อใช้แทน explicit any
+interface DailyTargetDateMetadata {
+    date?: string;
+    scheduled_date?: string;
+    scheduledDate?: string;
+}
+
 export function createDailyGuessGameStore<
     TCharacter extends { id: string },
     TTarget extends { id: string; character_id: string },
@@ -47,10 +54,6 @@ export function createDailyGuessGameStore<
     const initialExtra = () =>
         Object.fromEntries(derivedCounters.map((d) => [d.key, d.initial])) as Record<string, number>;
 
-    // 🔧 FIX: use `unknown` index signature, not `number` — a `number` index signature
-    // forces every property on the intersected type (including functions like setTarget)
-    // to also be assignable to `number`, which is impossible. `unknown` accepts anything,
-    // and we cast to number only where we actually read/write a counter value.
     type State = DailyGuessGameState<TCharacter, TTarget> & TExtra;
     const getCounter = (state: State, key: string) => state[key as keyof State] as number;
 
@@ -63,11 +66,9 @@ export function createDailyGuessGameStore<
                 hasFinalized: false,
                 _hasHydrated: false,
 
-                // 🔧 FIX: ใส่ Type ให้พารามิเตอร์อย่างชัดเจน
                 setHasHydrated: (state: boolean) => set({ _hasHydrated: state } as unknown as Partial<State>),
                 ...initialExtra(),
 
-                // 🔧 FIX: ใส่ Type ให้ target และ state
                 setTarget: (target: TTarget) => set((state: State) => {
                     if (state.target && state.target.id === target.id) {
                         return { target } as unknown as Partial<State>;
@@ -83,7 +84,6 @@ export function createDailyGuessGameStore<
                     set({ stats: saved } as unknown as Partial<State>);
                 },
 
-                // 🔧 FIX: ใส่ Type ให้ characterId และ state
                 addGuess: (characterId: string) => set((state: State) => {
                     const isGameOver = state.guesses.length >= config.maxGuesses('daily');
                     if (!state.target || isGameOver) return state;
@@ -106,15 +106,21 @@ export function createDailyGuessGameStore<
                     return { guesses: allGuesses, ...extraUpdates } as unknown as Partial<State>;
                 }),
 
-                finalizeGame: (isWin: boolean) => { // 🔧 FIX: ใส่ Type ให้ isWin
-                    // ... โค้ดส่วนนี้เหมือนเดิม ...
+                finalizeGame: (isWin: boolean) => {
                     const { target, hasFinalized, guesses } = get();
                     if (!target || hasFinalized) return;
 
-                    const today = getTodayStr();
+                    // 🎯 Enterprise Fix: ผสมโครงสร้าง Type แบบเฉพาะเจาะจง ปิดจุดเตือน Lint ถาวร
+                    const targetWithDate = target as TTarget & DailyTargetDateMetadata;
+                    const targetDate = 
+                        targetWithDate.date || 
+                        targetWithDate.scheduled_date || 
+                        targetWithDate.scheduledDate || 
+                        getTodayStr();
+
                     const completedData = JSON.parse(localStorage.getItem(config.storageKeys.completed) || '{}');
                     completedData.daily = isWin
-                        ? [...new Set([...(completedData.daily || []), today])]
+                        ? [...new Set([...(completedData.daily || []), targetDate])]
                         : [];
                     localStorage.setItem(config.storageKeys.completed, JSON.stringify(completedData));
 
@@ -141,16 +147,12 @@ export function createDailyGuessGameStore<
                     localStorage.setItem(config.storageKeys.stats, JSON.stringify(statsData));
 
                     const extraFinal = Object.fromEntries(derivedCounters.map((d) => [d.key, d.finalizeValue]));
-
-                    // 🩹 FIX: เดิม `revealedCharacter = isWin ? guesses[0]?.guess ?? null : null`
-                    // เฉลยเฉพาะตอนชนะเท่านั้น — ฝั่งแพ้ (จบเกมแบบ isWin=false) ไม่เคยมีข้อมูล
-                    // คำตอบให้ UI เอาไปโชว์เลย ทั้งที่เกมจบแล้วควรเฉลยทั้งสองกรณี
-                    // เปลี่ยนมาใช้ getCharacterById + resolveAnswerId เพื่อดึง "คำตอบเต็ม"
-                    // จริง ๆ เสมอเมื่อเกมจบ ไม่ผูกกับผลแพ้ชนะอีกต่อไป
                     const revealedCharacter = config.getCharacterById(resolveAnswerId(target)) ?? null;
 
                     set({ hasFinalized: true, stats: newStats, revealedCharacter, ...extraFinal } as unknown as Partial<State>);
-                    recordDailyStat(config.gameKey, isWin, guesses.length).catch(() => { });
+                    
+                    // 🆕 ส่ง targetDate แนบไปเคลียร์หลังบ้านด้วย
+                    recordDailyStat(config.gameKey, isWin, guesses.length, targetDate).catch(() => { });
                 },
 
                 resetGame: () => set({ target: null, revealedCharacter: null, guesses: [], hasFinalized: false, ...initialExtra() } as unknown as Partial<State>),
@@ -175,8 +177,6 @@ export function createDailyGuessGameStore<
                         return typeof val !== 'number' || !d.isValidRange(val);
                     });
 
-                    // 🔧 cast ครั้งเดียวตรงนี้แทนการ cast `as any` ซ้ำที่ทุกจุดเขียนค่า —
-                    // แคบกว่า any เพราะบังคับว่า key ที่เขียนต้องมี value เป็น number เท่านั้น
                     const extra = state as unknown as Record<string, number>;
 
                     if (hasCorruptedGuesses || hasStaleTargetShape) {

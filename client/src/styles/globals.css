@@ -2008,58 +2008,6 @@ button *:active,
   }
 }
 
-@keyframes bd-hanko-approach {
-  0% {
-    transform: translateY(-40px) scale(0.6) rotate(-18deg);
-    opacity: 0;
-  }
-
-  100% {
-    transform: translateY(0) scale(1.22) rotate(-14deg);
-    opacity: 0.9;
-  }
-}
-
-@keyframes bd-hanko-impact {
-  0% {
-    transform: scale(1.22) rotate(-14deg);
-  }
-
-  45% {
-    transform: scale(0.88) rotate(-6deg);
-  }
-
-  70% {
-    transform: scale(1.05) rotate(-9deg);
-  }
-
-  100% {
-    transform: scale(1) rotate(-7deg);
-  }
-}
-
-@keyframes bd-hanko-shock {
-  0% {
-    transform: scale(0.4);
-    opacity: 0.55;
-  }
-
-  100% {
-    transform: scale(2.4);
-    opacity: 0;
-  }
-}
-
-@keyframes bd-halo-spin {
-  0% {
-    transform: rotate(0deg);
-  }
-
-  100% {
-    transform: rotate(360deg);
-  }
-}
-
 @keyframes bd-sheen-sweep {
   0% {
     transform: translateX(-140%) skewX(-18deg);
@@ -2445,5 +2393,366 @@ button *:active,
   50% {
     filter: drop-shadow(0 0 6px rgba(200, 169, 110, 0.9)) drop-shadow(0 0 16px rgba(200, 169, 110, 0.5));
     transform: scale(1.06);
+  }
+}
+
+/* ============================== GARGANTA ============================== */
+@keyframes bdph-garganta-crack {
+  0% {
+    stroke-dashoffset: var(--bdph-dash, 220);
+    opacity: 0;
+  }
+
+  10% {
+    opacity: 1;
+  }
+
+  60% {
+    stroke-dashoffset: 0;
+    opacity: 0.9;
+  }
+
+  100% {
+    stroke-dashoffset: 0;
+    opacity: 0;
+  }
+}
+
+@keyframes bdph-garganta-rip {
+  0% {
+    transform: scale(0.02, 0.35) rotate(-2deg);
+    opacity: 0;
+    filter: blur(3px);
+  }
+
+  10% {
+    opacity: 1;
+  }
+
+  45% {
+    transform: scale(1.08, 1.05) rotate(1deg);
+    filter: blur(0px);
+  }
+
+  70% {
+    transform: scale(0.94, 0.98) rotate(-0.5deg);
+  }
+
+  100% {
+    transform: scale(1, 1) rotate(0deg);
+  }
+}
+
+@keyframes bdph-garganta-breathe {
+
+  0%,
+  100% {
+    transform: scale(1, 1);
+  }
+
+  50% {
+    transform: scale(1.015, 1.04);
+  }
+}
+
+@keyframes bdph-garganta-rim-pulse {
+
+  0%,
+  100% {
+    opacity: 0.5;
+  }
+
+  50% {
+    opacity: 0.85;
+  }
+}
+
+@keyframes bdph-garganta-suck {
+  0% {
+    transform: translate(var(--bdph-tx), var(--bdph-ty)) scale(1);
+    opacity: 0;
+  }
+
+  15% {
+    opacity: 0.9;
+  }
+
+  100% {
+    transform: translate(0, 0) scale(0.15);
+    opacity: 0;
+  }
+}
+
+/* ============================== ALMIGHTY =============================== */
+@keyframes bdph-eye-open {
+  0% {
+    transform: scaleY(0.02);
+    opacity: 0;
+  }
+
+  100% {
+    transform: scaleY(1);
+    opacity: var(--bdph-eye-o, 0.5);
+  }
+}
+
+@keyframes bdph-eye-blink {
+
+  0%,
+  92%,
+  100% {
+    transform: scaleY(1);
+  }
+
+  96% {
+    transform: scaleY(0.04);
+  }
+}
+
+@keyframes bdph-eye-drift {
+
+  0%,
+  100% {
+    transform: translateY(0px);
+  }
+
+  50% {
+    transform: translateY(-6px);
+  }
+}
+
+/* ============================ KUROHITSUGI ============================== */
+@keyframes bdph-pillar-rise {
+  0% {
+    transform: scaleY(0);
+    opacity: 0;
+  }
+
+  60% {
+    transform: scaleY(1.05);
+    opacity: 1;
+  }
+
+  100% {
+    transform: scaleY(1);
+    opacity: 1;
+  }
+}
+
+@keyframes bdph-pillar-seal-line {
+  0% {
+    stroke-dashoffset: var(--bdph-dash, 400);
+  }
+
+  100% {
+    stroke-dashoffset: 0;
+  }
+}
+
+@keyframes bdph-pillar-settle {
+  0% {
+    opacity: 1;
+    filter: brightness(2.2);
+  }
+
+  20% {
+    opacity: 1;
+    filter: brightness(2.6);
+  }
+
+  40% {
+    opacity: 0.9;
+    filter: brightness(1);
+  }
+
+  100% {
+    opacity: 0.16;
+    filter: brightness(0.8);
+  }
+}
+
+@keyframes bdph-pillar-flicker {
+
+  0%,
+  96%,
+  100% {
+    opacity: 0.16;
+  }
+
+  98% {
+    opacity: 0.4;
+  }
+}
+
+@keyframes bdph-ember-burst {
+  0% {
+    transform: translate(0, 0) scale(1);
+    opacity: 1;
+  }
+
+  100% {
+    transform: translate(var(--bdph-ex), var(--bdph-ey)) scale(0);
+    opacity: 0;
+  }
+}
+
+/* ============================ ZERO DIVISION ============================= */
+@keyframes bdph-ink-bloom {
+  0% {
+    transform: scale(0.3);
+    opacity: 0;
+    filter: blur(10px);
+  }
+
+  60% {
+    opacity: 0.9;
+    filter: blur(2px);
+  }
+
+  100% {
+    transform: scale(1);
+    opacity: 1;
+    filter: blur(0px);
+  }
+}
+
+@keyframes bdph-ink-brush {
+  0% {
+    stroke-dashoffset: var(--bdph-dash, 300);
+    opacity: 0;
+  }
+
+  10% {
+    opacity: 1;
+  }
+
+  100% {
+    stroke-dashoffset: 0;
+    opacity: 1;
+  }
+}
+
+@keyframes bdph-ink-seal-spin {
+  0% {
+    transform: rotate(0deg);
+  }
+
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes bdph-ink-seal-spin-rev {
+  0% {
+    transform: rotate(0deg);
+  }
+
+  100% {
+    transform: rotate(-360deg);
+  }
+}
+
+@keyframes bdph-ink-wisp {
+
+  0%,
+  100% {
+    transform: translate(0, 0) scale(1);
+    opacity: 0.35;
+  }
+
+  50% {
+    transform: translate(var(--bdph-wx, 12px), var(--bdph-wy, -8px)) scale(1.15);
+    opacity: 0.6;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .bdph-anim {
+    animation: none !important;
+  }
+}
+
+@keyframes bd-halo-spin {
+  0% {
+    transform: rotate(0deg);
+  }
+
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+/* 🚀 คีย์การ์ดสยบอาการกระตุก: บังคับใช้ GPU เร่งความเร็ว */
+.bd-hanko-stamp {
+  will-change: transform, opacity;
+  transform-style: preserve-3d;
+  backface-visibility: hidden;
+}
+
+.bd-halo-ring {
+  will-change: transform;
+}
+
+/* 🚀 GPU Warmer & Layer Isolation */
+.bd-hanko-wrapper {
+  backface-visibility: hidden;
+  transform-style: preserve-3d;
+  will-change: transform, opacity;
+  /* แยกเลเยอร์การเรนเดอร์ออกจากส่วนอื่นของเว็บไซต์เพื่อลด Layout Thrashing */
+  contain: layout paint style;
+}
+
+/* 🌀 อนิเมชันหลักคุมแค่ Scale และ Position (ห้ามมี Filter ในระดับนี้!) */
+@keyframes bd-hanko-approach {
+  0% {
+    transform: scale(2.2) rotate(-12deg) translateZ(0);
+    opacity: 0;
+  }
+
+  100% {
+    transform: scale(1) rotate(0deg) translateZ(0);
+    opacity: 1;
+  }
+}
+
+@keyframes bd-hanko-impact {
+  0% {
+    transform: scale(1) rotate(0deg) translateZ(0);
+  }
+
+  25% {
+    transform: scale(1.18) rotate(-5deg) translateZ(0);
+  }
+
+  45% {
+    transform: scale(0.92) rotate(2deg) translateZ(0);
+  }
+
+  70% {
+    transform: scale(1.03) rotate(-1deg) translateZ(0);
+  }
+
+  100% {
+    transform: scale(1) rotate(0deg) translateZ(0);
+  }
+}
+
+/* ⚙️ Static Filter Target (เลเยอร์นี้จะมีฟิลเตอร์ขรุขระ แต่ตัวมันเองจะไม่สเกลแยกอิสระ) */
+.bd-hanko-filtered-core {
+  transform: translateZ(0);
+  backface-visibility: hidden;
+  will-change: filter;
+}
+
+/* Shockwave */
+@keyframes bd-hanko-shock {
+  0% {
+    transform: scale(0.8) translateZ(0);
+    opacity: 1;
+  }
+
+  100% {
+    transform: scale(2.2) translateZ(0);
+    opacity: 0;
   }
 }

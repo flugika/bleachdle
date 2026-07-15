@@ -6,7 +6,7 @@ import { ComparisonOutcome } from '@/src/features/character/types';
 import { getCharacterById } from '@/src/features/character/character';
 import { persist } from 'zustand/middleware';
 import { recordDailyStat } from '@/src/services/statsClient';
-import { STORAGE_KEYS } from '@/src/const/localStorage'
+import { STORAGE_KEYS } from '@/src/const/localStorage';
 import { nestedJSONStorage } from '@/src/lib/store/createNestedStorage';
 import { MAX_DAILY_CHARACTER_GUESSES } from '@/src/const/guess';
 import { isValidCharacterGuessEntry } from '../../validGuessEntry';
@@ -18,16 +18,23 @@ interface GuessEntry {
     isNew: boolean;
 }
 
+// 🆕 เพิ่ม Interface มารองรับฟิลด์เมทาดาตาวันที่แบบ Strict Type
+interface CharacterDateMetadata {
+    date?: string;
+    scheduled_date?: string;
+}
+
 interface CharacterGameState {
     targetId: string | null;
     target: Character | null;
+    scheduledDate: string | null; 
     guesses: GuessEntry[];
-    stats: Stats; // 🆕
+    stats: Stats;
     addGuess: (guessId: string) => void;
-    setTarget: (target: Character) => void;
-    initializeGame: (target?: Character) => void;
+    setTarget: (target: Character, scheduledDate?: string) => void; 
+    initializeGame: (target?: Character, scheduledDate?: string) => void; 
     finalizeGame: (isWin: boolean) => void;
-    loadStats: () => void; // 🆕
+    loadStats: () => void;
     resetGame: () => void;
     hasFinalized: boolean;
     _hasHydrated: boolean;
@@ -39,15 +46,19 @@ export const useCharacterGame = create<CharacterGameState>()(
         (set, get) => ({
             targetId: null,
             target: null,
+            scheduledDate: null, 
             guesses: [],
-            stats: { currentStreak: 0, maxStreak: 0, playedCount: 0, passedCount: 0, guessDistribution: {} }, // 🆕
+            stats: { currentStreak: 0, maxStreak: 0, playedCount: 0, passedCount: 0, guessDistribution: {} },
             hasFinalized: false,
             _hasHydrated: false,
             setHasHydrated: (state) => set({ _hasHydrated: state }),
 
-            setTarget: (target) => set({ target, targetId: target.id }),
+            setTarget: (target, scheduledDate) => set({ 
+                target, 
+                targetId: target.id,
+                scheduledDate: scheduledDate || new Date().toISOString().split('T')[0] 
+            }),
 
-            // 🆕 ย้ายมาจาก component: อ่าน STORAGE_KEYS.CHARACTER_STATS เข้า store
             loadStats: () => {
                 if (typeof window === 'undefined') return;
                 const statsData = JSON.parse(localStorage.getItem(STORAGE_KEYS.CHARACTER_STATS) || '{}');
@@ -71,34 +82,41 @@ export const useCharacterGame = create<CharacterGameState>()(
                 return { guesses: [newEntry, ...prevGuesses] };
             }),
 
-            initializeGame: (target) => {
+            initializeGame: (target, scheduledDate) => {
                 if (!target) return;
 
                 const { targetId } = get();
+                const dateStr = scheduledDate || new Date().toISOString().split('T')[0]; 
 
                 if (targetId && targetId === target.id) {
-                    set({ target }); // sync object ใหม่ (เผื่อ ref เปลี่ยน) แต่ id เดิม
+                    set({ target, scheduledDate: dateStr }); 
                     return;
                 }
 
-                set({ target, targetId: target.id, guesses: [], hasFinalized: false });
+                set({ target, targetId: target.id, scheduledDate: dateStr, guesses: [], hasFinalized: false });
             },
 
             finalizeGame: (isWin) => {
-                const { target, hasFinalized, guesses } = get();
+                const { target, hasFinalized, guesses, scheduledDate } = get();
                 if (!target || hasFinalized) return;
 
-                // ── completedData: กันซ้ำด้วยวันที่ ──
+                // 🎯 Enterprise Fix: ผสม Type หลีกเลี่ยง any โดยสมบูรณ์และได้ความแม่นยำสูงสุด
+                const targetWithDate = target as Character & CharacterDateMetadata;
+                const targetDate = 
+                    scheduledDate || 
+                    targetWithDate.date || 
+                    targetWithDate.scheduled_date || 
+                    new Date().toISOString().split('T')[0];
+
                 const completedData = JSON.parse(
                     localStorage.getItem(STORAGE_KEYS.CHARACTER_COMPLETED) || "{}"
                 );
-                const today = new Date().toISOString().split('T')[0];
 
                 if (isWin) {
                     const history = completedData.daily || [];
-                    completedData.daily = [...new Set([...history, today])];
+                    completedData.daily = [...new Set([...history, targetDate])]; 
                 } else {
-                    completedData.daily = []; // กัน array โตไม่จบระหว่าง win streak ยาว
+                    completedData.daily = [];
                 }
 
                 localStorage.setItem(
@@ -106,7 +124,6 @@ export const useCharacterGame = create<CharacterGameState>()(
                     JSON.stringify(completedData)
                 );
 
-                // ── 🆕 stats: ย้าย logic จาก updateStats เดิมเข้ามาตรงนี้ ──
                 const statsData = JSON.parse(localStorage.getItem(STORAGE_KEYS.CHARACTER_STATS) || '{}');
                 const savedStats: Stats = statsData.daily || { currentStreak: 0, maxStreak: 0, playedCount: 0, passedCount: 0, guessDistribution: {} };
 
@@ -130,13 +147,14 @@ export const useCharacterGame = create<CharacterGameState>()(
                 statsData.daily = newStats;
                 localStorage.setItem(STORAGE_KEYS.CHARACTER_STATS, JSON.stringify(statsData));
 
-                set({ hasFinalized: true, stats: newStats }); // 🆕 อัปเดต stats พร้อมกันในนี้เลย
+                set({ hasFinalized: true, stats: newStats });
 
-                recordDailyStat('character', isWin, guesses.length).catch(() => { });
+                // 🆕 ส่งวันที่ของโจทย์ที่เล่นไปยืนยันสถิติ
+                recordDailyStat('character', isWin, guesses.length, targetDate).catch(() => { });
             },
 
             resetGame: () => {
-                set({ target: null, guesses: [], hasFinalized: false });
+                set({ target: null, guesses: [], hasFinalized: false, scheduledDate: null });
             },
         }),
         {
@@ -145,8 +163,8 @@ export const useCharacterGame = create<CharacterGameState>()(
             partialize: (state) => ({
                 guesses: state.guesses,
                 targetId: state.targetId,
+                scheduledDate: state.scheduledDate, 
                 hasFinalized: state.hasFinalized,
-                // ❌ ไม่ใส่ stats — stats เก็บแยกที่ STORAGE_KEYS.CHARACTER_STATS อยู่แล้ว
             }),
             onRehydrateStorage: () => (state) => {
                 if (state) {
@@ -156,9 +174,9 @@ export const useCharacterGame = create<CharacterGameState>()(
                     if (hasCorruptedData) {
                         state.guesses = [];
                         state.target = null;
+                        state.scheduledDate = null;
                         state.hasFinalized = false;
                     } else if (state.targetId) {
-                        // 👈 resolve object จาก id ที่โหลดมา ไม่ได้อ่าน target ตรงๆ จาก localStorage
                         state.target = getCharacterById(state.targetId) ?? null;
                     }
 

@@ -1,4 +1,4 @@
-// src/app/api/asset/audio/[...path]/route.ts
+// app/api/asset/audio/[...path]/route.ts
 import { NextRequest, NextResponse } from 'next/server';
 import { createReadStream } from 'fs';
 import { stat } from 'fs/promises';

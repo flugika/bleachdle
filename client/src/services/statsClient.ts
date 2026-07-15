@@ -5,7 +5,7 @@ export async function recordDailyStat(
     mode: StatMode,
     isWin: boolean,
     guessCount: number,
-    // turnstileToken: string
+    date?: string
 ) {
     try {
         const res = await fetch('/api/stats/finalize', {
@@ -15,7 +15,7 @@ export async function recordDailyStat(
                 mode,
                 isWin,
                 guessCount,
-                // turnstileToken
+                date, // 🆕 แนบส่งให้ API นำไป Validate และบันทึก
             }),
         });
 
@@ -23,7 +23,6 @@ export async function recordDailyStat(
             console.error('[recordDailyStat] non-OK response:', await res.text());
         }
     } catch (err) {
-        // ── ห้าม throw ต่อ: นี่คือ analytics side-effect ไม่ใช่ critical path ของเกม
         console.error('[recordDailyStat] network error:', err);
     }
 }

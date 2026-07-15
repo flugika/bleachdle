@@ -9,6 +9,9 @@ import { ModeSelectorModal, GameMode } from "@/src/shared/ui/game-selector/ModeS
 import { MODE_ACCENT, BL_MODES_METADATA } from "@/src/config/mode";
 import { HeroDailyCTA } from "@/src/shared/ui/daily-hub/HeroDailyCTA";
 import type { DailyStats } from "@/src/shared/ui/daily-hub/DailyStatsBar";
+import { HeroPhenomenonStage } from "@/src/shared/ui/hero-phenomena/HeroPhenomenonStage";
+import { PhenomenaStyles } from "@/src/shared/ui/hero-phenomena/PhenomenaStyles";
+import { usePhenomenonState } from "@/src/shared/ui/hero-phenomena/HeroPhenomenonStage";
 
 // ================= 📖 GAME MODE DATABASE =================
 // Accent colors pull from MODE_ACCENT, and kanji pulls from BL_MODES_METADATA
@@ -88,6 +91,7 @@ interface HomePageClientProps {
 export default function HomePageClient({ initialStats }: HomePageClientProps) {
     const { navigate, state } = useSenkaimon();
     const [isMounted, setIsMounted] = useState(false);
+    const { phenomenon, phase } = usePhenomenonState(undefined, "garganta");
 
     // 🛡️ State Management สำหรับ Interactive Flow
     const [isModalOpen, setIsModalOpen] = useState(false);
@@ -182,7 +186,7 @@ export default function HomePageClient({ initialStats }: HomePageClientProps) {
                 })}
             </svg>
             <div className="fixed top-3.5 left-7 z-30 hidden lg:flex items-center gap-2 text-[9px] font-mono tracking-[0.3em] text-[#c8a96e]/50 pointer-events-none">
-                <span className="w-6 h-px bg-[#c8a96e]/50" /> SYS.ONLINE
+                <span className="w-6 h-px bg-[#c8a96e]/50" /> 12TH_DIVISION_TERMINAL.READY
             </div>
             <div className="fixed top-3.5 right-7 z-30 hidden lg:flex items-center gap-2 text-[9px] font-mono tracking-[0.3em] text-[#c8a96e]/50 pointer-events-none">
                 SENKAIMON.GATE <span className="w-6 h-px bg-[#c8a96e]/50" />
@@ -233,6 +237,8 @@ export default function HomePageClient({ initialStats }: HomePageClientProps) {
                 ))}
             </div>
 
+            <HeroPhenomenonStage phenomenon={phenomenon} phase={phase} />
+
             {/* ================= 🎴 HERO INTRO SECTION ================= */}
             <div className="relative z-20 text-center mb-6 max-w-5xl w-full px-4 flex flex-col items-center justify-center font-[family-name:var(--font-display)]">
                 <div className="text-[9px] md:text-xs tracking-[0.7em] text-[#c8a96e] font-mono font-bold mb-6 flex flex-col md:flex-row items-center justify-center gap-3">
@@ -254,9 +260,27 @@ export default function HomePageClient({ initialStats }: HomePageClientProps) {
                     </h1>
                 </div>
 
-                <HeaderDivider className="mt-6" />
+                <HeaderDivider className="my-6" />
 
-                <div className="relative mt-8 max-w-xl w-full mx-auto group/subtitle">
+                {/* ================= ⛩️ SPIRITUAL RELEASE SEAL (primary CTA) =================
+                A kido incantation circle wrapping the daily CTA: rotating rune rings,
+                rising embers, a breathing gold aura and a double-bordered "sealed blade"
+                button. Everything reuses the page's existing bd-* animation vocabulary
+                so it reads as part of the same world instead of a bolted-on widget. */}
+                <div className="relative z-20 flex flex-col items-center gap-4 w-full max-w-md px-4 group/seal">
+                    {/* Faint bankai kanji, glowing softly at the seal's core */}
+                    <div
+                        className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-8xl md:text-9xl font-black text-[#c8a96e]/[0.05] select-none pointer-events-none z-0 bd-anim"
+                        style={{ animation: "bd-rune-fade 6s ease-in-out infinite" }}
+                        aria-hidden="true"
+                    >
+                        卍
+                    </div>
+
+                    <HeroDailyCTA handleNavigation={handleNavigation} initialStats={initialStats} phase={phase} />
+                </div>
+
+                <div className="relative my-2 max-w-xl w-full mx-auto group/subtitle">
                     <span className="absolute -left-[5px] top-1/2 -translate-y-1/2 w-1.5 h-1.5 rotate-45 bg-[#c8a96e]/50 group-hover/subtitle:bg-[#c8a96e] transition-colors duration-500" />
                     <span className="absolute -right-[5px] top-1/2 -translate-y-1/2 w-1.5 h-1.5 rotate-45 bg-[#c8a96e]/50 group-hover/subtitle:bg-[#c8a96e] transition-colors duration-500" />
                     <p className="relative overflow-hidden text-[10px] sm:text-[13px] md:text-sm font-mono tracking-[0.45em] uppercase border-y border-white/10 py-5 backdrop-blur-sm bg-black/20">
@@ -268,23 +292,7 @@ export default function HomePageClient({ initialStats }: HomePageClientProps) {
                 </div>
             </div>
 
-            {/* ================= ⛩️ SPIRITUAL RELEASE SEAL (primary CTA) =================
-                A kido incantation circle wrapping the daily CTA: rotating rune rings,
-                rising embers, a breathing gold aura and a double-bordered "sealed blade"
-                button. Everything reuses the page's existing bd-* animation vocabulary
-                so it reads as part of the same world instead of a bolted-on widget. */}
-            <div className="relative z-20 flex flex-col items-center gap-4 w-full max-w-md px-4 mb-10 md:mb-12 group/seal">
-                {/* Faint bankai kanji, glowing softly at the seal's core */}
-                <div
-                    className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-8xl md:text-9xl font-black text-[#c8a96e]/[0.05] select-none pointer-events-none z-0 bd-anim"
-                    style={{ animation: "bd-rune-fade 6s ease-in-out infinite" }}
-                    aria-hidden="true"
-                >
-                    卍
-                </div>
-
-                <HeroDailyCTA handleNavigation={handleNavigation} initialStats={initialStats} />
-            </div>
+            <PhenomenaStyles />
 
             {/* ================= ⚖️ MODE HIERARCHY: DAILY (featured) + UNLIMITED (secondary) =================
                 Same two destinations as before, kept intact — just re-weighted so a first-time
@@ -405,10 +413,10 @@ export default function HomePageClient({ initialStats }: HomePageClientProps) {
                 floating alone in empty space between two sections. */}
             <div className="relative z-10 flex flex-col items-center w-full max-w-2xl px-4 mb-10 md:mb-12 font-[family-name:var(--font-display)]">
                 <span
-                    className="text-[8px] md:text-[9px] font-mono tracking-[0.4em] uppercase text-[#c8a96e]/40 mb-4"
+                    className="text-[8px] md:text-[9px] font-mono tracking-[0.4em] uppercase text-[#c8a96e]/60 mb-4"
                     aria-hidden="true"
                 >
-                    霊魂同期 // soul sync
+                    霊魂同期 // REIATSU SYNCHRONIZED
                 </span>
 
                 <div className="relative w-full flex items-center justify-center">
@@ -437,7 +445,7 @@ export default function HomePageClient({ initialStats }: HomePageClientProps) {
                 </div>
 
                 <span
-                    className="text-[8px] md:text-[9px] font-mono tracking-[0.35em] uppercase text-[#c8a96e]/25 mt-4"
+                    className="text-[8px] md:text-[9px] font-mono tracking-[0.35em] uppercase text-[#c8a96e]/60 mt-4"
                     aria-hidden="true"
                 >
                     卍　central46 // reiatsu link stable　卍
@@ -477,7 +485,7 @@ export default function HomePageClient({ initialStats }: HomePageClientProps) {
                     {/* HEADER INFORMATION BLOCK */}
                     <div className="relative z-10 flex items-center gap-4 mb-6">
                         <span className="text-[11px] font-mono tracking-[0.4em] text-[#c8a96e] font-bold uppercase">
-                            DATABASE_ENTRY // 12TH_DIV_ARCHIVE
+                            CLASSIFIED_DOSSIER // 12TH_DIV_ARCHIVE
                         </span>
                         <div className="h-px flex-1 bg-white/10" />
                     </div>

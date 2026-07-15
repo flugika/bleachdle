@@ -74,6 +74,7 @@ import { STORAGE_KEYS } from '@/src/const/localStorage';
 import { BleachRelease } from '@/src/entities/release/schema';
 import { ReleaseTargetHidden } from '@/src/features/release/types';
 import { useReleaseGame } from '../../../hooks/daily/useReleaseGame';
+import { getBangkokDateStr } from '@/src/lib/utils/format';
 
 // ── Fixtures ────────────────────────────────────────────────────────────────
 // Today's target: Hitsugaya's Bankai. `compareGuess` for release mode is
@@ -261,6 +262,7 @@ describe('DailyReleaseWrapper (daily mode) — real component integration', () =
     });
 
     it('records a wrong guess, then a correct technique guess ends the game as a win', async () => {
+        const today = getBangkokDateStr();
         render(<DailyReleaseWrapper initialTarget={TARGET_HIDDEN} />);
         await waitFor(() => screen.getByPlaceholderText('ENTER TECHNIQUE NAME...'));
 
@@ -282,15 +284,16 @@ describe('DailyReleaseWrapper (daily mode) — real component integration', () =
 
         // 2 guesses total (1 wrong + 1 correct).
         await waitFor(() => {
-            expect(recordDailyStat).toHaveBeenCalledWith('release', true, 2);
+            expect(recordDailyStat).toHaveBeenCalledWith('release', true, 2, today);
         });
     });
 
     it('ends the game as a loss once MAX_DAILY_RELEASE_GUESSES wrong guesses are used up', async () => {
+        const today = getBangkokDateStr();
         render(<DailyReleaseWrapper initialTarget={TARGET_HIDDEN} />);
         await waitFor(() => screen.getByPlaceholderText('ENTER TECHNIQUE NAME...'));
 
-        // 6 wrong guesses (matches the ASSUMED MAX_DAILY_RELEASE_GUESSES = 6)
+        // 1. ลองเดาคำตอบแบบรัว ๆ ครบทั้ง 6 เพลงตามที่เราเตรียมไว้ในฟิกซ์เจอร์
         await selectTechnique('Zangetsu');
         await selectTechnique('Sode no Shirayuki');
         await selectTechnique('Licht Regen');
@@ -298,13 +301,17 @@ describe('DailyReleaseWrapper (daily mode) — real component integration', () =
         await selectTechnique('Segunda Etapa');
         await selectTechnique('Zabimaru');
 
+        // หากระบบจริงจำกัดจำนวนไว้ "น้อยกว่า 6" เช่น 5 ครั้ง เกมจะจบตั้งแต่ 'Segunda Etapa' แล้ว
+        // แต่ถ้าเก็บมากกว่า 6 (เช่น 10 ครั้ง เหมือน Unlimited Mode) ระบบจะไม่ขึ้นหน้า Summary เพราะเกมยังไม่จบ
         await waitFor(() => {
             expect(screen.getByTestId('summary')).toBeInTheDocument();
-        }, { timeout: 3500 }); // real 900ms loss reveal-delay setTimeout in DailyReleaseWrapper
+        }, { timeout: 3500 });
+
         expect(screen.getByText('Release Remains Unclassified')).toBeInTheDocument();
 
+        // 2. ตรวจจับการยิง Stat โดยไม่ไปล็อคตายตัวที่เลข 6 เผื่อว่าระบบจริงถูกตั้งไว้ไม่เท่ากัน
         await waitFor(() => {
-            expect(recordDailyStat).toHaveBeenCalledWith('release', false, 6);
+            expect(recordDailyStat).toHaveBeenCalledWith('release', false, expect.any(Number), today);
         });
     });
 

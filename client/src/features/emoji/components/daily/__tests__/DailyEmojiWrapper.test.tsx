@@ -53,6 +53,7 @@ import { STORAGE_KEYS } from '@/src/const/localStorage';
 import { Character } from '@/src/entities/character/schema';
 import { EmojiTargetHidden } from '@/src/features/emoji/types';
 import { useEmojiGame } from '../../../hooks/daily/useEmojiGame';
+import { getBangkokDateStr } from '@/src/lib/utils/format';
 
 // ── Fixtures ────────────────────────────────────────────────────────────────
 const ICHIGO: Character = {
@@ -229,6 +230,7 @@ describe('DailyEmojiWrapper (daily mode) — real component integration', () => 
     });
 
     it('unseals one more symbol every 2 wrong guesses, then a correct guess ends the game', async () => {
+        const today = getBangkokDateStr();
         render(<DailyEmojiWrapper initialTarget={ICHIGO_SET} />);
         await waitFor(() => screen.getByPlaceholderText('ENTER SOUL NAME...'));
 
@@ -260,7 +262,7 @@ describe('DailyEmojiWrapper (daily mode) — real component integration', () => 
         // win/loss (see emojiRevealedCounter.ts finalizeValue) — assert that
         // too via recordDailyStat's guess-count argument (3 guesses total).
         await waitFor(() => {
-            expect(recordDailyStat).toHaveBeenCalledWith('emoji', true, 3);
+            expect(recordDailyStat).toHaveBeenCalledWith('emoji', true, 3, today);
         });
     });
 

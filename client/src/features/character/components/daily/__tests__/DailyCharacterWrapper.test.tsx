@@ -168,7 +168,7 @@ describe('DailyCharacterWrapper (daily mode) — real component integration', ()
         expect(screen.getByText('Reishi Signature Resonance Confirmed')).toBeInTheDocument();
 
         await waitFor(() => {
-            expect(recordDailyStat).toHaveBeenCalledWith('character', true, 2);
+            expect(recordDailyStat).toHaveBeenCalledWith('character', true, 2, expect.stringMatching(/^\d{4}-\d{2}-\d{2}$/));
         });
     });
 

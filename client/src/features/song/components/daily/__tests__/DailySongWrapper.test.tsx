@@ -258,7 +258,7 @@ describe('DailySongWrapper (daily mode) — real component integration [SCAFFOLD
         expect(screen.getByText('Melodic Reiatsu Resonance Confirmed')).toBeInTheDocument();
 
         await waitFor(() => {
-            expect(recordDailyStat).toHaveBeenCalledWith('song', true, 2);
+            expect(recordDailyStat).toHaveBeenCalledWith('song', true, 2, expect.stringMatching(/^\d{4}-\d{2}-\d{2}$/));
         });
 
         const completed = JSON.parse(localStorage.getItem(STORAGE_KEYS.SONG_COMPLETED) || '{}');

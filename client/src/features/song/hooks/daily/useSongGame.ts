@@ -14,18 +14,35 @@ import { BleachSong } from '@/src/entities/song/schema';
 
 const isValidGuessEntry = defaultIsValidGuessEntry<BleachSong>;
 
-export const useSongGame = create<DailySongGameState>()(
+// 🆕 สร้าง Interface ป้องกันสำหรับการเข้าถึงข้อมูลวันที่แบบ Type-Safe
+interface SongDateMetadata {
+    date?: string;
+    scheduled_date?: string;
+}
+
+// 🆕 ขยายโครงสร้างของสถานะเพื่อรองรับวันที่และ Parameter ตัวเลือกวัน
+interface ExtendedDailySongGameState extends Omit<DailySongGameState, 'initializeGame' | 'setTarget'> {
+    scheduledDate: string | null;
+    setTarget: (target: BleachSong, scheduledDate?: string) => void;
+    initializeGame: (target?: BleachSong, segmentId?: string, scheduledDate?: string) => void;
+}
+
+export const useSongGame = create<ExtendedDailySongGameState>()(
     persist(
         (set, get) => ({
             target: null,
             targetSegmentId: null,
+            scheduledDate: null, 
             guesses: [],
             stats: { currentStreak: 0, maxStreak: 0, playedCount: 0, passedCount: 0, guessDistribution: {} },
             hasFinalized: false,
             _hasHydrated: false,
             setHasHydrated: (state) => set({ _hasHydrated: state }),
 
-            setTarget: (target) => set({ target }),
+            setTarget: (target, scheduledDate) => set({ 
+                target, 
+                scheduledDate: scheduledDate || new Date().toISOString().split('T')[0] 
+            }),
 
             loadStats: () => {
                 if (typeof window === 'undefined') return;
@@ -51,24 +68,36 @@ export const useSongGame = create<DailySongGameState>()(
                 return { guesses: [newEntry, ...prevGuesses] };
             }),
 
-            initializeGame: (target, segmentId) => {
+            initializeGame: (target, segmentId, scheduledDate) => {
                 if (!target || !segmentId) return;
                 const currentSegmentId = get().targetSegmentId;
-                if (currentSegmentId === segmentId) return;
+                const dateStr = scheduledDate || new Date().toISOString().split('T')[0]; 
 
-                set({ target, targetSegmentId: segmentId, guesses: [], hasFinalized: false });
+                if (currentSegmentId === segmentId) {
+                    set({ scheduledDate: dateStr });
+                    return;
+                }
+
+                set({ target, targetSegmentId: segmentId, scheduledDate: dateStr, guesses: [], hasFinalized: false });
             },
 
             finalizeGame: (isWin) => {
-                const { target, hasFinalized, guesses } = get();
+                const { target, hasFinalized, guesses, scheduledDate } = get();
                 if (!target || hasFinalized) return;
 
+                // 🎯 Enterprise Fix: ผนวก Interface เพื่อแผ่ขยาย Property ด้านวันที่อย่างถูกต้อง
+                const targetWithDate = target as BleachSong & SongDateMetadata;
+                const targetDate = 
+                    scheduledDate || 
+                    targetWithDate.date || 
+                    targetWithDate.scheduled_date || 
+                    new Date().toISOString().split('T')[0];
+
                 const completedData = JSON.parse(localStorage.getItem(STORAGE_KEYS.SONG_COMPLETED) || '{}');
-                const today = new Date().toISOString().split('T')[0];
 
                 if (isWin) {
                     const history = completedData.daily || [];
-                    completedData.daily = [...new Set([...history, today])];
+                    completedData.daily = [...new Set([...history, targetDate])]; 
                 } else {
                     completedData.daily = [];
                 }
@@ -99,17 +128,18 @@ export const useSongGame = create<DailySongGameState>()(
                 localStorage.setItem(STORAGE_KEYS.SONG_STATS, JSON.stringify(statsData));
 
                 set({ hasFinalized: true, stats: newStats });
-                recordDailyStat('song', isWin, guesses.length).catch(() => { });
+                
+                // 🆕 ยิงสถิติแบบระบุเป้าหมายวันที่ถูกต้อง
+                recordDailyStat('song', isWin, guesses.length, targetDate).catch(() => { });
             },
 
             resetGame: () => {
-                set({ target: null, guesses: [], hasFinalized: false });
+                set({ target: null, guesses: [], hasFinalized: false, scheduledDate: null });
             },
         }),
         {
             name: 'daily',
             storage: nestedJSONStorage(STORAGE_KEYS.SONG_PROGRESS),
-            // ✂️ ซ่อนข้อมูลโดยการเก็บแค่ ID ดิบ ๆ ลง LocalStorage
             partialize: (state) => ({
                 guesses: state.guesses.map(({ guess, status }) => ({ 
                     guess: { id: guess.id } as BleachSong, 
@@ -118,9 +148,9 @@ export const useSongGame = create<DailySongGameState>()(
                 })),
                 target: state.target ? { id: state.target.id } as BleachSong : null,
                 targetSegmentId: state.targetSegmentId,
+                scheduledDate: state.scheduledDate, 
                 hasFinalized: state.hasFinalized,
             }),
-            // 🔄 ดึงข้อมูลตัวเต็มกลับคืนมาผ่านฟังก์ชันค้นหา ID 
             onRehydrateStorage: () => (state) => {
                 if (state) {
                     if (state.target?.id) {
@@ -144,6 +174,7 @@ export const useSongGame = create<DailySongGameState>()(
                         state.guesses = [];
                         state.target = null;
                         state.hasFinalized = false;
+                        state.scheduledDate = null;
                     }
 
                     state.setHasHydrated(true);

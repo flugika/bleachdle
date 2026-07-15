@@ -16,3 +16,11 @@ export const formatHeight = (height: number): string => {
 export function getTodayStr(): string {
     return new Date().toLocaleDateString('en-CA', { timeZone: 'Asia/Bangkok' });
 }
+
+export function getBangkokDateStr(offsetDays = 0): string {
+    const date = new Date();
+    if (offsetDays !== 0) {
+        date.setDate(date.getDate() + offsetDays);
+    }
+    return date.toLocaleDateString('en-CA', { timeZone: 'Asia/Bangkok' });
+}

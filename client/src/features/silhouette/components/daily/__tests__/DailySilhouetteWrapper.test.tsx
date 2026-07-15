@@ -79,6 +79,7 @@ import { STORAGE_KEYS } from '@/src/const/localStorage';
 import { Character } from '@/src/entities/character/schema';
 import { SilhouetteTargetHidden } from '@/src/features/silhouette/types';
 import { useSilhouetteGame } from '../../../hooks/daily/useSilhouetteGame';
+import { getBangkokDateStr } from '@/src/lib/utils/format';
 
 // ── Fixtures ────────────────────────────────────────────────────────────────
 const ICHIGO: Character = {
@@ -255,6 +256,7 @@ describe('DailySilhouetteWrapper (daily mode) — real component integration', (
     });
 
     it('reveals one more grid cell (guessCount+1) per wrong guess, then a correct guess ends the game', async () => {
+        const today = getBangkokDateStr();
         render(<DailySilhouetteWrapper initialTarget={ICHIGO_SILHOUETTE} />);
         await waitFor(() => screen.getByPlaceholderText('ENTER SOUL NAME...'));
 
@@ -284,7 +286,7 @@ describe('DailySilhouetteWrapper (daily mode) — real component integration', (
         expect(screen.queryByRole('button', { name: /OPEN SENKAIMON/i })).not.toBeInTheDocument();
 
         await waitFor(() => {
-            expect(recordDailyStat).toHaveBeenCalledWith('silhouette', true, 3);
+            expect(recordDailyStat).toHaveBeenCalledWith('silhouette', true, 3, today);
         });
     });
 

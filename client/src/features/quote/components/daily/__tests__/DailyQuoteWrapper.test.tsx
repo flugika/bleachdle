@@ -59,6 +59,7 @@ import { Character } from '@/src/entities/character/schema';
 import { QuoteTargetHidden } from '@/src/features/quote/types';
 import { useQuoteGame } from '@/src/features/quote/hooks/daily/useQuoteGame';
 import { SearchBar } from '@/src/shared/ui/SearchBar';
+import { getBangkokDateStr } from '@/src/lib/utils/format';
 
 // ── Fixtures ────────────────────────────────────────────────────────────────
 const ICHIGO: Character = {
@@ -206,6 +207,7 @@ describe('DailyQuoteWrapper (daily mode) — real component integration', () => 
     });
 
     it('renders a wrong-guess row, then a correct guess ends the game and records the stat', async () => {
+        const today = getBangkokDateStr();
         render(<DailyQuoteWrapper initialTarget={QUOTE_ICHIGO} />);
         await waitFor(() => screen.getByPlaceholderText('ENTER SOUL NAME...'));
 
@@ -226,7 +228,7 @@ describe('DailyQuoteWrapper (daily mode) — real component integration', () => 
 
         // finalizeGame(true, guesses.length) — 2 guesses total (1 wrong + 1 correct).
         await waitFor(() => {
-            expect(recordDailyStat).toHaveBeenCalledWith('quote', true, 2);
+            expect(recordDailyStat).toHaveBeenCalledWith('quote', true, 2, today);
         });
     });
 
