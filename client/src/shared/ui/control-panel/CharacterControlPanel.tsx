@@ -1,13 +1,13 @@
 // src/shared/ui/CharacterControlPanel.tsx
-import { SearchBar } from '@/src/shared/ui/SearchBar';
+import { SearchBar } from '@/src/shared/ui/control-panel/SearchBar';
 import { Character } from '@/src/entities/character/schema';
 import { useState } from 'react';
 import { Modal } from '../modal';
-import { CharacterGuessable } from '@/src/features/character';
+import { CharacterGuessable, DailyCharacterResponse } from '@/src/features/character';
 
 interface CharacterControlPanelProps {
     mode: 'daily' | 'unlimited'; // รับโหมดเพื่อเปลี่ยน Logic เล็กน้อย
-    target: Character | null;
+    target: DailyCharacterResponse | null;
     characters: Character[];
     remainingGuesses?: number;
     stats: { currentStreak: number; maxStreak: number };

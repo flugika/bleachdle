@@ -80,6 +80,11 @@ export interface GuessEntry {
     result: ComparisonOutcome;
 }
 
+export interface DailyCharacterResponse {
+    id: string;
+    scheduledDate?: string;
+}
+
 /**
  * 🔁 CharacterGameController now simply extends the shared GuessGameController
  * contract (moved to src/lib/guessGame/types.ts) so <SearchBar /> / the new

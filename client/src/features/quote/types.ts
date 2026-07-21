@@ -18,7 +18,9 @@ export type QuoteGuessStatus = 'correct' | 'wrong';
  * Build one via `attachCharacter()` / `getQuoteWithCharacterById()`
  * in src/features/quote/quote.ts.
  */
-export type QuoteTargetHidden = Pick<BleachQuote, 'id' | 'text' | 'character_id'>;
+export type QuoteTargetHidden = Pick<BleachQuote, 'id' | 'text' | 'character_id'> & {
+    scheduledDate?: string;
+};
 
 export type QuoteTarget = BleachQuote & { character: Character };
 

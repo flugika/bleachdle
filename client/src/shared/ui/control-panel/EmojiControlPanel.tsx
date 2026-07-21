@@ -1,6 +1,6 @@
 // src/shared/ui/control-panel/EmojiControlPanel.tsx
 import { useState } from 'react';
-import { SearchBar } from '@/src/shared/ui/SearchBar'; // ⚠️ reuse ของเดิม เพราะเดา Character เหมือนกัน
+import { SearchBar } from '@/src/shared/ui/control-panel/SearchBar'; // ⚠️ reuse ของเดิม เพราะเดา Character เหมือนกัน
 import { BleachEmojiSet } from '@/src/entities/emoji/schema';
 import { EmojiGuessable, EmojiTargetHidden } from '@/src/features/emoji/types';
 import { Modal } from '../modal';

@@ -65,7 +65,7 @@ import { Character } from '@/src/entities/character/schema';
 import { BleachQuote } from '@/src/entities/quote/schema';
 import { QuoteTarget } from '@/src/features/quote/types';
 import { useQuoteGame } from '@/src/features/quote/hooks/unlimited/useQuoteGame';
-import { SearchBar } from '@/src/shared/ui/SearchBar';
+import { SearchBar } from '@/src/shared/ui/control-panel/SearchBar';
  
 // ── Fixtures ────────────────────────────────────────────────────────────────
 const ICHIGO: Character = {
@@ -159,7 +159,7 @@ vi.mock('@/src/shared/ui/control-panel/QuoteControlPanel', () => ({
  
 // Central46ConfidentialArchive: unknown internals — stub asserts only on the
 // `mode="quote"` prop, hardcoded in page.tsx itself.
-vi.mock('@/src/shared/ui/Central46ConfidentialArchive', () => ({
+vi.mock('@/src/shared/ui/control-panel/Central46ConfidentialArchive', () => ({
     default: ({ mode }: { mode: string }) => <div data-testid="pool-completed">Archive: {mode}</div>,
 }));
  

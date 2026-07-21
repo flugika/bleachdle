@@ -35,5 +35,6 @@ export async function getDailySilhouette(): Promise<SilhouetteTargetHidden | nul
 
     return {
         ...silhouetteFields,
-    } as SilhouetteTargetHidden;
+        scheduledDate: todayStr,
+    } as SilhouetteTargetHidden & { scheduledDate: string };
 }

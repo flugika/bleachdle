@@ -1,7 +1,7 @@
 // src/features/song/components/unlimited/SongSummaryGuess.tsx
 "use client";
 
-import { DailyResetTimer } from '@/src/shared/ui/DailyResetTimer';
+import { DailyResetTimer } from '@/src/shared/ui/summary/DailyResetTimer';
 import { SongGuessEntry } from '@/src/features/song/types';
 import { BleachSong } from '@/src/entities/song/schema';
 import { useSongTier } from '@/src/shared/hooks/useBadgeTier';
@@ -21,6 +21,7 @@ interface SongSummaryGuessProps {
     onClose: () => void;
     guesses: SongGuessEntry[];
     target: BleachSong | null;
+    scheduledDate?: string | null;
     isWin: boolean;
     mode: 'daily' | 'unlimited';
     stats: Stats;
@@ -39,6 +40,7 @@ export const SongSummaryGuess = ({
     onClose,
     guesses,
     target,
+    scheduledDate,
     isWin,
     mode,
     stats = { currentStreak: 0, maxStreak: 0, playedCount: 0, passedCount: 0, guessDistribution: {} },
@@ -56,7 +58,9 @@ export const SongSummaryGuess = ({
                 subtitleColorClassName="text-[#eed9c4]/50"
             />
 
-            {mode === 'daily' && <DailyResetTimer />}
+            {mode === 'daily' && scheduledDate && (
+                <DailyResetTimer targetDate={scheduledDate ?? undefined} />
+            )}
 
             <TierBadgeCard activeTier={activeTier} />
 

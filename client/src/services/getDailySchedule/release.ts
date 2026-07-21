@@ -39,5 +39,6 @@ export async function getDailyRelease(): Promise<ReleaseTargetHidden | null> {
     // จะเทียบผิดตัว (จะกลายเป็นเทียบ character แทน release)
     return {
         ...releaseFields,
-    } as ReleaseTargetHidden;
+        scheduledDate: todayStr,
+    } as ReleaseTargetHidden & { scheduledDate: string };
 }

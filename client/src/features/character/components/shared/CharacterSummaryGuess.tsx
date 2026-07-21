@@ -1,12 +1,11 @@
 // src/features/character/components/.../CharacterSummaryGuess.tsx
 "use client";
 
-import { useMemo } from 'react';
 import Image from 'next/image';
-import { GuessEntry, MatchResult } from "../../types";
+import { DailyCharacterResponse, GuessEntry, MatchResult } from "../../types";
 import { STATUS_COLORS, RESULT_KEYS } from '@/src/const/summary';
 import { useCharacterTier } from '@/src/shared/hooks/useBadgeTier';
-import { DailyResetTimer } from '@/src/shared/ui/DailyResetTimer';
+import { DailyResetTimer } from '@/src/shared/ui/summary/DailyResetTimer';
 import {
     SummaryCardShell,
     SummaryHeader,
@@ -19,66 +18,26 @@ import {
 import { formatAge, formatHeight } from '@/src/lib/utils/format';
 import { Stats } from '@/src/lib/guessGame/types';
 import { getCharacterById } from '../../character';
-
-const SUBSTITUTE_SHINIGAMI_NAMES = ["Ichigo Kurosaki", "Kugo Ginjo"];
-
-// 🗺️ 1. TYBW LORE LOOKUP DICTIONARY (ทำหน้าที่เป็น Whitelist & อัปเดตชื่อไฟล์จริง)
-const EMBLEM_DATA: Record<string, { file: string; color: string }> = {
-    "shinigami": { file: "shinigami.webp", color: "#f8fafc" },
-    "quincy": { file: "quincy.webp", color: "#00d2ff" },
-    "arrancar": { file: "arrancar.webp", color: "#ff2a2a" },
-    "hollow": { file: "arrancar.webp", color: "#9333ea" },
-    "fullbringer": { file: "Xcution.webp", color: "#10b981" },
-    "mod soul": { file: "mod_soul.webp", color: "#f59e0b" },
-    "substitute shinigami": { file: "daiko_shinigami.webp", color: "#ff8a00" },
-    "visored": { file: "visored.webp", color: "#e11d48" },
-    "human": { file: "soul.webp", color: "#94a3b8" },
-    "soul": { file: "soul.webp", color: "#7dd3fc" },
-    "unknown": { file: "soul.webp", color: "#52525b" },
-};
+import { useRaceEmblem } from '@/src/shared/hooks/useRaceEmblem';
 
 interface CharacterSummaryGuessProps {
     isOpen: boolean;
     onClose: () => void;
     guesses: GuessEntry[];
-    targetId: string;
+    target: DailyCharacterResponse;
     isWin: boolean;
     mode: 'daily' | 'unlimited';
     stats: Stats;
 }
 
-export const CharacterSummaryGuess = ({ isOpen, onClose, guesses, targetId, isWin, mode, stats = { currentStreak: 0, maxStreak: 0, playedCount: 0, passedCount: 0, guessDistribution: {} }, }: CharacterSummaryGuessProps) => {
-    const target = getCharacterById(targetId);
+export const CharacterSummaryGuess = ({ isOpen, onClose, guesses, target, isWin, mode, stats = { currentStreak: 0, maxStreak: 0, playedCount: 0, passedCount: 0, guessDistribution: {} }, }: CharacterSummaryGuessProps) => {
+    const answerCharacter = getCharacterById(target.id);
 
     const activeTier = useCharacterTier(stats.maxStreak);
 
-    const emblem = useMemo(() => {
-        if (!target) return null;
+    const emblem = useRaceEmblem(answerCharacter);
 
-        if (SUBSTITUTE_SHINIGAMI_NAMES.includes(target.name)) {
-            return EMBLEM_DATA["substitute shinigami"];
-        }
-
-        if (!target.race || !Array.isArray(target.race) || target.race.length === 0) {
-            return EMBLEM_DATA["unknown"];
-        }
-
-        const normalizedRaces = target.race.map((r: string) => r.toLowerCase().trim());
-
-        if (normalizedRaces.includes("shinigami") && normalizedRaces.includes("hollow")) {
-            return EMBLEM_DATA["visored"];
-        }
-
-        const priorityOrder = [
-            "arrancar", "quincy", "fullbringer", "shinigami", "hollow",
-            "mod soul", "human", "soul", "unknown",
-        ];
-        const matchedRace = priorityOrder.find(race => normalizedRaces.includes(race));
-
-        return matchedRace ? EMBLEM_DATA[matchedRace] : EMBLEM_DATA["unknown"];
-    }, [target]);
-
-    if (!isOpen || !target) return null;
+    if (!isOpen || !answerCharacter) return null;
 
     return (
         <SummaryCardShell isWin={isWin} kanji={activeTier.kanji} kanjiColor={activeTier.color}>
@@ -90,7 +49,9 @@ export const CharacterSummaryGuess = ({ isOpen, onClose, guesses, targetId, isWi
                 subtitleColorClassName="text-[#eed9c4]/50"
             />
 
-            {mode === 'daily' && <DailyResetTimer />}
+            {mode === 'daily' && target.scheduledDate && (
+                <DailyResetTimer targetDate={target.scheduledDate} />
+            )}
 
             <TierBadgeCard activeTier={activeTier} />
 
@@ -98,7 +59,7 @@ export const CharacterSummaryGuess = ({ isOpen, onClose, guesses, targetId, isWi
                 original — omitted here for brevity, this section is unique to
                 Character mode (race/height/age/eyes/hair/debut/weapon/ability/
                 release stat grid) and isn't shared with any other mode. */}
-            {target && (
+            {answerCharacter && (
                 <div className="relative mb-6 overflow-hidden border border-[#c8a96e]/20 bg-[#06060a] shadow-[0_0_30px_rgba(0,0,0,0.5)]">
 
                     {/* ⛩️ LAYER 0: ตราสัญลักษณ์ (ย้ายมาไว้บนสุดของ Root, จัดตำแหน่งไว้บนขวา และอยู่ใต้ข้อความด้วย z-0) */}
@@ -138,8 +99,8 @@ export const CharacterSummaryGuess = ({ isOpen, onClose, guesses, targetId, isWi
                             {/* Character Image */}
                             <div className='relative h-20 w-20 shrink-0 border border-[#c8a96e]/20 p-[1px] bg-black/40 z-10'>
                                 <Image
-                                    src={`/api/asset/character/${target.id}`}
-                                    alt={target.name}
+                                    src={`/api/asset/character/${answerCharacter.id}`}
+                                    alt={answerCharacter.name}
                                     fill
                                     className="object-cover grayscale-[10%] brightness-[95%]"
                                 />
@@ -147,11 +108,11 @@ export const CharacterSummaryGuess = ({ isOpen, onClose, guesses, targetId, isWi
 
                             {/* Info Section */}
                             <div className="flex flex-col text-left overflow-hidden pt-1 z-10">
-                                <h2 className="text-xl text-[#f5ebd5] tracking-wide font-black truncate font-[family-name:var(--font-display)]">{target.name}</h2>
+                                <h2 className="text-xl text-[#f5ebd5] tracking-wide font-black truncate font-[family-name:var(--font-display)]">{answerCharacter.name}</h2>
                                 <div className="flex flex-wrap gap-2 mt-2">
-                                    <span className="px-2 py-0.5 text-[12px] text-[#c8a96e]/80 border border-[#c8a96e]/20 bg-[#c8a96e]/5 font-mono">{target.gender}</span>
-                                    <span className="px-2 py-0.5 text-[12px] text-[#c8a96e]/80 border border-[#c8a96e]/20 bg-[#c8a96e]/5 font-mono">{target.race.length > 1 ? "Hybrid" : target.race}</span>
-                                    <span className="px-2 py-0.5 text-[12px] text-[#c8a96e]/80 border border-[#c8a96e]/20 bg-[#c8a96e]/5 font-mono">{target.affiliation}</span>
+                                    <span className="px-2 py-0.5 text-[12px] text-[#c8a96e]/80 border border-[#c8a96e]/20 bg-[#c8a96e]/5 font-mono">{answerCharacter.gender}</span>
+                                    <span className="px-2 py-0.5 text-[12px] text-[#c8a96e]/80 border border-[#c8a96e]/20 bg-[#c8a96e]/5 font-mono">{answerCharacter.race.length > 1 ? "Hybrid" : answerCharacter.race}</span>
+                                    <span className="px-2 py-0.5 text-[12px] text-[#c8a96e]/80 border border-[#c8a96e]/20 bg-[#c8a96e]/5 font-mono">{answerCharacter.affiliation}</span>
                                 </div>
                             </div>
                         </div>
@@ -159,14 +120,14 @@ export const CharacterSummaryGuess = ({ isOpen, onClose, guesses, targetId, isWi
                         {/* Stats Grid (Central 46 Style) */}
                         <div className="grid grid-cols-2 gap-[1px] bg-[#c8a96e]/10 border-t border-[#c8a96e]/10">
                             {[
-                                { label: 'Height', value: formatHeight(target.height_cm) },
-                                { label: 'Age', value: formatAge(target.age) },
-                                { label: 'Eyes', value: target.eye_color },
-                                { label: 'Hair', value: target.hair_color },
-                                { label: 'Debut', value: target.first_appearance_chapter },
-                                { label: 'Weapon', value: target.weapon.join(', ') },
-                                { label: 'Ability', value: target.primary_ability.join(', ') },
-                                { label: 'Release', value: target.release.join(', ') },
+                                { label: 'Height', value: formatHeight(answerCharacter.height_cm) },
+                                { label: 'Age', value: formatAge(answerCharacter.age) },
+                                { label: 'Eyes', value: answerCharacter.eye_color },
+                                { label: 'Hair', value: answerCharacter.hair_color },
+                                { label: 'Debut', value: answerCharacter.first_appearance_chapter },
+                                { label: 'Weapon', value: answerCharacter.weapon.join(', ') },
+                                { label: 'Ability', value: answerCharacter.primary_ability.join(', ') },
+                                { label: 'Release', value: answerCharacter.release.join(', ') },
                             ].map((stat, i) => (
                                 <div key={i} className="bg-[#0a0a0f]/90 p-3 flex flex-col gap-0.5 hover:bg-[#c8a96e]/5 transition-colors">
                                     <span className="text-[11px] uppercase tracking-[0.2em] text-[#c8a96e]/70 font-bold">{stat.label}</span>

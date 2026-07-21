@@ -2,9 +2,9 @@
 "use client";
 
 import { useEffect, useState } from 'react';
-import { CharacterGuessTable } from '@/src/features/character';
+import { CharacterGuessTable, DailyCharacterResponse } from '@/src/features/character';
 import { useCharacterGame } from '@/src/features/character/hooks/daily/useCharacterGame';
-import { getCharacters } from '@/src/features/character/character';
+import { getCharacterById, getCharacters } from '@/src/features/character/character';
 import { CharacterSummaryGuess } from '@/src/features/character/components/shared/CharacterSummaryGuess';
 import { CharacterHowToPlayModal } from '@/src/features/character/components/shared/CharacterHowToPlayModal';
 import { Header } from '@/src/shared/ui/layout/Header';
@@ -12,7 +12,6 @@ import { Divider } from '@/src/shared/ui/layout/Divider';
 import { SubHeader } from '@/src/shared/ui/layout/SubHeader';
 import Sealed from '@/src/shared/ui/Sealed';
 import { FEATURE_FLAGS } from '@/src/config/feature.flags';
-import { Character } from '@/src/entities/character/schema';
 import { CharacterControlPanel } from '@/src/shared/ui/control-panel/CharacterControlPanel';
 import { ModeBadge } from '@/src/shared/ui/game-selector/ModeBadge';
 import { ModeSelectorModal } from '@/src/shared/ui/game-selector/ModeSelectorModal';
@@ -23,15 +22,16 @@ import { DailyHubModalFooter } from '@/src/shared/ui/daily-hub/DailyHubModalFoot
 import { useDailyHub } from '@/src/shared/hooks/useDailyHub';
 import { EmptyGuessState } from '@/src/features/character/components/shared/EmptyGuessState';
 import { logFullTarget } from '@/src/lib/debug/logFullTarget';
-import { Legend } from '@/src/shared/ui/Legend';
+import { Legend } from '@/src/shared/ui/control-panel/Legend';
 
-export default function DailyCharacterWrapper({ initialTarget }: { initialTarget: Character | null }) {
+export default function DailyCharacterWrapper({ initialTarget }: { initialTarget: DailyCharacterResponse | null }) {
     const { navigate, state, reportReady } = useSenkaimon();
 
     const gameStore = useCharacterGame();
     const { target, guesses, initializeGame, finalizeGame, resetGame, hasFinalized, _hasHydrated, stats, loadStats } = gameStore;
     const characters = getCharacters();
     const isSynced = target !== null && initialTarget !== null && target.id === initialTarget.id;
+    const fullTarget = target ? getCharacterById(target.id) : null;
 
     const { markModePlayed } = useDailyHub();
 
@@ -40,7 +40,7 @@ export default function DailyCharacterWrapper({ initialTarget }: { initialTarget
         if (initialTarget !== null) {
             initializeGame(initialTarget);
 
-            logFullTarget(target);
+            logFullTarget(fullTarget);
         }
         // 🔧 อ่านค่า `target` ก่อนหน้า (ยังไม่ถูก initializeGame อัปเดต) โดยตั้งใจ
         // เพื่อ log เทียบค่าเก่ากับ initialTarget ใหม่ — ถ้าใส่ target/initializeGame
@@ -68,7 +68,7 @@ export default function DailyCharacterWrapper({ initialTarget }: { initialTarget
     useEffect(() => {
         setManuallyClosed(false);
         setRevealDelayDone(false);
-    }, [target?.id]);
+    }, [fullTarget?.id]);
 
     // 🎯 รักษาเงื่อนไขคำนวณ Remaining และสเตตัสการตรวจคำตอบคุณลักษณะ (Properties) ของโมเดลเดิมไว้ทั้งหมด
     const remainingGuesses = Math.max(0, MAX_DAILY_CHARACTER_GUESSES - guesses.length);
@@ -202,9 +202,9 @@ export default function DailyCharacterWrapper({ initialTarget }: { initialTarget
                     </>
                 )}
 
-                {showSummary && target ? (
+                {showSummary && fullTarget ? (
                     <>
-                        <CharacterSummaryGuess isOpen={showSummary} onClose={handleCloseModal} guesses={guesses} targetId={target.id} isWin={isWin} mode="daily" stats={stats} />
+                        <CharacterSummaryGuess isOpen={showSummary} onClose={handleCloseModal} guesses={guesses} target={fullTarget} isWin={isWin} mode="daily" stats={stats} />
                         <DailyHubModalFooter activeMode="character" />
                     </>
                 ) : target && isSynced ? (

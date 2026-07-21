@@ -34,5 +34,8 @@ export async function getDailyEmoji(): Promise<EmojiTargetHidden | null> {
 
     if (!emojiRow) return null;
 
-    return { ...emojiRow } as EmojiTargetHidden;
+    return {
+        ...emojiRow,
+        scheduledDate: todayStr,
+    } as EmojiTargetHidden & { scheduledDate: string };
 }

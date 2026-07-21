@@ -6,7 +6,9 @@ import { GuessGameController, Stats } from '@/src/lib/guessGame/types';
 export type EmojiGuessStatus = 'correct' | 'wrong';
 
 /** 🆕 สิ่งที่ client ถือระหว่างเล่น — มีแค่ character_id เฉยๆ ไม่มี name/image */
-export type EmojiTargetHidden = Pick<BleachEmojiSet, "id" | "character_id">;
+export type EmojiTargetHidden = Pick<BleachEmojiSet, "id" | "character_id"> & {
+    scheduledDate?: string;
+};
 
 /** ตัวเต็ม — ใช้ตอน finalize แล้วเท่านั้น (revealedCharacter ใน store) */
 export type EmojiTarget = BleachEmojiSet & { character: Character };

@@ -2,7 +2,7 @@
 "use client";
 
 import Image from 'next/image';
-import { DailyResetTimer } from '@/src/shared/ui/DailyResetTimer';
+import { DailyResetTimer } from '@/src/shared/ui/summary/DailyResetTimer';
 import { EmojiGuessEntry, EmojiTargetHidden } from '@/src/features/emoji/types';
 import { EmojiTestimonyDisplay } from './EmojiTestimonyDisplay';
 import { useRaceEmblem } from '@/src/shared/hooks/useRaceEmblem';
@@ -68,7 +68,9 @@ export const EmojiSummaryGuess = ({
                 subtitle={isWin ? "Symbol Set Traced to Registered Soul" : "Symbol Set Left Unattributed"}
             />
 
-            {mode === 'daily' && <DailyResetTimer />}
+            {mode === 'daily' && target.scheduledDate && (
+                <DailyResetTimer targetDate={target.scheduledDate} />
+            )}
 
             <TierBadgeCard activeTier={activeTier} />
 

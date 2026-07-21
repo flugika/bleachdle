@@ -189,7 +189,7 @@ vi.mock('@/src/features/release/components/shared/ReleaseGuessTable', () => ({
 
 // Central 46 Archive — copied verbatim from the emoji test's stub (same
 // shared component, same prop contract).
-vi.mock('@/src/shared/ui/Central46ConfidentialArchive', () => {
+vi.mock('@/src/shared/ui/control-panel/Central46ConfidentialArchive', () => {
     interface MockArchiveProps {
         inputName: string;
         setInputName: (value: string) => void;

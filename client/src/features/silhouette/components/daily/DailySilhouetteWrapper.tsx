@@ -21,17 +21,8 @@ import { BL_MODES_METADATA } from '@/src/config/mode';
 import { DailyHubModalFooter } from '@/src/shared/ui/daily-hub/DailyHubModalFooter';
 import { useDailyHub } from '@/src/shared/hooks/useDailyHub';
 import { logFullTarget } from '@/src/lib/debug/logFullTarget';
-import { Legend } from '@/src/shared/ui/Legend';
+import { Legend } from '@/src/shared/ui/control-panel/Legend';
 
-/**
- * ⚠️ ต่างจาก DailyQuoteWrapper ตรงที่ SilhouetteControlPanel ตัวจริง**ไม่มี** prop `mode`/`timeLeft`/
- * `onSurrender` — มันรับแค่ { target, characters, remainingGuesses, stats, game, isGameOver } เหมือน
- * ที่หน้า unlimited ใช้เป๊ะ ดังนั้น component เดียวกันถูก reuse ทั้ง 2 โหมดตรง ๆ โดยไม่มีการสลับ copy
- * ภายใน — เราเลยวาง <DailyResetTimer /> แยกไว้ข้างนอก panel เอง แทนที่จะฝากให้ panel จัดการ
- *
- * 🎯 win/loss ใช้ pattern เดียวกับหน้า unlimited (remaining-guesses cap เป็นเงื่อนไขแพ้จริง)
- * ไม่ใช่ pattern ของ quote daily (unlimited attempts + surrender) — เพื่อให้ streak มี stake จริง
- */
 export default function DailySilhouetteWrapper({ initialTarget }: { initialTarget: SilhouetteTargetHidden | null }) {
     const { navigate, state, reportReady } = useSenkaimon();
 

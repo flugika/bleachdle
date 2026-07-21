@@ -25,7 +25,9 @@ export interface ReleaseGuessEntry {
  * มี 2 ที่ import ประกาศซ้ำจะ desync กันได้ง่ายเวลามีคนแก้แค่ที่เดียว
  */
 
-export type ReleaseTargetHidden = Pick<BleachRelease, 'id' | 'character_id' | 'release_type' | 'clip_end_ms'>;
+export type ReleaseTargetHidden = Pick<BleachRelease, 'id' | 'character_id' | 'release_type' | 'clip_end_ms'> & {
+    scheduledDate?: string;
+};
 
 export type ReleaseTarget = BleachRelease & {
     character: Character;

@@ -2,7 +2,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { SearchBar } from '@/src/shared/ui/SearchBar';
+import { SearchBar } from '@/src/shared/ui/control-panel/SearchBar';
 import { Character } from '@/src/entities/character/schema';
 import { SilhouetteImage } from '@/src/features/silhouette/components/shared/SilhouetteImage';
 // 🆕 game: SilhouetteGuessable แทน SilhouetteGameController — panel นี้แค่โชว์รูป + ส่งเดา

@@ -9,6 +9,12 @@ import { Stats } from '@/src/lib/guessGame/types';
  */
 export type SongGuessStatus = 'correct' | 'wrong';
 
+export interface DailySongResponse {
+    song: BleachSong;
+    segmentId: string;
+    scheduledDate: string;
+}
+
 export interface SongGuessEntry {
     guess: BleachSong;
     status: SongGuessStatus;

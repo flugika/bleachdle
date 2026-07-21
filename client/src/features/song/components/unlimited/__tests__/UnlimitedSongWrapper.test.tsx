@@ -96,7 +96,7 @@ vi.mock('@/src/features/song/components/shared/SongSummaryGuess', () => ({
 }));
 
 // เปลี่ยนแปลงการ Mock ของ Central46ConfidentialArchive ด้านบนของไฟล์ทดสอบ
-vi.mock('@/src/shared/ui/Central46ConfidentialArchive', () => {
+vi.mock('@/src/shared/ui/control-panel/Central46ConfidentialArchive', () => {
     interface MockArchiveProps {
         inputName: string;
         setInputName: (value: string) => void;

@@ -3,7 +3,7 @@
 
 import { useMemo } from 'react';
 import Image from 'next/image';
-import { DailyResetTimer } from '@/src/shared/ui/DailyResetTimer';
+import { DailyResetTimer } from '@/src/shared/ui/summary/DailyResetTimer';
 import { ReleaseGuessEntry, ReleaseTargetHidden } from '@/src/features/release/types';
 import { BleachRelease } from '@/src/entities/release/schema';
 import { Stats } from '@/src/lib/guessGame/types';
@@ -89,7 +89,9 @@ export const ReleaseSummaryGuess = ({
                 subtitle={isWin ? "Release Traced to Registered Technique" : "Release Remains Unclassified"}
             />
 
-            {mode === 'daily' && <DailyResetTimer />}
+            {mode === 'daily' && target.scheduledDate && (
+                <DailyResetTimer targetDate={target.scheduledDate} />
+            )}
 
             <TierBadgeCard activeTier={activeTier} />
 

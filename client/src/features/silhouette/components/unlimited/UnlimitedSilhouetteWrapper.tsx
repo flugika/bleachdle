@@ -13,7 +13,7 @@ import { SilhouetteHowToPlayModal } from '@/src/features/silhouette/components/s
 import { Header } from '@/src/shared/ui/layout/Header';
 import { Divider } from '@/src/shared/ui/layout/Divider';
 import { SubHeader } from '@/src/shared/ui/layout/SubHeader';
-import Central46ConfidentialArchive from '@/src/shared/ui/Central46ConfidentialArchive';
+import Central46ConfidentialArchive from '@/src/shared/ui/control-panel/Central46ConfidentialArchive';
 import Sealed from '@/src/shared/ui/Sealed';
 import { FEATURE_FLAGS } from '@/src/config/feature.flags';
 import { ModeBadge } from '@/src/shared/ui/game-selector/ModeBadge';
@@ -23,7 +23,7 @@ import { MAX_UNLIMITED_SILHOUETTE_GUESSES } from '@/src/const/guess';
 import { STORAGE_KEYS } from '@/src/const/localStorage';
 import { BL_MODES_METADATA } from '@/src/config/mode';
 import { logFullTarget } from '@/src/lib/debug/logFullTarget';
-import { Legend } from '@/src/shared/ui/Legend';
+import { Legend } from '@/src/shared/ui/control-panel/Legend';
 
 export default function UnlimitedSilhouetteWrapper() {
     const { navigate, state, reportReady } = useSenkaimon();

@@ -22,7 +22,7 @@ import { MAX_DAILY_SONG_GUESSES } from '@/src/const/guess';
 import { DailyHubModalFooter } from '@/src/shared/ui/daily-hub/DailyHubModalFooter';
 import { useDailyHub } from '@/src/shared/hooks/useDailyHub';
 import { logFullTarget } from '@/src/lib/debug/logFullTarget';
-import { Legend } from '@/src/shared/ui/Legend';
+import { Legend } from '@/src/shared/ui/control-panel/Legend';
 
 interface DailySongWrapperProps {
     initialTarget: BleachSong;
@@ -33,7 +33,7 @@ export default function DailySongWrapper({ initialTarget, initialSegmentId }: Da
     const { navigate, state, reportReady } = useSenkaimon();
 
     const gameStore = useSongGame();
-    const { target, guesses, initializeGame, finalizeGame, resetGame, hasFinalized, _hasHydrated, stats, loadStats } = gameStore;
+    const { target, scheduledDate, guesses, initializeGame, finalizeGame, resetGame, hasFinalized, _hasHydrated, stats, loadStats } = gameStore;
     const songs = getSongs();
 
     const { markModePlayed } = useDailyHub();
@@ -202,7 +202,7 @@ export default function DailySongWrapper({ initialTarget, initialSegmentId }: Da
 
                 {showSummary ? (
                     <>
-                        <SongSummaryGuess isOpen={showSummary} onClose={handleCloseModal} guesses={guesses} target={target} isWin={isWin} mode="daily" stats={stats} />
+                        <SongSummaryGuess isOpen={showSummary} onClose={handleCloseModal} guesses={guesses} target={target} scheduledDate={scheduledDate} isWin={isWin} mode="daily" stats={stats} />
                         <DailyHubModalFooter activeMode="song" />
                     </>
                 ) : target && isSynced ? (

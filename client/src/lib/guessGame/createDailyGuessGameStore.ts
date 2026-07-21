@@ -16,6 +16,7 @@ import { compareBinaryGuess } from './compareBinaryGuess';
 
 export interface DailyGuessGameState<TCharacter, TTarget> {
     target: TTarget | null;
+    scheduledDate: string | null;
     revealedCharacter: TCharacter | null;
     guesses: GuessEntry<TCharacter>[];
     stats: Stats;
@@ -29,10 +30,9 @@ export interface DailyGuessGameState<TCharacter, TTarget> {
     resetGame: () => void;
 }
 
-// 🆕 สร้าง Interface รองรับ Metadata ด้านวันที่แบบปลอดภัย เพื่อใช้แทน explicit any
+// 🆕 Interface Metadata สำหรับดึงวันที่ออกจาก Target
 interface DailyTargetDateMetadata {
     date?: string;
-    scheduled_date?: string;
     scheduledDate?: string;
 }
 
@@ -61,6 +61,7 @@ export function createDailyGuessGameStore<
         persist(
             (set, get) => ({
                 target: null,
+                scheduledDate: null,
                 revealedCharacter: null,
                 guesses: [],
                 hasFinalized: false,
@@ -70,10 +71,32 @@ export function createDailyGuessGameStore<
                 ...initialExtra(),
 
                 setTarget: (target: TTarget) => set((state: State) => {
+                    const targetWithDate = target as TTarget & DailyTargetDateMetadata;
+                    
+                    // 1. สกัดวันที่ออกมาไว้ที่ Root State
+                    const targetDate =
+                        targetWithDate.scheduledDate ||
+                        targetWithDate.date ||
+                        getTodayStr();
+
+                    // 2. ลบฟิลด์วันที่ออกจากตัว target เพื่อไม่ให้บันทึกซ้ำซ้อนลง LocalStorage
+                    const { ...cleanTarget } = targetWithDate;
+                    const sanitizedTarget = cleanTarget as unknown as TTarget;
+
                     if (state.target && state.target.id === target.id) {
-                        return { target } as unknown as Partial<State>;
+                        return { 
+                            target: sanitizedTarget, 
+                            scheduledDate: targetDate 
+                        } as unknown as Partial<State>;
                     }
-                    return { target, guesses: [], hasFinalized: false, ...initialExtra() } as unknown as Partial<State>;
+
+                    return {
+                        target: sanitizedTarget,
+                        scheduledDate: targetDate, // 🎯 ล็อกวันที่ของโจทย์ไว้ที่ Root State จุดเดียว
+                        guesses: [],
+                        hasFinalized: false,
+                        ...initialExtra()
+                    } as unknown as Partial<State>;
                 }),
 
                 stats: { currentStreak: 0, maxStreak: 0, playedCount: 0, passedCount: 0, guessDistribution: {} },
@@ -107,16 +130,10 @@ export function createDailyGuessGameStore<
                 }),
 
                 finalizeGame: (isWin: boolean) => {
-                    const { target, hasFinalized, guesses } = get();
+                    const { target, scheduledDate, hasFinalized, guesses } = get();
                     if (!target || hasFinalized) return;
 
-                    // 🎯 Enterprise Fix: ผสมโครงสร้าง Type แบบเฉพาะเจาะจง ปิดจุดเตือน Lint ถาวร
-                    const targetWithDate = target as TTarget & DailyTargetDateMetadata;
-                    const targetDate = 
-                        targetWithDate.date || 
-                        targetWithDate.scheduled_date || 
-                        targetWithDate.scheduledDate || 
-                        getTodayStr();
+                    const targetDate = scheduledDate || getTodayStr();
 
                     const completedData = JSON.parse(localStorage.getItem(config.storageKeys.completed) || '{}');
                     completedData.daily = isWin
@@ -150,12 +167,18 @@ export function createDailyGuessGameStore<
                     const revealedCharacter = config.getCharacterById(resolveAnswerId(target)) ?? null;
 
                     set({ hasFinalized: true, stats: newStats, revealedCharacter, ...extraFinal } as unknown as Partial<State>);
-                    
-                    // 🆕 ส่ง targetDate แนบไปเคลียร์หลังบ้านด้วย
+
                     recordDailyStat(config.gameKey, isWin, guesses.length, targetDate).catch(() => { });
                 },
 
-                resetGame: () => set({ target: null, revealedCharacter: null, guesses: [], hasFinalized: false, ...initialExtra() } as unknown as Partial<State>),
+                resetGame: () => set({ 
+                    target: null, 
+                    scheduledDate: null, 
+                    revealedCharacter: null, 
+                    guesses: [], 
+                    hasFinalized: false, 
+                    ...initialExtra() 
+                } as unknown as Partial<State>),
             } as unknown as State),
             {
                 name: 'daily',
@@ -163,6 +186,7 @@ export function createDailyGuessGameStore<
                 partialize: (state) => ({
                     guesses: state.guesses.map(({ guess, status }) => ({ guess, status, isNew: false })),
                     target: state.target,
+                    scheduledDate: state.scheduledDate,
                     revealedCharacter: state.revealedCharacter,
                     hasFinalized: state.hasFinalized,
                     ...Object.fromEntries(derivedCounters.map((d) => [d.key, getCounter(state, d.key)])),
@@ -182,6 +206,7 @@ export function createDailyGuessGameStore<
                     if (hasCorruptedGuesses || hasStaleTargetShape) {
                         state.guesses = [];
                         state.target = null;
+                        state.scheduledDate = null;
                         state.hasFinalized = false;
                         derivedCounters.forEach((d) => { extra[d.key] = d.initial; });
                     } else if (hasInvalidExtra) {

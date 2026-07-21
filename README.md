@@ -2,7 +2,7 @@
 
 > A Wordle-style character guessing game for Bleach fans — unlimited mode, attribute-based feedback, Soul Society aesthetic.
 
-**Last Updated:** 21 July 2026, 23:51 PM.
+**Last Updated:** 22 July 2026, 4:49 AM.
 
 [![Next.js](https://img.shields.io/badge/Next.js-15-black?logo=next.js)](https://nextjs.org/)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5-blue?logo=typescript)](https://www.typescriptlang.org/)
@@ -711,14 +711,16 @@ bleachdle
 │  │  │  └─ ui
 │  │  │     ├─ BleachReiatsuCursor.tsx
 │  │  │     ├─ button.tsx
-│  │  │     ├─ Central46ConfidentialArchive.tsx
 │  │  │     ├─ context
 │  │  │     │  └─ NavigationContext.tsx
 │  │  │     ├─ control-panel
+│  │  │     │  ├─ Central46ConfidentialArchive.tsx
 │  │  │     │  ├─ CharacterControlPanel.tsx
 │  │  │     │  ├─ EmojiControlPanel.tsx
+│  │  │     │  ├─ Legend.tsx
 │  │  │     │  ├─ QuoteControlPanel.tsx
 │  │  │     │  ├─ ReleaseControlPanel.tsx
+│  │  │     │  ├─ SearchBar.tsx
 │  │  │     │  ├─ SilhouetteControlPanel.tsx
 │  │  │     │  └─ SongControlPanel.tsx
 │  │  │     ├─ daily-hub
@@ -726,7 +728,6 @@ bleachdle
 │  │  │     │  ├─ DailyHubModalFooter.tsx
 │  │  │     │  ├─ DailyProgressBar.tsx
 │  │  │     │  └─ DailyStatsBar.tsx
-│  │  │     ├─ DailyResetTimer.tsx
 │  │  │     ├─ game-selector
 │  │  │     │  ├─ AboutButton.tsx
 │  │  │     │  ├─ AllModesButton.tsx
@@ -767,7 +768,6 @@ bleachdle
 │  │  │     │  ├─ HeaderDivider.tsx
 │  │  │     │  ├─ ReiatsuAmbientSides.tsx
 │  │  │     │  └─ SubHeader.tsx
-│  │  │     ├─ Legend.tsx
 │  │  │     ├─ loader
 │  │  │     │  ├─ SenkaimonTransition.tsx
 │  │  │     │  ├─ SoulSyncLoader.tsx
@@ -775,8 +775,8 @@ bleachdle
 │  │  │     ├─ modal.tsx
 │  │  │     ├─ ScaleFit.tsx
 │  │  │     ├─ Sealed.tsx
-│  │  │     ├─ SearchBar.tsx
 │  │  │     ├─ summary
+│  │  │     │  ├─ DailyResetTimer.tsx
 │  │  │     │  ├─ IdentificationHistoryPanel.tsx
 │  │  │     │  ├─ index.ts
 │  │  │     │  ├─ NarrativeFlavorText.tsx

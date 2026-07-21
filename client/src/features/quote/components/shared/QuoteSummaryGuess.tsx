@@ -8,7 +8,7 @@ import { getQuoteById } from '@/src/features/quote/quote';
 import { QuoteTestimonyDisplay } from './QuoteTestimonyDisplay';
 import { useRaceEmblem } from '@/src/shared/hooks/useRaceEmblem';
 import { useCharacterTier } from '@/src/shared/hooks/useBadgeTier';
-import { DailyResetTimer } from '@/src/shared/ui/DailyResetTimer';
+import { DailyResetTimer } from '@/src/shared/ui/summary/DailyResetTimer';
 import {
     SummaryCardShell,
     SummaryHeader,
@@ -81,7 +81,9 @@ export const QuoteSummaryGuess = ({
                 subtitle={isWin ? "Testimony Traced to Registered Speaker" : "Testimony Left Unattributed"}
             />
 
-            {mode === 'daily' && <DailyResetTimer />}
+            {mode === 'daily' && target.scheduledDate && (
+                <DailyResetTimer targetDate={target.scheduledDate} />
+            )}
 
             <TierBadgeCard activeTier={activeTier} />
 

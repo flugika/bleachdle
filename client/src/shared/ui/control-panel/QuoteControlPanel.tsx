@@ -1,6 +1,6 @@
 // src/shared/ui/controlPanel/QuoteControlPanel.tsx
 import { useState } from 'react';
-import { SearchBar } from '@/src/shared/ui/SearchBar'; // ⚠️ reuse ของเดิม เพราะเดา Character เหมือนกัน
+import { SearchBar } from '@/src/shared/ui/control-panel/SearchBar'; // ⚠️ reuse ของเดิม เพราะเดา Character เหมือนกัน
 import { BleachQuote } from '@/src/entities/quote/schema';
 import { QuoteGuessable } from '@/src/features/quote/types';
 import { Modal } from '../modal';

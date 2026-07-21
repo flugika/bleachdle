@@ -37,5 +37,6 @@ export async function getDailyQuote(): Promise<QuoteTargetHidden | null> {
 
     return {
         ...quoteFields,
-    } as QuoteTargetHidden;
+        scheduledDate: todayStr,
+    } as QuoteTargetHidden & { scheduledDate: string };
 }

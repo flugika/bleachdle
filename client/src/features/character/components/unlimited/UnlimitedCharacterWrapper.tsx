@@ -11,7 +11,7 @@ import { CharacterHowToPlayModal } from '@/src/features/character/components/sha
 import { Header } from '@/src/shared/ui/layout/Header';
 import { Divider } from '@/src/shared/ui/layout/Divider';
 import { SubHeader } from '@/src/shared/ui/layout/SubHeader';
-import Central46ConfidentialArchive from '@/src/shared/ui/Central46ConfidentialArchive';
+import Central46ConfidentialArchive from '@/src/shared/ui/control-panel/Central46ConfidentialArchive';
 import Sealed from '@/src/shared/ui/Sealed';
 import { FEATURE_FLAGS } from '@/src/config/feature.flags';
 import { ModeBadge } from '@/src/shared/ui/game-selector/ModeBadge';
@@ -22,7 +22,7 @@ import { STORAGE_KEYS } from '@/src/const/localStorage';
 import { BL_MODES_METADATA } from '@/src/config/mode';
 import { EmptyGuessState } from '@/src/features/character/components/shared/EmptyGuessState';
 import { logFullTarget } from '@/src/lib/debug/logFullTarget';
-import { Legend } from '@/src/shared/ui/Legend';
+import { Legend } from '@/src/shared/ui/control-panel/Legend';
 
 export default function UnlimitedCharacterWrapper() {
     const { navigate, state, reportReady } = useSenkaimon();
@@ -226,7 +226,7 @@ export default function UnlimitedCharacterWrapper() {
                 )}
 
                 {showSummary && target ? (
-                    <CharacterSummaryGuess isOpen={showSummary} onClose={handleCloseModal} guesses={guesses} targetId={target.id} isWin={isWin} mode="unlimited" stats={stats} />
+                    <CharacterSummaryGuess isOpen={showSummary} onClose={handleCloseModal} guesses={guesses} target={target} isWin={isWin} mode="unlimited" stats={stats} />
                 ) : target ? (
                     <div className="w-full overflow-x-auto">
                         {guesses.length === 0 ? (

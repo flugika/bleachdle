@@ -58,7 +58,7 @@ import { STORAGE_KEYS } from '@/src/const/localStorage';
 import { Character } from '@/src/entities/character/schema';
 import { QuoteTargetHidden } from '@/src/features/quote/types';
 import { useQuoteGame } from '@/src/features/quote/hooks/daily/useQuoteGame';
-import { SearchBar } from '@/src/shared/ui/SearchBar';
+import { SearchBar } from '@/src/shared/ui/control-panel/SearchBar';
 import { getBangkokDateStr } from '@/src/lib/utils/format';
 
 // ── Fixtures ────────────────────────────────────────────────────────────────

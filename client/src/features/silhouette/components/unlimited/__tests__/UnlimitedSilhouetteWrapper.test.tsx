@@ -204,7 +204,7 @@ vi.mock('@/src/features/silhouette/components/shared/SilhouetteGuessTable', () =
 // Central 46 Archive — copied from the emoji test's stub, updated to the
 // real placeholder/button copy already confirmed against the actual
 // component in this project.
-vi.mock('@/src/shared/ui/Central46ConfidentialArchive', () => {
+vi.mock('@/src/shared/ui/control-panel/Central46ConfidentialArchive', () => {
     interface MockArchiveProps {
         inputName: string;
         setInputName: (value: string) => void;

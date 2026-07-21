@@ -1,29 +1,37 @@
-// src/services/character.ts
 import 'server-only'
 
 import { supabaseServer } from '@/src/lib/supabase/supabase-server';
-import { Character } from '@/src/entities/character/schema';
 import { getTodayStr } from '@/src/lib/utils/format';
+import { DailyCharacterResponse } from '@/src/features/character';
 
-export async function getDailyCharacter() {
+// 2. Helper Type สำหรับคุม Type ของ Supabase Join (แบบเดียวกับ silhouette.ts)
+type CharacterJoinResult = {
+    characters: { id: string } | { id: string }[] | null;
+};
+
+export async function getDailyCharacter(): Promise<DailyCharacterResponse | null> {
     const todayStr = getTodayStr();
 
-    // ระบุ Type ของผลลัพธ์จาก Supabase ให้ชัดเจน
     const { data, error } = await supabaseServer
         .from('daily_schedule')
         .select(`
             characters:character_id (id)
         `)
         .eq('date', todayStr)
-        .maybeSingle(); // ใช้ maybeSingle เพื่อดึงมาแค่ Object เดียว
+        .maybeSingle();
 
     if (error || !data) return null;
 
-    // Supabase จะคืนค่า characters ออกมาเป็น Array ถ้า relation เป็น one-to-many
-    // เราต้องมั่นใจว่าเราดึงมาตัวเดียว (ใช้ [0])
-    const characterData = Array.isArray(data.characters)
-        ? data.characters[0]
-        : data.characters;
+    // 🛡️ Cast Type เพื่อเคลียร์ Error: "Property 'id' does not exist"
+    const typedData = data as unknown as CharacterJoinResult;
+    const characterData = Array.isArray(typedData.characters)
+        ? typedData.characters[0]
+        : typedData.characters;
 
-    return characterData as Character | null;
+    if (!characterData) return null;
+
+    return {
+        ...characterData,
+        scheduledDate: todayStr, 
+    };
 }

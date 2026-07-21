@@ -22,7 +22,7 @@ import { DailyHubModalFooter } from '@/src/shared/ui/daily-hub/DailyHubModalFoot
 import { useDailyHub } from '@/src/shared/hooks/useDailyHub';
 import { getReleases } from '../../release';
 import { logFullTarget } from '@/src/lib/debug/logFullTarget';
-import { Legend } from '@/src/shared/ui/Legend';
+import { Legend } from '@/src/shared/ui/control-panel/Legend';
 
 export default function DailyReleaseWrapper({ initialTarget }: { initialTarget: ReleaseTargetHidden | null }) {
     const { navigate, state, reportReady } = useSenkaimon();

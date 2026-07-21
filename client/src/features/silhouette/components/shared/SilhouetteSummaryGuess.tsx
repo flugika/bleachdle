@@ -3,7 +3,7 @@
 
 import { useState, useEffect } from 'react';
 import Image from 'next/image';
-import { DailyResetTimer } from '@/src/shared/ui/DailyResetTimer';
+import { DailyResetTimer } from '@/src/shared/ui/summary/DailyResetTimer';
 import { SilhouetteGuessEntry, SilhouetteTargetHidden } from '@/src/features/silhouette/types';
 import { SilhouetteImage } from './SilhouetteImage';
 import { useCharacterTier } from '@/src/shared/hooks/useBadgeTier';
@@ -73,7 +73,9 @@ export const SilhouetteSummaryGuess = ({
                 subtitle={isWin ? "VISUAL SPECTRUM TRACED SUCCESSFULLY" : "TARGET IDENTITY DISRUPTED"}
             />
 
-            {mode === 'daily' && <DailyResetTimer />}
+            {mode === 'daily' && target.scheduledDate && (
+                <DailyResetTimer targetDate={target.scheduledDate} />
+            )}
 
             <TierBadgeCard activeTier={activeTier} />
 

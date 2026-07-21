@@ -11,7 +11,7 @@ import { SongHowToPlayModal } from '@/src/features/song/components/shared/SongHo
 import { Header } from '@/src/shared/ui/layout/Header';
 import { Divider } from '@/src/shared/ui/layout/Divider';
 import { SubHeader } from '@/src/shared/ui/layout/SubHeader';
-import Central46ConfidentialArchive from '@/src/shared/ui/Central46ConfidentialArchive';
+import Central46ConfidentialArchive from '@/src/shared/ui/control-panel/Central46ConfidentialArchive';
 import Sealed from '@/src/shared/ui/Sealed';
 import { FEATURE_FLAGS } from '@/src/config/feature.flags';
 import { ModeBadge } from '@/src/shared/ui/game-selector/ModeBadge';
@@ -21,7 +21,7 @@ import { MAX_UNLIMITED_SONG_GUESSES } from '@/src/const/guess';
 import { STORAGE_KEYS } from '@/src/const/localStorage';
 import { BL_MODES_METADATA } from '@/src/config/mode';
 import { logFullTarget } from '@/src/lib/debug/logFullTarget';
-import { Legend } from '@/src/shared/ui/Legend';
+import { Legend } from '@/src/shared/ui/control-panel/Legend';
 
 export default function UnlimitedSongWrapper() {
     const { navigate, state, reportReady } = useSenkaimon(); // 👈 pattern เดียวกับหน้า character unlimited เป๊ะ
