@@ -2,7 +2,7 @@
 
 > A Wordle-style character guessing game for Bleach fans — unlimited mode, attribute-based feedback, Soul Society aesthetic.
 
-**Last Updated:** 16 July 2026, 2:21 AM.
+**Last Updated:** 21 July 2026, 23:51 PM.
 
 [![Next.js](https://img.shields.io/badge/Next.js-15-black?logo=next.js)](https://nextjs.org/)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5-blue?logo=typescript)](https://www.typescriptlang.org/)
@@ -412,6 +412,7 @@ bleachdle
 │  │  │  │  ├─ shinigami.webp
 │  │  │  │  ├─ soul.webp
 │  │  │  │  ├─ visored.webp
+│  │  │  │  ├─ wandenreich.webp
 │  │  │  │  └─ Xcution.webp
 │  │  │  ├─ screenshots
 │  │  │  │  ├─ homepage.png
@@ -724,8 +725,7 @@ bleachdle
 │  │  │     │  ├─ DailyCountdownBadge.tsx
 │  │  │     │  ├─ DailyHubModalFooter.tsx
 │  │  │     │  ├─ DailyProgressBar.tsx
-│  │  │     │  ├─ DailyStatsBar.tsx
-│  │  │     │  └─ HeroDailyCTA.tsx
+│  │  │     │  └─ DailyStatsBar.tsx
 │  │  │     ├─ DailyResetTimer.tsx
 │  │  │     ├─ game-selector
 │  │  │     │  ├─ AboutButton.tsx
@@ -742,12 +742,17 @@ bleachdle
 │  │  │     ├─ hero-phenomena
 │  │  │     │  ├─ constants.ts
 │  │  │     │  ├─ hankoSeal
+│  │  │     │  │  ├─ AlmightyEyeIcon.tsx
 │  │  │     │  │  ├─ HankoSeal.tsx
 │  │  │     │  │  └─ HollowMaskIcon.tsx
+│  │  │     │  ├─ HeroDailyCTA.tsx
 │  │  │     │  ├─ HeroPhenomenonStage.tsx
 │  │  │     │  ├─ phenomena
 │  │  │     │  │  ├─ Almighty.tsx
+│  │  │     │  │  ├─ AlmightyBleed.tsx
+│  │  │     │  │  ├─ AlmightyShadowEyes.tsx
 │  │  │     │  │  ├─ Garganta.tsx
+│  │  │     │  │  ├─ GargantaBleed.tsx
 │  │  │     │  │  ├─ Kurohitsugi.tsx
 │  │  │     │  │  └─ ZeroDivision.tsx
 │  │  │     │  ├─ PhenomenaStyles.tsx

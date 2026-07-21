@@ -38,9 +38,9 @@ export function PhenomenaStyles() {
 
 /* แสงออร่าสีม่วงตรงขอบรอยแยก กระพริบอย่างไม่มั่นคง (Unstable Spiritual Pressure) */
 @keyframes bdph-garganta-glow-flicker {
-  0%, 100% { opacity: 0.35; filter: drop-shadow(0 0 15px rgba(147,51,234,0.4)); }
-  33% { opacity: 0.75; filter: drop-shadow(0 0 25px rgba(168,85,255,0.7)); }
-  66% { opacity: 0.5; filter: drop-shadow(0 0 18px rgba(147,51,234,0.5)); }
+  0%, 100% { opacity: 0.35; }
+  33% { opacity: 0.75; }
+  66% { opacity: 0.5; }
 }
 
 /* อนุภาคอณูวิญญาณ (Reishi) ระเบิดพุ่งกระจายออกจากรอยแยก */

@@ -3,35 +3,7 @@
 import { motion, type Variants } from "framer-motion";
 import type { PhenomenonKey, PhenomenonPhase } from "./constants";
 import { PHENOMENON_CTA_LORE } from "./constants";
-import { GARGANTA_STRIPS, GARGANTA_RIP_DELAY, GARGANTA_RIP_DURATION } from "./phenomena/Garganta";
-
-// ════════════════════════════════════════════════════════════════════════
-// PhenomenonPlayButton skin system
-// ────────────────────────────────────────────────────────────────────────
-// The daily-play button used to be a rectangle sitting IN FRONT of the
-// background phenomenon, painted in matching colors ("isGarganta ? cyan
-// strips at the edges : gold"). That reads as decoration. What we want is
-// for the button to be a fragment that belongs to the phenomenon — cut by
-// the same tear, lit by the same reiatsu, carrying a line of lore that
-// explains why this specific object is the door to today's puzzle.
-//
-// Each phenomenon gets a "skin" with three independent pieces:
-//
-//   1. clipPath     — torn silhouette applied to the button's own edges.
-//                      Undefined = plain rectangle (safe default for any
-//                      phenomenon that hasn't been art-directed yet).
-//   2. safePadding   — extra inner padding (px) so text never sits in the
-//                      deepest notch of the torn silhouette.
-//   3. Bleed         — phenomenon matter (void strips, embers, ink...)
-//                      rendered ACROSS the button's edges, reusing the
-//                      exact same visual primitives as the background
-//                      renderer so it reads as one continuous object,
-//                      not a re-skinned copy.
-//
-// HeroDailyCTA only needs to ask `usePhenomenonCTASkin(phenomenon)` and
-// spread the result onto the button — it doesn't need to know which
-// phenomenon exists or how many more will be added later.
-// ════════════════════════════════════════════════════════════════════════
+import { GargantaBleed } from "./phenomena/GargantaBleed";
 
 export interface PhenomenonCTASkin {
     clipPath?: string;
@@ -39,72 +11,102 @@ export interface PhenomenonCTASkin {
     Bleed?: React.ComponentType<{ phase: PhenomenonPhase }>;
 }
 
-// ── GARGANTA ─────────────────────────────────────────────────────────────
-// Bleach lore: a Garganta is torn open with claws along a fault line
-// between worlds — never a clean cut. The button's clip-path is that same
-// jagged fault line, and three of the STRIPS from the background rift
-// (same array, same indices logic as Garganta.tsx) are threaded straight
-// through the button and out past its top/bottom edges, so it looks like
-// the CTA is the piece of the rift that never fully closed.
-const GARGANTA_BUTTON_STRIP_IDX = [2, 7, 12] as const;
+// ── ALMIGHTY / YHWACH ─────────────────────────────────────────────────────
+// Bleach lore: The Almighty (全能) ดวงตาหลายม่านตาของจอมจักรพรรดิ Yhwach
+// มองเห็นและเปลี่ยนแปลงอนาคต ใช้โครงสร้าง Reishi Crystalline Diamond
+// พร้อมม่านตาเรืองแสงสลับสี Kaiser Gold & Crimson Reiatsu
 
-const gargantaStripVariants: Variants = {
-    entrance: ({ delay }: { delay: number }) => ({
-        scaleY: [0, 0.6, 1.1, 0.95, 1],
-        opacity: 1,
-        transition: {
-            duration: GARGANTA_RIP_DURATION,
-            delay: GARGANTA_RIP_DELAY + delay,
-            ease: [0.16, 1, 0.3, 1],
-            times: [0, 0.4, 0.7, 0.88, 1],
-        },
-    }),
+const almightyEyeVariants: Variants = {
+    entrance: {
+        scale: [0, 1.25, 1],
+        opacity: [0, 1, 0.9],
+        transition: { duration: 1.6, ease: "easeOut" },
+    },
     idle: {
-        scaleY: [1, 1.02, 0.99, 1.015, 1],
-        opacity: 1,
-        transition: { duration: 3.4, repeat: Infinity, ease: "easeInOut" },
+        scale: [1, 1.08, 0.95, 1],
+        opacity: [0.8, 1, 0.7, 0.8],
+        transition: { duration: 3.8, repeat: Infinity, ease: "easeInOut" },
     },
 };
 
-function GargantaBleed({ phase }: { phase: PhenomenonPhase }) {
+const reishiPulseVariants: Variants = {
+    entrance: {
+        opacity: [0, 1],
+        scaleX: [0.8, 1],
+        transition: { duration: 1.2 },
+    },
+    idle: {
+        opacity: [0.5, 0.9, 0.5],
+        filter: [
+            "drop-shadow(0 0 6px rgba(245,158,11,0.5))",
+            "drop-shadow(0 0 14px rgba(239,68,68,0.8))",
+            "drop-shadow(0 0 6px rgba(245,158,11,0.5))",
+        ],
+        transition: { duration: 3, repeat: Infinity, ease: "easeInOut" },
+    },
+};
+
+function AlmightyBleed({ phase }: { phase: PhenomenonPhase }) {
     return (
         <>
-            {GARGANTA_BUTTON_STRIP_IDX.map((idx, i) => {
-                const s = GARGANTA_STRIPS[idx];
-                const leftPct = 10 + i * 38; // three shards spread across the button width
-                return (
-                    <motion.span
-                        key={idx}
-                        aria-hidden="true"
-                        className="pointer-events-none absolute -top-5 -bottom-5 w-[3px] z-20"
-                        style={{
-                            left: `${leftPct}%`,
-                            transformOrigin: "center",
-                            background: "linear-gradient(180deg, transparent 6%, #aef4ff 45%, #2fd0f5 55%, transparent 94%)",
-                            boxShadow: "0 0 10px 2px rgba(47,208,245,0.75)",
-                        }}
-                        initial={{ scaleY: 0, opacity: 0 }}
-                        custom={{ delay: s.delay }}
-                        variants={gargantaStripVariants}
-                        animate={phase}
-                    />
-                );
-            })}
-            {/* thin cyan hairline tracing the torn edge itself, so the clip-path
-                reads as a wound rather than a CSS mask */}
+            {/* Multi-pupil Almighty Eye #1 (มุมซ้ายบน) */}
+            <motion.div
+                className="pointer-events-none absolute -top-3.5 left-6 z-20 flex items-center justify-center drop-shadow-[0_0_8px_rgba(245,158,11,0.8)]"
+                variants={almightyEyeVariants}
+                animate={phase}
+            >
+                <svg width="32" height="18" viewBox="0 0 32 18" fill="none">
+                    <ellipse cx="16" cy="9" rx="15" ry="8" stroke="#fef08a" strokeWidth="1.5" fill="#0c0404" />
+                    <circle cx="10" cy="9" r="2.5" fill="#f59e0b" />
+                    <circle cx="16" cy="7.5" r="2" fill="#ef4444" />
+                    <circle cx="22" cy="9" r="2.5" fill="#f59e0b" />
+                </svg>
+            </motion.div>
+
+            {/* Multi-pupil Almighty Eye #2 (มุมขวาล่าง) */}
+            <motion.div
+                className="pointer-events-none absolute -bottom-3.5 right-8 z-20 flex items-center justify-center drop-shadow-[0_0_8px_rgba(239,68,68,0.8)]"
+                variants={almightyEyeVariants}
+                animate={phase}
+            >
+                <svg width="28" height="16" viewBox="0 0 32 18" fill="none">
+                    <ellipse cx="16" cy="9" rx="15" ry="8" stroke="#f59e0b" strokeWidth="1.5" fill="#0c0404" />
+                    <circle cx="10.5" cy="9" r="2" fill="#ef4444" />
+                    <circle cx="16" cy="10" r="2.5" fill="#fef08a" />
+                    <circle cx="21.5" cy="9" r="2" fill="#ef4444" />
+                </svg>
+            </motion.div>
+
+            {/* Quincy Reishi Sparkles & Cross Shards */}
+            <motion.div
+                className="pointer-events-none absolute inset-0 z-10"
+                variants={reishiPulseVariants}
+                animate={phase}
+            >
+                <span
+                    className="absolute top-0 left-1/2 -translate-x-1/2 w-1/2 h-[1px]"
+                    style={{ background: "linear-gradient(90deg, transparent, #fef08a, transparent)" }}
+                />
+                <span
+                    className="absolute bottom-0 left-1/2 -translate-x-1/2 w-1/2 h-[1px]"
+                    style={{ background: "linear-gradient(90deg, transparent, #f59e0b, transparent)" }}
+                />
+            </motion.div>
+
+            {/* Inner Border Glow with Crimson Schatten Inner Shadow */}
             <span
                 aria-hidden="true"
-                className="pointer-events-none absolute inset-0 z-10 opacity-70"
-                style={{ boxShadow: "inset 0 0 0 1px rgba(94,224,255,0.35), inset 0 0 22px rgba(47,208,245,0.18)" }}
+                className="pointer-events-none absolute inset-0 z-10 opacity-80"
+                style={{
+                    boxShadow:
+                        "inset 0 0 0 1.5px rgba(245,158,11,0.5), inset 0 0 28px rgba(185,28,28,0.4), 0 0 15px rgba(245,158,11,0.2)",
+                }}
             />
         </>
     );
 }
 
-// ── Skin registry ─────────────────────────────────────────────────────────
-// Add an entry here to art-direct the button for a new phenomenon. Anything
-// missing falls back to a clean rectangle with no Bleed layer — the button
-// still works, it just isn't "torn" yet.
+// ── Skin Registry ─────────────────────────────────────────────────────────
 export const CTA_SKINS: Partial<Record<PhenomenonKey, PhenomenonCTASkin>> = {
     garganta: {
         clipPath:
@@ -112,26 +114,29 @@ export const CTA_SKINS: Partial<Record<PhenomenonKey, PhenomenonCTASkin>> = {
         safePadding: 16,
         Bleed: GargantaBleed,
     },
-    // almighty: { ... }        — eyes bleeding light through cracked edges
-    // kurohitsugi: { ... }     — pillar seams / ember scorch along the cut
-    // zerodivision: { ... }    — a brush stroke left unfinished at one corner
+    
+    // 💥 [เพิ่มส่วนใหม่] ALMIGHTY SKIN - Crystalline Fractured Future Silhouette
+    almighty: {
+        clipPath:
+            "polygon(0% 12%, 6% 0%, 94% 0%, 100% 12%, 97% 50%, 100% 88%, 94% 100%, 6% 100%, 0% 88%, 3% 50%)",
+        safePadding: 20,
+        Bleed: AlmightyBleed,
+    },
 };
 
 export function usePhenomenonCTASkin(phenomenon: PhenomenonKey): PhenomenonCTASkin {
     return CTA_SKINS[phenomenon] ?? {};
 }
 
-/** One line of in-universe justification for why this button IS the door
- *  to today's puzzle, rendered under the CTA's subtext. */
 export function PhenomenonLoreCaption({ phenomenon }: { phenomenon: PhenomenonKey }) {
     const lore = PHENOMENON_CTA_LORE[phenomenon];
     if (!lore) return null;
     return (
         <span
-            className="relative block text-[9px] md:text-[10px] tracking-[0.14em] mt-2 text-white/40 italic"
+            className="relative block text-[9px] md:text-[10px] tracking-[0.14em] mt-2 text-white/50 italic font-[family-name:var(--font-body)]"
             style={{ fontFamily: "'Shippori Mincho', serif" }}
         >
-            {lore.jp} <span className="not-italic text-white/25">— {lore.en}</span>
+            {lore.jp} <span className="not-italic text-white/30">— {lore.en}</span>
         </span>
     );
 }

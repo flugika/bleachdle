@@ -35,12 +35,12 @@ const NAV_BUTTONS: NavButtonConfig[] = [
 
 // Static paths that should show the nav but don't get their own nav button
 // (support has no SupportButton in the row, same for the answer-key archive).
-// NOTE: /mockup/:mode pages do NOT belong here — they're already covered
-// generically by GAME_PATH_REGEX below, same as /daily/:mode and
-// /unlimited/:mode. The original code hardcoded only '/mockup/release' as a
-// one-off static path, which meant any other /mockup/:mode page (e.g.
-// /mockup/character) would have silently gotten no nav at all.
-const STATIC_NAV_ONLY_PATHS = ['/soul-society-archives', '/monitor'];
+const STATIC_NAV_ONLY_PATHS = [
+    '/daily',
+    '/unlimited',
+    '/soul-society-archives', 
+    '/monitor'
+];
 
 // Dynamic game routes: /daily/:mode, /unlimited/:mode, /mockup/:mode
 const GAME_PATH_REGEX = /^\/(daily|unlimited|mockup)\/([^/]+)$/;

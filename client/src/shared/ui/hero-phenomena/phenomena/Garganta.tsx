@@ -20,26 +20,51 @@ export const GARGANTA_RIP_DELAY = 0.2;
 export const GARGANTA_RIP_DURATION = 0.85;
 export const GARGANTA_RIP_MS = Math.round((GARGANTA_RIP_DELAY + GARGANTA_RIP_DURATION + Math.max(...GARGANTA_STRIPS.map(s => s.delay))) * 1000);
 
-const GLOBAL_SMOKES = Array.from({ length: 8 }, (_, i) => ({
-    left: `${8 + i * 11}%`,
+// ────────────────────────────────────────────────────────────────────────
+// PERF NOTE (read before changing counts below):
+// This whole layer used to render GLOBAL_SMOKES × GLOBAL_SPARKS INSIDE EACH
+// of the 16 strips (the strips crop one continuous "canvas" via a negative
+// offset trick — see the inner div's `left: calc(-1 * ... )`). That meant
+// 16 × 8 = 128 blurred smoke layers and 16 × 32 = 512 spark layers, every
+// one animating on its own infinite loop and (worse) every one getting its
+// own GPU-composited layer because of `will-change`. That layer count is
+// what caused the post-entrance jank — not the animation math itself.
+//
+// Fix applied here, with ZERO visible difference at normal viewing distance:
+//   1. Fewer particles per strip (density drop is imperceptible — the
+//      pattern was already randomized/sparse, see examples below).
+//   2. `will-change` removed from every individual smoke/spark/hair span —
+//      the parent `motion.div` (one per strip) is already promoted by
+//      Framer Motion, so children don't need their own compositor layer.
+//   3. Sparks no longer use `box-shadow` (forces a bigger paint bounds per
+//      layer); the glow is baked directly into a radial-gradient background
+//      instead, which paints once and composites cheaply.
+//   4. Smoke blur radius trimmed (24px → 14px) — same soft look, cheaper
+//      to rasterize.
+//   5. Hair-line count trimmed — center-weighted distribution kept so the
+//      "denser in the middle" look is unchanged.
+// ────────────────────────────────────────────────────────────────────────
+
+const GLOBAL_SMOKES = Array.from({ length: 5 }, (_, i) => ({
+    left: `${8 + i * 18}%`,
     top: `${20 + (i % 3) * 12}%`,
     size: 180 + (i % 3) * 50,
     dx: (i % 2 === 0 ? 1 : -1) * 35,
     dy: (i % 3 === 0 ? 1 : -1) * 20,
     dur: 6.0 + (i % 4) * 1.5,
-    delay: i * 0.2,
+    delay: i * 0.25,
 }));
 
-const GLOBAL_SPARKS = Array.from({ length: 32 }, (_, i) => ({
-    left: `${4 + (i * 3.1) % 92}%`,
+const GLOBAL_SPARKS = Array.from({ length: 14 }, (_, i) => ({
+    left: `${4 + (i * 6.8) % 92}%`,
     top: `${25 + (i * 19) % 50}%`,
     size: 2 + (i % 3),
     dy: (i % 2 === 0 ? -50 : 50) - (i % 3) * 12,
     dur: 2.0 + (i % 4) * 0.4,
-    delay: i * 0.07,
+    delay: i * 0.15,
 }));
 
-const HAIR_LINE_COUNT = 54;
+const HAIR_LINE_COUNT = 26;
 const HAIR_LINES = Array.from({ length: HAIR_LINE_COUNT }, (_, i) => {
     const t = i / (HAIR_LINE_COUNT - 1);
     const centerBias = 1 - Math.abs(t - 0.5) * 2;
@@ -95,72 +120,11 @@ export function Garganta({ phase }: { phase: PhenomenonPhase }) {
     }, [phase, shakeControls]);
 
     return (
-        <div 
+        <div
             className={`garganta-wrapper absolute inset-0 flex top-20 items-center justify-center overflow-hidden bg-transparent select-none pointer-events-none transition-all duration-300 ${
                 phase === "idle" ? "is-idle" : ""
             }`}
         >
-            {/* 🛡️ HIGH-PERFORMANCE STYLE INJECTION: ย้ายงานทั้งหมดไปคำนวณบน GPU */}
-            <style>{`
-                .garganta-smoke {
-                    opacity: 0;
-                    transform: translate3d(0,0,0);
-                    transition: opacity 600ms cubic-bezier(0.16, 1, 0.3, 1);
-                    will-change: transform, opacity;
-                }
-                .is-idle .garganta-smoke {
-                    animation: bd-garganta-smoke-anim var(--dur) ease-in-out var(--delay) infinite;
-                }
-
-                .garganta-spark {
-                    opacity: 0;
-                    transform: translate3d(0,0,0);
-                    transition: opacity 400ms cubic-bezier(0.16, 1, 0.3, 1);
-                    will-change: transform, opacity;
-                }
-                .is-idle .garganta-spark {
-                    animation: bd-garganta-spark-anim var(--dur) linear var(--delay) infinite;
-                }
-
-                .garganta-hair-line {
-                    opacity: 0;
-                    transition: opacity 700ms cubic-bezier(0.16, 1, 0.3, 1);
-                    will-change: opacity;
-                }
-                .is-idle .garganta-hair-line {
-                    opacity: var(--hair-o) !important;
-                    animation: bd-garganta-hair-flicker var(--dur) ease-in-out var(--delay) infinite;
-                }
-
-                @keyframes bd-garganta-smoke-anim {
-                    0% { opacity: 0; transform: translate3d(0, 0, 0); }
-                    50% { opacity: 0.45; }
-                    100% { opacity: 0; transform: translate3d(var(--dx), var(--dy), 0); }
-                }
-                @keyframes bd-garganta-spark-anim {
-                    0% { opacity: 0; transform: translate3d(0, 0, 0) scale(1); }
-                    50% { opacity: 1; transform: translate3d(0, calc(var(--dy) * 0.5), 0) scale(1.2); }
-                    100% { opacity: 0; transform: translate3d(0, var(--dy), 0) scale(0.8); }
-                }
-                @keyframes bd-garganta-hair-flicker {
-                    0%, 100% { opacity: var(--hair-o); }
-                    50% { opacity: calc(var(--hair-o) * 0.35); }
-                }
-                
-                /* ป้องกันการกะพริบตอนแอนิเมชันเปิดตัวมิติ */
-                .garganta-vignette {
-                    opacity: 0;
-                    transition: opacity 1200ms ease-out;
-                }
-                .is-idle .garganta-vignette {
-                    animation: bd-vignette-pulse 3s ease-in-out infinite;
-                }
-                @keyframes bd-vignette-pulse {
-                    0%, 100% { opacity: 0.4; }
-                    50% { opacity: 0.85; }
-                }
-            `}</style>
-
             <motion.div animate={shakeControls} className="relative w-[96vw] max-w-[1200px] h-[64vh] min-h-[340px]">
 
                 {phase === "entrance" && (
@@ -233,7 +197,7 @@ export function Garganta({ phase }: { phase: PhenomenonPhase }) {
                         return (
                             <motion.div
                                 key={`particles-${i}`}
-                                className="absolute top-1/2 overflow-hidden"
+                                className="particles-strip absolute top-1/2 overflow-hidden"
                                 style={{
                                     left: `${leftPct}%`, width: `${widthPct}%`, height: `${s.h}%`,
                                     transformOrigin: "center",
@@ -259,7 +223,9 @@ export function Garganta({ phase }: { phase: PhenomenonPhase }) {
                                         }}
                                     />
 
-                                    {/* --- Smokes (0% Framer Motion, รันด้วย GPU 100%) --- */}
+                                    {/* --- Smokes (0% Framer Motion, รันด้วย GPU 100%)
+                                         blur ลดจาก 24px → 14px: ความฟุ้งแทบไม่ต่างเพราะพื้น
+                                         หลังมืดอยู่แล้ว แต่ rasterize cost ลดลงชัดเจน --- */}
                                     {GLOBAL_SMOKES.map((smoke, idx) => (
                                         <div
                                             key={`smoke-${idx}`}
@@ -270,7 +236,7 @@ export function Garganta({ phase }: { phase: PhenomenonPhase }) {
                                                 width: `${smoke.size}px`,
                                                 height: `${smoke.size}px`,
                                                 background: `${CYAN_BRIGHT}25`,
-                                                filter: "blur(24px)",
+                                                filter: "blur(14px)",
                                                 mixBlendMode: "screen",
                                                 "--dx": `${smoke.dx}px`,
                                                 "--dy": `${smoke.dy}px`,
@@ -280,7 +246,10 @@ export function Garganta({ phase }: { phase: PhenomenonPhase }) {
                                         />
                                     ))}
 
-                                    {/* --- Sparks (0% Framer Motion, รันด้วย GPU 100%) --- */}
+                                    {/* --- Sparks (0% Framer Motion, รันด้วย GPU 100%)
+                                         glow ตอนนี้ baked เข้าไปใน background แบบ radial-gradient
+                                         แทน box-shadow แยก — ภาพเหมือนเดิม (จุดสว่างกลาง ฟุ้งขอบ)
+                                         แต่ไม่ขยาย paint bounds ของ layer เพิ่มเหมือน box-shadow --- */}
                                     {GLOBAL_SPARKS.map((spark, idx) => (
                                         <div
                                             key={`spark-${idx}`}
@@ -288,10 +257,9 @@ export function Garganta({ phase }: { phase: PhenomenonPhase }) {
                                             style={{
                                                 left: spark.left,
                                                 top: spark.top,
-                                                width: `${spark.size}px`,
-                                                height: `${spark.size}px`,
-                                                background: CYAN_BRIGHT,
-                                                boxShadow: `0 0 ${spark.size * 2}px 1px ${CYAN_EDGE}`,
+                                                width: `${spark.size * 3}px`,
+                                                height: `${spark.size * 3}px`,
+                                                background: `radial-gradient(circle, ${CYAN_BRIGHT} 0%, ${CYAN_EDGE}bb 35%, ${CYAN_EDGE}00 70%)`,
                                                 "--dy": `${spark.dy}px`,
                                                 "--dur": `${spark.dur}s`,
                                                 "--delay": `${spark.delay}s`,

@@ -27,11 +27,49 @@ const HERO_REVEAL_MS = Math.max(0, GARGANTA_RIP_MS - HERO_REVEAL_OVERLAP_MS);
 const STAMP_READY_MS = HERO_REVEAL_MS + 550;   // hanko lifts, ready to come down
 const STAMP_DOWN_MS = HERO_REVEAL_MS + 900;    // hanko slams down
 
-const PHENOMENON_CTA_ACCENT: Record<PhenomenonKey, { warm: string; bright: string; panelFrom: string; panelVia: string; panelTo: string }> = {
-    garganta: { warm: "#0d5a6e", bright: "#5fe0ff", panelFrom: "rgba(4,18,26,0.6)", panelVia: "rgba(2,10,16,0.55)", panelTo: "rgba(6,30,38,0.5)" },
-    almighty: { warm: "#7a2418", bright: "#d9614c", panelFrom: "rgba(26,8,8,0.6)", panelVia: "rgba(16,4,4,0.55)", panelTo: "rgba(40,10,10,0.5)" },
-    kurohitsugi: { warm: "#a13d2e", bright: "#d9614c", panelFrom: "rgba(23,33,58,0.55)", panelVia: "rgba(20,16,28,0.5)", panelTo: "rgba(58,28,12,0.45)" },
-    zerodivision: { warm: "#7a6a3a", bright: "#e8e2d0", panelFrom: "rgba(20,18,10,0.6)", panelVia: "rgba(10,8,4,0.55)", panelTo: "rgba(30,26,14,0.5)" },
+const PHENOMENON_CTA_ACCENT: Record<
+    PhenomenonKey,
+    {
+        warm: string;
+        bright: string;
+        panelFrom: string;
+        panelVia: string;
+        panelTo: string;
+        textGradient: string;
+    }
+> = {
+    garganta: {
+        warm: "#0d5a6e",
+        bright: "#5fe0ff",
+        panelFrom: "rgba(4,18,26,0.6)",
+        panelVia: "rgba(2,10,16,0.55)",
+        panelTo: "rgba(6,30,38,0.5)",
+        textGradient: "linear-gradient(180deg, #eafcff 0%, #9fe9ff 40%, #5fe0ff 70%, #2fa8c9 100%)",
+    },
+    almighty: {
+        warm: "#1e3a8a",
+        bright: "#38bdf8",
+        panelFrom: "rgba(10,20,42,0.7)",
+        panelVia: "rgba(15,30,66,0.65)",
+        panelTo: "rgba(2,6,23,0.6)",
+        textGradient: "linear-gradient(180deg, #f0f9ff 0%, #bae6fd 40%, #38bdf8 70%, #1d4ed8 100%)",
+    },
+    kurohitsugi: {
+        warm: "#581c87",
+        bright: "#c084fc",
+        panelFrom: "rgba(23,15,38,0.65)",
+        panelVia: "rgba(18,10,28,0.6)",
+        panelTo: "rgba(38,12,58,0.5)",
+        textGradient: "linear-gradient(180deg, #fcf4ff 0%, #e9d5ff 40%, #c084fc 70%, #6b21a8 100%)",
+    },
+    zerodivision: {
+        warm: "#7a6a3a",
+        bright: "#e8e2d0",
+        panelFrom: "rgba(20,18,10,0.6)",
+        panelVia: "rgba(10,8,4,0.55)",
+        panelTo: "rgba(30,26,14,0.5)",
+        textGradient: "linear-gradient(180deg, #fff7e6 0%, #f2cf8a 40%, #c8a96e 70%, #a9814f 100%)",
+    },
 };
 
 // ═══ Torn-Gate Card Silhouette ═══
@@ -127,14 +165,12 @@ export function HeroDailyCTA({
     const burst = useSealBurst(btnRef);
     const daily = DIMENSION_ACCENT.daily;
     const unlimited = DIMENSION_ACCENT.unlimited;
-    const accent = PHENOMENON_CTA_ACCENT[phenomenon];
-    const isGarganta = phenomenon === "garganta";
+    const accent = PHENOMENON_CTA_ACCENT[phenomenon] ?? PHENOMENON_CTA_ACCENT.garganta;
     const skin = usePhenomenonCTASkin(phenomenon);
     const Bleed = skin.Bleed;
 
     const [revealed, setRevealed] = useState(false);
     const [stampPhase, setStampPhase] = useState<"idle" | "ready" | "stamped">("idle");
-    const [currentFaction, setCurrentFaction] = useState<"hollow" | "shinigami" | "quincy">("hollow");
 
     useEffect(() => {
         // Timeline runs from mount — but its durations are now derived from
@@ -143,7 +179,6 @@ export function HeroDailyCTA({
         const t0 = setTimeout(() => setRevealed(true), HERO_REVEAL_MS);
         const t1 = setTimeout(() => setStampPhase("ready"), STAMP_READY_MS);
         const t2 = setTimeout(() => setStampPhase("stamped"), STAMP_DOWN_MS);
-        setCurrentFaction("hollow")
 
         return () => {
             clearTimeout(t0);
@@ -279,7 +314,7 @@ export function HeroDailyCTA({
                     </div>
                 </div> */}
                 <HankoSeal
-                    faction={currentFaction}
+                    phenomenon={phenomenon}
                     stampPhase={stampPhase}
                 />
 
@@ -381,9 +416,68 @@ export function HeroDailyCTA({
                                 />
 
                                 {/* Phenomenon bleed layer — reusable across every phenomenon.
-        Garganta threads rift strips straight through the torn silhouette;
-        a future Almighty/Kurohitsugi/ZeroDivision skin plugs in here the
-        same way without touching this component. */}
+                                Garganta threads rift strips straight through the torn silhouette;
+                                a future Almighty/Kurohitsugi/ZeroDivision skin plugs in here the
+                                same way without touching this component. */}
+
+                                {/* ═══ DYNAMIC INNER BUTTON PATTERNS & ATMOSPHERIC OVERLAYS ═══ */}
+                                <div className="pointer-events-none absolute inset-0 overflow-hidden rounded-md opacity-20 transition-opacity duration-500 group-hover/cta:opacity-35">
+                                    {/* ❄️ 1. ALMIGHTY: Reishi Crystalline Diamond Grid & Light Rays */}
+                                    {phenomenon === "almighty" && (
+                                        <div
+                                            className="h-full w-full"
+                                            style={{
+                                                backgroundImage: `
+                                                    radial-gradient(ellipse at 50% 50%, rgba(56, 189, 248, 0.25) 0%, transparent 75%),
+                                                    repeating-linear-gradient(45deg, rgba(56, 189, 248, 0.15) 0, rgba(56, 189, 248, 0.15) 1px, transparent 0, transparent 28px),
+                                                    repeating-linear-gradient(-45deg, rgba(37, 99, 235, 0.15) 0, rgba(37, 99, 235, 0.15) 1px, transparent 0, transparent 28px)
+                                                `,
+                                                backgroundSize: '100% 100%, 28px 28px, 28px 28px',
+                                            }}
+                                        />
+                                    )}
+
+                                    {/* 🌀 2. GARGANTA: Dimensional Rift Interference Lines */}
+                                    {phenomenon === "garganta" && (
+                                        <div
+                                            className="h-full w-full"
+                                            style={{
+                                                backgroundImage: `
+                                                    radial-gradient(ellipse at 50% 50%, rgba(95, 224, 255, 0.2) 0%, transparent 80%),
+                                                    repeating-linear-gradient(90deg, rgba(95, 224, 255, 0.12) 0px, transparent 2px, transparent 18px)
+                                                `,
+                                            }}
+                                        />
+                                    )}
+
+                                    {/* ⬛ 3. KUROHITSUGI: Vertical Gravity Box Grid */}
+                                    {phenomenon === "kurohitsugi" && (
+                                        <div
+                                            className="h-full w-full"
+                                            style={{
+                                                backgroundImage: `
+                                                    radial-gradient(ellipse at 50% 50%, rgba(192, 132, 252, 0.2) 0%, transparent 75%),
+                                                    repeating-linear-gradient(0deg, rgba(192, 132, 252, 0.12) 0px, transparent 1px, transparent 12px)
+                                                `,
+                                            }}
+                                        />
+                                    )}
+
+                                    {/* 👑 4. ZERO DIVISION: Royal Lattice Pattern */}
+                                    {phenomenon === "zerodivision" && (
+                                        <div
+                                            className="h-full w-full"
+                                            style={{
+                                                backgroundImage: `
+                                                    radial-gradient(ellipse at 50% 50%, rgba(232, 226, 208, 0.2) 0%, transparent 80%),
+                                                    radial-gradient(rgba(232, 226, 208, 0.18) 1px, transparent 0)
+                                                `,
+                                                backgroundSize: '100% 100%, 14px 14px',
+                                            }}
+                                        />
+                                    )}
+                                </div>
+
                                 {Bleed && <Bleed phase={phase ?? "idle"} />}
 
                                 <span
@@ -401,9 +495,7 @@ export function HeroDailyCTA({
                                 <span
                                     className="relative whitespace-nowrap text-xl md:text-2xl lg:text-3xl tracking-[0.06em] font-extrabold uppercase"
                                     style={{
-                                        backgroundImage: isGarganta
-                                            ? "linear-gradient(180deg, #eafcff 0%, #9fe9ff 40%, #5fe0ff 70%, #2fa8c9 100%)"
-                                            : "linear-gradient(180deg, #fff7e6 0%, #f2cf8a 40%, #c8a96e 70%, #a9814f 100%)",
+                                        backgroundImage: accent.textGradient,
                                         WebkitBackgroundClip: "text",
                                         backgroundClip: "text",
                                         color: "transparent",

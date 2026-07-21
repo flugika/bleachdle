@@ -7,11 +7,13 @@ import { HeaderDivider } from "@/src/shared/ui/layout/HeaderDivider";
 import SoulSyncLoader from "@/src/shared/ui/loader/SoulSyncLoader";
 import { ModeSelectorModal, GameMode } from "@/src/shared/ui/game-selector/ModeSelectorModal";
 import { MODE_ACCENT, BL_MODES_METADATA } from "@/src/config/mode";
-import { HeroDailyCTA } from "@/src/shared/ui/daily-hub/HeroDailyCTA";
+import { HeroDailyCTA } from "@/src/shared/ui/hero-phenomena/HeroDailyCTA";
 import type { DailyStats } from "@/src/shared/ui/daily-hub/DailyStatsBar";
 import { HeroPhenomenonStage } from "@/src/shared/ui/hero-phenomena/HeroPhenomenonStage";
 import { PhenomenaStyles } from "@/src/shared/ui/hero-phenomena/PhenomenaStyles";
 import { usePhenomenonState } from "@/src/shared/ui/hero-phenomena/HeroPhenomenonStage";
+
+const ENABLE_HERO_PHENOMENA = true;
 
 // ================= 📖 GAME MODE DATABASE =================
 // Accent colors pull from MODE_ACCENT, and kanji pulls from BL_MODES_METADATA
@@ -91,7 +93,7 @@ interface HomePageClientProps {
 export default function HomePageClient({ initialStats }: HomePageClientProps) {
     const { navigate, state } = useSenkaimon();
     const [isMounted, setIsMounted] = useState(false);
-    const { phenomenon, phase } = usePhenomenonState(undefined, "garganta");
+    const { phenomenon, phase } = usePhenomenonState(undefined, "almighty");
 
     // 🛡️ State Management สำหรับ Interactive Flow
     const [isModalOpen, setIsModalOpen] = useState(false);
@@ -185,23 +187,23 @@ export default function HomePageClient({ initialStats }: HomePageClientProps) {
                     );
                 })}
             </svg>
-            <div className="fixed top-3.5 left-7 z-30 hidden lg:flex items-center gap-2 text-[9px] font-mono tracking-[0.3em] text-[#c8a96e]/50 pointer-events-none">
-                <span className="w-6 h-px bg-[#c8a96e]/50" /> 12TH_DIVISION_TERMINAL.READY
+            <div className="fixed top-3.5 left-7 z-30 hidden lg:flex items-center gap-2 text-[9px] font-mono tracking-[0.3em] text-[#c8a96e]/70 pointer-events-none">
+                <span className="w-6 h-px bg-[#c8a96e]/70" /> 12TH_DIVISION_TERMINAL.READY
             </div>
-            <div className="fixed top-3.5 right-7 z-30 hidden lg:flex items-center gap-2 text-[9px] font-mono tracking-[0.3em] text-[#c8a96e]/50 pointer-events-none">
-                SENKAIMON.GATE <span className="w-6 h-px bg-[#c8a96e]/50" />
+            <div className="fixed top-3.5 right-7 z-30 hidden lg:flex items-center gap-2 text-[9px] font-mono tracking-[0.3em] text-[#c8a96e]/70 pointer-events-none">
+                SENKAIMON.GATE <span className="w-6 h-px bg-[#c8a96e]/70" />
             </div>
-            <div className="fixed bottom-3.5 left-7 z-30 hidden lg:block text-[9px] font-mono tracking-[0.3em] text-white/30 pointer-events-none">
+            <div className="fixed bottom-3.5 left-7 z-30 hidden lg:block text-[9px] font-mono tracking-[0.3em] text-white/50 pointer-events-none">
                 LAT_35.68 // LON_139.69
             </div>
-            <div className="fixed bottom-3.5 right-7 z-30 hidden lg:block text-[9px] font-mono tracking-[0.3em] text-white/30 pointer-events-none">
+            <div className="fixed bottom-3.5 right-7 z-30 hidden lg:block text-[9px] font-mono tracking-[0.3em] text-white/50 pointer-events-none">
                 REIATSU.LINK // STABLE
             </div>
 
             {/* ================= 🌌 AMBIENT GLOW (mouse-parallax) ================= */}
             <div
                 ref={glowRef}
-                className={`absolute top-1/2 left-1/2 w-[130vw] h-[130vh] bg-[radial-gradient(circle_at_center,rgba(200,169,110,0.28)_0%,transparent_60%)] pointer-events-none z-0 blur-[110px] transition-opacity duration-[2000ms] ease-in-out will-change-transform ${isMounted ? "opacity-100" : "opacity-0"}`}
+                className={`absolute top-1/2 left-1/2 w-[130vw] h-[130vh] bg-[radial-gradient(circle_at_center,rgba(200,169,110,0.28)_0%,transparent_60%)] pointer-events-none z-10 blur-[110px] transition-opacity duration-[2000ms] ease-in-out will-change-transform ${isMounted ? "opacity-100" : "opacity-0"}`}
                 style={{ transform: "translate(-50%, -50%)" }}
             >
                 <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(200,169,110,0.2)_0%,transparent_30%)] bd-anim" style={{ animation: "bd-aura 5s ease-in-out infinite" }} />
@@ -237,7 +239,9 @@ export default function HomePageClient({ initialStats }: HomePageClientProps) {
                 ))}
             </div>
 
-            <HeroPhenomenonStage phenomenon={phenomenon} phase={phase} />
+            {ENABLE_HERO_PHENOMENA && (
+                <HeroPhenomenonStage phenomenon={phenomenon} phase={phase} />
+            )}
 
             {/* ================= 🎴 HERO INTRO SECTION ================= */}
             <div className="relative z-20 text-center mb-6 max-w-5xl w-full px-4 flex flex-col items-center justify-center font-[family-name:var(--font-display)]">
@@ -277,10 +281,10 @@ export default function HomePageClient({ initialStats }: HomePageClientProps) {
                         卍
                     </div>
 
-                    <HeroDailyCTA handleNavigation={handleNavigation} initialStats={initialStats} phase={phase} />
+                    <HeroDailyCTA handleNavigation={handleNavigation} initialStats={initialStats} phase={ENABLE_HERO_PHENOMENA ? phase : "idle"} phenomenon={phenomenon} />
                 </div>
 
-                <div className="relative my-2 max-w-xl w-full mx-auto group/subtitle">
+                <div className="relative my-4 max-w-xl w-full mx-auto group/subtitle">
                     <span className="absolute -left-[5px] top-1/2 -translate-y-1/2 w-1.5 h-1.5 rotate-45 bg-[#c8a96e]/50 group-hover/subtitle:bg-[#c8a96e] transition-colors duration-500" />
                     <span className="absolute -right-[5px] top-1/2 -translate-y-1/2 w-1.5 h-1.5 rotate-45 bg-[#c8a96e]/50 group-hover/subtitle:bg-[#c8a96e] transition-colors duration-500" />
                     <p className="relative overflow-hidden text-[10px] sm:text-[13px] md:text-sm font-mono tracking-[0.45em] uppercase border-y border-white/10 py-5 backdrop-blur-sm bg-black/20">
@@ -292,7 +296,7 @@ export default function HomePageClient({ initialStats }: HomePageClientProps) {
                 </div>
             </div>
 
-            <PhenomenaStyles />
+            {ENABLE_HERO_PHENOMENA && <PhenomenaStyles />}
 
             {/* ================= ⚖️ MODE HIERARCHY: DAILY (featured) + UNLIMITED (secondary) =================
                 Same two destinations as before, kept intact — just re-weighted so a first-time

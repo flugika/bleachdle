@@ -2669,6 +2669,7 @@ button *:active,
 @media (prefers-reduced-motion: reduce) {
   .bdph-anim {
     animation: none !important;
+    will-change: transform, opacity;
   }
 }
 
@@ -2755,4 +2756,130 @@ button *:active,
     transform: scale(2.2) translateZ(0);
     opacity: 0;
   }
+}
+
+.particles-strip {
+  will-change: transform, opacity;
+}
+
+.garganta-smoke {
+  opacity: 0;
+  transition: opacity 600ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.is-idle .garganta-smoke {
+  animation: bd-garganta-smoke-anim var(--dur) ease-in-out var(--delay) infinite;
+}
+
+.garganta-spark {
+  opacity: 0;
+  transition: opacity 400ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.is-idle .garganta-spark {
+  animation: bd-garganta-spark-anim var(--dur) linear var(--delay) infinite;
+}
+
+.garganta-hair-line {
+  opacity: 0;
+  transition: opacity 700ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.is-idle .garganta-hair-line {
+  opacity: var(--hair-o) !important;
+  animation: bd-garganta-hair-flicker var(--dur) ease-in-out var(--delay) infinite;
+}
+
+@keyframes bd-garganta-smoke-anim {
+  0% {
+    opacity: 0;
+    transform: translate3d(0, 0, 0);
+  }
+
+  50% {
+    opacity: 0.45;
+  }
+
+  100% {
+    opacity: 0;
+    transform: translate3d(var(--dx), var(--dy), 0);
+  }
+}
+
+@keyframes bd-garganta-spark-anim {
+  0% {
+    opacity: 0;
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+
+  50% {
+    opacity: 1;
+    transform: translate3d(0, calc(var(--dy) * 0.5), 0) scale(1.2);
+  }
+
+  100% {
+    opacity: 0;
+    transform: translate3d(0, var(--dy), 0) scale(0.8);
+  }
+}
+
+@keyframes bd-garganta-hair-flicker {
+
+  0%,
+  100% {
+    opacity: var(--hair-o);
+  }
+
+  50% {
+    opacity: calc(var(--hair-o) * 0.35);
+  }
+}
+
+/* ป้องกันการกะพริบตอนแอนิเมชันเปิดตัวมิติ */
+.garganta-vignette {
+  opacity: 0;
+  transition: opacity 1200ms ease-out;
+}
+
+.is-idle .garganta-vignette {
+  animation: bd-vignette-pulse 3s ease-in-out infinite;
+}
+
+@keyframes bd-vignette-pulse {
+
+  0%,
+  100% {
+    opacity: 0.4;
+  }
+
+  50% {
+    opacity: 0.85;
+  }
+}
+
+/* หยุดทุก animation ในเลเยอร์นี้เวลาแท็บไม่ได้ถูกมองเห็น
+                   (ตั้งค่าโดย HeroPhenomenonStage ผ่าน --bdph-play-state) */
+.garganta-smoke,
+.garganta-spark,
+.garganta-hair-line,
+.garganta-vignette {
+  animation-play-state: var(--bdph-play-state, running);
+}
+
+@keyframes bdph-almighty-reishi-shift {
+
+  0%,
+  100% {
+    background-position: 0px 0px, 0px 0px, 0px 0px;
+    opacity: 0.2;
+  }
+
+  50% {
+    background-position: 0px -10px, 14px 14px, -14px 14px;
+    opacity: 0.35;
+  }
+}
+
+.bdph-almighty-bg {
+  animation: bdph-almighty-reishi-shift 8s ease-in-out infinite;
 }

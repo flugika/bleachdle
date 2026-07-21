@@ -80,7 +80,16 @@ export function HeroPhenomenonStage({ dateKey, overridePhenomenon, phenomenon: c
     const phenomenon = controlledPhenomenon ?? internalState.phenomenon;
     const phase = controlledPhase ?? internalState.phase;
 
-    useEffect(() => { setMounted(true); }, []);
+    useEffect(() => {
+        setMounted(true);
+        const root = document.documentElement;
+        const onVis = () => {
+            root.style.setProperty("--bdph-play-state", document.hidden ? "paused" : "running");
+        };
+        document.addEventListener("visibilitychange", onVis);
+        return () => document.removeEventListener("visibilitychange", onVis);
+    }, []);
+
     if (!mounted) return null;
 
     const Renderer = RENDERERS[phenomenon];
@@ -92,10 +101,10 @@ export function HeroPhenomenonStage({ dateKey, overridePhenomenon, phenomenon: c
             <div className="fixed inset-0 z-[8] pointer-events-none overflow-hidden">
                 <Renderer key={phenomenon} phase={phase} />
             </div>
-            <div className="fixed bottom-3.5 left-1/2 -translate-x-1/2 z-30 hidden lg:flex items-center gap-2 text-[9px] font-mono tracking-[0.35em] text-white/30 pointer-events-none">
-                <span className="w-4 h-px bg-white/25" />
+            <div className="fixed bottom-3.5 left-1/2 -translate-x-1/2 z-30 hidden lg:flex items-center gap-2 text-[9px] font-mono tracking-[0.35em] text-white/50 pointer-events-none">
+                <span className="w-4 h-px bg-white/40" />
                 <span>{label.kanji} · {label.name}</span>
-                <span className="w-4 h-px bg-white/25" />
+                <span className="w-4 h-px bg-white/40" />
             </div>
         </>
     );
