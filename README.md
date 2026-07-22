@@ -24,10 +24,10 @@ Screenshots of the home page across different days, different themes:
 
 | Theme | Preview |
 |---|---|
-| **Garganta** | <img width="450" alt="homepage_garganta" src="https://github.com/user-attachments/assets/e86c8e64-4ab5-45ac-8e3f-659ca7257939" /> |
-| **Almighty** | <img width="450" alt="homepage_almighty" src="https://github.com/user-attachments/assets/8a4e8fbd-0713-486c-b8de-7ecaed469759" /> |
-| **Kurohitsugi** | <img width="450" alt="homepage_kurohitsugi" src="https://github.com/user-attachments/assets/3165c406-70e4-4223-b267-c98bd5e9d46d" /> |
-| **Zero Division** | <img width="450" alt="homepage_zerodivision" src="https://github.com/user-attachments/assets/7ec5afcc-17a5-4cb2-8f7b-e530a8a9e63b" /> |
+| **Garganta** | <img width="450" alt="homepage_garganta" src="https://github.com/user-attachments/assets/cc78a463-2a0f-46d4-928b-d34293b74dbf" /> |
+| **Almighty** | <img width="450" alt="homepage_almighty" src="https://github.com/user-attachments/assets/bb0f3031-fc06-41ec-a96e-37e1594adf19" /> |
+| **Kurohitsugi** | <img width="450" alt="homepage_kurohitsugi" src="https://github.com/user-attachments/assets/51e61f7d-eefb-4f4e-a67e-900c779996c1" /> |
+| **Zero Division** | <img width="450" alt="homepage_zerodivision" src="https://github.com/user-attachments/assets/7c024679-7869-4f9c-ae46-3808597baeed" /> |
 
 <details>
 <summary><strong>Standard (full page)</strong></summary>
