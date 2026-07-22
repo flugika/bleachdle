@@ -14,7 +14,7 @@ import { AlmightyShadowEyes } from "./AlmightyShadowEyes";
 export function Almighty({ phase }: { phase: PhenomenonPhase }) {
     return (
         <AlmightyShadowEyes
-            className="absolute inset-0 w-full h-full -z-10 pointer-events-none"
+            className="absolute inset-0 w-full h-full -z-10 pointer-events-none bg-[#050308]"
             width="100%"
             height="100%"
             phase={phase}

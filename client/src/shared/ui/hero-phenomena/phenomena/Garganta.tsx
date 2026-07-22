@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import React, { useEffect, useRef } from "react";
 import { motion, useAnimationControls, type Variants } from "framer-motion";
 import type { PhenomenonPhase } from "../constants";
 
@@ -20,49 +20,17 @@ export const GARGANTA_RIP_DELAY = 0.2;
 export const GARGANTA_RIP_DURATION = 0.85;
 export const GARGANTA_RIP_MS = Math.round((GARGANTA_RIP_DELAY + GARGANTA_RIP_DURATION + Math.max(...GARGANTA_STRIPS.map(s => s.delay))) * 1000);
 
-// ────────────────────────────────────────────────────────────────────────
-// PERF NOTE (read before changing counts below):
-// This whole layer used to render GLOBAL_SMOKES × GLOBAL_SPARKS INSIDE EACH
-// of the 16 strips (the strips crop one continuous "canvas" via a negative
-// offset trick — see the inner div's `left: calc(-1 * ... )`). That meant
-// 16 × 8 = 128 blurred smoke layers and 16 × 32 = 512 spark layers, every
-// one animating on its own infinite loop and (worse) every one getting its
-// own GPU-composited layer because of `will-change`. That layer count is
-// what caused the post-entrance jank — not the animation math itself.
-//
-// Fix applied here, with ZERO visible difference at normal viewing distance:
-//   1. Fewer particles per strip (density drop is imperceptible — the
-//      pattern was already randomized/sparse, see examples below).
-//   2. `will-change` removed from every individual smoke/spark/hair span —
-//      the parent `motion.div` (one per strip) is already promoted by
-//      Framer Motion, so children don't need their own compositor layer.
-//   3. Sparks no longer use `box-shadow` (forces a bigger paint bounds per
-//      layer); the glow is baked directly into a radial-gradient background
-//      instead, which paints once and composites cheaply.
-//   4. Smoke blur radius trimmed (24px → 14px) — same soft look, cheaper
-//      to rasterize.
-//   5. Hair-line count trimmed — center-weighted distribution kept so the
-//      "denser in the middle" look is unchanged.
-// ────────────────────────────────────────────────────────────────────────
-
-const GLOBAL_SMOKES = Array.from({ length: 5 }, (_, i) => ({
-    left: `${8 + i * 18}%`,
-    top: `${20 + (i % 3) * 12}%`,
-    size: 180 + (i % 3) * 50,
-    dx: (i % 2 === 0 ? 1 : -1) * 35,
-    dy: (i % 3 === 0 ? 1 : -1) * 20,
-    dur: 6.0 + (i % 4) * 1.5,
-    delay: i * 0.25,
-}));
-
-const GLOBAL_SPARKS = Array.from({ length: 14 }, (_, i) => ({
-    left: `${4 + (i * 6.8) % 92}%`,
-    top: `${25 + (i * 19) % 50}%`,
-    size: 2 + (i % 3),
-    dy: (i % 2 === 0 ? -50 : 50) - (i % 3) * 12,
-    dur: 2.0 + (i % 4) * 0.4,
-    delay: i * 0.15,
-}));
+const STRIP_COUNT = GARGANTA_STRIPS.length;
+export const PRECOMPUTED_STRIPS = GARGANTA_STRIPS.map((strip, i) => {
+    const widthPct = `${100 / STRIP_COUNT + 0.5}%`;
+    const leftPct = `${(i / STRIP_COUNT) * 100}%`;
+    return {
+        ...strip,
+        index: i,
+        widthPct,
+        leftPct,
+    };
+});
 
 const HAIR_LINE_COUNT = 26;
 const HAIR_LINES = Array.from({ length: HAIR_LINE_COUNT }, (_, i) => {
@@ -93,21 +61,80 @@ const stripVariants: Variants = {
             times: [0, 0.4, 0.7, 0.88, 1],
         },
     }),
-    idle: ({ index }) => ({
+    idle: {
         y: "-50%",
-        scaleY: [1, 1.015, 0.99, 1.02, 1],
+        scaleY: 1,
         opacity: 1,
-        transition: {
-            duration: 3.2 + (index % 4) * 0.4,
-            repeat: Infinity,
-            ease: "easeInOut",
-        },
-    }),
+        transition: { duration: 0.1 }
+    },
 };
 
-export function Garganta({ phase }: { phase: PhenomenonPhase }) {
+// 💡 Micro-Canvas: กลับมาใช้ควัน 2 เลเยอร์ที่กำลังสวยงามและเบาสบายเครื่อง
+const StripParticleCanvas = React.memo(function StripParticleCanvas({ index }: { index: number }) {
+    const canvasRef = useRef<HTMLCanvasElement>(null);
+
+    useEffect(() => {
+        const canvas = canvasRef.current;
+        if (!canvas) return;
+        const ctx = canvas.getContext("2d");
+        if (!ctx) return;
+
+        let animationFrameId: number;
+        let time = index * 1.5;
+
+        const particles = [
+            { x: 30, y: 80, r: 40, speed: 0.4, alpha: 0.12 },
+            { x: 20, y: 200, r: 25, speed: -0.6, alpha: 0.08 }
+        ];
+
+        const render = () => {
+            time += 0.03;
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            const grad = ctx.createRadialGradient(
+                canvas.width / 2, canvas.height / 2, 5,
+                canvas.width / 2, canvas.height / 2, canvas.width * 1.2
+            );
+            grad.addColorStop(0, "transparent");
+            grad.addColorStop(0.7, "rgba(47, 208, 245, 0.15)");
+            grad.addColorStop(1, "transparent");
+            ctx.fillStyle = grad;
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            particles.forEach((p, idx) => {
+                const currentY = p.y + Math.sin(time + idx * 2) * 15;
+                const pGrad = ctx.createRadialGradient(
+                    p.x, currentY, 0,
+                    p.x, currentY, p.r
+                );
+                pGrad.addColorStop(0, `rgba(174, 244, 255, ${p.alpha * 1.5})`);
+                pGrad.addColorStop(1, "rgba(174, 244, 255, 0)");
+
+                ctx.fillStyle = pGrad;
+                ctx.beginPath();
+                ctx.arc(p.x, currentY, p.r, 0, Math.PI * 2);
+                ctx.fill();
+            });
+
+            animationFrameId = requestAnimationFrame(render);
+        };
+
+        canvas.width = 60;
+        canvas.height = 300;
+        render();
+
+        return () => {
+            cancelAnimationFrame(animationFrameId);
+        };
+    }, [index]);
+
+    return <canvas ref={canvasRef} className="absolute inset-0 w-full h-full pointer-events-none" />;
+});
+
+export const Garganta = React.memo(function Garganta({ phase }: { phase: PhenomenonPhase }) {
     const shakeControls = useAnimationControls();
     const startedShake = useRef(false);
+    const isIdle = phase === "idle";
 
     useEffect(() => {
         if (phase !== "entrance" || startedShake.current) return;
@@ -121,11 +148,21 @@ export function Garganta({ phase }: { phase: PhenomenonPhase }) {
 
     return (
         <div
-            className={`garganta-wrapper absolute inset-0 flex top-20 items-center justify-center overflow-hidden bg-transparent select-none pointer-events-none transition-all duration-300 ${
-                phase === "idle" ? "is-idle" : ""
-            }`}
+            className={`garganta-wrapper absolute inset-0 flex items-center justify-center overflow-hidden bg-[#0c0a0d] select-none pointer-events-none transition-all duration-300 ${isIdle ? "is-idle" : ""}`}
         >
-            <motion.div animate={shakeControls} className="relative w-[96vw] max-w-[1200px] h-[64vh] min-h-[340px]">
+            <style>{`
+                @keyframes garganta-gpu-idle {
+                    0%, 100% { transform: translateY(-50%) scaleY(1) translateZ(0); }
+                    25% { transform: translateY(-50%) scaleY(1.015) translateZ(0); }
+                    50% { transform: translateY(-50%) scaleY(0.99) translateZ(0); }
+                    75% { transform: translateY(-50%) scaleY(1.02) translateZ(0); }
+                }
+                .garganta-strip-idle {
+                    animation: garganta-gpu-idle var(--idle-dur) ease-in-out infinite !important;
+                }
+            `}</style>
+
+            <motion.div animate={shakeControls} className="relative top-10 w-[96vw] max-w-[1200px] h-[64vh] min-h-[340px]">
 
                 {phase === "entrance" && (
                     <motion.div
@@ -140,34 +177,39 @@ export function Garganta({ phase }: { phase: PhenomenonPhase }) {
                     />
                 )}
 
-                {/* ═══ LAYER 1: 16 ช่องมิติสีดำ (ใช้ prop 'phase' ตรงกัน 100%) ═══ */}
+                {/* ═══ LAYER: 16 บล็อกอิสระพร้อมขอบเรืองแสงเนียนตาและ Canvas ภายใน ═══ */}
                 <div className="absolute inset-0 flex w-full h-full z-10">
-                    {GARGANTA_STRIPS.map((s, i) => {
-                        const widthPct = 100 / GARGANTA_STRIPS.length + 0.5;
-                        const leftPct = (i / GARGANTA_STRIPS.length) * 100;
-                        return (
-                            <motion.div
-                                key={`void-${i}`}
-                                className="absolute top-1/2"
-                                style={{
-                                    left: `${leftPct}%`, width: `${widthPct}%`, height: `${s.h}%`,
-                                    transformOrigin: "center",
-                                    background: `linear-gradient(180deg, ${VOID_TOP}, ${VOID_BOTTOM} 50%, ${VOID_TOP})`,
-                                    boxShadow: `inset 0 0 25px rgba(10,60,80,0.8)`,
-                                }}
-                                initial={{ y: "-50%", scaleY: 0, opacity: 0 }}
-                                custom={{ delay: s.delay, index: i }}
-                                variants={stripVariants}
-                                animate={phase}
-                            >
-                                <div className="absolute top-0 left-0 right-0 h-[2px] bg-white opacity-90" style={{ boxShadow: `0 1px 10px 2px ${CYAN_BRIGHT}` }} />
-                                <div className="absolute bottom-0 left-0 right-0 h-[2px] bg-white opacity-90" style={{ boxShadow: `0 -1px 10px 2px ${CYAN_BRIGHT}` }} />
-                            </motion.div>
-                        );
-                    })}
+                    {PRECOMPUTED_STRIPS.map((s) => (
+                        <motion.div
+                            key={`strip-${s.index}`}
+                            className={`absolute top-1/2 overflow-hidden ${isIdle ? "garganta-strip-idle" : ""}`}
+                            style={{
+                                left: s.leftPct,
+                                width: s.widthPct,
+                                height: `${s.h}%`,
+                                transformOrigin: "center",
+                                background: `linear-gradient(180deg, #051b24 0%, ${VOID_TOP} 15%, ${VOID_BOTTOM} 50%, ${VOID_TOP} 85%, #051b24 100%)`,
+                                borderLeft: `1px solid rgba(47, 208, 245, 0.35)`,
+                                borderRight: `1px solid rgba(47, 208, 245, 0.35)`,
+                                boxShadow: `inset 0 0 12px rgba(47, 208, 245, 0.15)`,
+                                willChange: "transform",
+                                ["--idle-dur" as string]: `${3.2 + (s.index % 4) * 0.4}s`,
+                            } as React.CSSProperties}
+                            initial={{ y: "-50%", scaleY: 0, opacity: 0 }}
+                            custom={{ delay: s.delay, index: s.index }}
+                            variants={stripVariants}
+                            animate={phase}
+                        >
+                            <StripParticleCanvas index={s.index} />
+
+                            {/* 💡 ขอบเรืองแสงหัว-ท้ายแบบจัดเต็ม (Neon Energy Glow) */}
+                            <div className="absolute -top-[6px] left-[-3px] right-[-3px] h-[14px] z-20 pointer-events-none" style={{ background: `linear-gradient(180deg, transparent 0%, rgba(47,208,245,0.6) 30%, ${CYAN_BRIGHT} 50%, rgba(47,208,245,0.6) 70%, transparent 100%)`, borderRadius: '50%', filter: 'blur(0.5px)' }} />
+                            <div className="absolute -bottom-[6px] left-[-3px] right-[-3px] h-[14px] z-20 pointer-events-none" style={{ background: `linear-gradient(180deg, transparent 0%, rgba(47,208,245,0.6) 30%, ${CYAN_BRIGHT} 50%, rgba(47,208,245,0.6) 70%, transparent 100%)`, borderRadius: '50%', filter: 'blur(0.5px)' }} />
+                        </motion.div>
+                    ))}
                 </div>
 
-                {/* ═══ LAYER 1.5: เส้นขนแตกละเอียด (เปลี่ยนมาใช้ GPU-flicker Class-based) ═══ */}
+                {/* ═══ LAYER 1.5: เส้นขนแตกละเอียด ═══ */}
                 <div className="absolute inset-0 w-full h-full z-[15] pointer-events-none overflow-hidden">
                     {HAIR_LINES.map((hl, i) => (
                         <span
@@ -179,8 +221,8 @@ export function Garganta({ phase }: { phase: PhenomenonPhase }) {
                                 width: hl.w,
                                 height: hl.h,
                                 background: `linear-gradient(180deg, transparent 0%, ${CYAN_BRIGHT} 12%, ${CYAN_EDGE} 50%, ${CYAN_BRIGHT} 88%, transparent 100%)`,
-                                filter: "blur(0.2px)",
                                 transitionDelay: `${hl.revealDelay}s`,
+                                willChange: "transform, opacity",
                                 "--hair-o": hl.o,
                                 "--dur": `${hl.dur}s`,
                                 "--delay": `${hl.delay}s`,
@@ -188,98 +230,12 @@ export function Garganta({ phase }: { phase: PhenomenonPhase }) {
                         />
                     ))}
                 </div>
-
-                {/* ═══ LAYER 2: 16 ช่องมิติสำหรับครอปควันและละออง (Sync แอนิเมชันกับมิติหลักอย่างไร้รอยต่อ) ═══ */}
-                <div className="absolute inset-0 flex w-full h-full z-20 pointer-events-none">
-                    {GARGANTA_STRIPS.map((s, i) => {
-                        const widthPct = 100 / GARGANTA_STRIPS.length + 0.5;
-                        const leftPct = (i / GARGANTA_STRIPS.length) * 100;
-                        return (
-                            <motion.div
-                                key={`particles-${i}`}
-                                className="particles-strip absolute top-1/2 overflow-hidden"
-                                style={{
-                                    left: `${leftPct}%`, width: `${widthPct}%`, height: `${s.h}%`,
-                                    transformOrigin: "center",
-                                }}
-                                initial={{ y: "-50%", scaleY: 0, opacity: 0 }}
-                                custom={{ delay: s.delay, index: i }}
-                                variants={stripVariants}
-                                animate={phase} // บังคับผูกสัมพันธ์กับ 'phase' ของแม่โดยตรงเพื่อความแม่นยำระดับซับพิกเซล
-                            >
-                                <div
-                                    className="absolute top-0 h-full"
-                                    style={{
-                                        width: `min(96vw, 1200px)`,
-                                        left: `calc(-1 * min(96vw, 1200px) * ${i / GARGANTA_STRIPS.length})`,
-                                    }}
-                                >
-                                    {/* --- Vignette Effect (ย้ายจาก Framer Motion เป็น CSS Pulse) --- */}
-                                    <div
-                                        className="garganta-vignette absolute inset-0 pointer-events-none"
-                                        style={{
-                                            background: `radial-gradient(circle at center, transparent 20%, ${CYAN_EDGE}30 80%, transparent 100%)`,
-                                            mixBlendMode: "screen",
-                                        }}
-                                    />
-
-                                    {/* --- Smokes (0% Framer Motion, รันด้วย GPU 100%)
-                                         blur ลดจาก 24px → 14px: ความฟุ้งแทบไม่ต่างเพราะพื้น
-                                         หลังมืดอยู่แล้ว แต่ rasterize cost ลดลงชัดเจน --- */}
-                                    {GLOBAL_SMOKES.map((smoke, idx) => (
-                                        <div
-                                            key={`smoke-${idx}`}
-                                            className="garganta-smoke absolute rounded-full pointer-events-none"
-                                            style={{
-                                                left: smoke.left,
-                                                top: smoke.top,
-                                                width: `${smoke.size}px`,
-                                                height: `${smoke.size}px`,
-                                                background: `${CYAN_BRIGHT}25`,
-                                                filter: "blur(14px)",
-                                                mixBlendMode: "screen",
-                                                "--dx": `${smoke.dx}px`,
-                                                "--dy": `${smoke.dy}px`,
-                                                "--dur": `${smoke.dur}s`,
-                                                "--delay": `${smoke.delay}s`,
-                                            } as React.CSSProperties}
-                                        />
-                                    ))}
-
-                                    {/* --- Sparks (0% Framer Motion, รันด้วย GPU 100%)
-                                         glow ตอนนี้ baked เข้าไปใน background แบบ radial-gradient
-                                         แทน box-shadow แยก — ภาพเหมือนเดิม (จุดสว่างกลาง ฟุ้งขอบ)
-                                         แต่ไม่ขยาย paint bounds ของ layer เพิ่มเหมือน box-shadow --- */}
-                                    {GLOBAL_SPARKS.map((spark, idx) => (
-                                        <div
-                                            key={`spark-${idx}`}
-                                            className="garganta-spark absolute rounded-full pointer-events-none"
-                                            style={{
-                                                left: spark.left,
-                                                top: spark.top,
-                                                width: `${spark.size * 3}px`,
-                                                height: `${spark.size * 3}px`,
-                                                background: `radial-gradient(circle, ${CYAN_BRIGHT} 0%, ${CYAN_EDGE}bb 35%, ${CYAN_EDGE}00 70%)`,
-                                                "--dy": `${spark.dy}px`,
-                                                "--dur": `${spark.dur}s`,
-                                                "--delay": `${spark.delay}s`,
-                                            } as React.CSSProperties}
-                                        />
-                                    ))}
-                                </div>
-                            </motion.div>
-                        );
-                    })}
-                </div>
             </motion.div>
         </div>
     );
-}
+});
 
-/**
- * ═══ GargantaContentMask ═══
- */
-export function GargantaContentMask({
+export const GargantaContentMask = React.memo(function GargantaContentMask({
     phase,
     children,
 }: {
@@ -297,9 +253,7 @@ export function GargantaContentMask({
         },
         idle: {
             opacity: 1,
-            transition: {
-                duration: 0.2,
-            },
+            transition: { duration: 0.2 },
         },
     };
 
@@ -323,12 +277,9 @@ export function GargantaContentMask({
             animate={phase}
             variants={containerVariants}
         >
-            <motion.div
-                initial={{ opacity: 1 }}
-                variants={contentVariants}
-            >
+            <motion.div initial={{ opacity: 1 }} variants={contentVariants}>
                 {children}
             </motion.div>
         </motion.div>
     );
-}
+});

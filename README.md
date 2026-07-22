@@ -2,7 +2,7 @@
 
 > A Wordle-style character guessing game for Bleach fans — unlimited mode, attribute-based feedback, Soul Society aesthetic.
 
-**Last Updated:** 22 July 2026, 4:49 AM.
+**Last Updated:** 22 July 2026, 9:49 PM.
 
 [![Next.js](https://img.shields.io/badge/Next.js-15-black?logo=next.js)](https://nextjs.org/)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5-blue?logo=typescript)](https://www.typescriptlang.org/)
@@ -372,11 +372,6 @@ bleachdle
 │  │  │  │  ├─ Bankai_Byakuya_Kuchiki.mp3
 │  │  │  │  ├─ Bankai_Chojiro_Sasakibe.mp3
 │  │  │  │  ├─ Bankai_Genryusai_Shigekuni_Yamamoto.mp3
-│  │  │  │  └─ ...
-│  │  │  └─ songs
-│  │  │     ├─ 1106_tybw.mp3
-│  │  │     ├─ after_dark.mp3
-│  │  │     ├─ alones.mp3
 │  │  │     └─ ...
 │  │  ├─ characters
 │  │  │  ├─ Aaroniero_Arruruerie.webp
@@ -743,9 +738,11 @@ bleachdle
 │  │  │     ├─ hero-phenomena
 │  │  │     │  ├─ constants.ts
 │  │  │     │  ├─ hankoSeal
-│  │  │     │  │  ├─ AlmightyEyeIcon.tsx
+│  │  │     │  │  ├─ AlmightyIcon.tsx
+│  │  │     │  │  ├─ GargantaIcon.tsx
 │  │  │     │  │  ├─ HankoSeal.tsx
-│  │  │     │  │  └─ HollowMaskIcon.tsx
+│  │  │     │  │  ├─ KurohitsugiIcon.tsx
+│  │  │     │  │  └─ ZeroDivisionIcon.tsx
 │  │  │     │  ├─ HeroDailyCTA.tsx
 │  │  │     │  ├─ HeroPhenomenonStage.tsx
 │  │  │     │  ├─ phenomena
@@ -755,8 +752,9 @@ bleachdle
 │  │  │     │  │  ├─ Garganta.tsx
 │  │  │     │  │  ├─ GargantaBleed.tsx
 │  │  │     │  │  ├─ Kurohitsugi.tsx
-│  │  │     │  │  └─ ZeroDivision.tsx
-│  │  │     │  ├─ PhenomenaStyles.tsx
+│  │  │     │  │  ├─ KurohitsugiBleed.tsx
+│  │  │     │  │  ├─ ZeroDivision.tsx
+│  │  │     │  │  └─ ZeroDivisionBleed.tsx
 │  │  │     │  ├─ PhenomenonPlayButton.tsx
 │  │  │     │  └─ useDailyPhenomenon.ts
 │  │  │     ├─ input.tsx

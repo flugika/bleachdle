@@ -10,7 +10,6 @@ import { MODE_ACCENT, BL_MODES_METADATA } from "@/src/config/mode";
 import { HeroDailyCTA } from "@/src/shared/ui/hero-phenomena/HeroDailyCTA";
 import type { DailyStats } from "@/src/shared/ui/daily-hub/DailyStatsBar";
 import { HeroPhenomenonStage } from "@/src/shared/ui/hero-phenomena/HeroPhenomenonStage";
-import { PhenomenaStyles } from "@/src/shared/ui/hero-phenomena/PhenomenaStyles";
 import { usePhenomenonState } from "@/src/shared/ui/hero-phenomena/HeroPhenomenonStage";
 
 const ENABLE_HERO_PHENOMENA = true;
@@ -88,12 +87,14 @@ const PARTICLES = [
 
 interface HomePageClientProps {
     initialStats: DailyStats;
+    dateKey: string;
 }
 
-export default function HomePageClient({ initialStats }: HomePageClientProps) {
+export default function HomePageClient({ initialStats, dateKey }: HomePageClientProps) {
     const { navigate, state } = useSenkaimon();
     const [isMounted, setIsMounted] = useState(false);
-    const { phenomenon, phase } = usePhenomenonState(undefined, "almighty");
+    const { phenomenon, phase } = usePhenomenonState(dateKey);
+    // const { phenomenon, phase } = usePhenomenonState(dateKey, "kurohitsugi");
 
     // 🛡️ State Management สำหรับ Interactive Flow
     const [isModalOpen, setIsModalOpen] = useState(false);
@@ -209,11 +210,6 @@ export default function HomePageClient({ initialStats }: HomePageClientProps) {
                 <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(200,169,110,0.2)_0%,transparent_30%)] bd-anim" style={{ animation: "bd-aura 5s ease-in-out infinite" }} />
             </div>
 
-            {/* Giant kanji watermark */}
-            <div className="absolute top-1/2 left-1/2 text-center -translate-x-1/2 -translate-y-1/2 text-[38vw] font-black text-white/[0.02] pointer-events-none tracking-[0.1em] leading-none z-0 select-none transition-all duration-1000 animate-pulse">
-                卍解
-            </div>
-
             {/* Scanning sweep line */}
             <div
                 className="absolute inset-x-0 top-0 h-24 bg-gradient-to-b from-[#c8a96e]/10 to-transparent pointer-events-none z-0 bd-anim"
@@ -289,14 +285,12 @@ export default function HomePageClient({ initialStats }: HomePageClientProps) {
                     <span className="absolute -right-[5px] top-1/2 -translate-y-1/2 w-1.5 h-1.5 rotate-45 bg-[#c8a96e]/50 group-hover/subtitle:bg-[#c8a96e] transition-colors duration-500" />
                     <p className="relative overflow-hidden text-[10px] sm:text-[13px] md:text-sm font-mono tracking-[0.45em] uppercase border-y border-white/10 py-5 backdrop-blur-sm bg-black/20">
                         <span className="pointer-events-none absolute inset-y-0 left-[-45%] w-1/3 bg-gradient-to-r from-transparent via-[#c8a96e]/20 to-transparent skew-x-[-20deg] animate-[subtitle-scan_4.5s_ease-in-out_infinite]" />
-                        <span className="relative text-[#c8a96e]/90">THOUSAND-YEAR BLOOD WAR</span>
+                        <span className="relative text-[#c8a96e]/90 font-bold">THOUSAND-YEAR BLOOD WAR</span>
                         <br />
                         <span className="relative text-white/40">THE SPIRITUAL DECODING INTERFACE</span>
                     </p>
                 </div>
             </div>
-
-            {ENABLE_HERO_PHENOMENA && <PhenomenaStyles />}
 
             {/* ================= ⚖️ MODE HIERARCHY: DAILY (featured) + UNLIMITED (secondary) =================
                 Same two destinations as before, kept intact — just re-weighted so a first-time

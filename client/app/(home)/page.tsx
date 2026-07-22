@@ -16,5 +16,8 @@ export default async function Home() {
     const initialStats = (!error && data) ? data : {};
 
     // 🚀 โยนข้อมูลที่ดึงเสร็จแล้ว ลงไปให้ Client Component เอาไปวาด UI ทันที
-    return <HomePageClient initialStats={initialStats} />;
+    // ส่ง `date` ต่อเป็น dateKey ให้ usePhenomenonState ด้วย เพื่อให้ hero
+    // phenomenon กับ daily stats อ้างอิงวันเดียวกันเป๊ะๆ ไม่มีโอกาสเพี้ยน
+    // ตอนใกล้เที่ยงคืน (server cutover กับ client local date คนละวันกัน)
+    return <HomePageClient initialStats={initialStats} dateKey={date} />;
 }

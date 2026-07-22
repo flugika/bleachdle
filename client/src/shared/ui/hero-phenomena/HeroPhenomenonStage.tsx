@@ -3,7 +3,6 @@
 import { useEffect, useState, type ComponentType } from "react";
 import { useDailyPhenomenon } from "./useDailyPhenomenon";
 import { PHENOMENON_LABELS, PHENOMENON_ENTRANCE_MS, type PhenomenonKey, type PhenomenonPhase } from "./constants";
-import { PhenomenaStyles } from "./PhenomenaStyles";
 import { Garganta } from "./phenomena/Garganta";
 import { Almighty } from "./phenomena/Almighty";
 import { Kurohitsugi } from "./phenomena/Kurohitsugi";
@@ -18,6 +17,13 @@ const RENDERERS: Record<PhenomenonKey, ComponentType<{ phase: PhenomenonPhase }>
 
 export interface HeroPhenomenonStageProps {
     dateKey?: string;
+    /**
+     * NOT used in production right now — the live daily pick always comes
+     * from useDailyPhenomenon's deterministic no-repeat rotation. Kept so we
+     * can force/preview a specific phenomenon while building and QA-ing NEW
+     * hero phenomena before they join the rotation. Do not wire this into
+     * any production call site (HomePageClient etc.) — dev/QA only.
+     */
     overridePhenomenon?: PhenomenonKey;
     /**
      * Externally-owned timeline (from a parent's own usePhenomenonState call).
@@ -31,29 +37,18 @@ export interface HeroPhenomenonStageProps {
 }
 
 /**
- * 1. ฟังก์ชันตัวช่วยสำหรับ Force ปรากฏการณ์ผ่าน URL (เช่น ?phenomenon=garganta)
- * ทำการ Export ออกไปเพื่อให้ Hook ตัวอื่นเรียกใช้ร่วมกันได้ ไร้ปัญหา Scope
- */
-export function useForcedPhenomenon(): PhenomenonKey | undefined {
-    const [forced, setForced] = useState<PhenomenonKey | undefined>(undefined);
-    useEffect(() => {
-        const param = new URLSearchParams(window.location.search).get("phenomenon");
-        if (param && (Object.keys(PHENOMENON_LABELS) as PhenomenonKey[]).includes(param as PhenomenonKey)) {
-            setForced(param as PhenomenonKey);
-        }
-    }, []);
-    return forced;
-}
-
-/**
- * 2. Shared Hook สำหรับดึง State ปรากฏการณ์ปัจจุบันไปใช้ร่วมกับ Component อื่นๆ
+ * Shared Hook สำหรับดึง State ปรากฏการณ์ปัจจุบันไปใช้ร่วมกับ Component อื่นๆ
  * (เช่น นำไปใช้คู่กับ GargantaContentMask ในหน้าปุ่มกด HeroDailyCTA)
+ *
+ * `overridePhenomenon` มีไว้เพื่อ dev/QA เท่านั้น (เช่น hardcode ทดสอบ
+ * phenomenon ใหม่ก่อนปล่อยเข้า rotation จริง) — production call sites
+ * ไม่ควร pass ค่านี้เลย ปล่อยให้ useDailyPhenomenon เป็นแหล่งความจริงเดียว
+ * ของ "วันนี้คือปรากฏการณ์ไหน" (deterministic, no-repeat)
  */
 export function usePhenomenonState(dateKey?: string, overridePhenomenon?: PhenomenonKey, enabled: boolean = true) {
     const [phase, setPhase] = useState<PhenomenonPhase>("entrance");
     const dailyPhenomenon = useDailyPhenomenon(dateKey);
-    const urlForced = useForcedPhenomenon();
-    const phenomenon = overridePhenomenon ?? urlForced ?? dailyPhenomenon;
+    const phenomenon = overridePhenomenon ?? dailyPhenomenon;
 
     useEffect(() => {
         if (!enabled) return; // parent owns the clock — don't run our own
@@ -66,8 +61,7 @@ export function usePhenomenonState(dateKey?: string, overridePhenomenon?: Phenom
 }
 
 /**
- * 3. Main Stage Component
- * ปรับปรุงใหม่ให้ดึง Logic มาจาก usePhenomenonState โดยตรง ไม่ซ้ำซ้อนกันแล้ว
+ * Main Stage Component
  */
 export function HeroPhenomenonStage({ dateKey, overridePhenomenon, phenomenon: controlledPhenomenon, phase: controlledPhase }: HeroPhenomenonStageProps) {
     const [mounted, setMounted] = useState(false);
@@ -97,7 +91,6 @@ export function HeroPhenomenonStage({ dateKey, overridePhenomenon, phenomenon: c
 
     return (
         <>
-            <PhenomenaStyles />
             <div className="fixed inset-0 z-[8] pointer-events-none overflow-hidden">
                 <Renderer key={phenomenon} phase={phase} />
             </div>

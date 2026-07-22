@@ -589,17 +589,6 @@ button *:active,
   }
 }
 
-/* [FIXED] อัปเกรดความเข้มของฟอนต์ยักษ์ เพิ่มกรอบและเงาเรืองแสงสีม่วงวิญญาณจางๆ (Reiatsu Aura) */
-.bleach-watermark {
-  font-family: 'Impact', 'Arial Black', -apple-system, sans-serif;
-  color: transparent;
-  /* เพิ่มความทึบของเส้นขอบตัวอักษรเป็น 0.08 และหยอดเงา Glow ด้านหลังให้ลอยขึ้นมาจากความมืด */
-  -webkit-text-stroke: 1px rgba(255, 255, 255, 0.08);
-  text-shadow: 0 0 27px rgba(140, 90, 255, 0.06);
-  letter-spacing: -0.02em;
-  animation: trackingGlance 24s ease-in-out infinite alternate;
-}
-
 @keyframes trackingGlance {
   0% {
     letter-spacing: -0.04em;
@@ -2099,17 +2088,39 @@ button *:active,
   .kido-spin-ccw,
   .kido-pulse,
   .kido-sparkle,
-  .kido-emblem {
-    animation: none;
-  }
-
-  /* กลุ่มที่ 2: บังคับปิดแอนิเมชันขั้นเด็ดขาด (มี !important) */
+  .kido-emblem,
   .reiatsu-particle,
   .seal-ring-loading,
   .seal-ring-ready,
   .seal-ring-burst,
   .seal-ring-active,
-  .bd-anim {
+  .bd-anim,
+  .bd-countdown-flicker,
+  .bd-empty-scan,
+  .bd-empty-glow,
+  .bd-empty-flicker,
+  .bd-hanko-stamp,
+  .bd-panel-breathe-el,
+  .bd-cta-sheen,
+  .bd-cta-glow,
+  .bd-halo-ring,
+  .bdph-anim {
+    animation: none !important;
+    opacity: 1 !important;
+    transform: none !important;
+    will-change: auto;
+  }
+
+  /* กลุ่มที่ 2: บังคับปิดแอนิเมชันขั้นเด็ดขาด (มี !important) */
+  .bd-anim,
+  .bdph-zd-anim,
+  .zdi-spin-slow,
+  .zdi-spin-rev,
+  .zdi-pulse,
+  .zdi-ink-breathe,
+  .zdi-kanji-breathe,
+  .zdi-spark,
+  circle {
     animation: none !important;
   }
 
@@ -2125,6 +2136,11 @@ button *:active,
   .bd-halo-ring {
     animation: none !important;
     opacity: 1 !important;
+  }
+
+  .bdph-anim {
+    animation: none !important;
+    will-change: transform, opacity;
   }
 
 }
@@ -2220,12 +2236,6 @@ button *:active,
 
   to {
     transform: rotate(360deg);
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  circle {
-    animation: none !important;
   }
 }
 
@@ -2420,9 +2430,8 @@ button *:active,
 
 @keyframes bdph-garganta-rip {
   0% {
-    transform: scale(0.02, 0.35) rotate(-2deg);
+    transform: scale3d(0.02, 0.35, 1) rotate(-2deg);
     opacity: 0;
-    filter: blur(3px);
   }
 
   10% {
@@ -2430,16 +2439,15 @@ button *:active,
   }
 
   45% {
-    transform: scale(1.08, 1.05) rotate(1deg);
-    filter: blur(0px);
+    transform: scale3d(1.08, 1.05, 1) rotate(1deg);
   }
 
   70% {
-    transform: scale(0.94, 0.98) rotate(-0.5deg);
+    transform: scale3d(0.94, 0.98, 1) rotate(-0.5deg);
   }
 
   100% {
-    transform: scale(1, 1) rotate(0deg);
+    transform: scale3d(1, 1, 1) rotate(0deg);
   }
 }
 
@@ -2666,13 +2674,6 @@ button *:active,
   }
 }
 
-@media (prefers-reduced-motion: reduce) {
-  .bdph-anim {
-    animation: none !important;
-    will-change: transform, opacity;
-  }
-}
-
 @keyframes bd-halo-spin {
   0% {
     transform: rotate(0deg);
@@ -2742,7 +2743,6 @@ button *:active,
 .bd-hanko-filtered-core {
   transform: translateZ(0);
   backface-visibility: hidden;
-  will-change: filter;
 }
 
 /* Shockwave */
@@ -2882,4 +2882,1210 @@ button *:active,
 
 .bdph-almighty-bg {
   animation: bdph-almighty-reishi-shift 8s ease-in-out infinite;
+}
+
+/* ============================ KUROHITSUGI ============================= */
+/* Anticipation: matter sucked INWARD before the slabs slam up. Negative
+   scale/translate reads as gravity collapsing toward the button core. */
+@keyframes bdph-kh-implode {
+  0% {
+    transform: translate(var(--bdph-kx, 0), var(--bdph-ky, 0)) scale(1);
+    opacity: 0;
+  }
+
+  15% {
+    opacity: 0.9;
+  }
+
+  60% {
+    transform: translate(calc(var(--bdph-kx, 0) * 0.08), calc(var(--bdph-ky, 0) * 0.08)) scale(0.3);
+    opacity: 1;
+  }
+
+  100% {
+    transform: translate(0, 0) scale(0);
+    opacity: 0;
+  }
+}
+
+/* Slab entrance: fast rise, SLAMS past target, snaps back — heavy, not smooth */
+@keyframes bdph-kh-slab-slam {
+  0% {
+    transform: translateY(var(--bdph-slab-from, 60%)) scaleY(0.4);
+    opacity: 0;
+  }
+
+  55% {
+    transform: translateY(-6%) scaleY(1.08);
+    opacity: 1;
+  }
+
+  75% {
+    transform: translateY(2%) scaleY(0.97);
+  }
+
+  90% {
+    transform: translateY(-1%) scaleY(1.01);
+  }
+
+  100% {
+    transform: translateY(0%) scaleY(1);
+    opacity: 1;
+  }
+}
+
+/* Idle: zero-gravity float, phase-offset per slab via animation-delay/duration */
+@keyframes bdph-kh-slab-float {
+
+  0%,
+  100% {
+    transform: translateY(-4px);
+  }
+
+  50% {
+    transform: translateY(4px);
+  }
+}
+
+/* Hover: trap snapping shut — fast compress toward center, no ease-out softness */
+@keyframes bdph-kh-slab-compress {
+  0% {
+    transform: translateY(0) translateX(0);
+  }
+
+  100% {
+    transform: translateY(var(--bdph-compress-y, 0)) translateX(var(--bdph-compress-x, 0));
+  }
+}
+
+/* Reiatsu lightning: erratic steps() flash, never a smooth glow */
+@keyframes bdph-kh-lightning {
+
+  0%,
+  88% {
+    opacity: 0;
+  }
+
+  92% {
+    opacity: 1;
+  }
+
+  94% {
+    opacity: 0.2;
+  }
+
+  96% {
+    opacity: 1;
+  }
+
+  100% {
+    opacity: 0;
+  }
+}
+
+/* Inner coffin pattern: grid crawling upward = infinite gravity inside */
+@keyframes bdph-kh-grid-rise {
+  0% {
+    background-position-y: 0;
+  }
+
+  100% {
+    background-position-y: -32px;
+  }
+}
+
+/* Click: micro-implosion then purple shockwave burst outward */
+@keyframes bdph-kh-click-implode {
+  0% {
+    transform: scale(1);
+  }
+
+  40% {
+    transform: scale(0.95);
+  }
+
+  100% {
+    transform: scale(1);
+  }
+}
+
+@keyframes bdph-kh-shockwave {
+  0% {
+    transform: scale(0.3);
+    opacity: 0.9;
+    border-width: 3px;
+  }
+
+  100% {
+    transform: scale(2.6);
+    opacity: 0;
+    border-width: 0.5px;
+  }
+}
+
+/* ============================ KUROHITSUGI (STAGE) ====================== */
+/* Background vortex: dark reiatsu sucked toward center before the slam,
+   opposite direction of an explosion — this is the "coffin closing" breath */
+@keyframes bdph-kh-vortex-pull {
+  0% {
+    transform: translate(var(--bdph-vx), var(--bdph-vy)) scale(1.6) rotate(0deg);
+    opacity: 0;
+  }
+
+  20% {
+    opacity: 0.9;
+  }
+
+  70% {
+    transform: translate(calc(var(--bdph-vx) * 0.05), calc(var(--bdph-vy) * 0.05)) scale(0.15) rotate(-30deg);
+    opacity: 1;
+  }
+
+  100% {
+    transform: translate(0, 0) scale(0) rotate(-45deg);
+    opacity: 0;
+  }
+}
+
+/* Containment ring: crushes inward fast then holds — the "lid sealing" beat */
+@keyframes bdph-kh-ring-crush {
+  0% {
+    transform: scale(2.4);
+    opacity: 0;
+    stroke-width: 0.15;
+  }
+
+  55% {
+    transform: scale(0.92);
+    opacity: 1;
+    stroke-width: 0.6;
+  }
+
+  75% {
+    transform: scale(1.04);
+  }
+
+  100% {
+    transform: scale(1);
+    opacity: 0.5;
+    stroke-width: 0.3;
+  }
+}
+
+/* Ink-crack bleed: jagged fracture lines spidering out once slabs land */
+@keyframes bdph-kh-crack-bleed {
+  0% {
+    stroke-dashoffset: 240;
+    opacity: 0;
+  }
+
+  15% {
+    opacity: 1;
+  }
+
+  100% {
+    stroke-dashoffset: 0;
+    opacity: 0.85;
+  }
+}
+
+/* Heavier pillar slam with overshoot — used by the new taller monoliths */
+@keyframes bdph-kh-pillar-slam {
+  0% {
+    transform: translate3d(0, var(--bdph-py, 65%), 0) scaleY(0.35);
+    opacity: 0;
+  }
+
+  50% {
+    transform: translate3d(0, -4%, 0) scaleY(1.1);
+    opacity: 1;
+  }
+
+  72% {
+    transform: translate3d(0, 1.5%, 0) scaleY(0.96);
+  }
+
+  88% {
+    transform: translate3d(0, -0.5%, 0) scaleY(1.015);
+  }
+
+  100% {
+    transform: translate3d(0, 0%, 0) scaleY(1);
+    opacity: 1;
+  }
+}
+
+/* Idle zero-g float, reused per-pillar with random duration/delay */
+@keyframes bdph-kh-pillar-float {
+
+  0%,
+  100% {
+    transform: translateY(-5px) scaleY(1);
+  }
+
+  50% {
+    transform: translateY(5px) scaleY(1.008);
+  }
+}
+
+/* Deep violet god-rays leaking between the sealed slabs while idle */
+@keyframes bdph-kh-godray {
+
+  0%,
+  100% {
+    opacity: 0.15;
+  }
+
+  45% {
+    opacity: 0.4;
+  }
+
+  70% {
+    opacity: 0.22;
+  }
+}
+
+@keyframes bdph-garganta-glitchline {
+  0% {
+    transform: scaleX(0) translateY(-50%);
+    opacity: 0;
+  }
+
+  10% {
+    transform: scaleX(0.3) translateY(-50%);
+    opacity: 1;
+  }
+
+  30% {
+    transform: scaleX(0.8) translateY(-50%) skewX(-20deg);
+    opacity: 0.5;
+  }
+
+  50% {
+    transform: scaleX(1.05) translateY(-50%) skewX(10deg);
+    opacity: 1;
+  }
+
+  90% {
+    transform: scaleX(1) translateY(-50%);
+    opacity: 1;
+  }
+
+  100% {
+    transform: scaleX(1) translateY(-50%);
+    opacity: 0;
+  }
+}
+
+/* ขั้นที่ 2: แท่งมิติฉีกกระชากออกจากตรงกลาง แยกตัวออกแบบ Step-Function (ไม่สมูท) */
+@keyframes bdph-garganta-strip-rip {
+  0% {
+    transform: translateY(-50%) scaleY(0.01);
+    opacity: 0;
+  }
+
+  15% {
+    transform: translateY(-50%) scaleY(0.08);
+    opacity: 1;
+  }
+
+  40% {
+    transform: translateY(-50%) scaleY(0.45);
+  }
+
+  65% {
+    transform: translateY(-50%) scaleY(1.08);
+  }
+
+  85% {
+    transform: translateY(-50%) scaleY(0.96);
+  }
+
+  100% {
+    transform: translateY(-50%) scaleY(1);
+    opacity: 1;
+  }
+}
+
+/* ขั้นที่ 3: มิติต้องไม่นิ่ง! สั่นไหวแบบกึกๆ ตลอดเวลาเหมือนโดนแรงดันวิญญาณ (Reiatsu) กดทับ */
+@keyframes bdph-garganta-jitter {
+
+  0%,
+  100% {
+    transform: translateY(-50%) scaleY(1) translateX(0px) rotate(0deg);
+  }
+
+  25% {
+    transform: translateY(-50%) scaleY(1.01) translateX(1px) scaleX(0.99) rotate(0.2deg);
+  }
+
+  50% {
+    transform: translateY(-50%) scaleY(0.99) translateX(-1px) rotate(-0.1deg);
+  }
+
+  75% {
+    transform: translateY(-50%) scaleY(1.02) translateX(0.5px) scaleX(1.01) rotate(0.1deg);
+  }
+}
+
+/* แสงออร่าสีม่วงตรงขอบรอยแยก กระพริบอย่างไม่มั่นคง (Unstable Spiritual Pressure) */
+@keyframes bdph-garganta-glow-flicker {
+
+  0%,
+  100% {
+    opacity: 0.35;
+  }
+
+  33% {
+    opacity: 0.75;
+  }
+
+  66% {
+    opacity: 0.5;
+  }
+}
+
+/* อนุภาคอณูวิญญาณ (Reishi) ระเบิดพุ่งกระจายออกจากรอยแยก */
+@keyframes bdph-garganta-leak {
+  0% {
+    transform: translate(0, 0) scale(1.5);
+    opacity: 0;
+  }
+
+  10% {
+    opacity: 1;
+  }
+
+  90% {
+    opacity: 0.4;
+  }
+
+  100% {
+    transform: translate(var(--bdph-lx), var(--bdph-ly)) scale(0.2);
+    opacity: 0;
+  }
+}
+
+/* เส้นขนแตกละเอียด (Hairline Fringe) กระพริบไม่สม่ำเสมอ เหมือนเส้นถ่านที่ยังไม่นิ่ง */
+@keyframes bdph-garganta-hair-flicker {
+
+  0%,
+  100% {
+    opacity: var(--bdph-hair-o, 0.2);
+    transform: scaleY(1);
+  }
+
+  35% {
+    opacity: calc(var(--bdph-hair-o, 0.2) * 1.6);
+    transform: scaleY(1.03);
+  }
+
+  60% {
+    opacity: calc(var(--bdph-hair-o, 0.2) * 0.5);
+    transform: scaleY(0.98);
+  }
+
+  82% {
+    opacity: calc(var(--bdph-hair-o, 0.2) * 1.3);
+    transform: scaleY(1.015);
+  }
+}
+
+@keyframes bd-cta-tear-flash {
+  0% {
+    transform: translate(-50%, -50%) scaleX(0.05);
+    opacity: 0;
+  }
+
+  10% {
+    opacity: 1;
+  }
+
+  70% {
+    transform: translate(-50%, -50%) scaleX(1.15);
+    opacity: 0.9;
+  }
+
+  100% {
+    transform: translate(-50%, -50%) scaleX(1);
+    opacity: 0;
+  }
+}
+
+@keyframes bd-tear-aura-pulse {
+
+  0%,
+  100% {
+    opacity: 0.55;
+  }
+
+  50% {
+    opacity: 0.85;
+  }
+}
+
+.bd-tear-aura {
+  animation: bd-tear-aura-pulse 4.5s ease-in-out infinite;
+}
+
+@keyframes bd-tear-strip-flicker {
+
+  0%,
+  100% {
+    opacity: 0.55;
+    transform: scaleY(1);
+  }
+
+  30% {
+    opacity: 1;
+    transform: scaleY(1.04);
+  }
+
+  55% {
+    opacity: 0.7;
+    transform: scaleY(0.97);
+  }
+
+  80% {
+    opacity: 0.95;
+    transform: scaleY(1.02);
+  }
+}
+
+.bd-tear-strip {
+  animation: bd-tear-strip-flicker 3.2s ease-in-out infinite;
+}
+
+@keyframes kh-ring-breathe {
+  0% {
+    transform: scale(2.5) rotate(-15deg);
+    opacity: 0;
+    filter: blur(8px) brightness(2);
+  }
+
+  /* พุ่งเข้ามาอย่างรวดเร็วและหยุดกึกด้วยความหนักหน่วง (Cubic-Bezier ฟีล Bleach) */
+  25% {
+    transform: scale(0.92) rotate(3deg);
+    opacity: 0.45;
+    filter: blur(0px) brightness(1.2);
+  }
+
+  45% {
+    transform: scale(1.04) rotate(-1deg);
+    opacity: 0.35;
+  }
+
+  70% {
+    transform: scale(0.98) rotate(0.5deg);
+    opacity: 0.38;
+  }
+
+  100% {
+    transform: scale(1) rotate(0deg);
+    opacity: 0.3;
+    /* ลด Opacity ลงมาให้จาง ไม่สดเกินไป */
+    filter: drop-shadow(0 0 8px rgba(168, 85, 247, 0.4));
+  }
+}
+
+@keyframes kh-ring-idle-pulse {
+  0% {
+    transform: scale(1);
+    opacity: 0.3;
+    filter: drop-shadow(0 0 8px rgba(168, 85, 247, 0.4));
+  }
+
+  50% {
+    transform: scale(1.015);
+    opacity: 0.45;
+    /* ให้ความรู้สึกเหมือนพลังงานกำลังกระเพื่อม */
+    filter: drop-shadow(0 0 14px rgba(192, 132, 252, 0.7)) brightness(1.2);
+  }
+
+  100% {
+    transform: scale(1);
+    opacity: 0.3;
+    filter: drop-shadow(0 0 8px rgba(168, 85, 247, 0.4));
+  }
+}
+
+@keyframes kh-crack-strike {
+  0% {
+    stroke-dashoffset: 220;
+    opacity: 0;
+    filter: brightness(3) drop-shadow(0 0 4px #c084fc);
+  }
+
+  /* 5% แรก พุ่งพรวดออกมากระชากมิติ */
+  5% {
+    stroke-dashoffset: 40;
+    opacity: 1;
+    filter: brightness(2) drop-shadow(0 0 8px #a855f7);
+  }
+
+  /* สั่นสะท้านอยู่กับที่จากแรงดันวิญญาณ */
+  12% {
+    stroke-dashoffset: 0;
+    opacity: 0.9;
+    transform: translate3d(1px, -1px, 0);
+  }
+
+  18% {
+    transform: translate3d(-1px, 1px, 0);
+  }
+
+  30% {
+    opacity: 0.7;
+    transform: translate3d(0, 0, 0);
+    filter: brightness(1);
+  }
+
+  100% {
+    stroke-dashoffset: 0;
+    opacity: 0.45;
+    /* กลืนไปกับพื้นหลังหลังจากพุ่งเสร็จ */
+  }
+}
+
+/* ตอนสลายตัว: ให้วาบสว่างขึ้นมาแวบหนึ่งแล้วแตกกระจายหายไปอย่างรวดเร็ว */
+@keyframes kh-crack-exit {
+  0% {
+    opacity: 0.45;
+    stroke-dashoffset: 0;
+    filter: brightness(1);
+  }
+
+  15% {
+    opacity: 1;
+    stroke-dashoffset: 0;
+    filter: brightness(4) drop-shadow(0 0 12px #ffffff);
+    /* วาบแสงก่อนดับ */
+  }
+
+  100% {
+    opacity: 0;
+    stroke-dashoffset: -120;
+    /* ดึงเส้นให้หลุดออกจากกรอบอย่างไว */
+    filter: brightness(2) blur(2px);
+  }
+}
+
+@keyframes kh-bg-suck-in {
+  0% {
+    transform: scale(1.55);
+    opacity: 0.15;
+  }
+
+  45% {
+    transform: scale(1.12);
+    opacity: 0.75;
+  }
+
+  70% {
+    transform: scale(0.97);
+    opacity: 1;
+  }
+
+  85% {
+    transform: scale(1.015);
+    opacity: 1;
+  }
+
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+@keyframes bdph-kh-bg-pulse {
+  0% {
+    opacity: 0.55;
+    transform: scale(1);
+  }
+
+  50% {
+    opacity: 0.85;
+    transform: scale(1.06);
+  }
+
+  100% {
+    opacity: 0.55;
+    transform: scale(1);
+  }
+}
+
+@keyframes kh-vignette-crush {
+  0% {
+    opacity: 0;
+    transform: scale(1.2);
+  }
+
+  50% {
+    opacity: 0.4;
+    transform: scale(1.06);
+  }
+
+  80% {
+    opacity: 0.85;
+    transform: scale(1.01);
+  }
+
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes kh-box-seal {
+  0% {
+    transform: scale(1.15);
+    opacity: 0;
+  }
+
+  15% {
+    transform: scale(1);
+    opacity: 1;
+    /* ล็อคความเข้มเต็มร้อยอย่างรวดเร็ว */
+  }
+
+  100% {
+    transform: scale(1);
+    opacity: 1;
+    /* คงสภาพกล่องทึบไว้จนจบเฟสชาร์จ ไม่เฟดก่อนแรงกระแทก */
+  }
+}
+
+@keyframes kh-box-face-flicker {
+
+  0%,
+  100% {
+    opacity: 1;
+  }
+}
+
+@keyframes kh-pierce-in {
+  0% {
+    transform: rotate(var(--rot)) scaleX(0);
+    opacity: 0;
+    filter: brightness(3);
+  }
+
+  7% {
+    transform: rotate(var(--rot)) scaleX(1.25);
+    /* ทะลวงเลยจุดแล้วดึงกลับ */
+    opacity: 1;
+    filter: brightness(2) drop-shadow(0 0 10px #a855f7);
+  }
+
+  15% {
+    transform: rotate(var(--rot)) scaleX(0.96);
+    opacity: 0.9;
+  }
+
+  25% {
+    transform: rotate(var(--rot)) scaleX(1.02);
+  }
+
+  35% {
+    transform: rotate(var(--rot)) scaleX(1);
+    opacity: 0.85;
+    filter: brightness(1);
+  }
+
+  100% {
+    transform: rotate(var(--rot)) scaleX(1);
+    opacity: 0.85;
+  }
+}
+
+@keyframes kh-spear-exit {
+  0% {
+    transform: rotate(var(--rot)) scaleX(1);
+    opacity: 0.85;
+  }
+
+  10% {
+    transform: rotate(var(--rot)) scaleX(1.4) scaleY(1.8);
+    opacity: 1;
+    filter: brightness(4) drop-shadow(0 0 20px #ffffff);
+  }
+
+  100% {
+    transform: rotate(var(--rot)) scaleX(2) translate3d(80px, 0, 0);
+    opacity: 0;
+    filter: blur(6px);
+  }
+}
+
+@keyframes kh-shatter-flash {
+  0% {
+    transform: scale(0.2);
+    opacity: 0;
+  }
+
+  12% {
+    transform: scale(1);
+    opacity: 1;
+  }
+
+  30% {
+    transform: scale(1.6);
+    opacity: 0.9;
+  }
+
+  100% {
+    transform: scale(3.4);
+    opacity: 0;
+  }
+}
+
+@keyframes kh-shatter-fade-out {
+  0% {
+    opacity: 1;
+  }
+
+  100% {
+    opacity: 0;
+  }
+}
+
+@keyframes kh-shake {
+
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0);
+  }
+
+  10%,
+  30%,
+  50%,
+  70%,
+  90% {
+    transform: translate3d(-5px, 3px, 0);
+  }
+
+  20%,
+  40%,
+  60%,
+  80% {
+    transform: translate3d(5px, -3px, 0);
+  }
+}
+
+@keyframes kh-fragment-fly {
+  0% {
+    opacity: 0;
+    transform: translate(0, 0) scale(0);
+  }
+
+  /* ดึงความสว่างขึ้นมาทันทีภายใน 10% แรกที่เริ่มพุ่ง */
+  10% {
+    opacity: 1;
+    transform: translate(calc(var(--fx) * 0.1), calc(var(--fy) * 0.1)) scale(1.2);
+  }
+
+  /* พุ่งกระเด็นออกไปตามระยะทางและหมุนคว้าง */
+  100% {
+    opacity: 0;
+    /* หรือเซ็ตเป็น 1 ถ้าอยากให้เศษค้างไว้ */
+    transform: translate(var(--fx), var(--fy)) rotate(var(--frot)) scale(0.5);
+  }
+}
+
+@keyframes kh-vortex-particle {
+  0% {
+    transform: translate3d(var(--vx), var(--vy), 0) scale(1.6);
+    opacity: 0;
+  }
+
+  20% {
+    transform: translate3d(var(--vx), var(--vy), 0) scale(1.3);
+    opacity: 0.9;
+  }
+
+  70% {
+    transform: translate3d(calc(var(--vx) * 0.05), calc(var(--vy) * 0.05), 0) scale(0.15);
+    opacity: 1;
+  }
+
+  100% {
+    transform: translate3d(0, 0, 0) scale(0);
+    opacity: 0;
+  }
+}
+
+.bdph-zd-anim {
+  will-change: transform, opacity;
+}
+
+@keyframes bdph-zd-gold-bloom {
+  0% {
+    opacity: 0;
+    transform: scale(0.4);
+  }
+
+  55% {
+    opacity: 1;
+  }
+
+  100% {
+    opacity: 0.9;
+    transform: scale(1);
+  }
+}
+
+@keyframes bdph-zd-bloom-breathe {
+
+  0%,
+  100% {
+    opacity: 0.75;
+    transform: scale(1);
+  }
+
+  50% {
+    opacity: 1;
+    transform: scale(1.04);
+  }
+}
+
+@keyframes bdph-zd-ink-collapse {
+  0% {
+    opacity: 0;
+    transform: scale(2.2);
+  }
+
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes bdph-zd-shockwave {
+  0% {
+    opacity: 0.95;
+    transform: scale(1);
+  }
+
+  100% {
+    opacity: 0;
+    transform: scale(24);
+  }
+}
+
+@keyframes bdph-zd-tear {
+  0% {
+    opacity: 0;
+    transform: translateX(-50%) scaleY(0);
+  }
+
+  45% {
+    opacity: 1;
+    transform: translateX(-50%) scaleY(1);
+  }
+
+  100% {
+    opacity: 0;
+    transform: translateX(-50%) scaleY(1.05);
+  }
+}
+
+@keyframes bdph-zd-wisp {
+
+  0%,
+  100% {
+    transform: translate(0, 0);
+    opacity: 0.5;
+  }
+
+  50% {
+    transform: translate(var(--bdph-zd-wx), var(--bdph-zd-wy));
+    opacity: 0.9;
+  }
+}
+
+@keyframes bdph-zd-seal-spin {
+  from {
+    transform: rotate(0deg);
+  }
+
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes bdph-zd-seal-spin-rev {
+  from {
+    transform: rotate(360deg);
+  }
+
+  to {
+    transform: rotate(0deg);
+  }
+}
+
+@keyframes bdph-zd-seal-slam {
+  0% {
+    opacity: 0;
+    transform: scale(2.4) translateY(-40px);
+  }
+
+  60% {
+    opacity: 1;
+    transform: scale(0.92) translateY(0);
+  }
+
+  100% {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+@keyframes bdph-zd-seal-float {
+
+  0%,
+  100% {
+    transform: translateY(0) scale(1);
+  }
+
+  50% {
+    transform: translateY(-4px) scale(1.015);
+  }
+}
+
+@keyframes bdph-zd-link-draw {
+  0% {
+    opacity: 0;
+  }
+
+  100% {
+    opacity: 0.22;
+  }
+}
+
+@keyframes bdph-zd-link-pulse {
+
+  0%,
+  100% {
+    opacity: 0.14;
+  }
+
+  50% {
+    opacity: 0.32;
+  }
+}
+
+@keyframes bdph-zd-poly-breathe {
+
+  0%,
+  100% {
+    opacity: 0.1;
+  }
+
+  50% {
+    opacity: 0.2;
+  }
+}
+
+@keyframes bdph-zd-fade-in {
+  0% {
+    opacity: 0;
+  }
+
+  100% {
+    opacity: 0.14;
+  }
+}
+
+@keyframes bdph-zd-core-pulse {
+
+  0%,
+  100% {
+    opacity: 0.75;
+    transform: scale(1);
+  }
+
+  50% {
+    opacity: 1;
+    transform: scale(1.08);
+  }
+}
+
+@keyframes bdph-zd-kanji-reveal {
+  0% {
+    opacity: 0;
+    transform: scale(0.5);
+  }
+
+  70% {
+    opacity: 1;
+    transform: scale(1.12);
+  }
+
+  100% {
+    opacity: 0.95;
+    transform: scale(1);
+  }
+}
+
+@keyframes bdph-zd-kanji-idle {
+
+  0%,
+  100% {
+    opacity: 0.85;
+  }
+
+  50% {
+    opacity: 1;
+  }
+}
+
+@keyframes bdph-zd-spark {
+
+  0%,
+  100% {
+    opacity: 0.3;
+  }
+
+  50% {
+    opacity: 1;
+  }
+}
+
+@keyframes bdph-zd-steam {
+
+  0%,
+  100% {
+    opacity: 0.4;
+    transform: translateY(0);
+  }
+
+  50% {
+    opacity: 0.85;
+    transform: translateY(-4px);
+  }
+}
+
+@keyframes bdph-zd-mote-drift {
+  0% {
+    opacity: 0;
+    transform: translateY(0);
+  }
+
+  20% {
+    opacity: 0.8;
+  }
+
+  80% {
+    opacity: 0.5;
+  }
+
+  100% {
+    opacity: 0;
+    transform: translateY(-14px);
+  }
+}
+
+.zdi-spin-slow {
+  animation: zdi-spin 26s linear infinite;
+}
+
+.zdi-spin-rev {
+  animation: zdi-spin-reverse 18s linear infinite;
+}
+
+.zdi-pulse {
+  animation: zdi-pulse 3.5s ease-in-out infinite;
+  will-change: opacity, transform;
+  transform-origin: center;
+}
+
+.zdi-ink-breathe {
+  animation: zdi-ink-breathe 5s ease-in-out infinite;
+  transform-origin: center;
+}
+
+.zdi-kanji-breathe {
+  animation: zdi-kanji-breathe 4s ease-in-out infinite;
+  will-change: opacity;
+}
+
+.zdi-spark {
+  opacity: 0;
+  animation: zdi-spark 2.4s ease-in-out infinite;
+  will-change: opacity, transform;
+  transform-box: fill-box;
+  transform-origin: center;
+}
+
+@keyframes zdi-spin {
+  from {
+    transform: rotate(0deg);
+  }
+
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes zdi-spin-reverse {
+  from {
+    transform: rotate(0deg);
+  }
+
+  to {
+    transform: rotate(-360deg);
+  }
+}
+
+@keyframes zdi-pulse {
+
+  0%,
+  100% {
+    opacity: 0.7;
+    transform: scale(0.98);
+  }
+
+  50% {
+    opacity: 1;
+    transform: scale(1.03);
+  }
+}
+
+@keyframes zdi-ink-breathe {
+
+  0%,
+  100% {
+    transform: scale(1) rotate(0deg);
+  }
+
+  50% {
+    transform: scale(1.02) rotate(1deg);
+  }
+}
+
+@keyframes zdi-kanji-breathe {
+
+  0%,
+  100% {
+    opacity: 0.85;
+  }
+
+  50% {
+    opacity: 1;
+    text-shadow: 0 0 10px rgba(242, 207, 138, 0.5);
+  }
+}
+
+@keyframes zdi-spark {
+
+  0%,
+  100% {
+    opacity: 0;
+    transform: scale(0.8) translate(0, 0);
+  }
+
+  50% {
+    opacity: 1;
+    transform: scale(1.1) translate(2px, -2px);
+  }
 }

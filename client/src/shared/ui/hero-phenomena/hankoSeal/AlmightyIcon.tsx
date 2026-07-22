@@ -1,7 +1,7 @@
-// src/shared/ui/hero-phenomena/hankoSeal/AlmightyEyeIcon.tsx
+// src/shared/ui/hero-phenomena/hankoSeal/AlmightyIcon.tsx
 "use client";
 
-export function AlmightyEyeIcon({ className = "w-10 h-10" }: { className?: string }) {
+export function AlmightyIcon({ className = "w-10 h-10" }: { className?: string }) {
     return (
         <svg
             viewBox="0 0 100 100"

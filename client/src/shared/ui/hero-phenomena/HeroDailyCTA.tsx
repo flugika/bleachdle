@@ -198,27 +198,6 @@ export function HeroDailyCTA({
 
     return (
         <>
-            <style>{`
-                @keyframes bd-cta-tear-flash {
-                    0%   { transform: translate(-50%,-50%) scaleX(0.05); opacity: 0; }
-                    10%  { opacity: 1; }
-                    70%  { transform: translate(-50%,-50%) scaleX(1.15); opacity: 0.9; }
-                    100% { transform: translate(-50%,-50%) scaleX(1); opacity: 0; }
-                }
-                @keyframes bd-tear-aura-pulse {
-                    0%, 100% { opacity: 0.55; }
-                    50% { opacity: 0.85; }
-                }
-                .bd-tear-aura { animation: bd-tear-aura-pulse 4.5s ease-in-out infinite; }
-                @keyframes bd-tear-strip-flicker {
-                    0%, 100% { opacity: 0.55; transform: scaleY(1); }
-                    30% { opacity: 1; transform: scaleY(1.04); }
-                    55% { opacity: 0.7; transform: scaleY(0.97); }
-                    80% { opacity: 0.95; transform: scaleY(1.02); }
-                }
-                .bd-tear-strip { animation: bd-tear-strip-flicker 3.2s ease-in-out infinite; }
-            `}</style>
-
             <div className="relative w-[400px] md:w-[600px] lg:w-[800px] max-w-[94vw] flex flex-col items-center py-2 font-[family-name:var(--font-display)]">
 
                 {/* ═══ RADIAL GLOW BACKGROUND ═══ */}

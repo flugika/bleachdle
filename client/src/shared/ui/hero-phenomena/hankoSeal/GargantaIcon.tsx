@@ -1,6 +1,4 @@
-import React from "react";
-
-export function HollowMaskIcon({ className }: { className?: string }) {
+export function GargantaIcon({ className }: { className?: string }) {
     return (
         <svg
             viewBox="0 0 1080 1080"
