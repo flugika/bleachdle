@@ -20,7 +20,7 @@
 
 ## 🏠 Home Page
 
-Screenshots of the home page across different themes:
+Screenshots of the home page across different days, different themes:
 
 | Theme | Preview |
 |---|---|
