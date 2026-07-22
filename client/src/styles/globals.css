@@ -4089,3 +4089,27 @@ button *:active,
     transform: scale(1.1) translate(2px, -2px);
   }
 }
+
+@keyframes garganta-gpu-idle {
+
+  0%,
+  100% {
+    transform: translateY(-50%) scaleY(1) translateZ(0);
+  }
+
+  25% {
+    transform: translateY(-50%) scaleY(1.015) translateZ(0);
+  }
+
+  50% {
+    transform: translateY(-50%) scaleY(0.99) translateZ(0);
+  }
+
+  75% {
+    transform: translateY(-50%) scaleY(1.02) translateZ(0);
+  }
+}
+
+.garganta-strip-idle {
+  animation: garganta-gpu-idle var(--idle-dur) ease-in-out infinite !important;
+}

@@ -165,7 +165,7 @@ export default function HomePageClient({ initialStats, dateKey }: HomePageClient
             {/* ================= 🛰️ FIXED HUD FRAME (desktop only, ambient chrome) ================= */}
             {/* Incantation rings — tighter + independently paced vs. the ambient background rings */}
             <svg
-                className="absolute -top-179 w-[560px] h-[560px] md:w-[1080px] md:h-[1080px] pointer-events-none z-0 opacity-40 group-hover/seal:opacity-70 transition-opacity duration-700"
+                className="absolute -top-179 w-[560px] h-[560px] md:w-[1080px] md:h-[1080px] pointer-events-none z-[9] opacity-40 group-hover/seal:opacity-70 transition-opacity duration-700"
                 viewBox="0 0 200 200"
                 aria-hidden="true"
             >

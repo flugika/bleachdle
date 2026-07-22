@@ -150,18 +150,6 @@ export const Garganta = React.memo(function Garganta({ phase }: { phase: Phenome
         <div
             className={`garganta-wrapper absolute inset-0 flex items-center justify-center overflow-hidden bg-[#0c0a0d] select-none pointer-events-none transition-all duration-300 ${isIdle ? "is-idle" : ""}`}
         >
-            <style>{`
-                @keyframes garganta-gpu-idle {
-                    0%, 100% { transform: translateY(-50%) scaleY(1) translateZ(0); }
-                    25% { transform: translateY(-50%) scaleY(1.015) translateZ(0); }
-                    50% { transform: translateY(-50%) scaleY(0.99) translateZ(0); }
-                    75% { transform: translateY(-50%) scaleY(1.02) translateZ(0); }
-                }
-                .garganta-strip-idle {
-                    animation: garganta-gpu-idle var(--idle-dur) ease-in-out infinite !important;
-                }
-            `}</style>
-
             <motion.div animate={shakeControls} className="relative top-10 w-[96vw] max-w-[1200px] h-[64vh] min-h-[340px]">
 
                 {phase === "entrance" && (
