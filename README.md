@@ -2,7 +2,7 @@
 
 > A Wordle-style character guessing game for Bleach fans — unlimited mode, attribute-based feedback, Soul Society aesthetic.
 
-**Last Updated:** 22 July 2026, 9:49 PM.
+**Last Updated:** 22 July 2026, 11:30 PM.
 
 [![Next.js](https://img.shields.io/badge/Next.js-15-black?logo=next.js)](https://nextjs.org/)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5-blue?logo=typescript)](https://www.typescriptlang.org/)
@@ -58,6 +58,7 @@ The game ships six verticals: **Character**, **Quote**, **Song**, **Silhouette**
 - **Custom transitions & loaders** — `ZangetsuLoader`, `SoulSyncLoader`, `SenkaimonTransition`; purpose-built animations instead of a generic spinner
 - **Reiatsu cursor** — optional particle-trail cursor effect, togglable (`BleachReiatsuCursor.tsx`)
 - **Feature flags** — `src/config/feature.flags.ts` gates verticals per mode (nested under `daily` / `unlimited`) so a mode can ship in Unlimited before Daily. All six verticals — Character, Quote, Song, Silhouette, Emoji, and Release — are now live in both modes.
+- **Emoji anti-peek reveal** — `getDailyEmoji` (`services/getDailySchedule/emoji.ts`) now returns an `EmojiTargetHidden` (`id` + `character_id` only — see `features/emoji/types.ts`) instead of the full row, so the round's complete 4-emoji clue array no longer ships to the client up front. `getRevealedEmojiTiles` (`features/emoji/emoji.ts`) then renders only the slice unlocked by `revealedCount` and masks the rest as `null`; `emojiRevealedCounter.ts` drives that count up as wrong guesses accumulate. Note: `character_id` itself is still present client-side for guess comparison, same as every other vertical (see [Reliability & Process](#reliability--process) below) — this fix closes the emoji-clue leak specifically, not full answer confidentiality.
 - **Dark-first UI** — Soul Society-themed palette, responsive layout down to mobile
 
 ---
@@ -216,7 +217,7 @@ Flags are nested per mode rather than a flat list, since a vertical can ship in 
 
 ## Roadmap
 
-> Testing (unit/integration/UAT) is intentionally deferred — data schemas (`characters.json`, entity types) are still changing frequently, so writing tests now would mean rewriting them constantly. Will pick up once the data layer stabilizes (post Supabase migration).
+> Status below was verified directly against the current `main` branch (source, config, and test files), not just tracked from memory — so checkbox state and description should stay in sync going forward. Please keep it that way in PRs: flipping a box without updating its sentence is worse than leaving it unchecked.
 
 ### Gameplay — core modes (done)
 - [x] Silhouette Daily — bring Silhouette to Daily Hub
@@ -229,36 +230,36 @@ Flags are nested per mode rather than a flat list, since a vertical can ship in 
 - [ ] **Pyramid** — order ~10 characters along an axis (e.g. power level); height and age are excluded as axes since canon data is too inconsistent for them. Mode itself may be skipped entirely unless Bleach actually has enough data to build a real pyramid ranking
 - [ ] **Pair** — a flip-card / memory-matching game where cards aren't reused; the target relationship type (siblings, family, enemies, romantic, past opponents, shared trait, etc.) is shown to the player up front, and they match pairs of characters that fit that relationship — needs the new relationship table, see Data Model below
 - [ ] **Connection** — 16 characters shown, 4 of them share a hidden boundary/relationship (trait, race, affiliation, etc.). Player picks 4 and submits; sees how many of the 4 were correct (e.g. "3 of 4 belong, 1 doesn't"), then re-picks to isolate the outlier — up to 5 guesses total
-- [ ] **First Name** — simplest new mode, Wordle-style guessing on a character's first name only, with the classic gray/yellow/green letter feedback. Needs a new `first_name` field split out from the existing full `name` field, otherwise no new data required
+- [ ] **First Name** — simplest new mode, Wordle-style guessing on a character's first name only, with the classic gray/yellow/green letter feedback. Needs a new `first_name` field split out from the existing full `name` field, otherwise no new data required (confirmed: `characters.json` has no `first_name` field yet)
 - [ ] **Trait Group** — system picks 3 characters at random and reveals what they share (trait / race / affiliation / friend group) but NOT who they are — player must guess the identities of those 3 hidden characters themselves (not guess additional members of the group); countdown-based
 - [ ] **Higher/Lower** — one character card shows a revealed "power level," the other is hidden; guess higher or lower than the revealed card. Blocked on defining a power-ranking methodology — win rate alone isn't sufficient, multiple factors need to be weighed
 
 ### Data Model (new, supports the modes above)
-- [ ] **Character relationship / boundary table** — stores how one character relates to another. Rough shape so far: `id`, `character_id`, `related_character_id`, `type` (e.g. friend / family / rival / same-trait). Still deciding what else needs to be captured — directional vs. bidirectional, a strength/weight field, free-text notes, whether one row can represent multiple shared boundaries at once, etc.
-- [x] **Emoji list anti-peek** — the full emoji clue array currently ships to the client up front, so opening dev tools reveals every clue immediately. Plan is to send emojis one at a time as the round progresses instead of the whole array at once.
+- [ ] **Character relationship / boundary table** — stores how one character relates to another. Rough shape so far: `id`, `character_id`, `related_character_id`, `type` (e.g. friend / family / rival / same-trait). Still deciding what else needs to be captured — directional vs. bidirectional, a strength/weight field, free-text notes, whether one row can represent multiple shared boundaries at once, etc. Not started — no migration or schema stub for it yet.
 
 ### Stats & Social
 - [x] **Global daily stats** — "X% of players solved it within N guesses," aggregated via Supabase on top of existing round/result tables
 - [x] **Surface badges on `/stats`** — badge system already exists but currently only renders inside each mode's summary card, not on the dedicated stats page
+- [x] **Rate limiting on game APIs** (not just `/api/support`) — done, but via the lighter path rather than the originally planned one: `app/api/stats/finalize`, `app/api/stats/daily`, and `app/api/stats/global` all now gate on IP-based checks (`checkIpRateLimit` from `lib/support/ipRateLimit.ts`, the same pattern generalized from the support ticket system) or the in-memory `edgeRateLimit` helper (`lib/rateLimit.ts`). `@upstash/ratelimit` / `@upstash/redis` are installed as dependencies but not wired into any route yet — today's limiter is in-process memory, which is fine for a single Vercel region but won't share state across edge regions if traffic grows; revisit Upstash then.
 - [ ] **Shareable result as image** — still pending. Skip the Wordle/Worldle-style emoji-grid text share; generate a downloadable/story-ready image (canvas or server-side OG image) instead
 - [ ] **Streak/session portability without login** — still pending. Current direction: generate a code on one device that can be entered on a second device to link/sync the streak data across them. This replaces the earlier same-network auto-detection idea, which had an unresolved collision problem on shared networks (family, roommates) where distinct players would merge onto one streak
-- [ ] **Rate limiting on game APIs** (not just `/api/support`) — still pending. Direction: sliding-window or token-bucket limiter via Upstash Redis + `@upstash/ratelimit` at the edge/middleware level, keyed by IP + session id. Apply first to `app/api/stats/finalize` (highest abuse risk — fake streak submissions) and any future leaderboard-writing routes; generalize the existing `ipRateLimit.ts` / `rateLimitCookie.ts` pattern from the support ticket system into shared middleware
 
 ### Accounts & Progression (new)
 - [ ] **Login** — account system, currently unauthenticated
 - [ ] **Card pack rewards** — gacha-style random cosmetic character card drawn after each round, collected and displayed on the user's profile
 - [ ] **User level** — XP/progression tied to playtime and rounds completed
-- [ ] **Character card / archive detail view** — a fuller per-character info page. Hesitant here because it could let players look up dle answers directly, but still seems worth building — likely gated somehow (behind account/level, or hiding the specific fields used in comparisons) rather than dropped
+- [ ] **Character card / archive detail view** — a fuller per-character info page. Hesitant here because it could let players look up dle answers directly, but still seems worth building — likely gated somehow (behind account/level, or hiding the specific fields used in comparisons) rather than dropped. (Not to be confused with the existing `/soul-society-archives` page, which is a daily-answers recap, not a general per-character profile.)
 
 ### Reliability & Process
-- [x] **Error monitoring (Sentry or similar)** — done — high priority precisely because there's no test coverage yet; needed visibility into prod failures before shipping faster
-- [ ] **Real CI pipeline** — still pending. A CI file exists but currently only validates character data; needs lint + `tsc --noEmit` + build checks gating PRs
-- [ ] **Reduced-motion setting** — still pending, lower priority; touches many components (loaders, transitions, cursor effect), needs a broader pass
-- [x] **Testing suite** (unit + integration) — still pending, blocked on schema stabilization, see note above
+- [x] **Error monitoring (Sentry or similar)** — done — high priority precisely because there wasn't full test coverage early on; needed visibility into prod failures while shipping fast
+- [x] **Testing suite** (unit + integration + e2e) — done. Vitest (`vitest.config.ts`, jsdom env) covers unit/integration specs under `src/**/*.{test,spec}.ts(x)` and `app/**/*.{test,spec}.ts(x)` — most API routes now ship a co-located `route.test.ts`. Playwright (`playwright.config.ts`) covers full daily/unlimited flow specs per vertical under `tests/e2e/`. Run via `pnpm test`, `pnpm test:e2e`, or both with `pnpm test:all`.
+- [x] **Emoji list anti-peek** — done. Moved up from the Data Model section below since it's a security/architecture fix, not a data-model addition. See the [Features](#features) entry above for the implementation; scope note: it closes the emoji-clue leak specifically, the target `character_id` is still available client-side for guess comparison like every other vertical.
+- [ ] **Real CI pipeline** — still pending, and currently in worse shape than previously noted: no `.github/workflows` (or equivalent CI config) exists in the repo at all right now, so `lint` / `tsc --noEmit` / tests / build aren't gated on PRs yet even though the scripts (`pnpm lint`, `pnpm tsc --noEmit`, `pnpm test`, `pnpm test:e2e`) all exist and pass locally. Wiring those into GitHub Actions is the next step, now that the testing suite above gives it something real to run.
+- [ ] **Reduced-motion setting** — in progress, not done. `prefers-reduced-motion` is already respected in `SenkaimonTransition.tsx` and `SoulSyncLoader.tsx` (plus a corresponding block in `globals.css`), but `BleachReiatsuCursor.tsx` and `ZangetsuLoader.tsx` don't check it yet. Leaving unchecked until the pass covers all loaders/transitions/the cursor effect.
 
 ### Infra
-- [x] **Supabase migration** — still pending. Persistent leaderboard and cross-session streaks
-- [ ] **Turnstile spam mitigation** — still paused. Legitimate traffic was being flagged as bot activity, needs a fix before re-enabling
+- [x] **Supabase migration** — done. `client/supabase/migrations/` now runs through `07_rls_policies.sql` and a full schema dump (`06_new_schema_dump.sql`), on top of the original support-ticket/daily-schedule migrations; `supabaseServer` (service-role client) is the backing store for daily schedules, stats, and support tickets in production.
+- [ ] **Turnstile spam mitigation** — still paused. `useTurnstile.ts` exists but isn't called anywhere in `SupportForm.tsx` yet — legitimate traffic was being flagged as bot activity, needs a fix before re-enabling
 - [ ] **PWA + push notifications** — still pending, and tied to the Discord bot notifications below — both are further out since they depend on renting a domain first
 - [ ] **Discord integration** — bot-based notifications, blocked on renting a domain
 
