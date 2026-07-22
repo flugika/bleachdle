@@ -12,15 +12,29 @@
 [![Deployed on Supabase](https://img.shields.io/badge/Deployed-Supabase-3ECF8E?logo=supabase&logoColor=white)](https://supabase.com/)
 [![Live Demo](https://img.shields.io/badge/Live%20Demo-bleachdle--theta.vercel.app-black?logo=vercel)](https://bleachdle-theta.vercel.app/)
 
----
-
-## Live
+## 🚀 Live Demo
 
 **Production:** [https://bleachdle-theta.vercel.app/](https://bleachdle-theta.vercel.app/)
 
+---
 
-<img width="2892" height="4476" alt="homepage" src="https://github.com/user-attachments/assets/dd871a29-b785-4d69-a690-606cc57bdc07" />
+## 🏠 Home Page
 
+Screenshots of the home page across different themes:
+
+| Theme | Preview |
+|---|---|
+| **Garganta** | <img width="450" alt="homepage_garganta" src="https://github.com/user-attachments/assets/e86c8e64-4ab5-45ac-8e3f-659ca7257939" /> |
+| **Almighty** | <img width="450" alt="homepage_almighty" src="https://github.com/user-attachments/assets/8a4e8fbd-0713-486c-b8de-7ecaed469759" /> |
+| **Kurohitsugi** | <img width="450" alt="homepage_kurohitsugi" src="https://github.com/user-attachments/assets/3165c406-70e4-4223-b267-c98bd5e9d46d" /> |
+| **Zero Division** | <img width="450" alt="homepage_zerodivision" src="https://github.com/user-attachments/assets/7ec5afcc-17a5-4cb2-8f7b-e530a8a9e63b" /> |
+
+<details>
+<summary><strong>Standard (full page)</strong></summary>
+
+<img width="900" alt="homepage" src="https://github.com/user-attachments/assets/dd871a29-b785-4d69-a690-606cc57bdc07" />
+
+</details>
 
 ---
 
