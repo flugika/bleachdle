@@ -1,11 +1,10 @@
 version: 2
 updates:
-  - package-ecosystem: npm # covers pnpm lockfiles too
+  - package-ecosystem: npm
     directory: /client
     schedule:
-      interval: weekly
-      day: monday
-    open-pull-requests-limit: 10
+      interval: monthly
+    open-pull-requests-limit: 3
     groups:
       next-and-react:
         patterns:
@@ -15,13 +14,15 @@ updates:
           - "@types/react*"
       dev-tooling:
         dependency-type: development
+      other-dependencies:
+        dependency-type: production
+        patterns:
+          - "*"
     ignore:
-      # Next.js major bumps deserve a manual look, not an auto PR
       - dependency-name: "next"
         update-types: ["version-update:semver-major"]
 
   - package-ecosystem: github-actions
     directory: /
     schedule:
-      interval: weekly
-      day: monday
+      interval: monthly
