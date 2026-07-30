@@ -94,7 +94,7 @@ jobs:
           cache-dependency-path: client/pnpm-lock.yaml
       - run: pnpm install --frozen-lockfile
       - name: Check name parity between characters.json and asset directory
-        run: node src/lib/utils/scripts/check-assets.js
+        run: npx tsx src/scripts/check-assets.js
 
   build:
     name: Build
