@@ -208,7 +208,6 @@ export default async function ArchivePage() {
                         <ScaleFit referenceWidth={340}>
                             <SilhouetteImage
                                 characterId={silhouetteCharacter.id}
-                                image={silhouetteCharacter.id}
                                 mode="daily"
                                 realImage={silhouetteCharacter.id}
                                 revealMode="crossfade"

@@ -120,7 +120,6 @@ export const SilhouetteSummaryGuess = ({
                         <SilhouetteImage
                             mode={mode}
                             characterId={target.character_id}
-                            image={answerCharacter?.id ?? ''}
                             realImage={answerCharacter?.id}
                             guessCount={guesses.length}
                             revealMode="crossfade"
