@@ -2,7 +2,7 @@
 
 > A Wordle-style character guessing game for Bleach fans — unlimited mode, attribute-based feedback, Soul Society aesthetic.
 
-**Last Updated:** 22 July 2026, 11:30 PM.
+**Last Updated:** 31 July 2026, 1:00 AM.
 
 [![Next.js](https://img.shields.io/badge/Next.js-15-black?logo=next.js)](https://nextjs.org/)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5-blue?logo=typescript)](https://www.typescriptlang.org/)
@@ -241,7 +241,7 @@ Flags are nested per mode rather than a flat list, since a vertical can ship in 
 - [x] **Global daily stats** — "X% of players solved it within N guesses," aggregated via Supabase on top of existing round/result tables
 - [x] **Surface badges on `/stats`** — badge system already exists but currently only renders inside each mode's summary card, not on the dedicated stats page
 - [x] **Rate limiting on game APIs** (not just `/api/support`) — done, but via the lighter path rather than the originally planned one: `app/api/stats/finalize`, `app/api/stats/daily`, and `app/api/stats/global` all now gate on IP-based checks (`checkIpRateLimit` from `lib/support/ipRateLimit.ts`, the same pattern generalized from the support ticket system) or the in-memory `edgeRateLimit` helper (`lib/rateLimit.ts`). `@upstash/ratelimit` / `@upstash/redis` are installed as dependencies but not wired into any route yet — today's limiter is in-process memory, which is fine for a single Vercel region but won't share state across edge regions if traffic grows; revisit Upstash then.
-- [ ] **Shareable result as image** — still pending. Skip the Wordle/Worldle-style emoji-grid text share; generate a downloadable/story-ready image (canvas or server-side OG image) instead
+- [x] **Shareable result as image** — still pending. Skip the Wordle/Worldle-style emoji-grid text share; generate a downloadable/story-ready image (canvas or server-side OG image) instead
 - [ ] **Streak/session portability without login** — still pending. Current direction: generate a code on one device that can be entered on a second device to link/sync the streak data across them. This replaces the earlier same-network auto-detection idea, which had an unresolved collision problem on shared networks (family, roommates) where distinct players would merge onto one streak
 
 ### Accounts & Progression (new)
@@ -676,6 +676,7 @@ bleachdle
 │  │  │     ├─ daily.ts
 │  │  │     ├─ format.ts
 │  │  │     ├─ generateCaseFileId.ts
+│  │  │     ├─ isTouchDevice.ts
 │  │  │     ├─ sanitize.ts
 │  │  │     ├─ time.ts
 │  │  │     └─ ui.ts
@@ -722,6 +723,8 @@ bleachdle
 │  │  │  │  ├─ useDailyWallpaper.ts
 │  │  │  │  ├─ useRaceEmblem.ts
 │  │  │  │  ├─ useRouteLoadingStore.ts
+│  │  │  │  ├─ useShareResultData.ts
+│  │  │  │  ├─ useShareResultExport.ts
 │  │  │  │  ├─ useTestWallpaper.ts
 │  │  │  │  └─ useTurnstile.ts
 │  │  │  ├─ types
@@ -800,6 +803,9 @@ bleachdle
 │  │  │     │  ├─ IdentificationHistoryPanel.tsx
 │  │  │     │  ├─ index.ts
 │  │  │     │  ├─ NarrativeFlavorText.tsx
+│  │  │     │  ├─ ShareResultButton.tsx
+│  │  │     │  ├─ ShareResultCard.tsx
+│  │  │     │  ├─ ShareResultPreviewModal.tsx
 │  │  │     │  ├─ StreakStatsGrid.tsx
 │  │  │     │  ├─ SummaryActionButton.tsx
 │  │  │     │  ├─ SummaryCardShell.tsx

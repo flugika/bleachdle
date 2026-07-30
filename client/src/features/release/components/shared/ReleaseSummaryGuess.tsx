@@ -19,6 +19,7 @@ import {
     StreakStatsGrid,
     SummaryActionButton,
     IdentificationHistoryPanel,
+    useShareResultData,
 } from '@/src/shared/ui/summary';
 
 interface ReleaseSummaryGuessProps {
@@ -73,6 +74,26 @@ export const ReleaseSummaryGuess = ({
     const emblem = useRaceEmblem(answerCharacter);
 
     const hasMeta = revealedCharacter?.source_episode != null;
+
+    const shareData = useShareResultData({
+        gameMode: 'RELEASE',
+        prefix: 'RL',
+        icon: '۞',
+        mode,
+        isWin,
+        guessCount: guesses.length,
+        tier: activeTier,
+        currentStreak: stats.currentStreak,
+        maxStreak: stats.maxStreak,
+        flavor: activeTier.flavor,
+        attemptMatrix: guesses.map((g) => ({
+            colors: [g.status === 'correct' ? '#4de880' : '#a64747'],
+        })),
+        dateLabel: mode === 'daily' && target?.scheduledDate
+            ? target.scheduledDate
+            : new Date().toISOString().slice(0, 10),
+        seed: target?.id ?? 'release-default',
+    });
 
     if (!isOpen || !target) return null;
 
@@ -272,7 +293,7 @@ export const ReleaseSummaryGuess = ({
                 tierColor={activeTier.color}
             />
 
-            <SummaryActionButton mode={mode} isWin={isWin} onClose={onClose} />
+            <SummaryActionButton mode={mode} isWin={isWin} onClose={onClose} shareData={shareData} />
         </SummaryCardShell>
     );
 };

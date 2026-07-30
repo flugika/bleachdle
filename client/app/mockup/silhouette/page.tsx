@@ -150,11 +150,15 @@ function SilhouettePreviewBox({
     isLoading = false,
 }: SilhouettePreviewBoxProps) {
 
-    const occupiedCells = useMemo(() => getOccupiedCells(image), [image]);
-    const weightCells = useMemo(() => getCellWeights(image), [image]);
     const revealed = useMemo(
-        () => getRevealedCellIndices(characterId, guessCount, "unlimited", occupiedCells, weightCells),
-        [characterId, guessCount, occupiedCells, weightCells],
+        () => getRevealedCellIndices(
+            characterId,
+            guessCount,
+            "unlimited",
+            getOccupiedCells(characterId),
+            getCellWeights(characterId)
+        ),
+        [characterId, guessCount],
     );
 
     return (

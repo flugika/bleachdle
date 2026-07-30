@@ -16,11 +16,22 @@ interface SilhouetteCellConfig {
 
 const cellsMap = silhouetteCells as unknown as Record<string, SilhouetteCellConfig>;
 
-export const getOccupiedCells = (image: string): number[] | undefined =>
-    cellsMap[image]?.occupied;
+export const getOccupiedCells = (characterId: string): number[] | undefined => {
+    const silhouette = loadSilhouettes().find((s) => s.character_id === characterId || s.id === characterId);
+    if (!silhouette) return undefined;
 
-export const getCellWeights = (image: string): Record<number, number> =>
-    (cellsMap[image]?.weights as unknown as Record<number, number>) ?? {};
+    // ตัดเอาเฉพาะชื่อไฟล์เผื่อใน JSON มี Path ติดมา
+    const filename = silhouette.image.split('/').pop()?.split('?')[0] ?? silhouette.image;
+    return cellsMap[filename]?.occupied;
+};
+
+export const getCellWeights = (characterId: string): Record<number, number> => {
+    const silhouette = loadSilhouettes().find((s) => s.character_id === characterId || s.id === characterId);
+    if (!silhouette) return {};
+
+    const filename = silhouette.image.split('/').pop()?.split('?')[0] ?? silhouette.image;
+    return (cellsMap[filename]?.weights as unknown as Record<number, number>) ?? {};
+};
 
 let cachedSilhouettes: BleachSilhouette[] | null = null;
 

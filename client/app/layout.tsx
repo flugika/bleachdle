@@ -38,7 +38,7 @@ const geist = Geist({
 
 export const metadata: Metadata = {
   title: "Bleachdle",
-  description: "Anime guessing game (Bleach TYBW Cour 3)",
+  description: "Anime guessing game (Bleach TYBW Cour 4)",
   metadataBase: new URL("https://bleachdle.app"),
   openGraph: {
     title: "Bleachdle",

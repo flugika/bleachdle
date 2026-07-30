@@ -14,6 +14,7 @@ import {
     StreakStatsGrid,
     SummaryActionButton,
     IdentificationHistoryPanel,
+    useShareResultData,
 } from '@/src/shared/ui/summary';
 import { formatAge, formatHeight } from '@/src/lib/utils/format';
 import { Stats } from '@/src/lib/guessGame/types';
@@ -36,6 +37,26 @@ export const CharacterSummaryGuess = ({ isOpen, onClose, guesses, target, isWin,
     const activeTier = useCharacterTier(stats.maxStreak);
 
     const emblem = useRaceEmblem(answerCharacter);
+
+    const shareData = useShareResultData({
+        gameMode: 'CHARACTER',
+        prefix: 'CH',
+        icon: '卍',
+        mode,
+        isWin,
+        guessCount: guesses.length,
+        tier: activeTier,
+        currentStreak: stats.currentStreak,
+        maxStreak: stats.maxStreak,
+        flavor: activeTier.flavor,
+        attemptMatrix: guesses.map((g) => ({
+            colors: RESULT_KEYS.map((key) => STATUS_COLORS[g.result[key] as MatchResult] || '#3a2828'),
+        })),
+        dateLabel: mode === 'daily' && target.scheduledDate
+            ? target.scheduledDate
+            : new Date().toISOString().slice(0, 10),
+        seed: target.id,
+    });
 
     if (!isOpen || !answerCharacter) return null;
 
@@ -204,7 +225,7 @@ export const CharacterSummaryGuess = ({ isOpen, onClose, guesses, target, isWin,
                 labelColorClassName="text-[#eed9c4]/70"
             />
 
-            <SummaryActionButton mode={mode} isWin={isWin} onClose={onClose} />
+            <SummaryActionButton mode={mode} isWin={isWin} onClose={onClose} shareData={shareData} />
         </SummaryCardShell>
     );
 };

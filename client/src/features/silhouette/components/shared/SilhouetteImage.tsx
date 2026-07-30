@@ -9,7 +9,6 @@ import Image from 'next/image';
 
 interface Props {
     characterId: string;
-    image: string;
     mode: "daily" | "unlimited";
     realImage?: string;
     guessCount?: number;
@@ -22,7 +21,6 @@ const DEFAULT_BG = '#3E77CF';
 
 export const SilhouetteImage = ({
     characterId,
-    image,
     mode,
     realImage,
     guessCount = 0,
@@ -124,8 +122,14 @@ export const SilhouetteImage = ({
     }, [fullCharacterSrc]);
 
     const revealed = useMemo(
-        () => getRevealedCellIndices(characterId, guessCount, mode, getOccupiedCells(image), getCellWeights(image)),
-        [characterId, guessCount, image, mode],
+        () => getRevealedCellIndices(
+            characterId,
+            guessCount,
+            mode,
+            getOccupiedCells(characterId),
+            getCellWeights(characterId)
+        ),
+        [characterId, guessCount, mode],
     );
 
     const isReady = configReady && silhouetteLoaded;

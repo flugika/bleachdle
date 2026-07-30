@@ -5,30 +5,19 @@ import fs from 'node:fs/promises';
 import path from 'node:path';
 
 const GRID_SIZE = 5;
-const ALPHA_THRESHOLD = 10;
-const OCCUPIED_RATIO_THRESHOLD = 0.02;
-const MAX_OCCUPIED_RATIO = 0.97;
-const SKIP_FILE_PATTERN = /^_/;
+const ALPHA_THRESHOLD = 15;
 
-// 🩹 เกณฑ์ขั้นต่ำของ gradient magnitude ที่จะนับเป็น "edge pixel" จริง (หน่วยเดียวกับ alpha 0-255)
-// ต่ำพอที่จะจับขอบ antialiased ได้ แต่สูงพอกันสัญญาณรบกวนจาก rounding error ในพื้นที่ทึบ/โปร่งใสล้วน
-const EDGE_DIRECTION_MIN_MAGNITUDE = 15;
-
-// น้ำหนักรวมระหว่าง "ความซับซ้อนของเส้นขอบ" กับ "ระยะห่างจากศูนย์กลางมวล"
-// contourComplexity ได้น้ำหนักมากกว่า เพราะเป็นตัวชี้ "เอกลักษณ์" โดยตรง (เส้นหยัก vs เส้นตรง)
-// ส่วน extremity เป็นแค่ proxy คร่าวๆ ของ "ส่วนที่ยื่นออกจากลำตัว" — ยังมีประโยชน์แต่หยาบกว่า
-// ⚠️ ค่านี้ยังเป็นจุดเริ่มต้น ต้องดู debug output จริงกับตัวละคร 5-10 ตัวที่รู้ทรงชัดก่อนฟันธง
-const CONTOUR_WEIGHT = 0.7;
-const EXTREMITY_WEIGHT = 0.3;
+// 🎯 1. บีบช่วงพื้นที่เงาให้แคบลง (ตัดช่องทึบเกิน / โล่งเกินออกอย่างเด็ดขาด)
+// 🎯 ค่าที่แนะนำสำหรับเกมทายเงา (ตาราง 5x5)
+const MIN_OCCUPIED_RATIO = 0.03;       // 3% (เก็บหมดแม้กระทั่งปลายดาบ/ปลายผม)
+const MAX_OCCUPIED_RATIO = 0.98;       // 98% (เก็บช่วงลำตัวทึบๆ ไว้ด้วย ไม่ทิ้งกลางตัว)
+const MIN_EDGE_PIXEL_COUNT = 3;        // 3 pixels (ลดลงเพื่อไม่ให้พลาดขอบเล็กๆ)
+const EDGE_DIRECTION_MIN_MAGNITUDE = 10;// 10 (ดักจับขอบภาพที่เบลอหรือมนนิดๆ ได้ดีขึ้น)
 
 const SILHOUETTE_DIR = path.resolve('assets-private/character_silhouette');
 const OUTPUT_PATH = path.resolve('src/data/silhouette-cells.json');
 const DEBUG_STATS_PATH = path.resolve('src/data/silhouette-cells.debug.json');
 
-// 🩹 normalize แบบ relative min-max ของภาพนั้นๆ เท่านั้น (ไม่ anchor สเกลสัมบูรณ์)
-// เพราะการสุ่มเลือกเกิดขึ้น "ภายในภาพเดียวกัน" เท่านั้น ไม่เคยเทียบข้ามภาพ
-// ถ้า range แคบเกินไป (cell ในภาพนี้คะแนนใกล้เคียงกันหมด) → คืนน้ำหนักเท่ากันหมด
-// กันไม่ให้ noise เล็กๆ ถูกขยายเป็นความต่างปลอมๆ
 function normalize(values) {
     if (values.length === 0) return [];
     const max = Math.max(...values);
@@ -57,26 +46,10 @@ async function getWeightedCellsForImage(filePath) {
         return channels === 4 ? data[idx + 3] : 255;
     };
 
-    // --- STEP 1: centroid ของเงา (ถ่วงน้ำหนักด้วย alpha) สำหรับวัด extremity ---
-    let sumX = 0, sumY = 0, massTotal = 0;
-    for (let y = 0; y < height; y++) {
-        for (let x = 0; x < width; x++) {
-            if (alphaAt(x, y) > ALPHA_THRESHOLD) {
-                sumX += x;
-                sumY += y;
-                massTotal++;
-            }
-        }
-    }
-    const centroidX = massTotal > 0 ? sumX / massTotal : width / 2;
-    const centroidY = massTotal > 0 ? sumY / massTotal : height / 2;
-    const maxPossibleDist = Math.hypot(width, height) / 2;
-
-    // --- STEP 2: ต่อ cell — occupiedRatio (เดิม) + contour complexity (ใหม่) + extremity ---
     const occupied = [];
     const cellDebug = [];
     const contourScores = [];
-    const extremityScores = [];
+    const balanceScores = [];
     const cellIndices = [];
 
     for (let row = 0; row < GRID_SIZE; row++) {
@@ -85,9 +58,6 @@ async function getWeightedCellsForImage(filePath) {
             const y0 = Math.floor(row * cellH), y1 = Math.floor((row + 1) * cellH);
 
             let filled = 0, total = 0;
-
-            // 🆕 สถิติทิศทาง gradient แบบถ่วงน้ำหนักด้วย magnitude (weighted circular mean)
-            // เก็บ sumCos/sumSin ของ edge pixel เท่านั้น (magnitude ผ่านเกณฑ์ขั้นต่ำ)
             let sumCos = 0, sumSin = 0, sumMagnitude = 0, edgePixelCount = 0;
 
             for (let y = y0; y < y1; y++) {
@@ -111,54 +81,59 @@ async function getWeightedCellsForImage(filePath) {
             }
 
             const occupiedRatio = filled / total;
-            const isTransparentEnough = occupiedRatio >= OCCUPIED_RATIO_THRESHOLD;
-            const isFullySolid = occupiedRatio > MAX_OCCUPIED_RATIO;
-            const isUsable = isTransparentEnough && !isFullySolid;
 
+            const isTransparentEnough = occupiedRatio >= MIN_OCCUPIED_RATIO;
+            const isNotTooSolid = occupiedRatio <= MAX_OCCUPIED_RATIO;
+            const hasEnoughEdgePixels = edgePixelCount >= MIN_EDGE_PIXEL_COUNT;
+
+            const isUsable = isTransparentEnough && isNotTooSolid && hasEnoughEdgePixels;
             const cellIndex = row * GRID_SIZE + col;
 
             let contourComplexity = 0;
-            let directionVariance = 0;
+
             if (isUsable) {
                 occupied.push(cellIndex);
                 cellIndices.push(cellIndex);
 
                 if (edgePixelCount > 0) {
-                    // circular variance: R=1 ทิศทางเดียวกันหมด (เส้นตรง) -> variance=0
-                    //                    R=0 ทิศทางกระจัดกระจาย (หยัก/ซับซ้อน) -> variance=1
                     const meanCos = sumCos / sumMagnitude;
                     const meanSin = sumSin / sumMagnitude;
                     const R = Math.hypot(meanCos, meanSin);
-                    directionVariance = 1 - R;
-
-                    // ถ่วงด้วยความหนาแน่นของ edge signal ใน cell — กัน cell ที่มี edge pixel
-                    // น้อยมาก (อาจเป็น noise) ได้ variance สูงลอยๆ โดยไม่มี edge จริงรองรับพอ
+                    const directionVariance = 1 - R;
                     const magnitudeDensity = sumMagnitude / total;
                     contourComplexity = magnitudeDensity * directionVariance;
                 }
                 contourScores.push(contourComplexity);
 
-                const cellCenterX = (x0 + x1) / 2;
-                const cellCenterY = (y0 + y1) / 2;
-                const dist = Math.hypot(cellCenterX - centroidX, cellCenterY - centroidY);
-                extremityScores.push(dist / maxPossibleDist);
+                // 🎯 2. คำนวณ Balance Score (ยิ่งเข้าใกล้ 50% / 0.5 คะแนนยิ่งสูง)
+                const balance = 1 - 4 * Math.pow(occupiedRatio - 0.5, 2);
+                balanceScores.push(Math.max(0, balance));
             }
 
             cellDebug.push({
                 cell: cellIndex,
                 occupiedRatio: Number(occupiedRatio.toFixed(3)),
+                edgePixelCount,
                 contourComplexity: Number(contourComplexity.toFixed(4)),
-                skippedReason: !isTransparentEnough ? 'too_transparent' : isFullySolid ? 'fully_solid_no_edge' : null,
+                isUsable,
+                skippedReason: !isTransparentEnough
+                    ? 'too_transparent'
+                    : !isNotTooSolid
+                        ? 'too_solid'
+                        : !hasEnoughEdgePixels
+                            ? 'insufficient_edges'
+                            : null,
             });
         }
     }
 
     const normContour = normalize(contourScores);
-    const normExtremity = normalize(extremityScores);
 
     const weights = {};
     cellIndices.forEach((cellIndex, i) => {
-        const w = normContour[i] * CONTOUR_WEIGHT + normExtremity[i] * EXTREMITY_WEIGHT;
+        // 🎯 3. รวมน้ำหนัก: ความซับซ้อนของขอบ (60%) + ความสมดุลไม่ทึบ/โล่งเกินไป (40%)
+        // 🎯 ปรับสัดส่วนน้ำหนัก: เน้นลายละเอียดขอบ 80% + ความทึบ 20%
+        const w = normContour[i] * 0.8 + balanceScores[i] * 0.2;
         weights[cellIndex] = Number(w.toFixed(4));
     });
 
@@ -168,7 +143,7 @@ async function getWeightedCellsForImage(filePath) {
 async function main() {
     const files = (await fs.readdir(SILHOUETTE_DIR))
         .filter((f) => /\.(png|webp)$/i.test(f))
-        .filter((f) => !SKIP_FILE_PATTERN.test(f));
+        .filter((f) => !path.basename(f).startsWith('_'));
 
     const result = {};
     const debugResult = {};
