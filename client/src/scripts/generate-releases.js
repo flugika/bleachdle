@@ -14,7 +14,6 @@ const RELEASES_FILE = path.join(DATA_DIR, 'releases.json');
 
 const VALID_RELEASE_TYPES = ['Shikai', 'Bankai', 'Resurreccion', 'Vollstandig'];
 
-// 🎯 ลิสต์เฉพาะตัวละครที่ตั้งใจจะเอาแค่ Shikai เท่านั้น (เพราะไม่มี Bankai หรืออยากโชว์แค่ Shikai)
 const ICONIC_SHIKAI_CHARACTERS = [
     "Izuru Kira",
     "Shuhei Hisagi",
@@ -27,6 +26,13 @@ const DEFAULT_CLIP_END_MS = 10_000;
 const slugifyName = (name) => name.trim().replace(/\s+/g, '_');
 const buildAudioUrl = (releaseType, characterName) => `${releaseType}_${slugifyName(characterName)}.mp3`;
 
+// 🛡️ Helper สำหรับ Atomic File Write
+function writeJsonAtomic(filePath, data) {
+    const tempPath = `${filePath}.${randomUUID()}.tmp`;
+    fs.writeFileSync(tempPath, JSON.stringify(data, null, 4), 'utf8');
+    fs.renameSync(tempPath, filePath);
+}
+
 function run() {
     try {
         const charactersData = fs.readFileSync(CHARACTERS_FILE, 'utf8');
@@ -34,9 +40,11 @@ function run() {
         const currentCharacterIds = new Set(characters.map((c) => c.id));
 
         let existingReleases = [];
-        if (fs.existsSync(RELEASES_FILE)) {
+        try {
             const raw = fs.readFileSync(RELEASES_FILE, 'utf8').trim();
             if (raw) existingReleases = JSON.parse(raw);
+        } catch (err) {
+            if (err.code !== 'ENOENT') throw err;
         }
 
         const existingKey = (r) => `${r.character_id}::${r.release_type}`;
@@ -51,7 +59,6 @@ function run() {
             const releaseTypesForChar = charReleases.filter((t) => {
                 if (!VALID_RELEASE_TYPES.includes(t)) return false;
 
-                // 🛑 ลอจิก: ถ้าตัวละครนี้มี Bankai ให้ตัด Shikai ทิ้งทันที
                 if (t === 'Shikai') {
                     if (hasBankai) return false;
                     return ICONIC_SHIKAI_CHARACTERS.includes(character.name);
@@ -104,7 +111,6 @@ function run() {
         const orphanedIds = new Set(orphaned.map((r) => r.id));
         const cleanedReleases = nextReleases.filter((r) => !orphanedIds.has(r.id));
 
-        // ลบ Shikai เก่าๆ ของคนที่มี Bankai ออกจากไฟล์ json ให้หมดเกลี้ยง
         const finalCleanedReleases = cleanedReleases.filter((r) => {
             if (r.release_type === 'Shikai') {
                 const char = characters.find((c) => c.id === r.character_id);
@@ -115,7 +121,7 @@ function run() {
             return true;
         });
 
-        fs.writeFileSync(RELEASES_FILE, JSON.stringify(finalCleanedReleases, null, 4), 'utf8');
+        writeJsonAtomic(RELEASES_FILE, finalCleanedReleases);
 
         console.log('\n✅ Done — releases.json has been cleaned and updated (No Spoilers Clutter).');
         console.log(`Total release entries: ${finalCleanedReleases.length}`);
