@@ -271,30 +271,6 @@
         "image": "Keigo_Asano.webp"
     },
     {
-        "id": "c2b3d4e5-f6a7-4b8c-9d0e-1f2a3b4c5d6e",
-        "name": "Mizuho Asano",
-        "gender": "Female",
-        "race": [
-            "Human"
-        ],
-        "affiliation": "Human",
-        "height_cm": 162,
-        "age": -1,
-        "eye_color": "Brown",
-        "hair_color": "Brown",
-        "first_appearance_chapter": "Agent of the Shinigami",
-        "weapon": [
-            "None"
-        ],
-        "release": [
-            "None"
-        ],
-        "primary_ability": [
-            "None"
-        ],
-        "image": "Mizuho_Asano.webp"
-    },
-    {
         "id": "05675003-0ce9-4385-82f6-f13f0ad9936f",
         "name": "Oscar Joaquin De La Rosa",
         "gender": "Male",
@@ -317,30 +293,6 @@
             "None"
         ],
         "image": "Oscar_Joaquin_De_La_Rosa.webp"
-    },
-    {
-        "id": "e6573cf1-e3b6-4bb0-af6a-c46877c960c5",
-        "name": "Chizuru Honsho",
-        "gender": "Female",
-        "race": [
-            "Human"
-        ],
-        "affiliation": "Human",
-        "height_cm": 163,
-        "age": 19,
-        "eye_color": "Blue",
-        "hair_color": "Red",
-        "first_appearance_chapter": "Agent of the Shinigami",
-        "weapon": [
-            "None"
-        ],
-        "release": [
-            "None"
-        ],
-        "primary_ability": [
-            "None"
-        ],
-        "image": "Chizuru_Honsho.webp"
     },
     {
         "id": "18fddac6-d9d9-4e6a-8837-ba146980b153",
@@ -391,30 +343,6 @@
         "image": "Mizuiro_Kojima.webp"
     },
     {
-        "id": "f8d9b7a6-5c4d-4e3b-9a2f-1b0c9d8e7f6a",
-        "name": "Ryo Kunieda",
-        "gender": "Female",
-        "race": [
-            "Human"
-        ],
-        "affiliation": "Human",
-        "height_cm": 166,
-        "age": 19,
-        "eye_color": "Black",
-        "hair_color": "Black",
-        "first_appearance_chapter": "Agent of the Shinigami",
-        "weapon": [
-            "None"
-        ],
-        "release": [
-            "None"
-        ],
-        "primary_ability": [
-            "None"
-        ],
-        "image": "Ryo_Kunieda.webp"
-    },
-    {
         "id": "b3c4d5e6-f7a8-49b0-9c1d-2e3f4a5b6c7d",
         "name": "Yuzu Kurosaki",
         "gender": "Female",
@@ -461,30 +389,6 @@
             "None"
         ],
         "image": "Mahana_Natsui.webp"
-    },
-    {
-        "id": "d1e2f3a4-b5c6-4d7e-8f9a-0b1c2d3e4f5a",
-        "name": "Misato Ochi",
-        "gender": "Female",
-        "race": [
-            "Human"
-        ],
-        "affiliation": "Human",
-        "height_cm": -1,
-        "age": -1,
-        "eye_color": "Brown",
-        "hair_color": "Black",
-        "first_appearance_chapter": "Agent of the Shinigami",
-        "weapon": [
-            "None"
-        ],
-        "release": [
-            "None"
-        ],
-        "primary_ability": [
-            "None"
-        ],
-        "image": "Misato_Ochi.webp"
     },
     {
         "id": "ac95022b-9d72-4f28-a6ae-7a0dec1a872a",
@@ -704,30 +608,6 @@
             "Scientific"
         ],
         "image": "Akon.webp"
-    },
-    {
-        "id": "19eb93a9-3893-41cf-8b7f-419e150901f3",
-        "name": "Makizo Aramaki",
-        "gender": "Male",
-        "race": [
-            "Shinigami"
-        ],
-        "affiliation": "Gotei 13",
-        "height_cm": -1,
-        "age": 600,
-        "eye_color": "Black",
-        "hair_color": "Black",
-        "first_appearance_chapter": "Soul Society",
-        "weapon": [
-            "Weaponized"
-        ],
-        "release": [
-            "Shikai"
-        ],
-        "primary_ability": [
-            "Physical"
-        ],
-        "image": "Makizo_Aramaki.webp"
     },
     {
         "id": "2bbc0f70-1259-4585-a08c-b140552af192",
@@ -1074,30 +954,6 @@
             "Physical"
         ],
         "image": "Hidetomo_Kajomaru.webp"
-    },
-    {
-        "id": "b1c2d3e4-f5a6-4789-b0c1-2d3e4f5a6b7c",
-        "name": "Asuka Katakura",
-        "gender": "Male",
-        "race": [
-            "Shinigami"
-        ],
-        "affiliation": "Gotei 13",
-        "height_cm": -1,
-        "age": 500,
-        "eye_color": "Black",
-        "hair_color": "Black",
-        "first_appearance_chapter": "Thousand-Year Blood War",
-        "weapon": [
-            "Weaponized"
-        ],
-        "release": [
-            "Shikai"
-        ],
-        "primary_ability": [
-            "Physical"
-        ],
-        "image": "Asuka_Katakura.webp"
     },
     {
         "id": "943c77f1-91f9-46c8-967e-42e016b343c3",
@@ -1848,30 +1704,6 @@
             "Physical"
         ],
         "image": "Marechiyo_Omaeda.webp"
-    },
-    {
-        "id": "c7514156-a344-4f1b-8f54-8653cf79b635",
-        "name": "Riku Togakushi",
-        "gender": "Male",
-        "race": [
-            "Shinigami"
-        ],
-        "affiliation": "Gotei 13",
-        "height_cm": -1,
-        "age": 500,
-        "eye_color": "Black",
-        "hair_color": "Blonde",
-        "first_appearance_chapter": "Thousand-Year Blood War",
-        "weapon": [
-            "Weaponized"
-        ],
-        "release": [
-            "Shikai"
-        ],
-        "primary_ability": [
-            "Physical"
-        ],
-        "image": "Riku_Togakushi.webp"
     },
     {
         "id": "7dd17627-d39b-4a1e-8e80-76b75e951576",
@@ -3103,30 +2935,6 @@
         "image": "Baraggan_Louisenbairn.webp"
     },
     {
-        "id": "6a3afad0-c2fd-4dff-83cf-9e0d8600d965",
-        "name": "Lumina and Verona",
-        "gender": "Male",
-        "race": [
-            "Arrancar"
-        ],
-        "affiliation": "Arrancar Army",
-        "height_cm": -1,
-        "age": 100,
-        "eye_color": "Black",
-        "hair_color": "Black",
-        "first_appearance_chapter": "Arrancar",
-        "weapon": [
-            "None"
-        ],
-        "release": [
-            "None"
-        ],
-        "primary_ability": [
-            "Support"
-        ],
-        "image": "Lumina_and_Verona.webp"
-    },
-    {
         "id": "b26339f6-2448-479d-b407-1609bd3a38df",
         "name": "Gantenbainne Mosqueda",
         "gender": "Male",
@@ -3197,30 +3005,6 @@
             "Special"
         ],
         "image": "Wonderweiss_Margela.webp"
-    },
-    {
-        "id": "9ef8b2eb-13a8-4fe0-9f26-d00f1c693213",
-        "name": "Medazeppi",
-        "gender": "Male",
-        "race": [
-            "Arrancar"
-        ],
-        "affiliation": "Arrancar Army",
-        "height_cm": -1,
-        "age": 100,
-        "eye_color": "Gold",
-        "hair_color": "Black",
-        "first_appearance_chapter": "Arrancar",
-        "weapon": [
-            "None"
-        ],
-        "release": [
-            "None"
-        ],
-        "primary_ability": [
-            "None"
-        ],
-        "image": "Medazeppi.webp"
     },
     {
         "id": "7ab835bb-5ec4-4e90-87bc-ca74c76db929",
@@ -3584,30 +3368,6 @@
         "image": "Bawabawa.webp"
     },
     {
-        "id": "dd20c358-5db2-4235-964e-4618047f0fb5",
-        "name": "Fishbone D",
-        "gender": "Male",
-        "race": [
-            "Hollow"
-        ],
-        "affiliation": "Independent",
-        "height_cm": -1,
-        "age": 100,
-        "eye_color": "Gold",
-        "hair_color": "Unknown",
-        "first_appearance_chapter": "Agent of the Shinigami",
-        "weapon": [
-            "None"
-        ],
-        "release": [
-            "None"
-        ],
-        "primary_ability": [
-            "Physical"
-        ],
-        "image": "Fishbone_D.webp"
-    },
-    {
         "id": "b3d6767c-b9b7-4ba8-8389-ef1d8f20c09c",
         "name": "Grand Fisher",
         "gender": "Male",
@@ -3679,30 +3439,6 @@
             "Physical"
         ],
         "image": "Runuganga.webp"
-    },
-    {
-        "id": "81217bc3-fc23-42bb-90e5-25bd1aca73bc",
-        "name": "Shrieker",
-        "gender": "Male",
-        "race": [
-            "Hollow"
-        ],
-        "affiliation": "Independent",
-        "height_cm": -1,
-        "age": 100,
-        "eye_color": "Gold",
-        "hair_color": "Unknown",
-        "first_appearance_chapter": "Agent of the Shinigami",
-        "weapon": [
-            "Weaponized"
-        ],
-        "release": [
-            "None"
-        ],
-        "primary_ability": [
-            "Physical"
-        ],
-        "image": "Shrieker.webp"
     },
     {
         "id": "1f22beab-20ec-48d0-b213-50b80ea80df1",
@@ -3878,54 +3614,6 @@
         "image": "Candice_Catnipp.webp"
     },
     {
-        "id": "8f0070af-98f8-4959-ae65-57c56a71c0d2",
-        "name": "Nikita Deslock",
-        "gender": "Male",
-        "race": [
-            "Quincy"
-        ],
-        "affiliation": "Wandenreich",
-        "height_cm": -1,
-        "age": 100,
-        "eye_color": "Black",
-        "hair_color": "Blonde",
-        "first_appearance_chapter": "Thousand-Year Blood War",
-        "weapon": [
-            "Weaponized"
-        ],
-        "release": [
-            "None"
-        ],
-        "primary_ability": [
-            "Physical"
-        ],
-        "image": "Nikita_Deslock.webp"
-    },
-    {
-        "id": "2a44e281-bf30-41f8-9484-33531eb84994",
-        "name": "Shaz Domino",
-        "gender": "Male",
-        "race": [
-            "Quincy"
-        ],
-        "affiliation": "Sternritter",
-        "height_cm": -1,
-        "age": -1,
-        "eye_color": "Unknown",
-        "hair_color": "Blonde",
-        "first_appearance_chapter": "Thousand-Year Blood War",
-        "weapon": [
-            "Weaponized"
-        ],
-        "release": [
-            "None"
-        ],
-        "primary_ability": [
-            "Physical"
-        ],
-        "image": "Shaz_Domino.webp"
-    },
-    {
         "id": "4cd08cdd-353e-4d7b-9cdf-e514153c1002",
         "name": "Cang Du",
         "gender": "Male",
@@ -3948,30 +3636,6 @@
             "Physical"
         ],
         "image": "Cang_Du.webp"
-    },
-    {
-        "id": "06dccd20-faee-48a1-be2a-c834ef654e27",
-        "name": "Berenice Gabrielli",
-        "gender": "Male",
-        "race": [
-            "Quincy"
-        ],
-        "affiliation": "Wandenreich",
-        "height_cm": 174,
-        "age": 100,
-        "eye_color": "Brown",
-        "hair_color": "Blonde",
-        "first_appearance_chapter": "Thousand-Year Blood War",
-        "weapon": [
-            "Weaponized"
-        ],
-        "release": [
-            "None"
-        ],
-        "primary_ability": [
-            "Special"
-        ],
-        "image": "Berenice_Gabrielli.webp"
     },
     {
         "id": "9b8171d5-0487-4efd-a344-eae7bde9239e",

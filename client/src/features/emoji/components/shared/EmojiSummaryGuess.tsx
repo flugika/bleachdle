@@ -15,6 +15,7 @@ import {
     StreakStatsGrid,
     SummaryActionButton,
     IdentificationHistoryPanel,
+    useShareResultData,
 } from '@/src/shared/ui/summary';
 import { Stats } from '@/src/lib/guessGame/types';
 import { Character } from '@/src/entities/character/schema';
@@ -56,6 +57,26 @@ export const EmojiSummaryGuess = ({
     // 🔮 Same watermark effect as QuoteSummaryGuess, driven by the revealed
     // speaker's race instead of the guessed target directly.
     const emblem = useRaceEmblem(answerCharacter);
+
+    const shareData = useShareResultData({
+        gameMode: 'EMOJI',
+        prefix: 'EG',
+        icon: '❖',
+        mode,
+        isWin,
+        guessCount: guesses.length,
+        tier: activeTier,
+        currentStreak: stats.currentStreak,
+        maxStreak: stats.maxStreak,
+        flavor: activeTier.flavor,
+        attemptMatrix: guesses.map((g) => ({
+            colors: [g.status === 'correct' ? '#4de880' : '#a64747'],
+        })),
+        dateLabel: mode === 'daily' && target?.scheduledDate
+            ? target.scheduledDate
+            : new Date().toISOString().slice(0, 10),
+        seed: target?.id ?? 'emoji-default',
+    });
 
     if (!isOpen || !target) return null;
 
@@ -220,7 +241,7 @@ export const EmojiSummaryGuess = ({
                 tierColor={activeTier.color}
             />
 
-            <SummaryActionButton mode={mode} isWin={isWin} onClose={onClose} />
+            <SummaryActionButton mode={mode} isWin={isWin} onClose={onClose} shareData={shareData} />
         </SummaryCardShell>
     );
 };

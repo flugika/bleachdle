@@ -8,7 +8,6 @@ import path from 'node:path';
 // 1. CONFIGURATION & ENVIRONMENT SETUP
 // ==========================================
 
-const IS_CI = process.env.CI === 'true' || process.env.GITHUB_ACTIONS === 'true';
 const IS_GITHUB_ACTIONS = process.env.GITHUB_ACTIONS === 'true';
 const ROOT_DIR = process.cwd();
 

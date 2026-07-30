@@ -15,6 +15,7 @@ import {
     StreakStatsGrid,
     SummaryActionButton,
     IdentificationHistoryPanel,
+    useShareResultData,
 } from '@/src/shared/ui/summary';
 import { Character } from '@/src/entities/character/schema';
 
@@ -56,6 +57,26 @@ export const SilhouetteSummaryGuess = ({
     const activeTier = useCharacterTier(stats.maxStreak);
 
     const answerCharacter = revealedCharacter;
+
+    const shareData = useShareResultData({
+        gameMode: 'SILHOUETTE',
+        prefix: 'SH',
+        icon: '❄',
+        mode,
+        isWin,
+        guessCount: guesses.length,
+        tier: activeTier,
+        currentStreak: stats.currentStreak,
+        maxStreak: stats.maxStreak,
+        flavor: activeTier.flavor,
+        attemptMatrix: guesses.map((g) => ({
+            colors: [g.status === 'correct' ? '#3ecb73' : '#a64747'],
+        })),
+        dateLabel: mode === 'daily' && target?.scheduledDate
+            ? target.scheduledDate
+            : new Date().toISOString().slice(0, 10),
+        seed: target?.id ?? 'silhouette-default',
+    });
 
     if (!isOpen || !target) return null;
 
@@ -186,17 +207,7 @@ export const SilhouetteSummaryGuess = ({
                 tierColor={activeTier.color}
             />
 
-            <SummaryActionButton mode={mode} isWin={isWin} onClose={onClose} />
+            <SummaryActionButton mode={mode} isWin={isWin} onClose={onClose} shareData={shareData} />
         </SummaryCardShell>
     );
 };
-
-/**
- * NOTE: two visual deltas vs the original weren't ported because the shared
- * NarrativeFlavorText / StreakStatsGrid components don't expose every micro
- * class Silhouette used (px-4 vs px-2 on the quote block, mb-5/gap-6/text-[10px]
- * vs mb-6/gap-8/text-[11px] on the streak grid, and z-10 on both). These are
- * sub-pixel-level spacing/opacity differences only — if pixel parity matters,
- * add the same className-override pattern used on SummaryHeader /
- * IdentificationHistoryPanel to these two components as well.
- */

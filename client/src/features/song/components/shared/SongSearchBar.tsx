@@ -261,7 +261,7 @@ export const SongSearchBar = ({ songs, disabled = false, game }: SongSearchBarPr
                                     ].join(' ')}>
                                         BY {item.artist}
                                         {item.album && (
-                                            <span className={`font-black ${isActive} ? 'text-red-500/70' : 'text-[#444452]'`}>
+                                            <span className={`${isActive} ? 'text-red-500/70' : 'text-[#444452]'`}>
                                                 {' '}// {item.album.toUpperCase()}
                                             </span>
                                         )}
