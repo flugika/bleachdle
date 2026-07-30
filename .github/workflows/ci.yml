@@ -78,8 +78,8 @@ jobs:
       - run: pnpm install --frozen-lockfile
       - run: pnpm tsc --noEmit
 
-  character-data:
-    name: Validate character data
+  asset-data:
+    name: Validate asset data
     needs: install
     runs-on: ubuntu-latest
     steps:
@@ -93,7 +93,7 @@ jobs:
           cache: pnpm
           cache-dependency-path: client/pnpm-lock.yaml
       - run: pnpm install --frozen-lockfile
-      - name: Check name parity between characters.json and asset directory
+      - name: Check name parity between json and asset directory
         run: npx tsx src/scripts/check-assets.js
 
   build:
@@ -116,8 +116,6 @@ jobs:
         uses: actions/cache@v4
         with:
           path: client/.next/cache
-          # Next's own cache is invalidated per-lockfile already; source hash
-          # narrows it further so a docs-only commit doesn't get a stale hit.
           key: nextjs-${{ runner.os }}-${{ hashFiles('client/pnpm-lock.yaml') }}-${{ hashFiles('client/src/**', 'client/app/**') }}
           restore-keys: |
             nextjs-${{ runner.os }}-${{ hashFiles('client/pnpm-lock.yaml') }}-
@@ -126,6 +124,8 @@ jobs:
         env:
           NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL || 'https://placeholder.supabase.co' }}
           NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY || 'placeholder' }}
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL || 'https://placeholder.supabase.co' }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY || 'placeholder-service-role-key' }}
         run: pnpm build
 
   # Single required status check to wire into branch protection — flip to

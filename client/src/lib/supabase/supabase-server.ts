@@ -1,15 +1,18 @@
-import 'server-only'
-
+import 'server-only';
 import { createClient } from '@supabase/supabase-js';
 
-// ตรวจสอบว่ามีตัวแปรเหล่านี้ใน .env ของคุณ
-const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL!;
-const SUPABASE_SERVICE_ROLE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY!;
+const supabaseUrl = process.env.SUPABASE_URL || process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://placeholder.supabase.co';
+const supabaseServiceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY || 'placeholder-key';
 
-if (!SUPABASE_URL || !SUPABASE_SERVICE_ROLE_KEY) {
-    console.error('❌ Error: Missing SUPABASE_URL or SUPABASE_SERVICE_ROLE_KEY in .env file!');
-    console.error('Please verify that the environment variables are correctly defined and spelled.');
+if (!process.env.SUPABASE_SERVICE_ROLE_KEY) {
+    if (process.env.NODE_ENV === 'development') {
+        console.warn('⚠️ Warning: Missing SUPABASE_SERVICE_ROLE_KEY in environment variables');
+    }
 }
 
-// สร้าง client สำหรับใช้งานใน Server
-export const supabaseServer = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY);
+// รวม Fallback ค่าหลอกไว้ เพื่อไม่ให้ next build หรือ CI พังขณะ Compile Static Pages
+export const supabaseServer = createClient(supabaseUrl, supabaseServiceRoleKey, {
+    auth: {
+        persistSession: false, // ปิด Session Persistence สำหรับ Server-side Service Role
+    },
+});
