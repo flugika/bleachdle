@@ -122,6 +122,7 @@ jobs:
           NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY || 'placeholder' }}
           SUPABASE_URL: ${{ secrets.SUPABASE_URL || 'https://placeholder.supabase.co' }}
           SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY || 'placeholder-service-role-key' }}
+          SUPPORT_COOKIE_SECRET: ${{ secrets.SUPPORT_COOKIE_SECRET || 'placeholder-support-cookie-secret' }}
         run: pnpm build
 
   ci-status:

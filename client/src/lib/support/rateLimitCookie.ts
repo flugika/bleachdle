@@ -1,23 +1,20 @@
 // src/lib/support/rateLimitCookie.ts
-//
-// Signed, httpOnly cookie helpers for rate limiting the support form.
-// Deliberately does NOT use IP address, user-agent, or any other identifying
-// data — everything needed to enforce the limit lives in a cookie scoped to
-// the browser that sent it. The signature stops the client from editing the
-// value; it does not stop the client from deleting the cookie outright. That
-// is an accepted trade-off in exchange for not tracking anything about the
-// device or network.
-
 import crypto from "crypto";
 
-const SECRET = process.env.SUPPORT_COOKIE_SECRET;
-
-if (!SECRET) {
-    throw new Error("Missing env var: SUPPORT_COOKIE_SECRET");
+// ดึง SECRET หรือใช้ fallback สำหรับช่วง build time ใน CI
+function getSecret(): string {
+    const secret = process.env.SUPPORT_COOKIE_SECRET;
+    if (!secret) {
+        if (process.env.NODE_ENV === "production" && process.env.NEXT_PHASE !== "phase-production-build") {
+            throw new Error("Missing env var: SUPPORT_COOKIE_SECRET");
+        }
+        return "development-or-ci-fallback-secret-key-32bytes!";
+    }
+    return secret;
 }
 
 function sign(payload: string): string {
-    return crypto.createHmac("sha256", SECRET as string).update(payload).digest("hex");
+    return crypto.createHmac("sha256", getSecret()).update(payload).digest("hex");
 }
 
 /** Pack a payload string into "payload.signature" for use as a cookie value. */
