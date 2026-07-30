@@ -398,6 +398,12 @@ bleachdle
 │  │  │  ├─ Abirama_Redder.webp
 │  │  │  ├─ Aisslinger_Wernarr.webp
 │  │  │  ├─ Akon.webp
+│  │  │  └─ ...
+│  │  └─ character_silhouette
+│  │     ├─ Aaroniero_Arruruerie_cutout_silhouette.webp
+│  │     ├─ Abirama_Redder_cutout_silhouette.webp
+│  │     ├─ Aisslinger_Wernarr_cutout_silhouette.webp
+│  │     ├─ Akon_cutout_silhouette.webp
 │  │     └─ ...
 │  ├─ CLAUDE.md
 │  ├─ eslint.config.mjs
@@ -407,7 +413,6 @@ bleachdle
 │  │  └─ index.html
 │  ├─ playwright.config.ts
 │  ├─ pnpm-lock.yaml
-│  ├─ pnpm-workspace.yaml
 │  ├─ postcss.config.mjs
 │  ├─ proxy.ts
 │  ├─ public
@@ -457,7 +462,6 @@ bleachdle
 │  │  │  ├─ characters.json
 │  │  │  ├─ emoji-list.json
 │  │  │  ├─ emojis.json
-│  │  │  ├─ powers.json
 │  │  │  ├─ quotes.json
 │  │  │  ├─ releases.json
 │  │  │  ├─ releases.json.bak
