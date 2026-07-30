@@ -28,7 +28,7 @@
     "preinstall": "npx only-allow pnpm"
   },
   "dependencies": {
-    "@marsidev/react-turnstile": "^1.5.3",
+    "@marsidev/react-turnstile": "^1.5.4",
     "@supabase/supabase-js": "^2.110.0",
     "@upstash/ratelimit": "^2.0.8",
     "@upstash/redis": "^1.38.0",
