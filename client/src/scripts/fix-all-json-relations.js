@@ -23,6 +23,13 @@ function isValidUuid(uuid) {
     return uuid && UUID_RE.test(uuid);
 }
 
+// 🛡️ Helper สำหรับ Atomic File Write เพื่อแก้ปัญหา Race Condition ของ CodeQL
+function writeJsonAtomic(filePath, data) {
+    const tempPath = `${filePath}.${randomUUID()}.tmp`;
+    fs.writeFileSync(tempPath, JSON.stringify(data, null, 4), 'utf8');
+    fs.renameSync(tempPath, filePath);
+}
+
 function run() {
     try {
         console.log('🚀 Starting Data Migration & UUID Synchronization...');
@@ -48,13 +55,18 @@ function run() {
         // STEP 2: ฟังก์ชันสำหรับรีไรต์ฟิลด์และซิงค์ ID ของไฟล์ลูก
         // ----------------------------------------------------------------
         const processRelationalFile = (filePath, fileName) => {
-            if (!fs.existsSync(filePath)) {
-                console.log(`⚠️ ไม่พบไฟล์ ${fileName} ข้ามไป...`);
-                return;
+            let entries = [];
+            try {
+                const raw = fs.readFileSync(filePath, 'utf8');
+                entries = JSON.parse(raw);
+            } catch (err) {
+                if (err.code === 'ENOENT') {
+                    console.log(`⚠️ ไม่พบไฟล์ ${fileName} ข้ามไป...`);
+                    return;
+                }
+                throw err;
             }
 
-            const raw = fs.readFileSync(filePath, 'utf8');
-            const entries = JSON.parse(raw);
             let idFixedCount = 0;
             let relationFixedCount = 0;
 
@@ -87,8 +99,8 @@ function run() {
                 return updatedEntry;
             });
 
-            // บันทึกไฟล์ที่แก้ไขแล้ว
-            fs.writeFileSync(filePath, JSON.stringify(fixedEntries, null, 4), 'utf8');
+            // บันทึกไฟล์แบบ Atomic Write
+            writeJsonAtomic(filePath, fixedEntries);
             console.log(`🔷 ${fileName} -> แก้ไข ID ตัวเอง: ${idFixedCount} | ซิงค์ Relation: ${relationFixedCount} รายการ`);
         };
 
@@ -99,8 +111,8 @@ function run() {
         processRelationalFile(QUOTES_FILE, 'quotes.json');
         processRelationalFile(SONGS_FILE, 'songs.json');
 
-        // บันทึกไฟล์แม่ปิดท้ายงาน
-        fs.writeFileSync(CHARACTERS_FILE, JSON.stringify(fixedCharacters, null, 4), 'utf8');
+        // บันทึกไฟล์แม่ปิดท้ายงานแบบ Atomic Write
+        writeJsonAtomic(CHARACTERS_FILE, fixedCharacters);
         console.log(`\n👑 characters.json -> แก้ไข ID ตัวละครไปทั้งหมด: ${charFixedCount} ตัว`);
 
         console.log('\n✅ การอพยพข้อมูลและซิงค์ ID เสร็จสิ้นสมบูรณ์! ข้อมูลทุกไฟล์ปลอดภัยและถูกต้องตามมาตรฐาน Zod UUID แล้วครับ');
