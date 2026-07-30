@@ -1,0 +1,144 @@
+name: CI
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+defaults:
+  run:
+    working-directory: client
+
+env:
+  # Keep this in lockstep with Vercel → Project Settings → Build and
+  # Deployment → Node.js Version. Mismatched versions between CI and the
+  # actual deploy target is the single most common "works in CI, breaks in
+  # prod" bug in Node projects — don't let these two drift apart.
+  NODE_VERSION: 24
+
+jobs:
+  install:
+    name: Install dependencies
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 9
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: pnpm
+          cache-dependency-path: client/pnpm-lock.yaml
+
+      - name: Install (frozen lockfile)
+        run: pnpm install --frozen-lockfile
+
+  lint:
+    name: Lint
+    needs: install
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 9
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: pnpm
+          cache-dependency-path: client/pnpm-lock.yaml
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm lint
+
+  typecheck:
+    name: Type check
+    needs: install
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 9
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: pnpm
+          cache-dependency-path: client/pnpm-lock.yaml
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm tsc --noEmit
+
+  character-data:
+    name: Validate character data
+    needs: install
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 9
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: pnpm
+          cache-dependency-path: client/pnpm-lock.yaml
+      - run: pnpm install --frozen-lockfile
+      - name: Check name parity between characters.json and asset directory
+        run: node src/lib/utils/scripts/check-assets.js
+
+  build:
+    name: Build
+    needs: [lint, typecheck, character-data]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 9
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: pnpm
+          cache-dependency-path: client/pnpm-lock.yaml
+      - run: pnpm install --frozen-lockfile
+
+      - name: Cache Next.js build output
+        uses: actions/cache@v4
+        with:
+          path: client/.next/cache
+          # Next's own cache is invalidated per-lockfile already; source hash
+          # narrows it further so a docs-only commit doesn't get a stale hit.
+          key: nextjs-${{ runner.os }}-${{ hashFiles('client/pnpm-lock.yaml') }}-${{ hashFiles('client/src/**', 'client/app/**') }}
+          restore-keys: |
+            nextjs-${{ runner.os }}-${{ hashFiles('client/pnpm-lock.yaml') }}-
+
+      - name: Build (Vercel env vars stubbed so a missing secret never blocks CI)
+        env:
+          NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL || 'https://placeholder.supabase.co' }}
+          NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY || 'placeholder' }}
+        run: pnpm build
+
+  # Single required status check to wire into branch protection — flip to
+  # green only once every real job above has succeeded.
+  ci-status:
+    name: CI success
+    if: always()
+    needs: [build]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Fail if any dependency job failed
+        run: |
+          if [ "${{ needs.build.result }}" != "success" ]; then
+            echo "One or more required jobs failed." >&2
+            exit 1
+          fi

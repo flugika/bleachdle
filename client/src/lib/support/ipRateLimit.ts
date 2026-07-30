@@ -10,7 +10,7 @@ const ipCache = new Map<string, { count: number; resetAt: number }>();
 
 // สั่งล้างหน่วยความจำที่หมดอายุทุกๆ 1 นาที เพื่อไม่ให้เกิด Memory Leak
 declare global {
-     
+
     var _ipCleanupInterval: ReturnType<typeof setInterval> | undefined;
 }
 
@@ -55,6 +55,11 @@ export function checkIpRateLimit(
     const windowMs = windowSeconds * 1000;
 
     const record = ipCache.get(ipHash);
+
+    // 💡 Bypass เฉพาะตอนพัฒนาบน Local Dev เท่านั้น (แต่ไม่ใช่ในสภาพแวดล้อม Test)
+    if (process.env.NODE_ENV === 'development') {
+        return { success: true, retryAfter: 0 };
+    }
 
     // 1. ถ้ายิงมาครั้งแรก หรือหมดหน้าต่างเวลาคูลดาวน์เดิมแล้ว -> เริ่มนับใหม่
     if (!record || now > record.resetAt) {

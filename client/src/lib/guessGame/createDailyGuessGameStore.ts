@@ -26,7 +26,7 @@ export interface DailyGuessGameState<TCharacter, TTarget> {
     loadStats: () => void;
     addGuess: (characterId: string) => void;
     setTarget: (target: TTarget) => void;
-    finalizeGame: (isWin: boolean) => void;
+    finalizeGame: (isWin: boolean, turnstileToken?: string) => void;
     resetGame: () => void;
 }
 
@@ -129,7 +129,7 @@ export function createDailyGuessGameStore<
                     return { guesses: allGuesses, ...extraUpdates } as unknown as Partial<State>;
                 }),
 
-                finalizeGame: (isWin: boolean) => {
+                finalizeGame: (isWin: boolean, turnstileToken?: string) => {
                     const { target, scheduledDate, hasFinalized, guesses } = get();
                     if (!target || hasFinalized) return;
 
@@ -168,7 +168,7 @@ export function createDailyGuessGameStore<
 
                     set({ hasFinalized: true, stats: newStats, revealedCharacter, ...extraFinal } as unknown as Partial<State>);
 
-                    recordDailyStat(config.gameKey, isWin, guesses.length, targetDate).catch(() => { });
+                    recordDailyStat(config.gameKey, isWin, guesses.length, turnstileToken, targetDate).catch(() => { });
                 },
 
                 resetGame: () => set({ 

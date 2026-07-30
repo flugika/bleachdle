@@ -112,7 +112,7 @@ describe('GET /api/asset/[type]/[id]', () => {
 
             expect(res.status).toBe(200);
             expect(res.headers.get('Content-Type')).toBe('audio/mpeg');
-            expect(res.headers.get('Cache-Control')).toBe('private, no-store');
+            expect(res.headers.get('Cache-Control')).toBe('public, max-age=31536000, immutable');
             expect(res.headers.get('Accept-Ranges')).toBe('bytes');
             expect(res.headers.get('Content-Length')).toBe(String(fakeFileSize));
             expect(mockCreateReadStream).toHaveBeenCalledWith(defaultMockPath);

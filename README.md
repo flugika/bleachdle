@@ -387,18 +387,17 @@ bleachdle
 │  │  │  │  ├─ Bankai_Byakuya_Kuchiki.mp3
 │  │  │  │  ├─ Bankai_Chojiro_Sasakibe.mp3
 │  │  │  │  ├─ Bankai_Genryusai_Shigekuni_Yamamoto.mp3
+│  │  │  │  └─ ...
+│  │  │  └─ songs
+│  │  │     ├─ 1106_tybw.mp3
+│  │  │     ├─ after_dark.mp3
+│  │  │     ├─ alones.mp3
 │  │  │     └─ ...
 │  │  ├─ characters
 │  │  │  ├─ Aaroniero_Arruruerie.webp
 │  │  │  ├─ Abirama_Redder.webp
 │  │  │  ├─ Aisslinger_Wernarr.webp
 │  │  │  ├─ Akon.webp
-│  │  │  └─ ...
-│  │  └─ character_silhouette
-│  │     ├─ Aaroniero_Arruruerie_cutout_silhouette.webp
-│  │     ├─ Abirama_Redder_cutout_silhouette.webp
-│  │     ├─ Aisslinger_Wernarr_cutout_silhouette.webp
-│  │     ├─ Akon_cutout_silhouette.webp
 │  │     └─ ...
 │  ├─ CLAUDE.md
 │  ├─ eslint.config.mjs
@@ -426,7 +425,11 @@ bleachdle
 │  │  │  │  └─ Xcution.webp
 │  │  │  ├─ screenshots
 │  │  │  │  ├─ homepage.png
-│  │  │  │  └─ homepage_old.png
+│  │  │  │  ├─ homepage_almighty.png
+│  │  │  │  ├─ homepage_garganta.png
+│  │  │  │  ├─ homepage_kurohitsugi.png
+│  │  │  │  ├─ homepage_old.png
+│  │  │  │  └─ homepage_zerodivision.png
 │  │  │  ├─ tensazangetsu.png
 │  │  │  └─ wallpapers
 │  │  │     ├─ bg_wallpaper_1.jpg
@@ -842,6 +845,7 @@ bleachdle
 │  │     └─ unlimited-song-flow.spec.ts
 │  ├─ tsconfig.json
 │  └─ vitest.config.ts
+├─ DEPLOYMENT.md
 └─ README.md
 
 ```

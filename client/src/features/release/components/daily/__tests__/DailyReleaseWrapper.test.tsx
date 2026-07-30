@@ -284,7 +284,7 @@ describe('DailyReleaseWrapper (daily mode) — real component integration', () =
 
         // 2 guesses total (1 wrong + 1 correct).
         await waitFor(() => {
-            expect(recordDailyStat).toHaveBeenCalledWith('release', true, 2, today);
+            expect(recordDailyStat).toHaveBeenCalledWith('release', true, 2, 'mock-test-token', today);
         });
     });
 
@@ -311,7 +311,7 @@ describe('DailyReleaseWrapper (daily mode) — real component integration', () =
 
         // 2. ตรวจจับการยิง Stat โดยไม่ไปล็อคตายตัวที่เลข 6 เผื่อว่าระบบจริงถูกตั้งไว้ไม่เท่ากัน
         await waitFor(() => {
-            expect(recordDailyStat).toHaveBeenCalledWith('release', false, expect.any(Number), today);
+            expect(recordDailyStat).toHaveBeenCalledWith('release', false, expect.any(Number), 'mock-test-token', today);
         });
     });
 

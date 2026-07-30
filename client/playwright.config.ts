@@ -22,11 +22,14 @@ export default defineConfig({
         { name: 'chromium', use: { ...devices['Desktop Chrome'] } },
     ],
 
-    // สตาร์ท Next.js dev/prod server ให้อัตโนมัติก่อนรันเทสต์
     webServer: {
-        command: 'pnpm dev', // หรือ 'pnpm build && pnpm start' ถ้าอยากเทสต์กับ production build
+        command: 'pnpm dev',
         url: baseURL,
         reuseExistingServer: !process.env.CI,
         timeout: 120_000,
+        // ปิดใช้งาน Turnstile เฉพาะเวลา Playwright รัน
+        env: {
+            NEXT_PUBLIC_DISABLE_TURNSTILE: 'true',
+        },
     },
 });

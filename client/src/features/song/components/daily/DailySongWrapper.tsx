@@ -1,7 +1,7 @@
 // src/features/song/components/daily/DailySongWrapper.tsx
 "use client";
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { SongGuessTable } from '@/src/features/song/components/shared/SongGuessTable';
 import { useSongGame } from '@/src/features/song/hooks/daily/useSongGame';
 import { getSongs } from '@/src/features/song/song';
@@ -23,6 +23,7 @@ import { DailyHubModalFooter } from '@/src/shared/ui/daily-hub/DailyHubModalFoot
 import { useDailyHub } from '@/src/shared/hooks/useDailyHub';
 import { logFullTarget } from '@/src/lib/debug/logFullTarget';
 import { Legend } from '@/src/shared/ui/control-panel/Legend';
+import { useTurnstile } from '@/src/shared/hooks/useTurnstile';
 
 interface DailySongWrapperProps {
     initialTarget: BleachSong;
@@ -31,6 +32,8 @@ interface DailySongWrapperProps {
 
 export default function DailySongWrapper({ initialTarget, initialSegmentId }: DailySongWrapperProps) {
     const { navigate, state, reportReady } = useSenkaimon();
+    const { getToken, containerRef } = useTurnstile();
+    const isFinalizingRef = useRef(false);
 
     const gameStore = useSongGame();
     const { target, scheduledDate, guesses, initializeGame, finalizeGame, resetGame, hasFinalized, _hasHydrated, stats, loadStats } = gameStore;
@@ -44,7 +47,7 @@ export default function DailySongWrapper({ initialTarget, initialSegmentId }: Da
             initializeGame(initialTarget, initialSegmentId);
 
             logFullTarget(target);
-    }
+        }
         // 🔧 อ่านค่า `target` ก่อนหน้า (ยังไม่ถูก initializeGame อัปเดต) โดยตั้งใจ
         // เพื่อ log เทียบค่าเก่ากับ initialTarget ใหม่ — ถ้าใส่ target/initializeGame
         // เข้า deps จะ loop เพราะ initializeGame เปลี่ยน target เอง แล้ว effect
@@ -120,11 +123,23 @@ export default function DailySongWrapper({ initialTarget, initialSegmentId }: Da
     // 🆕 บันทึกสถิติลงคลังข้อมูลทันทีเมื่อจบเกม (ไม่ต้องหน่วงเวลาฝั่ง Data เพื่อความแม่นยำ)
     useEffect(() => {
         if (!_hasHydrated || !isSynced) return;
-        if (isGameOver && !hasFinalized) {
-            finalizeGame(isWin);
-            markModePlayed('song', isWin);
+        if (isGameOver && !hasFinalized && !isFinalizingRef.current) {
+            isFinalizingRef.current = true;
+            (async () => {
+                let token: string | undefined;
+                try {
+                    token = await getToken();
+                } catch (err) {
+                    // 🛡️ fail-soft: ถ้า Turnstile ใช้ไม่ได้ ยังต้อง finalize local state ต่อ
+                    // (streak/hasFinalized) ไม่งั้นหน้าสรุปผลจะค้างไม่โผล่ — แค่สถิติฝั่ง server
+                    // จะไม่ถูกนับรอบนี้ (verifyTurnstileToken จะ reject token undefined เอง)
+                    console.error('[DailySongWrapper] turnstile getToken failed:', err);
+                }
+                finalizeGame(isWin, token);
+                markModePlayed('song', isWin);
+            })();
         }
-    }, [isGameOver, hasFinalized, isWin, _hasHydrated, isSynced, finalizeGame, markModePlayed]);
+    }, [isGameOver, hasFinalized, isWin, _hasHydrated, isSynced, finalizeGame, markModePlayed, getToken]);
 
     const handleCloseModal = () => {
         setManuallyClosed(true);
@@ -173,6 +188,7 @@ export default function DailySongWrapper({ initialTarget, initialSegmentId }: Da
     return (
         <div className="min-h-screen text-[#d8d0c8] overflow-x-hidden">
             <Header />
+            <div ref={containerRef} />
 
             <main className="max-w-[80%] mx-auto px-4 pb-24">
                 <ModeBadge mode="daily" onClick={() => setIsModeSelectorOpen(true)} />

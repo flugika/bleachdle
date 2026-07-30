@@ -23,6 +23,7 @@ interface ExtendedDailySongGameState extends Omit<DailySongGameState, 'initializ
     scheduledDate: string | null;
     setTarget: (target: BleachSong, scheduledDate?: string) => void;
     initializeGame: (target?: BleachSong, segmentId?: string, scheduledDate?: string) => void;
+    finalizeGame: (isWin: boolean, turnstileToken?: string) => void;
 }
 
 export const useSongGame = create<ExtendedDailySongGameState>()(
@@ -79,7 +80,7 @@ export const useSongGame = create<ExtendedDailySongGameState>()(
                 set({ target, targetSegmentId: segmentId, scheduledDate: dateStr, guesses: [], hasFinalized: false });
             },
 
-            finalizeGame: (isWin) => {
+            finalizeGame: (isWin, turnstileToken) => {
                 const { target, hasFinalized, guesses, scheduledDate } = get();
                 if (!target || hasFinalized) return;
 
@@ -126,7 +127,7 @@ export const useSongGame = create<ExtendedDailySongGameState>()(
 
                 set({ hasFinalized: true, stats: newStats });
 
-                recordDailyStat('song', isWin, guesses.length, targetDate).catch(() => { });
+                recordDailyStat('song', isWin, guesses.length, turnstileToken, targetDate).catch(() => { });
             },
 
             resetGame: () => {

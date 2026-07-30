@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { SilhouetteGuessTable } from '@/src/features/silhouette/components/shared/SilhouetteGuessTable';
 import { SilhouetteSummaryGuess } from '@/src/features/silhouette/components/shared/SilhouetteSummaryGuess';
 import { SilhouetteControlPanel } from '@/src/shared/ui/control-panel/SilhouetteControlPanel';
@@ -22,9 +22,12 @@ import { DailyHubModalFooter } from '@/src/shared/ui/daily-hub/DailyHubModalFoot
 import { useDailyHub } from '@/src/shared/hooks/useDailyHub';
 import { logFullTarget } from '@/src/lib/debug/logFullTarget';
 import { Legend } from '@/src/shared/ui/control-panel/Legend';
+import { useTurnstile } from '@/src/shared/hooks/useTurnstile';
 
 export default function DailySilhouetteWrapper({ initialTarget }: { initialTarget: SilhouetteTargetHidden | null }) {
     const { navigate, state, reportReady } = useSenkaimon();
+    const { getToken, containerRef } = useTurnstile();
+    const isFinalizingRef = useRef(false);
 
     const gameStore = useSilhouetteGame();
     const { target, revealedCharacter, guesses, setTarget, finalizeGame, hasFinalized, _hasHydrated, stats, loadStats } = gameStore;
@@ -112,11 +115,23 @@ export default function DailySilhouetteWrapper({ initialTarget }: { initialTarge
     // reconcile target จาก server เสร็จ)
     useEffect(() => {
         if (!_hasHydrated || !isSynced) return;
-        if (isGameOver && !hasFinalized) {
-            finalizeGame(isWin);
-            markModePlayed('silhouette', isWin);
+        if (isGameOver && !hasFinalized && !isFinalizingRef.current) {
+            isFinalizingRef.current = true;
+            (async () => {
+                let token: string | undefined;
+                try {
+                    token = await getToken();
+                } catch (err) {
+                    // 🛡️ fail-soft: ถ้า Turnstile ใช้ไม่ได้ ยังต้อง finalize local state ต่อ
+                    // (streak/hasFinalized) ไม่งั้นหน้าสรุปผลจะค้างไม่โผล่ — แค่สถิติฝั่ง server
+                    // จะไม่ถูกนับรอบนี้ (verifyTurnstileToken จะ reject token undefined เอง)
+                    console.error('[DailySilhouetteWrapper] turnstile getToken failed:', err);
+                }
+                finalizeGame(isWin, token);
+                markModePlayed('silhouette', isWin);
+            })();
         }
-    }, [isGameOver, hasFinalized, isWin, _hasHydrated, isSynced, finalizeGame, markModePlayed]);
+    }, [isGameOver, hasFinalized, isWin, _hasHydrated, isSynced, finalizeGame, markModePlayed, getToken]);
 
     const handleCloseModal = () => {
         // 🔒 daily มี target ตายตัว 1 ตัว/วัน — ปิด modal แค่กลับไปดู log การเดา ไม่ reset ไปสุ่มตัวใหม่
@@ -156,6 +171,7 @@ export default function DailySilhouetteWrapper({ initialTarget }: { initialTarge
     return (
         <div className="min-h-screen text-[#d8d0c8] overflow-x-hidden">
             <Header />
+            <div ref={containerRef} />
 
             <main className="max-w-[80%] mx-auto px-4 pb-24">
                 <ModeBadge mode="daily" onClick={() => setIsModeSelectorOpen(true)} />

@@ -228,7 +228,7 @@ describe('DailyQuoteWrapper (daily mode) — real component integration', () => 
 
         // finalizeGame(true, guesses.length) — 2 guesses total (1 wrong + 1 correct).
         await waitFor(() => {
-            expect(recordDailyStat).toHaveBeenCalledWith('quote', true, 2, today);
+            expect(recordDailyStat).toHaveBeenCalledWith('quote', true, 2, 'mock-test-token', today);
         });
     });
 

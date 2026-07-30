@@ -1,7 +1,7 @@
 // src/features/quote/components/daily/DailyQuoteWrapper.tsx
 "use client";
 
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { QuoteGuessTable } from '@/src/features/quote/components/shared/QuoteGuessTable';
 import { QuoteSummaryGuess } from '@/src/features/quote/components/shared/QuoteSummaryGuess';
 import { useQuoteGame } from '@/src/features/quote/hooks/daily/useQuoteGame';
@@ -23,9 +23,12 @@ import { useDailyHub } from '@/src/shared/hooks/useDailyHub';
 import { getQuotes } from '../../quote';
 import { logFullTarget } from '@/src/lib/debug/logFullTarget';
 import { Legend } from '@/src/shared/ui/control-panel/Legend';
+import { useTurnstile } from '@/src/shared/hooks/useTurnstile';
 
 export default function DailyQuoteWrapper({ initialTarget }: { initialTarget: QuoteTargetHidden | null }) {
     const { navigate, state, reportReady } = useSenkaimon();
+    const { getToken, containerRef } = useTurnstile();
+    const isFinalizingRef = useRef(false);
 
     const gameStore = useQuoteGame();
     // 🆕 initializeGame(target) ตัวเดิมถูกแทนด้วย setTarget(target) — factory ของ daily
@@ -117,11 +120,23 @@ export default function DailyQuoteWrapper({ initialTarget }: { initialTarget: Qu
     // 🏁 บันทึกสถานะการเล่น/สถิติประจำวันทันทีแบบไม่ต้องรอดีเลย์ UI หน่วงเวลา (Pattern สำคัญของ Silhouette)
     useEffect(() => {
         if (!_hasHydrated || !isSynced) return;
-        if (isGameOver && !hasFinalized) {
-            finalizeGame(isWin);
-            markModePlayed('quote', isWin);
+        if (isGameOver && !hasFinalized && !isFinalizingRef.current) {
+            isFinalizingRef.current = true;
+            (async () => {
+                let token: string | undefined;
+                try {
+                    token = await getToken();
+                } catch (err) {
+                    // 🛡️ fail-soft: ถ้า Turnstile ใช้ไม่ได้ ยังต้อง finalize local state ต่อ
+                    // (streak/hasFinalized) ไม่งั้นหน้าสรุปผลจะค้างไม่โผล่ — แค่สถิติฝั่ง server
+                    // จะไม่ถูกนับรอบนี้ (verifyTurnstileToken จะ reject token undefined เอง)
+                    console.error('[DailyQuoteWrapper] turnstile getToken failed:', err);
+                }
+                finalizeGame(isWin, token);
+                markModePlayed('quote', isWin);
+            })();
         }
-    }, [isGameOver, hasFinalized, isWin, _hasHydrated, isSynced, finalizeGame, markModePlayed]);
+    }, [isGameOver, hasFinalized, isWin, _hasHydrated, isSynced, finalizeGame, markModePlayed, getToken]);
 
     const handleCloseModal = () => {
         setManuallyClosed(true);
@@ -169,6 +184,7 @@ export default function DailyQuoteWrapper({ initialTarget }: { initialTarget: Qu
     return (
         <div className="min-h-screen text-[#d8d0c8] overflow-x-hidden">
             <Header />
+            <div ref={containerRef} />
 
             <main className="max-w-[80%] mx-auto px-4 pb-24">
                 <ModeBadge mode="daily" onClick={() => setIsModeSelectorOpen(true)} />

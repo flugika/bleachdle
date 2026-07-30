@@ -3,14 +3,28 @@ import { NextRequest, NextResponse } from "next/server";
 import { supabaseServer } from "@/src/lib/supabase/supabase-server";
 import { isAuthorizedForMonitor } from "@/src/features/admin/monitorAuth";
 import { getTodayStr } from "@/src/lib/utils/format";
+import { checkIpRateLimit } from "@/src/lib/support/ipRateLimit"; // 🛡️ auth เดี่ยวไม่พอ กัน brute-force/loop เพิ่มอีกชั้น
 
 export const runtime = "nodejs";
 
 const VALID_LEVELS = new Set(["success", "warning", "error"]);
 
+// 🛡️ Admin route แต่ isAuthorizedForMonitor เป็นด่านเดียว ไม่มี lockout ในตัว —
+// เติม rate limit ต่อ IP กันไว้เผื่อ token หลุด/ถูกลองสุ่ม หรือ dashboard loop เรียกถี่เกิน
+const MONITOR_RATE_LIMIT = 20; // ครั้ง
+const MONITOR_RATE_WINDOW_SECONDS = 10; // ต่อวินาที
+
 export async function GET(req: NextRequest) {
     if (!isAuthorizedForMonitor(req)) {
         return NextResponse.json({ ok: false, error: "Unauthorized." }, { status: 401 });
+    }
+
+    const rl = checkIpRateLimit(req, MONITOR_RATE_LIMIT, MONITOR_RATE_WINDOW_SECONDS);
+    if (!rl.success) {
+        return NextResponse.json(
+            { ok: false, error: "Too many requests, please slow down.", retryAfter: rl.retryAfter },
+            { status: 429 }
+        );
     }
 
     const params = req.nextUrl.searchParams;

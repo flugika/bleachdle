@@ -1,7 +1,7 @@
 // src/features/emoji/components/daily/DailyEmojiWrapper.tsx
 "use client";
 
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { EmojiGuessTable } from '@/src/features/emoji/components/shared/EmojiGuessTable';
 import { EmojiSummaryGuess } from '@/src/features/emoji/components/shared/EmojiSummaryGuess';
 import { useEmojiGame } from '@/src/features/emoji/hooks/daily/useEmojiGame';
@@ -24,9 +24,12 @@ import { useDailyHub } from '@/src/shared/hooks/useDailyHub';
 import { getEmojiSets } from '../../emoji';
 import { logFullTarget } from '@/src/lib/debug/logFullTarget';
 import { Legend } from '@/src/shared/ui/control-panel/Legend';
+import { useTurnstile } from '@/src/shared/hooks/useTurnstile';
 
 export default function DailyEmojiWrapper({ initialTarget }: { initialTarget: EmojiTargetHidden | null }) {
     const { navigate, state, reportReady } = useSenkaimon();
+    const { getToken, containerRef } = useTurnstile();
+    const isFinalizingRef = useRef(false);
 
     const gameStore = useEmojiGame();
     const {
@@ -115,11 +118,23 @@ export default function DailyEmojiWrapper({ initialTarget }: { initialTarget: Em
     // 🏁 บันทึกผลและสถิติประจำวันเข้าคลังระบบทันทีเมื่อเกมสิ้นสุด (แยกส่วนจาก UI หน่วงเวลาแอนิเมชัน)
     useEffect(() => {
         if (!_hasHydrated || !isSynced) return;
-        if (isGameOver && !hasFinalized) {
-            finalizeGame(isWin);
-            markModePlayed('emoji', isWin);
+        if (isGameOver && !hasFinalized && !isFinalizingRef.current) {
+            isFinalizingRef.current = true;
+            (async () => {
+                let token: string | undefined;
+                try {
+                    token = await getToken();
+                } catch (err) {
+                    // 🛡️ fail-soft: ถ้า Turnstile ใช้ไม่ได้ ยังต้อง finalize local state ต่อ
+                    // (streak/hasFinalized) ไม่งั้นหน้าสรุปผลจะค้างไม่โผล่ — แค่สถิติฝั่ง server
+                    // จะไม่ถูกนับรอบนี้ (verifyTurnstileToken จะ reject token undefined เอง)
+                    console.error('[DailyEmojiWrapper] turnstile getToken failed:', err);
+                }
+                finalizeGame(isWin, token);
+                markModePlayed('emoji', isWin);
+            })();
         }
-    }, [isGameOver, hasFinalized, isWin, _hasHydrated, isSynced, finalizeGame, markModePlayed]);
+    }, [isGameOver, hasFinalized, isWin, _hasHydrated, isSynced, finalizeGame, markModePlayed, getToken]);
 
     const handleCloseModal = () => {
         setManuallyClosed(true);
@@ -167,6 +182,7 @@ export default function DailyEmojiWrapper({ initialTarget }: { initialTarget: Em
     return (
         <div className="min-h-screen text-[#d8d0c8] overflow-x-hidden">
             <Header />
+            <div ref={containerRef} />
 
             <main className="max-w-[80%] mx-auto px-4 pb-24">
                 <ModeBadge mode="daily" onClick={() => setIsModeSelectorOpen(true)} />

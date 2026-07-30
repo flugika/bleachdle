@@ -7,6 +7,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { supabaseServer } from "@/src/lib/supabase/supabase-server";
 import { isAuthorizedForMonitor } from "@/src/features/admin/monitorAuth";
 import { logApiEvent } from "@/src/services/monitor/logEvent";
+import { checkIpRateLimit } from "@/src/lib/support/ipRateLimit"; // 🛡️ auth เดี่ยวไม่พอ กัน brute-force/loop เพิ่มอีกชั้น
 
 export const runtime = "nodejs";
 
@@ -14,9 +15,22 @@ const ENDPOINT = "monitor.feedback";
 const ALLOWED_STATUS = ["new", "seen", "resolved", "ignored"] as const;
 const ALLOWED_CATEGORY = ["bug", "feedback", "suggestion", "other"] as const;
 
+// 🛡️ เหมือน monitor/health — เติม rate limit ต่อ IP ต่อจาก auth check
+const MONITOR_RATE_LIMIT = 20; // ครั้ง
+const MONITOR_RATE_WINDOW_SECONDS = 10; // ต่อวินาที
+
 export async function GET(req: NextRequest) {
     if (!isAuthorizedForMonitor(req)) {
         return NextResponse.json({ ok: false, error: "Unauthorized." }, { status: 401 });
+    }
+
+    const rl = checkIpRateLimit(req, MONITOR_RATE_LIMIT, MONITOR_RATE_WINDOW_SECONDS);
+    if (!rl.success) {
+        logApiEvent(ENDPOINT, "warning", 429, "ip_rate_limited");
+        return NextResponse.json(
+            { ok: false, error: "Too many requests, please slow down.", retryAfter: rl.retryAfter },
+            { status: 429 }
+        );
     }
 
     try {
@@ -49,6 +63,15 @@ export async function GET(req: NextRequest) {
 export async function PATCH(req: NextRequest) {
     if (!isAuthorizedForMonitor(req)) {
         return NextResponse.json({ ok: false, error: "Unauthorized." }, { status: 401 });
+    }
+
+    const rl = checkIpRateLimit(req, MONITOR_RATE_LIMIT, MONITOR_RATE_WINDOW_SECONDS);
+    if (!rl.success) {
+        logApiEvent(ENDPOINT, "warning", 429, "ip_rate_limited");
+        return NextResponse.json(
+            { ok: false, error: "Too many requests, please slow down.", retryAfter: rl.retryAfter },
+            { status: 429 }
+        );
     }
 
     try {

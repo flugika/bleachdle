@@ -32,7 +32,7 @@ interface CharacterGameState {
     addGuess: (guessId: string) => void;
     setTarget: (target: DailyCharacterResponse, scheduledDate?: string) => void;
     initializeGame: (target?: DailyCharacterResponse, scheduledDate?: string) => void;
-    finalizeGame: (isWin: boolean) => void;
+    finalizeGame: (isWin: boolean, turnstileToken?: string) => void;
     loadStats: () => void;
     resetGame: () => void;
     hasFinalized: boolean;
@@ -95,7 +95,7 @@ export const useCharacterGame = create<CharacterGameState>()(
                 set({ target, targetId: target.id, scheduledDate: dateStr, guesses: [], hasFinalized: false });
             },
 
-            finalizeGame: (isWin) => {
+            finalizeGame: (isWin, turnstileToken) => {
                 const { target, hasFinalized, guesses, scheduledDate } = get();
                 if (!target || hasFinalized) return;
 
@@ -147,7 +147,7 @@ export const useCharacterGame = create<CharacterGameState>()(
 
                 set({ hasFinalized: true, stats: newStats });
 
-                recordDailyStat('character', isWin, guesses.length, targetDate).catch(() => { });
+                recordDailyStat('character', isWin, guesses.length, turnstileToken, targetDate).catch(() => { });
             },
 
             resetGame: () => {

@@ -286,7 +286,7 @@ describe('DailySilhouetteWrapper (daily mode) — real component integration', (
         expect(screen.queryByRole('button', { name: /OPEN SENKAIMON/i })).not.toBeInTheDocument();
 
         await waitFor(() => {
-            expect(recordDailyStat).toHaveBeenCalledWith('silhouette', true, 3, today);
+            expect(recordDailyStat).toHaveBeenCalledWith('silhouette', true, 3, 'mock-test-token', today);
         });
     });
 

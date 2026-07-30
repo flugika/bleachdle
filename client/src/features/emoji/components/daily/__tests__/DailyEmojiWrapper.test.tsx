@@ -262,7 +262,7 @@ describe('DailyEmojiWrapper (daily mode) — real component integration', () => 
         // win/loss (see emojiRevealedCounter.ts finalizeValue) — assert that
         // too via recordDailyStat's guess-count argument (3 guesses total).
         await waitFor(() => {
-            expect(recordDailyStat).toHaveBeenCalledWith('emoji', true, 3, today);
+            expect(recordDailyStat).toHaveBeenCalledWith('emoji', true, 3, 'mock-test-token', today);
         });
     });
 

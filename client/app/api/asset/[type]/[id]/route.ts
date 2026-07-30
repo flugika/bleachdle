@@ -38,7 +38,7 @@ export async function GET(
 
     const baseHeaders: Record<string, string> = {
         'Content-Type': contentType,
-        'Cache-Control': 'private, no-store',
+        'Cache-Control': 'public, max-age=31536000, immutable',
         // 🆕 สำคัญที่สุดสำหรับ <audio>: ถ้าไม่มีตัวนี้ browser จะไม่ trust ว่า
         // seek แบบ byte-accurate ได้ แล้วจะ estimate ตำแหน่งเอง -> seek เพี้ยน
         // (อาการที่เจอ: ขอ 3s ได้จริง ~2s)

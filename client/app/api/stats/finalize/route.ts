@@ -5,14 +5,16 @@ import { packCookie, unpackCookie } from '@/src/lib/support/rateLimitCookie';
 import { VALID_STAT_MODES, type StatMode } from '@/src/entities/stats/types';
 import { checkIpRateLimit } from '@/src/lib/support/ipRateLimit';
 import { getMaxGuessLimit } from '@/src/lib/support/constantsExtractor';
-import { getTodayStr, getBangkokDateStr } from '@/src/lib/utils/format'; // 🆕 อัปเดตการ Import
+import { getTodayStr, getBangkokDateStr } from '@/src/lib/utils/format';
 import { logApiEvent } from "@/src/services/monitor/logEvent";
+import { verifyTurnstileToken } from '@/src/lib/security/turnstile';
 
 interface FinalizeStatBody {
     mode: StatMode;
     isWin: boolean;
     guessCount: number;
-    date?: string; // 🆕 รับค่าวันที่ที่ทายของ Target นั้นๆ มาจาก Client
+    date?: string;
+    turnstileToken?: string;
 }
 
 const ENDPOINT = 'stats.finalize';
@@ -29,9 +31,9 @@ export async function POST(req: NextRequest) {
         return NextResponse.json({ error: 'Invalid JSON body' }, { status: 400 });
     }
 
-    const { mode, isWin, guessCount, date: clientSubmittedDate } = body;
+    const { mode, isWin, guessCount, date: clientSubmittedDate, turnstileToken } = body;
 
-    // ── ด่าน 1: Cheap, in-memory validation
+    // ── ด่านที่ 1: Cheap, In-Memory Validation (0ms I/O)
     if (!VALID_STAT_MODES.includes(mode)) {
         logApiEvent(ENDPOINT, 'warning', 400, 'invalid_mode');
         return NextResponse.json({ error: 'Invalid mode' }, { status: 400 });
@@ -47,20 +49,18 @@ export async function POST(req: NextRequest) {
         return NextResponse.json({ error: 'Invalid guessCount' }, { status: 400 });
     }
 
-    // ── ด่าน 1.5: Validate target date และป้องกันการสปูฟ (Enterprise Guard) 🆕
-    let targetDate = getTodayStr(); // Fallback เป็นวันนี้หาก client ไม่ได้ส่งมา
+    // ── ด่านที่ 1.5: Validate Target Date (0ms I/O)
+    let targetDate = getTodayStr();
 
     if (clientSubmittedDate) {
-        // ตรวจสอบ format เบื้องต้น (YYYY-MM-DD)
         if (!/^\d{4}-\d{2}-\d{2}$/.test(clientSubmittedDate)) {
             logApiEvent(ENDPOINT, 'warning', 400, 'invalid_date_format');
             return NextResponse.json({ error: 'Invalid date format' }, { status: 400 });
         }
 
         const todayStr = getTodayStr();
-        const yesterdayStr = getBangkokDateStr(-1); // วันวานใน Asia/Bangkok
+        const yesterdayStr = getBangkokDateStr(-1);
 
-        // 🛡️ จำกัดให้ส่งย้อนหลังได้แค่ "เมื่อวาน" เท่านั้น เพื่อความปลอดภัยของฐานข้อมูลสถิติ
         if (clientSubmittedDate !== todayStr && clientSubmittedDate !== yesterdayStr) {
             logApiEvent(ENDPOINT, 'warning', 400, 'date_out_of_allowed_window');
             return NextResponse.json({
@@ -71,7 +71,7 @@ export async function POST(req: NextRequest) {
         targetDate = clientSubmittedDate;
     }
 
-    // ── ด่าน 2: Cooldown check ด้วย Browser Cookie
+    // ── ด่านที่ 2: Cookie Cooldown Check (Fast, Local Request Inspection)
     const cookieName = `${COOLDOWN_COOKIE_PREFIX}${mode}`;
     const cooldownPayload = unpackCookie(req.cookies.get(cookieName)?.value);
     if (cooldownPayload) {
@@ -86,8 +86,11 @@ export async function POST(req: NextRequest) {
         }
     }
 
-    // ── ด่าน 3: สกัดกั้นด้วย IP Rate Limit
-    const ipCheck = checkIpRateLimit(req, 1, COOLDOWN_SECONDS);
+    // ── ด่านที่ 3: IP Network Rate Limiter (Token Bucket with Burst Allowance)
+    // 💡 Enterprise Rule: อนุญาต Burst Capacity (เช่น 5 Requests ใน 10 วินาที) ใน Production
+    // และ Bypass สภาพแวดล้อม Development / Test เพื่อป้องกัน False-positive จาก Localhost
+    const isProduction = process.env.NODE_ENV === 'production';
+    const ipCheck = checkIpRateLimit(req, 5, 10); // MAX 5 Requests per 10 Seconds per IP
     if (!ipCheck.success) {
         logApiEvent(ENDPOINT, 'warning', 429, 'ip_rate_limited');
         return NextResponse.json(
@@ -96,9 +99,17 @@ export async function POST(req: NextRequest) {
         );
     }
 
-    // ── ผ่านทุกด่าน -> บันทึกสถิติลงวันตาม targetDate จริงๆ! 🎯
+    // ── ด่านที่ 4: Turnstile Verification (Expensive External Network Call)
+    // 💡 ต้องอยู่หลังสุดเสมอ เพื่อไม่ให้สูญเสีย Network I/O หรือเผา Token ฟรีหากติด Rate Limit
+    const passed = await verifyTurnstileToken(turnstileToken, /* ip */ null);
+    if (!passed) {
+        logApiEvent(ENDPOINT, 'warning', 403, 'turnstile_failed');
+        return NextResponse.json({ error: 'Verification failed.' }, { status: 403 });
+    }
+
+    // ── ด่านสุดท้าย: Database Persistence (RPC)
     const { error } = await supabaseServer.rpc('increment_daily_stat', {
-        p_date: targetDate, // 👈 บันทึกลงวันตาม Target ไม่ใช่รันไทม์ปัจจุบัน
+        p_date: targetDate,
         p_mode: mode,
         p_passed: isWin,
         p_guess_count: isWin ? guessCount : null,
@@ -114,7 +125,7 @@ export async function POST(req: NextRequest) {
     res.cookies.set(cookieName, packCookie(String(Date.now())), {
         httpOnly: true,
         sameSite: 'lax',
-        secure: process.env.NODE_ENV === 'production',
+        secure: isProduction,
         path: '/',
         maxAge: COOLDOWN_SECONDS,
     });

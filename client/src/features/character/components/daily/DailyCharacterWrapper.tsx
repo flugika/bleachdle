@@ -1,7 +1,7 @@
 // src/features/character/components/daily/DailyCharacterWrapper.tsx
 "use client";
 
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { CharacterGuessTable, DailyCharacterResponse } from '@/src/features/character';
 import { useCharacterGame } from '@/src/features/character/hooks/daily/useCharacterGame';
 import { getCharacterById, getCharacters } from '@/src/features/character/character';
@@ -23,9 +23,12 @@ import { useDailyHub } from '@/src/shared/hooks/useDailyHub';
 import { EmptyGuessState } from '@/src/features/character/components/shared/EmptyGuessState';
 import { logFullTarget } from '@/src/lib/debug/logFullTarget';
 import { Legend } from '@/src/shared/ui/control-panel/Legend';
+import { useTurnstile } from '@/src/shared/hooks/useTurnstile';
 
 export default function DailyCharacterWrapper({ initialTarget }: { initialTarget: DailyCharacterResponse | null }) {
     const { navigate, state, reportReady } = useSenkaimon();
+    const { getToken, containerRef } = useTurnstile();
+    const isFinalizingRef = useRef(false);
 
     const gameStore = useCharacterGame();
     const { target, guesses, initializeGame, finalizeGame, resetGame, hasFinalized, _hasHydrated, stats, loadStats } = gameStore;
@@ -121,11 +124,23 @@ export default function DailyCharacterWrapper({ initialTarget }: { initialTarget
     // 🏁 บันทึกประวัติและสถิติการเล่นเข้า Store ทันทีเมื่อเกมจบจริง (ไม่ต้องโดนบล็อกจากระบบหน่วงเวลาฝั่ง UI)
     useEffect(() => {
         if (!_hasHydrated || !isSynced) return;
-        if (isGameOver && !hasFinalized) {
-            finalizeGame(isWin);
-            markModePlayed('character', isWin);
+        if (isGameOver && !hasFinalized && !isFinalizingRef.current) {
+            isFinalizingRef.current = true;
+            (async () => {
+                let token: string | undefined;
+                try {
+                    token = await getToken();
+                } catch (err) {
+                    // 🛡️ fail-soft: ถ้า Turnstile ใช้ไม่ได้ ยังต้อง finalize local state ต่อ
+                    // (streak/hasFinalized) ไม่งั้นหน้าสรุปผลจะค้างไม่โผล่ — แค่สถิติฝั่ง server
+                    // จะไม่ถูกนับรอบนี้ (verifyTurnstileToken จะ reject token undefined เอง)
+                    console.error('[DailyCharacterWrapper] turnstile getToken failed:', err);
+                }
+                finalizeGame(isWin, token);
+                markModePlayed('character', isWin);
+            })();
         }
-    }, [isGameOver, hasFinalized, isWin, _hasHydrated, isSynced, finalizeGame, markModePlayed]);
+    }, [isGameOver, hasFinalized, isWin, _hasHydrated, isSynced, finalizeGame, markModePlayed, getToken]);
 
     const handleCloseModal = () => {
         setManuallyClosed(true);
@@ -174,6 +189,7 @@ export default function DailyCharacterWrapper({ initialTarget }: { initialTarget
     return (
         <div className="min-h-screen text-[#d8d0c8] overflow-x-hidden">
             <Header />
+            <div ref={containerRef} />
 
             <main className="max-w-[80%] mx-auto px-4 pb-24">
                 <ModeBadge mode="daily" onClick={() => setIsModeSelectorOpen(true)} />

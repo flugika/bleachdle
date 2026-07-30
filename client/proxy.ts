@@ -7,7 +7,7 @@
 
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
-import { edgeRateLimit, getRateLimitKey } from './src/lib/rateLimit';
+import { edgeRateLimit } from './src/lib/rateLimit';
 
 // 🔑 คีย์ลับสิทธิ์ Admin — ต้องตั้งใน .env (ห้าม hardcode fallback ใน production)
 const ADMIN_SECRET = process.env.ADMIN_SECRET_KEY;
@@ -31,6 +31,14 @@ export const config = {
 export async function proxy(req: NextRequest) {
     const url = req.nextUrl;
     const pathname = url.pathname;
+
+    // 🌐 Extract Client IP ผ่าน Headers
+    const rawIp = req.headers.get('x-forwarded-for')
+        ?? req.headers.get('x-real-ip')
+        ?? '127.0.0.1';
+
+    // แยก IP แรกกรณีวิ่งผ่าน Reverse Proxy หลายชั้น
+    const ip = rawIp.split(',')[0].trim();
 
     // ==========================================
     // 🛡️ SECURITY LAYER: Soul Society Archives Gatekeeper
@@ -137,25 +145,36 @@ export async function proxy(req: NextRequest) {
         return NextResponse.rewrite(new URL('/monitor/sealed', req.url));
     }
 
-    // ==========================================
-    // ⚡ RATE LIMIT LAYER: API Protection Engine
-    // ==========================================
-    if (pathname.startsWith('/api')) {
-        let key: string;
-        try {
-            key = getRateLimitKey(req);
-        } catch {
-            return NextResponse.json({ error: 'Bad request' }, { status: 400 });
-        }
-
-        const isAllowed = edgeRateLimit(key, 5, 10000);
+    // -----------------------------------------------------------------
+    // 1. Asset Routes (Read-Only Static Files)
+    // -----------------------------------------------------------------
+    if (pathname.startsWith('/api/asset')) {
+        // High Burst Allowance: รองรับ Parallel Loading + Range Requests
+        const isAllowed = edgeRateLimit(`asset:${ip}`, 120, 10000); // 120 reqs / 10s
 
         if (!isAllowed) {
             return NextResponse.json(
-                { error: 'Too many requests, slow down.' },
+                { error: 'Asset rate limit exceeded. Please slow down.' },
                 { status: 429 }
             );
         }
+        return NextResponse.next();
+    }
+
+    // -----------------------------------------------------------------
+    // 2. Sensitive / Data-Mutation Routes (Writes & Finalize)
+    // -----------------------------------------------------------------
+    if (pathname.startsWith('/api')) {
+        // Strict Rate Limit: ป้องกันการยิง Spam / Spoof สถิติ
+        const isAllowed = edgeRateLimit(`api:${ip}`, 10, 10000); // 10 reqs / 10s
+
+        if (!isAllowed) {
+            return NextResponse.json(
+                { error: 'Too many API requests.' },
+                { status: 429 }
+            );
+        }
+        return NextResponse.next();
     }
 
     return NextResponse.next();

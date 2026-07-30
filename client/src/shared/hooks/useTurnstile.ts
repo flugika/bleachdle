@@ -28,7 +28,7 @@ function loadTurnstileScript(): Promise<void> {
     scriptLoadPromise = new Promise((resolve) => {
         window.__turnstileOnLoad = () => resolve();
 
-        if (document.getElementById(SCRIPT_ID)) return; // already injected, just waiting on onload
+        if (document.getElementById(SCRIPT_ID)) return;
         const script = document.createElement('script');
         script.id = SCRIPT_ID;
         script.src = SCRIPT_SRC;
@@ -40,22 +40,6 @@ function loadTurnstileScript(): Promise<void> {
     return scriptLoadPromise;
 }
 
-/**
- * Renders an invisible Turnstile widget and exposes getToken() to fetch a fresh
- * verification token on demand — call this right before hitting any endpoint
- * that requires `turnstileToken` in the body (e.g. /api/stats/finalize).
- *
- * Usage:
- *   const { getToken, containerRef } = useTurnstile();
- *   ...
- *   <div ref={containerRef} />  // stays invisible, size: 'invisible'
- *   ...
- *   const token = await getToken();
- *   await fetch('/api/stats/finalize', { body: JSON.stringify({ ...payload, turnstileToken: token }) });
- *
- * Tokens are single-use and expire after ~5 minutes — always call getToken()
- * fresh right before the request, don't cache it across game sessions.
- */
 export function useTurnstile() {
     const containerRef = useRef<HTMLDivElement | null>(null);
     const widgetIdRef = useRef<string | null>(null);
@@ -64,17 +48,24 @@ export function useTurnstile() {
         reject: (err: Error) => void;
     } | null>(null);
 
+    const isTest =
+        process.env.NODE_ENV === 'test' ||
+        process.env.NEXT_PUBLIC_DISABLE_TURNSTILE === 'true';
+
     useEffect(() => {
+        // ข้ามการโหลดสคริปต์ในสภาพแวดล้อมการทดสอบ
+        if (isTest) return;
+
         let cancelled = false;
 
         loadTurnstileScript().then(() => {
             if (cancelled || !containerRef.current || !window.turnstile) return;
-            if (widgetIdRef.current) return; // already rendered (e.g. StrictMode double-invoke)
+            if (widgetIdRef.current) return;
 
             widgetIdRef.current = window.turnstile.render(containerRef.current, {
                 sitekey: process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY,
                 size: 'invisible',
-                execution: 'execute', // don't auto-run on load — only when we call execute()
+                execution: 'execute',
                 callback: (token: string) => {
                     pendingRef.current?.resolve(token);
                     pendingRef.current = null;
@@ -101,9 +92,14 @@ export function useTurnstile() {
                 widgetIdRef.current = null;
             }
         };
-    }, []);
+    }, [isTest]);
 
     const getToken = useCallback((): Promise<string> => {
+        // คืนค่า mock token ทันทีเมื่อรันแบบ test
+        if (isTest) {
+            return Promise.resolve('mock-test-token');
+        }
+
         return new Promise((resolve, reject) => {
             if (!window.turnstile || !widgetIdRef.current) {
                 reject(new Error('Turnstile widget not ready yet'));
@@ -114,10 +110,10 @@ export function useTurnstile() {
                 return;
             }
             pendingRef.current = { resolve, reject };
-            window.turnstile.reset(widgetIdRef.current); // clear any stale/expired token first
+            window.turnstile.reset(widgetIdRef.current);
             window.turnstile.execute(widgetIdRef.current);
         });
-    }, []);
+    }, [isTest]);
 
     return { containerRef, getToken };
 }
