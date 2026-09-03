@@ -1,6 +1,6 @@
 // npx tsx --env-file=.env src/scripts/seeds/seed-silhouettes.js
 
-import { supabaseClient } from '@/src/lib/supabase/supabase-client'
+import { supabaseAdmin } from '@/src/lib/supabase/supabase-admin';
 import fs from 'fs';
 import path from 'path';
 
@@ -19,7 +19,7 @@ async function seedSilhouettes() {
         console.log(`📡 Connecting to Supabase... Preparing to upload ${silhouettes.length} silhouettes.`);
 
         // 3. Bulk Insert into 'silhouettes' table
-        const { data, error } = await supabaseClient
+        const { data, error } = await supabaseAdmin
             .from('silhouettes')
             .insert(silhouettes)
             .select('id, character_id, image');

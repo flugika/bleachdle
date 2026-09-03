@@ -1,6 +1,6 @@
 // npx tsx --env-file=.env src/scripts/seeds/seed-emojis.js
 
-import { supabaseClient } from '@/src/lib/supabase/supabase-client'
+import { supabaseAdmin } from '@/src/lib/supabase/supabase-admin';
 import fs from 'fs';
 import path from 'path';
 
@@ -32,7 +32,7 @@ async function seedEmojis() {
         console.log(`📡 Connecting to Supabase... Preparing to upload ${emojiSets.length} emoji sets.`);
 
         // 3. Bulk Insert into 'emojis' table (⚠️ table จริงชื่อ emojis ไม่ใช่ emoji_sets)
-        const { data, error } = await supabaseClient
+        const { data, error } = await supabaseAdmin
             .from('emojis')
             .insert(emojiSets)
             .select('id, character_id, emoji_list');

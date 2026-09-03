@@ -1,6 +1,6 @@
 // npx tsx --env-file=.env src/scripts/seeds/seed-quotes.js
 
-import { supabaseClient } from '@/src/lib/supabase/supabase-client'
+import { supabaseAdmin } from '@/src/lib/supabase/supabase-admin';
 import fs from 'fs';
 import path from 'path';
 
@@ -19,7 +19,7 @@ async function seedQuotes() {
         console.log(`📡 Connecting to Supabase... Preparing to upload ${quotes.length} quotes.`);
 
         // 3. Bulk Insert into 'quotes' table
-        const { data, error } = await supabaseClient
+        const { data, error } = await supabaseAdmin
             .from('quotes')
             .insert(quotes)
             .select('id, character_id, text');
