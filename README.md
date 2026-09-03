@@ -341,13 +341,6 @@ bleachdle
 │  │  │  │     └─ [id]
 │  │  │  │        ├─ route.test.ts
 │  │  │  │        └─ route.ts
-│  │  │  ├─ device
-│  │  │  │  ├─ init
-│  │  │  │  │  ├─ route.test.ts
-│  │  │  │  │  └─ route.ts
-│  │  │  │  └─ unlink
-│  │  │  │     ├─ route.test.ts
-│  │  │  │     └─ route.ts
 │  │  │  ├─ monitor
 │  │  │  │  ├─ feedback
 │  │  │  │  │  ├─ route.test.ts
@@ -958,6 +951,7 @@ bleachdle
 │  │     ├─ unlimited-silhouette-flow.spec.ts
 │  │     └─ unlimited-song-flow.spec.ts
 │  ├─ tsconfig.json
+│  ├─ vercel.json
 │  └─ vitest.config.ts
 ├─ DEPLOYMENT.md
 └─ README.md
