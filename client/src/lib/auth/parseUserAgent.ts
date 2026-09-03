@@ -38,7 +38,11 @@ export function parseUserAgentDetailed(
         // หรือ "Macintosh" ที่ไม่มี Intel/PPC ระบุ (ของจริง desktop Mac UA จะมี
         // "Intel Mac OS X" เสมอ) — ใช้ heuristic นี้แทน
         if (/iPad/.test(ua)) return 'tablet';
-        if (/Macintosh/.test(ua) && /Mobile\/|Safari\/[\d.]+\s*$/.test(ua) && !/Intel Mac OS X/.test(ua)) {
+        if (
+            /Macintosh/.test(ua) &&
+            (/Mobile\//.test(ua) || /Safari\/[\d.]+/.test(ua)) &&
+            !/Intel Mac OS X/.test(ua)
+        ) {
             return 'tablet'; // แนวโน้มสูงว่าเป็น iPad requesting desktop site
         }
         if (/Android/.test(ua) && !/Mobile/.test(ua)) return 'tablet'; // Android tablet ไม่มี "Mobile" token
