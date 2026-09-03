@@ -341,10 +341,6 @@ bleachdle
 │  │  │  │     └─ [id]
 │  │  │  │        ├─ route.test.ts
 │  │  │  │        └─ route.ts
-│  │  │  ├─ cron
-│  │  │  │  └─ purge-pairing-codes
-│  │  │  │     ├─ route.test.ts
-│  │  │  │     └─ route.ts
 │  │  │  ├─ device
 │  │  │  │  ├─ init
 │  │  │  │  │  ├─ route.test.ts
@@ -727,6 +723,7 @@ bleachdle
 │  │  │  ├─ store
 │  │  │  │  └─ createNestedStorage.ts
 │  │  │  ├─ supabase
+│  │  │  │  ├─ supabase-admin.ts
 │  │  │  │  ├─ supabase-client.ts
 │  │  │  │  └─ supabase-server.ts
 │  │  │  ├─ support
@@ -961,7 +958,6 @@ bleachdle
 │  │     ├─ unlimited-silhouette-flow.spec.ts
 │  │     └─ unlimited-song-flow.spec.ts
 │  ├─ tsconfig.json
-│  ├─ vercel.json
 │  └─ vitest.config.ts
 ├─ DEPLOYMENT.md
 └─ README.md
