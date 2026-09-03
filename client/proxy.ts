@@ -2,156 +2,160 @@
 
 // node -e "console.log(require('crypto').randomBytes(32).toString('hex'))"
 
-// /soul-society-archives?secret=
-// /monitor?secret=
-
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
+import { timingSafeEqual } from 'crypto';
 import { edgeRateLimit } from './src/lib/rateLimit';
 
-// 🔑 คีย์ลับสิทธิ์ Admin — ต้องตั้งใน .env (ห้าม hardcode fallback ใน production)
-const ADMIN_SECRET = process.env.ADMIN_SECRET_KEY;
-const SECRET_COOKIE_NAME = 'bleachdle_admin_auth';
-const SECRET_HEADER_NAME = 'x-archive-key'; // ใช้ header แทน query string เพื่อไม่ให้หลุดใน log/history
+// ==========================================
+// 🔑 Guarded route registry
+// ==========================================
+// เพิ่ม route ใหม่แค่เติม entry เดียวในนี้ ไม่ต้องเขียน logic ซ้ำ
+type GuardConfig = {
+    pathPrefix: string;
+    secret: string | undefined;
+    cookieName: string;
+    headerName: string;
+    cookiePath: string; // '/' ถ้ามี client fetch ไป /api/... คนละ path
+    devBypass: boolean; // true = อนุญาตแบบไม่ต้องมี secret ตอน NODE_ENV !== 'production'
+};
 
-// 🔑 คีย์ลับ Monitor dashboard — แยกจาก ADMIN_SECRET_KEY โดยเจตนา
-const MONITOR_SECRET = process.env.MONITOR_SECRET;
-const MONITOR_COOKIE_NAME = 'mntr_key';
-const MONITOR_HEADER_NAME = 'x-monitor-key';
+const GUARDS: GuardConfig[] = [
+    {
+        pathPrefix: '/soul-society-archives',
+        secret: process.env.ADMIN_SECRET_KEY,
+        cookieName: 'bleachdle_admin_auth',
+        headerName: 'x-archive-key',
+        cookiePath: '/soul-society-archives',
+        devBypass: false, // หน้าเฉลยเกม ห้ามหลุดแม้ dev
+    },
+    {
+        pathPrefix: '/monitor',
+        secret: process.env.MONITOR_SECRET_KEY,
+        cookieName: 'mntr_key',
+        headerName: 'x-monitor-key',
+        cookiePath: '/',
+        devBypass: true,
+    },
+    {
+        pathPrefix: '/mockup',
+        secret: process.env.MOCKUP_SECRET_KEY,
+        cookieName: 'mckp_key',
+        headerName: 'x-mockup-key',
+        cookiePath: '/',
+        devBypass: true,
+    },
+];
 
-// กฎใหม่ของ Next.js ตัวจับคู่ย้ายกลับมาอยู่ที่นี่
 export const config = {
     matcher: [
         '/api/:path*',
         '/soul-society-archives/:path*',
         '/monitor/:path*',
+        '/mockup/:path*',
     ],
 };
 
+// ==========================================
+// 🛡️ Utilities
+// ==========================================
+
+// เทียบ secret แบบ constant-time กัน timing attack
+// (แม้ risk จริงจะต่ำในเคสนี้ แต่เป็น best practice มาตรฐานเวลาต้องเทียบ secret กับ input จากภายนอก)
+function safeCompare(a: string, b: string): boolean {
+    const bufA = Buffer.from(a);
+    const bufB = Buffer.from(b);
+    if (bufA.length !== bufB.length) return false;
+    return timingSafeEqual(bufA, bufB);
+}
+
+// Deny แบบ "ไม่ให้รู้ว่า route นี้มีอยู่จริง"
+// สำคัญ: ห้าม rewrite ไปที่ '/404' ตรงๆ เพราะ App Router ไม่มี route file
+// ชื่อ /404 จริง (ต่างจาก Pages Router) — rewrite ไปที่ path ที่ "ไม่มีอยู่จริง"
+// ต่างหาก ที่จะทำให้ Next.js เรียก not-found.tsx ให้เองพร้อม status 404 ที่ถูกต้อง
+// เติม random suffix กัน path ชนกับ route จริงในอนาคตโดยบังเอิญ
+function denyAsNotFound(req: NextRequest): NextResponse {
+    const notFoundUrl = new URL(`/__sealed__`, req.url);
+    const response = NextResponse.rewrite(notFoundUrl, { status: 404 });
+    // กัน CDN/browser cache จำ response 404 นี้ไว้ (ไม่งั้น cache ที่ edge
+    // อาจทำให้ request ครั้งถัดไปได้ 404 ค้างแม้ auth ผ่านแล้วก็ตาม)
+    response.headers.set('Cache-Control', 'no-store');
+    return response;
+}
+
+// Log security event แยกจุดเดียว เผื่อต่อ Sentry/Datadog/SIEM ทีหลัง
+function logAccessDenied(pathname: string, ip: string, reason: string) {
+    console.warn(`[SECURITY] Access denied: ${pathname} | ip=${ip} | reason=${reason}`);
+}
+
+// ==========================================
+// 🛡️ Core guard logic — ใช้ซ้ำได้ทุก route ใน GUARDS
+// ==========================================
+function evaluateGuard(req: NextRequest, guard: GuardConfig, ip: string): NextResponse {
+    const { secret, cookieName, headerName, cookiePath, devBypass } = guard;
+    const pathname = req.nextUrl.pathname;
+
+    if (!secret) {
+        // ลืมตั้ง ENV ตอน deploy — ป้องกันเคสเผลอเปิดให้ทุกคนใน production
+        if (devBypass && process.env.NODE_ENV !== 'production') {
+            return NextResponse.next();
+        }
+        logAccessDenied(pathname, ip, 'secret_not_configured');
+        return denyAsNotFound(req);
+    }
+
+    const cookieValue = req.cookies.get(cookieName)?.value;
+    const hasValidCookie = !!cookieValue && safeCompare(cookieValue, secret);
+    const headerValue = req.headers.get(headerName);
+    const hasValidHeader = !!headerValue && safeCompare(headerValue, secret);
+    const secretParam = req.nextUrl.searchParams.get('secret');
+
+    // Exchange query param → cookie ครั้งแรก แล้ว redirect ตัด query ทิ้งเสมอ
+    // (ไม่ว่าจะมี cookie อยู่แล้วหรือไม่ กัน ?secret= ค้างใน URL/history/log)
+    if (secretParam && safeCompare(secretParam, secret)) {
+        const clean = new URL(pathname, req.url);
+        const response = NextResponse.redirect(clean, { status: 303 });
+        if (!hasValidCookie) {
+            response.cookies.set(cookieName, secret, {
+                httpOnly: true,
+                secure: process.env.NODE_ENV === 'production',
+                sameSite: 'lax',
+                maxAge: 60 * 60 * 24 * 7,
+                path: cookiePath,
+            });
+        }
+        return response;
+    }
+
+    if (hasValidCookie || hasValidHeader) {
+        return NextResponse.next();
+    }
+
+    logAccessDenied(pathname, ip, 'invalid_or_missing_credentials');
+    return denyAsNotFound(req);
+}
+
+// ==========================================
+// Entry point
+// ==========================================
 export async function proxy(req: NextRequest) {
     const url = req.nextUrl;
     const pathname = url.pathname;
 
-    // 🌐 Extract Client IP ผ่าน Headers
     const rawIp = req.headers.get('x-forwarded-for')
         ?? req.headers.get('x-real-ip')
         ?? '127.0.0.1';
-
-    // แยก IP แรกกรณีวิ่งผ่าน Reverse Proxy หลายชั้น
     const ip = rawIp.split(',')[0].trim();
 
-    // ==========================================
-    // 🛡️ SECURITY LAYER: Soul Society Archives Gatekeeper
-    // ==========================================
-    // ✅ FIX: เดิมเช็ค 'src/soul-society-archives' (ไม่มี '/' นำหน้า) ทำให้เงื่อนไขนี้
-    // ไม่เคยเป็นจริง เพราะ pathname ของ Next.js จะขึ้นต้นด้วย '/' เสมอ
-    // ผลคือหน้าเฉลยเปิดให้ทุกคนเข้าได้แบบไม่มีการป้องกันใดๆ เลยในโปรดักชัน
-    if (pathname.startsWith('/soul-society-archives')) {
-        if (!ADMIN_SECRET) {
-            // ป้องกันเคส ลืมตั้ง ENV ตอน deploy แล้วเผลอเปิดหน้าเฉลยให้ทุกคน
-            return NextResponse.rewrite(new URL('/404', req.url));
-        }
-
-        const hasCookie = req.cookies.has(SECRET_COOKIE_NAME);
-
-        // ✅ อ่าน secret จาก header แทน query param
-        // (query param จะไปโผล่ใน server access log, Vercel analytics, browser history,
-        //  และ Referer header ตอนคลิกลิงก์ออกจากหน้านั้น — header ไม่หลุดไปที่ไหนพวกนี้)
-        const secretHeader = req.headers.get(SECRET_HEADER_NAME);
-        // รองรับ query param ไว้ "เฉพาะตอน exchange เป็น cookie ครั้งแรก" เท่านั้น (ดูด้านล่าง)
-        const secretParam = url.searchParams.get('secret');
-
-        // 🐛 FIX: เดิมเช็ค secretParam เฉพาะตอนที่ยังไม่มี hasCookie เท่านั้น
-        // (อยู่ใน else-if ถัดจากบล็อกด้านล่าง) ทำให้ถ้ามี cookie อยู่แล้ว
-        // (เช่น bookmark เก่า, tab ที่ยังไม่ reload) แต่ ?secret= ยังค้างอยู่ใน URL
-        // โค้ดจะ NextResponse.next() เฉยๆ โดยไม่เคยตัด query string ทิ้งเลย
-        // ค่า secret เลยค้างอยู่ใน URL bar / history ต่อไปเรื่อยๆ
-        // ➜ ย้ายเช็ค secretParam ขึ้นมาก่อน แล้ว "redirect ตัด query ทิ้งเสมอ"
-        // ไม่ว่าจะมี cookie อยู่แล้วหรือไม่ก็ตาม
-        if (secretParam === ADMIN_SECRET) {
-            const clean = new URL(pathname, req.url);
-            const response = NextResponse.redirect(clean, { status: 303 });
-            if (!hasCookie) {
-                response.cookies.set(SECRET_COOKIE_NAME, 'authorized', {
-                    httpOnly: true,
-                    secure: process.env.NODE_ENV === 'production',
-                    sameSite: 'lax',
-                    maxAge: 60 * 60 * 24 * 7, // ลดจาก 30 วัน เหลือ 7 วัน (ลดเวลาเสี่ยงถ้าลิงก์หลุด)
-                    path: '/soul-society-archives',
-                });
-            }
-            return response;
-        }
-
-        if (hasCookie || secretHeader === ADMIN_SECRET) {
-            return NextResponse.next();
-        }
-
-        // ปฏิเสธสิทธิ์: แกล้งทำเป็น 404
-        return NextResponse.rewrite(new URL('/404', req.url));
+    // ---- Guarded routes (archives / monitor / mockup) ----
+    const matchedGuard = GUARDS.find((g) => pathname.startsWith(g.pathPrefix));
+    if (matchedGuard) {
+        return evaluateGuard(req, matchedGuard, ip);
     }
 
-    // ==========================================
-    // 🛡️ SECURITY LAYER: Monitor Dashboard Gatekeeper
-    // ==========================================
-    // เดิม /monitor เช็ค key === MONITOR_SECRET ใน page.tsx เฉยๆ แล้ว render
-    // ต่อเลย ไม่เคย redirect ตัด query string ทิ้ง ทำให้ ?key=... ค้างอยู่ใน
-    // URL bar / history / server access log / referrer ตลอดไปทุกครั้งที่เข้า
-    // (เหมือนปัญหาเดิมของ soul-society-archives) และไม่มีจุดไหนตั้ง cookie
-    // จริงเลยทั้งที่ comment ใน monitorAuth.ts สัญญาไว้ว่าจะจำให้ — ย้าย auth
-    // มาไว้ตรงนี้ ให้ทำงานแบบเดียวกับด้านบนแทน
-    if (pathname.startsWith('/monitor')) {
-        // ไม่ได้ตั้ง MONITOR_SECRET ไว้ — เปิดได้เฉพาะ local dev เท่านั้น
-        // (คงพฤติกรรมเดิมจาก isAuthorizedForMonitor เดิมไว้)
-        if (!MONITOR_SECRET) {
-            if (process.env.NODE_ENV !== 'production') {
-                return NextResponse.next();
-            }
-            return NextResponse.rewrite(new URL('/404', req.url));
-        }
-
-        const hasCookie = req.cookies.get(MONITOR_COOKIE_NAME)?.value === MONITOR_SECRET;
-        const secretHeader = req.headers.get(MONITOR_HEADER_NAME);
-        const secretParam = url.searchParams.get('secret');
-
-        // 🐛 FIX: เช็ค secretParam ก่อนเสมอ แล้ว redirect ตัด query ทิ้งทุกครั้ง
-        // ไม่ว่าจะมี cookie ที่ valid อยู่แล้วหรือไม่ — กัน ?secret= ค้างคาใน URL
-        // เวลาเปิดลิงก์เก่าซ้ำทั้งที่ล็อกอินอยู่แล้ว (เคสเดียวกับด้านบน)
-        if (secretParam === MONITOR_SECRET) {
-            const clean = new URL(pathname, req.url);
-            const response = NextResponse.redirect(clean, { status: 303 });
-            if (!hasCookie) {
-                response.cookies.set(MONITOR_COOKIE_NAME, MONITOR_SECRET, {
-                    httpOnly: true,
-                    secure: process.env.NODE_ENV === 'production',
-                    sameSite: 'lax',
-                    maxAge: 60 * 60 * 24 * 7,
-                    // ⚠️ path ต้องเป็น '/' ไม่ใช่ '/monitor' — MonitorClient.tsx fetch
-                    // ข้อมูล refresh ไปที่ /api/monitor/health ซึ่งอยู่คนละ path,
-                    // ถ้า scope cookie ไว้แค่ /monitor จะไม่ถูกส่งไปกับ request นั้น
-                    // แล้ว isAuthorizedForMonitor จะปฏิเสธทุกครั้งที่ client refresh
-                    path: '/',
-                });
-            }
-            return response;
-        }
-
-        if (hasCookie || secretHeader === MONITOR_SECRET) {
-            return NextResponse.next();
-        }
-
-        // ปฏิเสธสิทธิ์: ไม่ต้องแกล้งเป็น 404 เหมือน archives (ไม่ใช่หน้าเฉลยเกม)
-        // แต่ก็ไม่ควรเผยว่าหน้านี้มีอยู่โดยไม่มีเหตุผล — rewrite ไปหน้า sealed แทน
-        return NextResponse.rewrite(new URL('/monitor/sealed', req.url));
-    }
-
-    // -----------------------------------------------------------------
-    // 1. Asset Routes (Read-Only Static Files)
-    // -----------------------------------------------------------------
+    // ---- Asset routes ----
     if (pathname.startsWith('/api/asset')) {
-        // High Burst Allowance: รองรับ Parallel Loading + Range Requests
-        const isAllowed = edgeRateLimit(`asset:${ip}`, 120, 10000); // 120 reqs / 10s
-
+        const isAllowed = edgeRateLimit(`asset:${ip}`, 120, 10000);
         if (!isAllowed) {
             return NextResponse.json(
                 { error: 'Asset rate limit exceeded. Please slow down.' },
@@ -161,13 +165,9 @@ export async function proxy(req: NextRequest) {
         return NextResponse.next();
     }
 
-    // -----------------------------------------------------------------
-    // 2. Sensitive / Data-Mutation Routes (Writes & Finalize)
-    // -----------------------------------------------------------------
+    // ---- Sensitive API routes ----
     if (pathname.startsWith('/api')) {
-        // Strict Rate Limit: ป้องกันการยิง Spam / Spoof สถิติ
-        const isAllowed = edgeRateLimit(`api:${ip}`, 10, 10000); // 10 reqs / 10s
-
+        const isAllowed = edgeRateLimit(`api:${ip}`, 10, 10000);
         if (!isAllowed) {
             return NextResponse.json(
                 { error: 'Too many API requests.' },

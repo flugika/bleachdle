@@ -1,4 +1,4 @@
-// src/shared/ui/AllModesModal.tsx
+// src/shared/ui/game-selector/AllModesModal.tsx
 "use client";
 
 import { useEffect, useState } from 'react';

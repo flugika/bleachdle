@@ -1,11 +1,16 @@
 // src/features/release/components/unlimited/UnlimitedReleaseWrapper.tsx
+//
+// 🆕 changes: same as UnlimitedCharacterWrapper/UnlimitedSongWrapper —
+//   1. registerSoulName() no longer takes gameMode (global on players.soul_name).
+//   2. On mount, backfill this mode's local name from the global name if
+//      this mode never had one saved locally.
 "use client";
 
 import { useEffect, useState } from 'react';
 import { ReleaseGuessTable } from '@/src/features/release/components/shared/ReleaseGuessTable';
 import { ReleaseControlPanel } from '@/src/shared/ui/control-panel/ReleaseControlPanel';
 import { useReleaseGame } from '@/src/features/release/hooks/unlimited/useReleaseGame';
-import { getReleases } from '@/src/features/release/release';
+import { getReleasableItems, getReleases } from '@/src/features/release/release';
 import { ReleaseSummaryGuess } from '@/src/features/release/components/shared/ReleaseSummaryGuess';
 import { ReleaseHowToPlayModal } from '@/src/features/release/components/shared/ReleaseHowToPlayModal';
 import { Header } from '@/src/shared/ui/layout/Header';
@@ -22,12 +27,18 @@ import { STORAGE_KEYS } from '@/src/const/localStorage';
 import { BL_MODES_METADATA } from '@/src/config/mode';
 import { logFullTarget } from '@/src/lib/debug/logFullTarget';
 import { Legend } from '@/src/shared/ui/control-panel/Legend';
+import { SyncEngine } from '@/src/lib/sync/syncEngine';
+import { useRemoteProgressSync } from '@/src/shared/hooks/useRemoteProgressSync';
+import { RemoteProgressBanner } from '@/src/shared/ui/pairing/RemoteProgressBanner';
+import { ResyncButton } from '@/src/shared/ui/pairing/ResyncButton';
+import { pullAndApplyMeta } from '@/src/lib/sync/pullAndApplyMeta';
+import { onCompletedSynced } from '@/src/lib/sync/completedSyncEvent';
 
 export default function UnlimitedReleaseWrapper() {
     const { navigate, state, reportReady } = useSenkaimon();
 
     const gameStore = useReleaseGame();
-    const { target, revealedCharacter, guesses, initializeGame, finalizeGame, resetGame, hardReset, hasFinalized, _hasHydrated, resetStreakKeepMax, stats, loadStats } = gameStore;
+    const { target, revealedCharacter, guesses, initializeGame, finalizeGame, resetGame, hardReset, hasFinalized, _hasHydrated, resetStreakKeepMax, stats, loadStats, applyRemoteProgress, applyRemoteStats } = gameStore;
     const releases = getReleases();
 
     const [manuallyClosed, setManuallyClosed] = useState(false);
@@ -38,6 +49,43 @@ export default function UnlimitedReleaseWrapper() {
     const [revealDelayDone, setRevealDelayDone] = useState(false);
     const [finalRoundGuesses, setFinalRoundGuesses] = useState<typeof guesses>([]);
 
+    const handleRemoteLoad = async (remoteTargetId: string, remoteGuesses: unknown[]) => {
+        // 🆕 reset local ephemeral summary-gating state IMPERATIVELY, in the
+        // same handler that pulls in new remote data — don't rely solely on
+        // a useEffect keyed off target identity to catch this. Resync can be
+        // triggered while a summary is already showing (ResyncButton/banner
+        // stay mounted regardless of showSummary), so the reset must not
+        // depend on a round-trip through React's effect scheduler.
+        setManuallyClosed(false);
+        setRevealDelayDone(false);
+        applyRemoteProgress(remoteTargetId, remoteGuesses);
+
+        // 🆕 resync ควรดึง stats/completed/soul-registry มาด้วย ไม่ใช่แค่ progress
+        const meta = await pullAndApplyMeta('release', 'unlimited');
+        applyRemoteStats(meta.stats);
+        if (meta.reincarnationCount !== null) {
+            setReincarnationCount(meta.reincarnationCount);
+        }
+        if (meta.soulName) {
+            setSoulName(meta.soulName);
+        }
+
+        // ถ้า unlimited release มี isGameCompleted concept (เล่นครบทุกตัวละคร)
+        const allReleases = getReleasableItems();
+        const completedIds = new Set(meta.completed);
+        setIsGameCompleted(allReleases.length > 0 && completedIds.size >= allReleases.length);
+    };
+
+    const remoteProgress = useRemoteProgressSync({
+        gameMode: 'release',
+        gameType: 'unlimited',
+        hasHydrated: _hasHydrated,
+        localTargetId: target?.id ?? null,
+        localHasFinalized: hasFinalized,
+        localGuessCount: guesses.length,
+        applyRemoteProgress,
+    });
+
     useEffect(() => {
         if (state === "closing") {
             setIsModeSelectorOpen(false);
@@ -45,10 +93,19 @@ export default function UnlimitedReleaseWrapper() {
     }, [state]);
 
     useEffect(() => {
+        const recompute = () => {
+            const completedData = JSON.parse(localStorage.getItem(STORAGE_KEYS.RELEASE_COMPLETED) || '{}');
+            const completed = completedData.unlimited || [];
+            setIsGameCompleted(releases.length > 0 && completed.length >= releases.length);
+        };
+        return onCompletedSynced('release', recompute);
+    }, [releases]);
+
+    useEffect(() => {
         setManuallyClosed(false);
         logFullTarget(target);
         setRevealDelayDone(false);
-    }, [target]);
+    }, [target, hasFinalized]);
 
     const remainingGuesses = Math.max(0, MAX_UNLIMITED_RELEASE_GUESSES - guesses.length);
 
@@ -87,21 +144,40 @@ export default function UnlimitedReleaseWrapper() {
     useEffect(() => {
         if (!_hasHydrated) return;
 
-        loadStats();
+        let cancelled = false;
 
-        const completedData = JSON.parse(localStorage.getItem(STORAGE_KEYS.RELEASE_COMPLETED) || '{}');
-        const completed = completedData.unlimited || [];
-        setIsGameCompleted(releases.length > 0 && completed.length >= releases.length);
+        (async () => {
+            loadStats();
 
-        const registryData = JSON.parse(localStorage.getItem(STORAGE_KEYS.SOUL_REGISTRY) || '{}');
-        const registry = registryData.release || { name: "", count: 0 };
-        if (registry.name) {
-            setSoulName(registry.name);
-        }
-        setReincarnationCount(registry.count || 0);
+            const completedData = JSON.parse(localStorage.getItem(STORAGE_KEYS.RELEASE_COMPLETED) || '{}');
+            const completed = completedData.unlimited || [];
+            setIsGameCompleted(releases.length > 0 && completed.length >= releases.length);
 
-        initializeGame();
-        setIsReady(true);
+            const registryData = JSON.parse(localStorage.getItem(STORAGE_KEYS.SOUL_REGISTRY) || '{}');
+            const registry = registryData.release || { name: "", count: 0 };
+            if (registry.name) {
+                setSoulName(registry.name);
+            }
+            setReincarnationCount(registry.count || 0);
+
+            // 🆕 backfill this mode's local name from the global players.soul_name
+            // if it wasn't already set locally.
+            if (!registry.name) {
+                SyncEngine.getInstance().getSoulName().then((globalName) => {
+                    if (!globalName) return;
+                    setSoulName(globalName);
+                    const rd = JSON.parse(localStorage.getItem(STORAGE_KEYS.SOUL_REGISTRY) || '{}');
+                    rd.release = { ...(rd.release || { name: '', count: 0 }), name: globalName };
+                    localStorage.setItem(STORAGE_KEYS.SOUL_REGISTRY, JSON.stringify(rd));
+                });
+            }
+
+            await initializeGame();
+
+            if (!cancelled) setIsReady(true);
+        })();
+
+        return () => { cancelled = true; };
     }, [initializeGame, releases.length, _hasHydrated, loadStats]);
 
     useEffect(() => {
@@ -121,7 +197,7 @@ export default function UnlimitedReleaseWrapper() {
     const handleCloseModal = () => {
         setManuallyClosed(true);
         resetGame();
-        initializeGame(true);
+        void initializeGame(true);
         window.scrollTo({ top: 0, behavior: 'smooth' });
     };
 
@@ -136,6 +212,9 @@ export default function UnlimitedReleaseWrapper() {
         registryData.release = updated;
         localStorage.setItem(STORAGE_KEYS.SOUL_REGISTRY, JSON.stringify(registryData));
         setSoulName(inputName.trim());
+
+        // 🆕 no gameMode arg — sets players.soul_name globally
+        SyncEngine.getInstance().registerSoulName(inputName.trim()).catch(() => { });
     };
 
     const handleHardReset = () => {
@@ -151,6 +230,7 @@ export default function UnlimitedReleaseWrapper() {
         setReincarnationCount(registryData.release.count);
 
         hardReset();
+        SyncEngine.getInstance().reincarnate('release').catch(() => { });
     };
 
     const handleSwitchDimension = (targetMode: 'daily' | 'unlimited') => {
@@ -181,6 +261,15 @@ export default function UnlimitedReleaseWrapper() {
 
             <main className="max-w-[80%] mx-auto px-4 pb-24">
                 <ModeBadge mode="unlimited" onClick={() => setIsModeSelectorOpen(true)} />
+                {remoteProgress.visible ? (
+                    <RemoteProgressBanner
+                        updatedAt={remoteProgress.updatedAt}
+                        onDismiss={remoteProgress.onDismiss}
+                        onLoad={remoteProgress.onLoad}
+                    />
+                ) : (
+                    <ResyncButton gameMode={remoteProgress.gameMode} gameType={remoteProgress.gameType} applyRemoteProgress={handleRemoteLoad} />
+                )}
                 <div id="game-sub-header">
                     <SubHeader title={BL_MODES_METADATA.release.title} subtitle={BL_MODES_METADATA.release.statusLine} />
                 </div>

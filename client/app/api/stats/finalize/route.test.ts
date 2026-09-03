@@ -213,13 +213,13 @@ describe('POST /api/stats/finalize Route Handler', () => {
     // ── GROUP 4: DATABASE RPC AND SUCCESS STATES TESTS ──
     describe('Database Interactions', () => {
         it('should return 500 if the Supabase rpc call throws a database error', async () => {
-            // 🎯 Enterprise Fix: ปั้น Error Object โครงสร้างตรงตาม PostgrestResponse จริง ๆ แทนการ cast as any
+            const consoleErrorSpy = vi.spyOn(console, 'error').mockImplementation(() => { });
+
             const mockError = {
                 message: 'Database query timeout',
                 details: '',
                 hint: '',
                 code: '500',
-                // ต้องมีเมธอดเหล่านี้เพื่อผ่าน Type Checking
                 toJSON: () => ({}),
                 name: 'PostgrestError'
             };
@@ -240,6 +240,14 @@ describe('POST /api/stats/finalize Route Handler', () => {
             expect(response.status).toBe(500);
             expect(json.error).toBe('Failed to record stat');
             expect(logApiEvent).toHaveBeenCalledWith(expect.any(String), 'error', 500, 'Database query timeout');
+
+            // bonus: now that console.error is spied, actually assert on it instead
+            // of just silencing it — confirms the route logs the raw Postgrest
+            // error server-side even though the client only ever sees the generic
+            // "Failed to record stat" message.
+            expect(consoleErrorSpy).toHaveBeenCalledWith('[stats/finalize] RPC failed:', mockError);
+
+            consoleErrorSpy.mockRestore();
         });
 
         it('should successfully update stats and set browser cooldown cookie upon valid request', async () => {

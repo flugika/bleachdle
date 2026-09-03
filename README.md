@@ -233,16 +233,18 @@ Flags are nested per mode rather than a flat list, since a vertical can ship in 
 - [ ] **First Name** — simplest new mode, Wordle-style guessing on a character's first name only, with the classic gray/yellow/green letter feedback. Needs a new `first_name` field split out from the existing full `name` field, otherwise no new data required (confirmed: `characters.json` has no `first_name` field yet)
 - [ ] **Trait Group** — system picks 3 characters at random and reveals what they share (trait / race / affiliation / friend group) but NOT who they are — player must guess the identities of those 3 hidden characters themselves (not guess additional members of the group); countdown-based
 - [ ] **Higher/Lower** — one character card shows a revealed "power level," the other is hidden; guess higher or lower than the revealed card. Blocked on defining a power-ranking methodology — win rate alone isn't sufficient, multiple factors need to be weighed
+- [ ] **Link** — chain-guessing mode: player is given a start character and a target character, and must build a relationship path connecting them in as few hops as possible (4–5 steps target). Each step must be a direct relationship to the previous character (e.g. `Orihime → Ichigo → Aizen → Ichimaru → Kira` = 4 steps, counting the target itself as the final hop). Depends on the same **character relationship / boundary table** needed for Pair/Connection above — blocked on that data model landing first
+- [ ] **Tap One** — 10 character cards shown per round, each card asks "who is the strongest/best in [category]" (a random category per card — e.g. raw power, speed, kido mastery, swordsmanship). Player picks the character they believe ranks #1 for that card's category; any card not yet answered re-shuffles its character pool on each pick, so the options keep shifting until every card is resolved. Blocked on the same open question as Higher/Lower: needs a defined power-ranking/category methodology per trait before cards can be scored as correct/incorrect
 
 ### Data Model (new, supports the modes above)
-- [ ] **Character relationship / boundary table** — stores how one character relates to another. Rough shape so far: `id`, `character_id`, `related_character_id`, `type` (e.g. friend / family / rival / same-trait). Still deciding what else needs to be captured — directional vs. bidirectional, a strength/weight field, free-text notes, whether one row can represent multiple shared boundaries at once, etc. Not started — no migration or schema stub for it yet.
+- [ ] **Character relationship / boundary table** — stores how one character relates to another. Rough shape so far: `id`, `character_id`, `related_character_id`, `type` (e.g. friend / family / rival / same-trait). Still deciding what else needs to be captured — directional vs. bidirectional, a strength/weight field, free-text notes, whether one row can represent multiple shared boundaries at once, etc. Not started — no migration or schema stub for it yet. Needed for **Pair**, **Connection**, and **Link** above.
 
 ### Stats & Social
 - [x] **Global daily stats** — "X% of players solved it within N guesses," aggregated via Supabase on top of existing round/result tables
 - [x] **Surface badges on `/stats`** — badge system already exists but currently only renders inside each mode's summary card, not on the dedicated stats page
 - [x] **Rate limiting on game APIs** (not just `/api/support`) — done, but via the lighter path rather than the originally planned one: `app/api/stats/finalize`, `app/api/stats/daily`, and `app/api/stats/global` all now gate on IP-based checks (`checkIpRateLimit` from `lib/support/ipRateLimit.ts`, the same pattern generalized from the support ticket system) or the in-memory `edgeRateLimit` helper (`lib/rateLimit.ts`). `@upstash/ratelimit` / `@upstash/redis` are installed as dependencies but not wired into any route yet — today's limiter is in-process memory, which is fine for a single Vercel region but won't share state across edge regions if traffic grows; revisit Upstash then.
 - [x] **Shareable result as image** — still pending. Skip the Wordle/Worldle-style emoji-grid text share; generate a downloadable/story-ready image (canvas or server-side OG image) instead
-- [ ] **Streak/session portability without login** — still pending. Current direction: generate a code on one device that can be entered on a second device to link/sync the streak data across them. This replaces the earlier same-network auto-detection idea, which had an unresolved collision problem on shared networks (family, roommates) where distinct players would merge onto one streak
+- [x] **Streak/session portability without login** — still pending. Current direction: generate a code on one device that can be entered on a second device to link/sync the streak data across them. This replaces the earlier same-network auto-detection idea, which had an unresolved collision problem on shared networks (family, roommates) where distinct players would merge onto one streak
 
 ### Accounts & Progression (new)
 - [ ] **Login** — account system, currently unauthenticated
@@ -339,12 +341,38 @@ bleachdle
 │  │  │  │     └─ [id]
 │  │  │  │        ├─ route.test.ts
 │  │  │  │        └─ route.ts
+│  │  │  ├─ cron
+│  │  │  │  └─ purge-pairing-codes
+│  │  │  │     ├─ route.test.ts
+│  │  │  │     └─ route.ts
+│  │  │  ├─ device
+│  │  │  │  ├─ init
+│  │  │  │  │  ├─ route.test.ts
+│  │  │  │  │  └─ route.ts
+│  │  │  │  └─ unlink
+│  │  │  │     ├─ route.test.ts
+│  │  │  │     └─ route.ts
 │  │  │  ├─ monitor
 │  │  │  │  ├─ feedback
 │  │  │  │  │  ├─ route.test.ts
 │  │  │  │  │  └─ route.ts
 │  │  │  │  └─ health
 │  │  │  │     ├─ route.test.ts
+│  │  │  │     └─ route.ts
+│  │  │  ├─ pair
+│  │  │  │  ├─ confirm
+│  │  │  │  │  ├─ route.test.ts
+│  │  │  │  │  └─ route.ts
+│  │  │  │  ├─ create
+│  │  │  │  │  ├─ route.test.ts
+│  │  │  │  │  └─ route.ts
+│  │  │  │  ├─ devices
+│  │  │  │  │  ├─ route.test.ts
+│  │  │  │  │  └─ route.ts
+│  │  │  │  ├─ redeem
+│  │  │  │  │  ├─ route.test.ts
+│  │  │  │  │  └─ route.ts
+│  │  │  │  └─ status
 │  │  │  │     └─ route.ts
 │  │  │  ├─ stats
 │  │  │  │  ├─ daily
@@ -356,9 +384,31 @@ bleachdle
 │  │  │  │  └─ global
 │  │  │  │     ├─ route.test.ts
 │  │  │  │     └─ route.ts
-│  │  │  └─ support
-│  │  │     ├─ route.test.ts
-│  │  │     └─ route.ts
+│  │  │  ├─ support
+│  │  │  │  ├─ route.test.ts
+│  │  │  │  └─ route.ts
+│  │  │  └─ sync
+│  │  │     ├─ completed
+│  │  │     │  ├─ route.test.ts
+│  │  │     │  └─ route.ts
+│  │  │     ├─ progress
+│  │  │     │  ├─ route.test.ts
+│  │  │     │  └─ route.ts
+│  │  │     ├─ reincarnate
+│  │  │     │  ├─ route.test.ts
+│  │  │     │  └─ route.ts
+│  │  │     ├─ result
+│  │  │     │  ├─ route.test.ts
+│  │  │     │  └─ route.ts
+│  │  │     ├─ soul-name
+│  │  │     │  ├─ route.test.ts
+│  │  │     │  └─ route.ts
+│  │  │     ├─ soul-registry
+│  │  │     │  ├─ route.test.ts
+│  │  │     │  └─ route.ts
+│  │  │     └─ stats
+│  │  │        ├─ route.test.ts
+│  │  │        └─ route.ts
 │  │  ├─ favicon.ico
 │  │  ├─ icon.svg
 │  │  ├─ layout.tsx
@@ -373,10 +423,13 @@ bleachdle
 │  │  │  └─ song
 │  │  │     └─ page.tsx
 │  │  ├─ not-found.tsx
+│  │  ├─ robots.ts
+│  │  ├─ sitemap.ts
 │  │  ├─ soul-society-archives
 │  │  │  └─ page.tsx
 │  │  ├─ stats
-│  │  │  └─ page.tsx
+│  │  │  ├─ page.tsx
+│  │  │  └─ test
 │  │  ├─ support
 │  │  │  └─ page.tsx
 │  │  └─ [...catchAll]
@@ -455,6 +508,7 @@ bleachdle
 │  │  │  ├─ mode.ts
 │  │  │  └─ zIndex.ts
 │  │  ├─ const
+│  │  │  ├─ auth.ts
 │  │  │  ├─ guess.ts
 │  │  │  ├─ localStorage.ts
 │  │  │  └─ summary.ts
@@ -645,8 +699,15 @@ bleachdle
 │  │  │     ├─ SupportForm.tsx
 │  │  │     └─ SupportPageClient.tsx
 │  │  ├─ lib
+│  │  │  ├─ api
+│  │  │  │  └─ clientFetch.ts
 │  │  │  ├─ assets
 │  │  │  │  └─ resolveAssetPath.ts
+│  │  │  ├─ auth
+│  │  │  │  ├─ hmac.ts
+│  │  │  │  ├─ parseUserAgent.ts
+│  │  │  │  ├─ resolvePlayer.ts
+│  │  │  │  └─ verifySameOrigin.ts
 │  │  │  ├─ debug
 │  │  │  │  └─ logFullTarget.ts
 │  │  │  ├─ guessGame
@@ -656,6 +717,8 @@ bleachdle
 │  │  │  │  ├─ types.ts
 │  │  │  │  └─ __tests__
 │  │  │  │     └─ compareBinaryGuess.test.ts
+│  │  │  ├─ moderation
+│  │  │  │  └─ filterSoulName.ts
 │  │  │  ├─ rateLimit.ts
 │  │  │  ├─ search
 │  │  │  │  └─ fuzzy.ts
@@ -670,6 +733,24 @@ bleachdle
 │  │  │  │  ├─ constantsExtractor.ts
 │  │  │  │  ├─ ipRateLimit.ts
 │  │  │  │  └─ rateLimitCookie.ts
+│  │  │  ├─ sync
+│  │  │  │  ├─ clearAllLocalGameState.ts
+│  │  │  │  ├─ completedSyncEvent.ts
+│  │  │  │  ├─ fetchActiveRemoteProgress.ts
+│  │  │  │  ├─ hydrateGuessEntries.ts
+│  │  │  │  ├─ pullAndApplyMeta.ts
+│  │  │  │  ├─ pullServerStats.ts
+│  │  │  │  ├─ roundKey.ts
+│  │  │  │  ├─ storageKeyMaps.ts
+│  │  │  │  ├─ storeAccessMaps.ts
+│  │  │  │  ├─ syncEngine.ts
+│  │  │  │  ├─ syncProgressHelper.ts
+│  │  │  │  └─ syncStateOnLoad.ts
+│  │  │  ├─ test
+│  │  │  │  └─ helpers
+│  │  │  │     └─ selectSearchOption.ts
+│  │  │  ├─ turnstile
+│  │  │  │  └─ verifyTurnstileToken.ts
 │  │  │  └─ utils
 │  │  │     ├─ absolutePathEntities.ts
 │  │  │     ├─ checking.ts
@@ -721,10 +802,16 @@ bleachdle
 │  │  │  │  ├─ useCountdown.ts
 │  │  │  │  ├─ useDailyHub.ts
 │  │  │  │  ├─ useDailyWallpaper.ts
+│  │  │  │  ├─ useDeviceBootstrap.ts
+│  │  │  │  ├─ useManualResync.ts
 │  │  │  │  ├─ useRaceEmblem.ts
+│  │  │  │  ├─ useRemoteProgress.ts
+│  │  │  │  ├─ useRemoteProgressSync.ts
 │  │  │  │  ├─ useRouteLoadingStore.ts
 │  │  │  │  ├─ useShareResultData.ts
 │  │  │  │  ├─ useShareResultExport.ts
+│  │  │  │  ├─ useSoulName.ts
+│  │  │  │  ├─ useSyncStatus.ts
 │  │  │  │  ├─ useTestWallpaper.ts
 │  │  │  │  └─ useTurnstile.ts
 │  │  │  ├─ types
@@ -752,6 +839,7 @@ bleachdle
 │  │  │     │  ├─ AboutButton.tsx
 │  │  │     │  ├─ AllModesButton.tsx
 │  │  │     │  ├─ AllModesModal.tsx
+│  │  │     │  ├─ DeviceLinkButton.tsx
 │  │  │     │  ├─ HomeButton.tsx
 │  │  │     │  ├─ HowToPlayButton.tsx
 │  │  │     │  ├─ ModeBadge.tsx
@@ -784,6 +872,7 @@ bleachdle
 │  │  │     │  └─ useDailyPhenomenon.ts
 │  │  │     ├─ input.tsx
 │  │  │     ├─ layout
+│  │  │     │  ├─ DeviceSyncProvider.tsx
 │  │  │     │  ├─ Divider.tsx
 │  │  │     │  ├─ Footer.tsx
 │  │  │     │  ├─ GlobalGameNav.tsx
@@ -796,6 +885,15 @@ bleachdle
 │  │  │     │  ├─ SoulSyncLoader.tsx
 │  │  │     │  └─ ZangetsuLoader.tsx
 │  │  │     ├─ modal.tsx
+│  │  │     ├─ pairing
+│  │  │     │  ├─ DeviceManagementPanel.tsx
+│  │  │     │  ├─ LastActiveIndicator.tsx
+│  │  │     │  ├─ OtpCodeInput.tsx
+│  │  │     │  ├─ PairingModal.tsx
+│  │  │     │  ├─ RemoteProgressBanner.tsx
+│  │  │     │  ├─ ResyncButton.tsx
+│  │  │     │  ├─ SoulNameEditor.tsx
+│  │  │     │  └─ SyncStatusBanner.tsx
 │  │  │     ├─ ScaleFit.tsx
 │  │  │     ├─ Sealed.tsx
 │  │  │     ├─ summary
@@ -836,7 +934,16 @@ bleachdle
 │  │     ├─ 04_function.sql
 │  │     ├─ 05_cronjob.sql
 │  │     ├─ 06_new_schema_dump.sql
-│  │     └─ 07_rls_policies.sql
+│  │     ├─ 07_rls_policies.sql
+│  │     ├─ 08_pairing_schema.sql
+│  │     ├─ 09_player_progress.sql
+│  │     ├─ 10_replay_protection.sql
+│  │     ├─ 11_pairing_create_cap.sql
+│  │     ├─ 12_completion_and_reincarnation.sql
+│  │     ├─ 13_pairing_hardening.sql
+│  │     ├─ 14_soul_name_unification.sql
+│  │     ├─ 15_pairing_full_carryover.sql
+│  │     └─ 16_result_integrity_gate.sql
 │  ├─ test-results
 │  │  └─ .last-run.json
 │  ├─ tests
@@ -854,6 +961,7 @@ bleachdle
 │  │     ├─ unlimited-silhouette-flow.spec.ts
 │  │     └─ unlimited-song-flow.spec.ts
 │  ├─ tsconfig.json
+│  ├─ vercel.json
 │  └─ vitest.config.ts
 ├─ DEPLOYMENT.md
 └─ README.md

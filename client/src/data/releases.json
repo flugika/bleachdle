@@ -40,7 +40,7 @@
         "technique_name": "Daiguren Hyorinmaru",
         "technique_translation": "Great Crimson Ice Lotus",
         "audio_url": "Bankai_Toshiro_Hitsugaya.mp3",
-        "clip_end_ms": 1600,
+        "clip_end_ms": 1000,
         "source_episode": null
     },
     {
@@ -187,17 +187,6 @@
         "source_episode": null
     },
     {
-        "id": "9425189d-5d5d-4f43-8bf4-b4129b23f460",
-        "character_id": "50c41038-028f-4131-b660-84a123f8510a",
-        "release_type": "Shikai",
-        "trigger_phrase": "Awaken",
-        "technique_name": "Benihime",
-        "technique_translation": "Crimson Princess",
-        "audio_url": "Shikai_Kisuke_Urahara.mp3",
-        "clip_end_ms": 900,
-        "source_episode": null
-    },
-    {
         "id": "dcc15542-68e0-4465-8dbe-d9a630b348e9",
         "character_id": "b3e05a89-2917-48f8-86d7-c91723e9a7e4",
         "release_type": "Bankai",
@@ -261,6 +250,17 @@
         "technique_translation": "Cricket Final Form Demon Cricket",
         "audio_url": "Bankai_Kaname_Tosen.mp3",
         "clip_end_ms": 700,
+        "source_episode": null
+    },
+    {
+        "id": "9425189d-5d5d-4f43-8bf4-b4129b23f460",
+        "character_id": "50c41038-028f-4131-b660-84a123f8510a",
+        "release_type": "Bankai",
+        "trigger_phrase": "Bankai",
+        "technique_name": "Kannonbiraki Benihime Aratame",
+        "technique_translation": "Modified Crimson Princess of the Opened Kannon",
+        "audio_url": "Bankai_Kisuke_Urahara.mp3",
+        "clip_end_ms": 1100,
         "source_episode": null
     },
     {
@@ -440,17 +440,6 @@
         "source_episode": null
     },
     {
-        "id": "18c83c34-89af-4adb-a7b7-7332de1fd5d9",
-        "character_id": "5c092398-f7d3-4a1b-b84e-d00efd5c0be7",
-        "release_type": "Vollstandig",
-        "trigger_phrase": "Vollstandig",
-        "technique_name": "Bazz B",
-        "technique_translation": "Complete Holy Form",
-        "audio_url": "Vollstandig_Bazz_B.mp3",
-        "clip_end_ms": 1450,
-        "source_episode": null
-    },
-    {
         "id": "76d4decc-35d3-4f9c-bc62-26c864784832",
         "character_id": "9b8171d5-0487-4efd-a344-eae7bde9239e",
         "release_type": "Vollstandig",
@@ -462,17 +451,6 @@
         "source_episode": null
     },
     {
-        "id": "2115daf4-60c9-49d3-ae8f-1a6c47cb682f",
-        "character_id": "7961a321-5146-430a-9e87-2f6689a4c91b",
-        "release_type": "Vollstandig",
-        "trigger_phrase": "Vollstandig",
-        "technique_name": "Uryu Ishida",
-        "technique_translation": "Complete Holy Form",
-        "audio_url": "Vollstandig_Uryu_Ishida.mp3",
-        "clip_end_ms": 1200,
-        "source_episode": null
-    },
-    {
         "id": "86a5e5bc-5699-4ca9-8aa1-b697be17b15c",
         "character_id": "1d55513b-6b19-428f-9338-ed9bb07d3252",
         "release_type": "Vollstandig",
@@ -481,17 +459,6 @@
         "technique_translation": "Hunger of God",
         "audio_url": "Vollstandig_Liltotto_Lamperd.mp3",
         "clip_end_ms": 1000,
-        "source_episode": null
-    },
-    {
-        "id": "92b425f4-d3c1-4917-9641-d8c2dc19d5af",
-        "character_id": "7c9e6679-7425-40de-944b-e07fc1f90ae7",
-        "release_type": "Vollstandig",
-        "trigger_phrase": "Vollstandig",
-        "technique_name": "Mask De Masculine",
-        "technique_translation": "Complete Holy Form",
-        "audio_url": "Vollstandig_Mask_De_Masculine.mp3",
-        "clip_end_ms": 1650,
         "source_episode": null
     },
     {

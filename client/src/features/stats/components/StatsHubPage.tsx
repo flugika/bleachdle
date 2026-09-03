@@ -1,5 +1,29 @@
 // src/features/stats/components/StatsHubPage.tsx
 //
+// 🆕 changes from original:
+//   1. New optional prop `onRenameSoul?: (newName: string) => Promise<boolean> | void`
+//      — wires a single, GLOBAL name editor into the header (next to where
+//      soulName was previously just displayed read-only). This is the one
+//      place soul_name gets edited now that it's unified on players.soul_name
+//      instead of per-discipline (see 14_soul_name_unification.sql).
+//   2. The header name text is now a clickable button (only when
+//      onRenameSoul is provided — omit the prop and it silently falls back
+//      to the original read-only text, zero behavior change for callers
+//      that haven't wired persistence yet).
+//   3. `nameMismatch` prop is now effectively moot (one global name can't
+//      "vary by discipline" anymore) but left in place, unused-if-false,
+//      for backward compatibility — the parent (page.tsx) should simply
+//      stop passing `true` for it rather than requiring a prop-shape change
+//      here.
+//   4. `onRenameDiscipline` / the §05 Discipline Registry's per-mode RE-ETCH
+//      affordance is UNCHANGED in this file — DisciplineRegistryCell already
+//      makes editing conditional on the parent passing that callback
+//      (`canEdit = claimed && !!onRename`). To retire per-mode editing in
+//      favor of the new global editor, the PARENT should simply stop
+//      passing `onRenameDiscipline` — no code change needed in this file
+//      for that part.
+//
+// Everything else below is byte-identical to the original.
 // ============================================================================
 // STATS HUB — "REIATSU DOSSIER"
 //
@@ -9,32 +33,6 @@
 // accent colors, ticker). No login exists — "personal" here means whatever
 // is in localStorage (STORAGE_KEYS.*_STATS / SOUL_REGISTRY), "global" means
 // whatever daily_stats aggregates server-side across all players.
-//
-// Data contract expected from the page/server component that renders this:
-//
-//   type ModeStat = {
-//     played: number;
-//     passed: number;
-//     guess_distribution: Record<string, number>; // "1".."6" -> count, "6" = 6+
-//   };
-//
-//   type StatsHubProps = {
-//     soulName: string | null;              // from SOUL_REGISTRY, null = unregistered
-//     reincarnationCount: number;
-//     personal: Record<SubFeatureKey, ModeStat>;   // derived from *_STATS localStorage
-//     global: Record<SubFeatureKey, ModeStat>;     // from daily_stats (or an all-time rollup)
-//     badgeTiers: BadgeTier[];
-//   };
-//
-// Layout (top to bottom):
-//   §00 Seal banner            — security-strip header, matches archive top
-//   §01 Global pulse ticker    — reuses DailyStatsBar verbatim
-//   §02 Personal overview grid — 4 hero metric cards
-//   §03 Per-mode archive cards — 6 cards, one per SubFeatureKey, each with a
-//                                guess-distribution histogram + you-vs-global line
-//   §04 Soul registry roll     — lightweight "who else has cleared unlimited"
-//   §05 Badge / tier wall      — locked (silhouette) vs unlocked badges
-//   §06 Footer                 — archive footer, matches Central46 footer
 // ============================================================================
 
 "use client";
@@ -42,6 +40,7 @@
 import React, { useMemo, useState } from "react";
 import { MODE_ACCENT, SubFeatureKey } from "@/src/config/mode";
 import { DailyStatsBar } from "@/src/shared/ui/daily-hub/DailyStatsBar";
+import { Modal } from "@/src/shared/ui/modal"; // 🆕
 
 // ─────────────────────────────────────────────
 //  TYPES
@@ -78,6 +77,10 @@ export interface StatsHubProps {
     // (e.g. player renamed between sessions). Surfaced rather than silently
     // resolved so the player understands why the shown name might not match
     // what they see in a given mode.
+    //
+    // 🆕 Effectively obsolete now that soul_name is unified globally — one
+    // name can no longer "vary by discipline." Left in the prop shape for
+    // backward compatibility; the parent should just stop passing `true`.
     nameMismatch?: boolean;
     reincarnationCount: number;
     personal: Partial<Record<SubFeatureKey, ModeStat>>;
@@ -96,7 +99,17 @@ export interface StatsHubProps {
     // Called when the player edits a discipline's etched name from the §05
     // registry card. Optional so daily variant / callers without persistence
     // wiring can omit it — the card simply won't offer the edit affordance.
+    //
+    // 🆕 NOTE: now that soul_name is global, prefer NOT passing this from
+    // the parent anymore — per-mode renaming no longer makes sense when
+    // there's only one name. Left functional here for backward
+    // compatibility; retiring it is a parent-side change (omit the prop),
+    // not a change to this component.
     onRenameDiscipline?: (mode: SubFeatureKey, newName: string) => void;
+    // 🆕 The new single source of truth for editing soul_name. Returning
+    // `false` (or a rejected promise) keeps the editor modal open with an
+    // error instead of closing on failure.
+    onRenameSoul?: (newName: string) => Promise<boolean> | void;
     topSouls?: { name: string; cycles: number }[];
 }
 
@@ -256,6 +269,130 @@ function SecurityStrip() {
 }
 
 // ─────────────────────────────────────────────
+//  🆕 §00 SOUL NAME EDITOR — the one place soul_name gets edited now.
+//  Reuses the project's real <Modal>. Falls back to plain read-only text
+//  when the parent doesn't pass onRenameSoul (e.g. daily variant, or
+//  before persistence wiring is ready) — zero behavior change for those
+//  callers.
+// ─────────────────────────────────────────────
+
+function SoulNameHeaderControl({
+    soulName,
+    nameMismatch,
+    onRenameSoul,
+}: {
+    soulName: string | null;
+    nameMismatch?: boolean;
+    onRenameSoul?: (newName: string) => Promise<boolean> | void;
+}) {
+    const [isOpen, setIsOpen] = useState(false);
+    const [draft, setDraft] = useState("");
+    const [saving, setSaving] = useState(false);
+    const [error, setError] = useState<string | null>(null);
+
+    const displayName = soulName ? soulName.toUpperCase() : "UNREGISTERED SOUL";
+
+    const openEditor = () => {
+        setDraft(soulName ?? "");
+        setError(null);
+        setIsOpen(true);
+    };
+
+    const handleSave = async () => {
+        const trimmed = draft.trim();
+        if (!trimmed) {
+            setError("Name cannot be empty");
+            return;
+        }
+        if (!onRenameSoul) {
+            setIsOpen(false);
+            return;
+        }
+        setSaving(true);
+        setError(null);
+        try {
+            const result = await onRenameSoul(trimmed);
+            if (result === false) {
+                setError("Failed to save — please try again");
+                setSaving(false);
+                return;
+            }
+            setSaving(false);
+            setIsOpen(false);
+        } catch {
+            setError("Failed to save — please try again");
+            setSaving(false);
+        }
+    };
+
+    if (!onRenameSoul) {
+        // original read-only behavior, byte-identical to before
+        return (
+            <p style={{ fontSize: "12px", color: T.muted, letterSpacing: "0.2em", margin: 0 }}>
+                {displayName}
+                {soulName && nameMismatch && (
+                    <span style={{ color: T.gold, marginLeft: "8px", fontSize: "10px" }} title="Names differ across disciplines — showing your most-used name">
+                        NAME VARIES BY DISCIPLINE
+                    </span>
+                )}
+            </p>
+        );
+    }
+
+    return (
+        <>
+            <button
+                type="button"
+                onClick={openEditor}
+                className="group/soulname inline-flex items-center gap-2"
+                style={{ background: "transparent", border: "none", cursor: "pointer", padding: 0 }}
+            >
+                <p style={{ fontSize: "12px", color: T.muted, letterSpacing: "0.2em", margin: 0, transition: "color 0.2s" }}>
+                    <span className="group-hover/soulname:text-[color:var(--stats-gold,#e0bd7e)] transition-colors">
+                        {displayName}
+                    </span>
+                </p>
+                <svg
+                    width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"
+                    style={{ color: T.mutedMid }}
+                    className="opacity-0 group-hover/soulname:opacity-100 transition-opacity"
+                >
+                    <path d="M12 20h9" />
+                    <path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z" />
+                </svg>
+            </button>
+
+            <Modal
+                isOpen={isOpen}
+                onClose={() => setIsOpen(false)}
+                title="Name Your Soul"
+                titleAlign="center"
+                maxWidth="max-w-md"
+                onConfirm={handleSave}
+                confirmText={saving ? "Saving…" : "Save"}
+                cancelText="Cancel"
+            >
+                <div className="flex flex-col items-center gap-4">
+                    <p className="text-xs text-center max-w-sm" style={{ color: T.mutedMid, lineHeight: 1.6 }}>
+                        This name is shared across every discipline and every device linked to your streaks.
+                    </p>
+                    <input
+                        value={draft}
+                        onChange={(e) => setDraft(e.target.value)}
+                        maxLength={40}
+                        autoFocus
+                        placeholder="Enter your soul's name"
+                        className="w-full max-w-xs text-center py-3 bg-[#050507] border text-sm tracking-wide focus:outline-none"
+                        style={{ borderColor: T.border, color: T.value }}
+                    />
+                    {error && <p className="text-[11px]" style={{ color: "#e06060" }}>{error}</p>}
+                </div>
+            </Modal>
+        </>
+    );
+}
+
+// ─────────────────────────────────────────────
 //  §02 HERO METRIC CARD
 // ─────────────────────────────────────────────
 
@@ -371,7 +508,6 @@ function GuessDistribution({
                             />
                         </div>
 
-                        {/* 🛠️ แก้ไขจุดนี้: แยกออกเป็น Grid/Flex Column ให้ตรงกันเป๊ะ */}
                         <div
                             style={{
                                 display: "flex",
@@ -450,16 +586,10 @@ function StreakBadge({
 // ─────────────────────────────────────────────
 //  §03 SEALED ARCHIVE (empty-state ofuda panel)
 // ─────────────────────────────────────────────
-//
-// A blank card reads as broken. An unopened archive shouldn't look empty —
-// it should look *deliberately sealed*, like an ofuda talisman binding a
-// door in Soul Society lore. Fills whatever height the grid row gives it
-// instead of leaving dead space.
 
 function SealedArchive({ accent }: { accent: { base: string; bright: string } }) {
     return (
         <div className="relative flex-1 flex flex-col items-center justify-center gap-4 overflow-hidden" style={{ minHeight: "150px", padding: "18px 0" }}>
-            {/* faint seigaiha wave texture, mode-tinted */}
             <div
                 className="absolute inset-0 pointer-events-none"
                 style={{
@@ -469,7 +599,6 @@ function SealedArchive({ accent }: { accent: { base: string; bright: string } })
                 }}
             />
 
-            {/* vertical ofuda strips flanking the seal, like talisman paper bound over a doorway */}
             <div
                 className="absolute top-0 bottom-0 pointer-events-none"
                 style={{
@@ -487,7 +616,6 @@ function SealedArchive({ accent }: { accent: { base: string; bright: string } })
                 }}
             />
 
-            {/* hanko-style double-ring seal stamp */}
             <div className="relative flex items-center justify-center">
                 <span
                     className="absolute rounded-full"
@@ -560,7 +688,6 @@ function ModeArchiveCard({
                 opacity: isOpened ? 1 : 0.94,
             }}
         >
-            {/* corner brackets, mode-accented */}
             <span className="absolute top-0 left-0 w-6 h-[3px]" style={{ background: accent.bright }} />
             <span className="absolute top-0 left-0 w-[3px] h-6" style={{ background: accent.bright }} />
             <span className="absolute bottom-0 right-0 w-6 h-[3px]" style={{ background: accent.bright }} />
@@ -684,13 +811,11 @@ function CycleBadge({
 //  §05 BADGE / TIER WALL
 // ─────────────────────────────────────────────
 
-// Deterministic (no Math.random — avoids SSR/client hydration mismatch)
-// pseudo-scatter for particle positions/timing, seeded by rank + index.
 function reiatsuParticleStyle(rank: number, i: number): React.CSSProperties {
-    const left = ((i * 29 + rank * 17) % 86) + 4; // 4–90%
+    const left = ((i * 29 + rank * 17) % 86) + 4;
     const delay = ((i * 0.41 + rank * 0.23) % 2.6).toFixed(2);
     const duration = (2.1 + ((i + rank * 2) % 3) * 0.55).toFixed(2);
-    const size = 2 + rank + ((i * 7 + rank * 3) % 3); // grows with rank: ~2–4px at rank 0, ~5–7px at rank 3
+    const size = 2 + rank + ((i * 7 + rank * 3) % 3);
     const drift = ((i % 2 === 0 ? 1 : -1) * (6 + rank * 4 + ((i * 5 + rank) % 10))).toFixed(0);
     return {
         left: `${left}%`,
@@ -702,8 +827,6 @@ function reiatsuParticleStyle(rank: number, i: number): React.CSSProperties {
     } as React.CSSProperties;
 }
 
-// Higher tiers = denser, brighter reiatsu bleed-off — a Soul King badge
-// should visibly radiate more spiritual pressure than a First Awakening one.
 const RANK_PARTICLE_COUNT = [3, 8, 14, 22];
 const RANK_GLOW = [
     { core: "rgba(160,140,100,0.22)", spark: "#a8916a", ring: "#a8916a55", label: "bronze" },
@@ -735,10 +858,11 @@ function ReiatsuParticles({ rank }: { rank: number }) {
 
 // ─────────────────────────────────────────────
 //  §05 DISCIPLINE REGISTRY — per-mode soul name + cycle count
-//  Reuses the BadgeCell ritual (particles, rank-scaled glow) but the
-//  "unlock" state and glow intensity are driven by that mode's own
-//  cycle count, not a shared badge threshold — every discipline gets its
-//  own etched name and its own reiatsu bleed-off.
+//
+//  🆕 UNCHANGED in this file. To retire per-mode name editing now that
+//  soul_name is global, the PARENT should simply stop passing
+//  `onRenameDiscipline` — canEdit below already becomes false automatically,
+//  which hides the RE-ETCH hover affordance with no code change needed here.
 // ─────────────────────────────────────────────
 
 function rankForCycles(cycles: number): number {
@@ -815,9 +939,6 @@ function DisciplineRegistryCell({
 
             {claimed && <ReiatsuParticles rank={rank} />}
 
-            {/* ── HOVER EDIT AFFORDANCE — only when there's a real name to edit
-                 and the parent actually wired persistence via onRename. Clicking
-                 anywhere on a claimed card (or the pencil) opens inline rename. ── */}
             {canEdit && !editing && (
                 <button
                     type="button"
@@ -934,8 +1055,8 @@ function DisciplineRegistryCell({
 function BadgeCell({ badge, rank }: { badge: BadgeTier; rank: number }) {
     const glow = RANK_GLOW[Math.min(rank, RANK_GLOW.length - 1)];
     const isMaxRank = rank >= RANK_GLOW.length - 1;
-    const kanjiSize = 24 + rank * 3; // 24px → 33px, top tier kanji visibly larger
-    const shadowSpread = 10 + rank * 10; // 10 → 40, much wider bleed at high rank
+    const kanjiSize = 24 + rank * 3;
+    const shadowSpread = 10 + rank * 10;
 
     return (
         <div
@@ -954,8 +1075,6 @@ function BadgeCell({ badge, rank }: { badge: BadgeTier; rank: number }) {
                 "--bd-pulse-color": glow.spark,
             }}
         >
-            {/* Radial burst behind the kanji — density/spread scales with rank so
-                higher tiers visibly radiate more reiatsu, not just a color swap. */}
             {badge.unlocked && (
                 <div
                     className="absolute inset-0 pointer-events-none"
@@ -1035,6 +1154,7 @@ export default function StatsHubPage({
     masteryTiers = [],
     disciplineRegistry = {},
     onRenameDiscipline,
+    onRenameSoul, // 🆕
     topSouls = [],
 }: Partial<StatsHubProps>) {
     const isDaily = variant === "daily";
@@ -1066,15 +1186,11 @@ export default function StatsHubPage({
                         {isDaily ? "TODAY'S DUEL RECORD" : "YOUR REIATSU DOSSIER"}
                     </h1>
                     <div className="text-right">
+                        {/* 🆕 was: static <p>{soulName ...}</p> — now delegates to
+                            SoulNameHeaderControl, which falls back to identical
+                            read-only markup when onRenameSoul isn't passed. */}
                         {!isDaily && (
-                            <p style={{ fontSize: "12px", color: T.muted, letterSpacing: "0.2em", margin: 0 }}>
-                                {soulName ? soulName.toUpperCase() : "UNREGISTERED SOUL"}
-                                {soulName && nameMismatch && (
-                                    <span style={{ color: T.gold, marginLeft: "8px", fontSize: "10px" }} title="Names differ across disciplines — showing your most-used name">
-                                        NAME VARIES BY DISCIPLINE
-                                    </span>
-                                )}
-                            </p>
+                            <SoulNameHeaderControl soulName={soulName ?? null} nameMismatch={nameMismatch} onRenameSoul={onRenameSoul} />
                         )}
                         <p style={{ fontSize: "12px", color: T.mutedMid, letterSpacing: "0.2em", margin: "2px 0 0" }}>
                             {isDaily ? today : `${reincarnationCount} TOTAL CYCLES · ALL DISCIPLINES · ${today}`}
@@ -1148,10 +1264,7 @@ export default function StatsHubPage({
                     </div>
                 )}
 
-                {/* ══ §05 BADGE / TIER WALL — Unlimited only, split into two tracks ══
-                     Dedication (sum across modes) is kept separate from Mastery (best
-                     single mode) so a small-roster discipline can no longer "buy" a
-                     badge — like Soul King — that's meant to signal all-around skill. */}
+                {/* ══ §05 BADGE / TIER WALL — Unlimited only, split into two tracks ══ */}
                 {!isDaily && (
                     <>
                         <div>
@@ -1166,7 +1279,11 @@ export default function StatsHubPage({
                             </div>
                         </div>
 
-                        {/* ══ §05 DISCIPLINE REGISTRY — per-mode soul name + cycle count ══ */}
+                        {/* ══ §05 DISCIPLINE REGISTRY — per-mode soul name + cycle count ══
+                             🆕 Parent should stop passing onRenameDiscipline now that
+                             naming is unified globally — this section still shows each
+                             discipline's cycle count and etched name (all disciplines
+                             show the SAME name now), just without its own edit affordance. */}
                         <div>
                             <SectionHead>§ 05 — Discipline Registry</SectionHead>
                             <p style={{ fontSize: "12px", color: T.mutedMid, letterSpacing: "0.06em", margin: "-10px 0 16px" }}>

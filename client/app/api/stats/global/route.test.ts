@@ -1,7 +1,7 @@
 // app/api/stats/global/route.test.ts
 // pnpm --prefix client test app/api/stats/global/route.test.ts
 
-import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { NextRequest } from 'next/server';
 import { GET } from './route';
 import { supabaseServer } from '@/src/lib/supabase/supabase-server';
@@ -80,8 +80,23 @@ vi.mock('@/src/entities/stats/types', () => ({
 
 // ─── 🧪 TEST SUITE ────────────────────────────────────────────────────────────
 describe('GET /api/stats/global', () => {
+    let consoleWarnSpy: ReturnType<typeof vi.spyOn>;
+    let consoleErrorSpy: ReturnType<typeof vi.spyOn>;
+
     beforeEach(() => {
         vi.clearAllMocks();
+        // Route handler intentionally console.warn's on 429 and
+        // console.error's on 500 (see route.ts) — both paths are exercised
+        // on purpose by the tests below. Silence them here so CI/test
+        // output stays clean; the actual observability behavior is still
+        // covered separately via the logApiEvent assertions in each test.
+        consoleWarnSpy = vi.spyOn(console, 'warn').mockImplementation(() => { });
+        consoleErrorSpy = vi.spyOn(console, 'error').mockImplementation(() => { });
+    });
+
+    afterEach(() => {
+        consoleWarnSpy.mockRestore();
+        consoleErrorSpy.mockRestore();
     });
 
     it('should return 429 and log a warning if rate limit is exceeded', async () => {
@@ -95,6 +110,11 @@ describe('GET /api/stats/global', () => {
         expect(body).toEqual({ error: 'Too many requests, please slow down.' });
         expect(logApiEvent).toHaveBeenCalledWith('stats.global', 'warning', 429, 'rate_limited');
         expect(supabaseServer.rpc).not.toHaveBeenCalled();
+
+        // Confirm the route still actually console.warn'd, just silently
+        expect(consoleWarnSpy).toHaveBeenCalledWith(
+            expect.stringContaining('Rate limit exceeded for IP')
+        );
     });
 
     it('should return 500 and log an error if the database RPC fails', async () => {
@@ -110,6 +130,11 @@ describe('GET /api/stats/global', () => {
         expect(res.status).toBe(500);
         expect(body).toEqual({ error: 'Failed to load global stats' });
         expect(logApiEvent).toHaveBeenCalledWith('stats.global', 'error', 500, 'RPC execution failed');
+
+        expect(consoleErrorSpy).toHaveBeenCalledWith(
+            expect.stringContaining('RPC get_global_stats_today failed'),
+            mockError.error
+        );
     });
 
     it('should default to daily dimension and call get_global_stats_today with correct parameters', async () => {

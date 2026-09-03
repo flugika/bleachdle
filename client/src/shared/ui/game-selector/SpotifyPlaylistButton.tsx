@@ -1,4 +1,4 @@
-// src/shared/ui/button/SpotifyPlaylistButton.tsx
+// src/shared/ui/game-selector/SpotifyPlaylistButton.tsx
 "use client";
 
 import { Tooltip } from "@/src/shared/ui/tooltip";

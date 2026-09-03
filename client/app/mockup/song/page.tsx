@@ -119,7 +119,6 @@ function useAudioEngine(cutoffMs: number) {
             const audio = audioRef.current;
             if (!audio) return;
 
-            // กดซ้ำที่ปุ่มเดิม -> หยุด
             if (playingId === playId) {
                 stop(songId);
                 return;
@@ -127,7 +126,7 @@ function useAudioEngine(cutoffMs: number) {
 
             clearCutoffTimer();
 
-            audio.src = audioUrl;
+            audio.src = `/api/asset/song/${songId}`; // 🆕 แก้จาก audio.src = audioUrl — ใช้ endpoint เดียวกับเกมจริง (type/id lookup ฝั่ง server)
             audio.currentTime = startMs / 1000;
             setPlayingId(playId);
             setLivePositions((prev) => ({ ...prev, [songId]: startMs }));
@@ -144,7 +143,6 @@ function useAudioEngine(cutoffMs: number) {
                 }
             };
 
-            // ⏱️ บังคับตัดเสียงตามค่า "duration ตามตัวควบคุม" (TEST_DURATIONS)
             if (cutoffMs < NO_CUTOFF_VALUE) {
                 cutoffTimerRef.current = setTimeout(() => stop(songId), cutoffMs);
             }

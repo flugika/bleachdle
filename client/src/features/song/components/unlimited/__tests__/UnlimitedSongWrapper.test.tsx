@@ -37,16 +37,40 @@ const { hoistedSongs } = vi.hoisted(() => {
         segments: [{ id: 'seg-2', segment_name: 'FIRST VOCAL', start_time_ms: 900, difficulty_level: 'normal' }],
     };
 
+    // 🆕 Filler-only songs used PURELY to pad out a "forced loss"/ladder
+    // guesses array with unique ids (guessedIds gates re-selecting the
+    // same song in the real SongSearchBar). These are intentionally NOT
+    // included in ALL_SONGS / the getSongs() mock — the "Central 46
+    // Archive" completion tests depend on ALL_SONGS.length being exactly
+    // 2 (isGameCompleted checks completed.length >= songs.length), so
+    // adding fillers to that pool would silently break "last song
+    // completed" transitions. Guesses only need a valid Song shape; they
+    // don't need to be part of the game's real song pool.
+    const FILLER_SONGS = [
+        { id: 'song-filler-1', title: 'Ichirin no Hana', artist: 'High and Mighty Color', album: 'OP-3', audio_url: '/assets/audio/songs/filler-1.mp3', youtube_url: null, spotify_url: null, character_id: null, segments: [{ id: 'seg-filler-1', segment_name: 'INTRO', start_time_ms: 900, difficulty_level: 'normal' }] },
+        { id: 'song-filler-2', title: 'Tonight, Tonight, Tonight', artist: 'Beat Crusaders', album: 'OP-4', audio_url: '/assets/audio/songs/filler-2.mp3', youtube_url: null, spotify_url: null, character_id: null, segments: [{ id: 'seg-filler-2', segment_name: 'INTRO', start_time_ms: 550, difficulty_level: 'hard' }] },
+        { id: 'song-filler-3', title: 'Rolling Star', artist: 'YUI', album: 'OP-5', audio_url: '/assets/audio/songs/filler-3.mp3', youtube_url: null, spotify_url: null, character_id: null, segments: [{ id: 'seg-filler-3', segment_name: 'INTRO', start_time_ms: 800, difficulty_level: 'easy' }] },
+        { id: 'song-filler-4', title: 'Alones', artist: 'Aqua Timez', album: 'OP-6', audio_url: '/assets/audio/songs/filler-4.mp3', youtube_url: null, spotify_url: null, character_id: null, segments: [{ id: 'seg-filler-4', segment_name: 'INTRO', start_time_ms: 700, difficulty_level: 'normal' }] },
+        { id: 'song-filler-5', title: 'After Dark', artist: 'Asian Kung-Fu Generation', album: 'OP-7', audio_url: '/assets/audio/songs/filler-5.mp3', youtube_url: null, spotify_url: null, character_id: null, segments: [{ id: 'seg-filler-5', segment_name: 'INTRO', start_time_ms: 600, difficulty_level: 'normal' }] },
+        { id: 'song-filler-6', title: 'Chu-Bura', artist: 'Kelun', album: 'OP-8', audio_url: '/assets/audio/songs/filler-6.mp3', youtube_url: null, spotify_url: null, character_id: null, segments: [{ id: 'seg-filler-6', segment_name: 'SOLO INTRO', start_time_ms: 4650, difficulty_level: 'normal' }] },
+        { id: 'song-filler-7', title: 'Velonica', artist: 'Aqua Timez', album: 'OP-9', audio_url: '/assets/audio/songs/filler-7.mp3', youtube_url: null, spotify_url: null, character_id: null, segments: [{ id: 'seg-filler-7', segment_name: 'INTRO', start_time_ms: 600, difficulty_level: 'easy' }] },
+        { id: 'song-filler-8', title: 'Shojo S', artist: 'SCANDAL', album: 'OP-10', audio_url: '/assets/audio/songs/filler-8.mp3', youtube_url: null, spotify_url: null, character_id: null, segments: [{ id: 'seg-filler-8', segment_name: 'SOLO INTRO', start_time_ms: 1000, difficulty_level: 'normal' }] },
+        { id: 'song-filler-9', title: 'Anima Rossa', artist: 'Porno Graffitti', album: 'OP-11', audio_url: '/assets/audio/songs/filler-9.mp3', youtube_url: null, spotify_url: null, character_id: null, segments: [{ id: 'seg-filler-9', segment_name: 'INTRO', start_time_ms: 250, difficulty_level: 'easy' }] },
+    ];
+
+    // ⚠️ IMPORTANT: getSongs()/getAllSongSegments() mocks below intentionally
+    // return only [SONG_1, SONG_2] — NOT FILLER_SONGS. The Central 46 Archive
+    // lifecycle tests depend on this pool being exactly 2 songs.
     const ALL_SONGS = [SONG_1, SONG_2];
 
     const ALL_SEGMENTS = ALL_SONGS.flatMap(song =>
         song.segments.map(seg => ({ ...seg, song_id: song.id }))
     );
 
-    return { hoistedSongs: { SONG_1, SONG_2, ALL_SONGS, ALL_SEGMENTS } };
+    return { hoistedSongs: { SONG_1, SONG_2, FILLER_SONGS, ALL_SONGS, ALL_SEGMENTS } };
 });
 
-export const { SONG_1, SONG_2, ALL_SONGS } = hoistedSongs;
+export const { SONG_1, SONG_2, FILLER_SONGS, ALL_SONGS } = hoistedSongs;
 
 // 🎯 delay จริงที่ page.tsx ใช้ — ต่างกันระหว่างแพ้/ชนะ (คนละแบบกับ character ที่คงที่ 2500ms ทั้งคู่)
 const WIN_REVEAL_DELAY_MS = 1600;
@@ -85,6 +109,7 @@ vi.mock('@/src/shared/ui/Legend', () => ({ Legend: () => null }));
 vi.mock('@/src/features/song/components/shared/SongHowToPlayModal', () => ({
     SongHowToPlayModal: () => null,
 }));
+vi.mock('@/src/lib/debug/logFullTarget', () => ({ logFullTarget: () => { } }));
 
 vi.mock('@/src/features/song/components/shared/SongSummaryGuess', () => ({
     SongSummaryGuess: ({ isWin, onClose }: { isWin: boolean; onClose: () => void }) => (
@@ -117,7 +142,7 @@ vi.mock('@/src/shared/ui/control-panel/Central46ConfidentialArchive', () => {
         React.useEffect(() => {
             setLocalSoulName(soulName);
         }, [soulName]);
-        
+
         const onFormSubmit = (e: React.MouseEvent<HTMLButtonElement>) => {
             handleRegisterSoul(e as unknown as React.FormEvent);
             if (inputName) setLocalSoulName(inputName);
@@ -236,8 +261,9 @@ describe('UnlimitedSongWrapper (unlimited mode) — real component integration',
             useSongGame.setState({
                 guesses: [
                     { guess: SONG_2, status: 'wrong', isNew: true },
-                    { guess: SONG_2, status: 'wrong', isNew: false },
-                    { guess: SONG_2, status: 'wrong', isNew: false },
+                    ...FILLER_SONGS.slice(0, 2).map((song) => ({
+                        guess: song, status: 'wrong' as const, isNew: false,
+                    })),
                 ],
             });
         });
@@ -248,7 +274,12 @@ describe('UnlimitedSongWrapper (unlimited mode) — real component integration',
 
         act(() => {
             useSongGame.setState({
-                guesses: Array(5).fill({ guess: SONG_2, status: 'wrong', isNew: false }),
+                guesses: [
+                    { guess: SONG_2, status: 'wrong', isNew: true },
+                    ...FILLER_SONGS.slice(0, 4).map((song) => ({
+                        guess: song, status: 'wrong' as const, isNew: false,
+                    })),
+                ],
             });
         });
         // attemptIndex = 5 → ladder index 5 (สุดท้าย) → 10000ms → "10s"
@@ -258,7 +289,12 @@ describe('UnlimitedSongWrapper (unlimited mode) — real component integration',
 
         act(() => {
             useSongGame.setState({
-                guesses: Array(9).fill({ guess: SONG_2, status: 'wrong', isNew: false }),
+                guesses: [
+                    { guess: SONG_2, status: 'wrong', isNew: true },
+                    ...FILLER_SONGS.slice(0, 8).map((song) => ({
+                        guess: song, status: 'wrong' as const, isNew: false,
+                    })),
+                ],
             });
         });
         // เกิน ladder length (index 9 > 5) ต้อง clamp ค้างที่ "10s" ไม่ throw ไม่ undefined
@@ -294,7 +330,9 @@ describe('UnlimitedSongWrapper (unlimited mode) — real component integration',
             useSongGame.setState({
                 guesses: [
                     { guess: SONG_2, status: 'wrong', isNew: true },
-                    ...Array(9).fill({ guess: SONG_2, status: 'wrong', isNew: false }),
+                    ...FILLER_SONGS.map((song) => ({
+                        guess: song, status: 'wrong' as const, isNew: false,
+                    })),
                 ],
             });
         });

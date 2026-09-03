@@ -102,7 +102,7 @@ export const QuoteSummaryGuess = ({
                 subtitle={isWin ? "Testimony Traced to Registered Speaker" : "Testimony Left Unattributed"}
             />
 
-            {mode === 'daily' && target.scheduledDate && (
+            {mode === 'daily' && (
                 <DailyResetTimer targetDate={target.scheduledDate} />
             )}
 

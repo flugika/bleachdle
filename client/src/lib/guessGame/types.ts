@@ -61,35 +61,25 @@ export interface GuessGameConfig<
     TTarget extends { id: string; character_id: string }
 > {
     storageKeys: GuessGameStorageKeys;
-    /** ใช้เป็น key ของ recordDailyStat(...) — ต้องเป็นค่าที่ recordDailyStat รับจริง */
     gameKey: DailyStatGameKey;
     maxGuesses: (mode: 'daily' | 'unlimited') => number;
     getCharacterById: (id: string) => TCharacter | undefined;
-    /** default: (guess, target) => guess.id === target.character_id ? 'correct' : 'wrong' */
     compareGuess?: (guess: TCharacter, target: TTarget) => BinaryGuessStatus;
-    /**
-     * 🆕 บอก factory ว่า "คำตอบเต็ม" (ตัวที่จะเอาไป lookup ผ่าน getCharacterById ตอน
-     * finalizeGame เพื่อ set `revealedCharacter`) คือ id ไหนของ target
-     *
-     * default: target.character_id — ใช้ได้กับโหมดที่ "สิ่งที่ทาย" คือ Character
-     * (Quote, Silhouette: guess.id ต้องตรงกับ target.character_id)
-     *
-     * โหมดที่ "สิ่งที่ทาย" ไม่ใช่ Character (เช่น Release: ทายด้วยตัว release เอง,
-     * compareGuess ก็ override เป็น guess.id === target.id) ต้อง override ตัวนี้เป็น
-     * `(target) => target.id` ด้วยเหตุผลเดียวกัน มิเช่นนั้น getCharacterById จะถูกเรียก
-     * ด้วย character_id (id ของเจ้าของ ไม่ใช่ id ของคำตอบ) แล้วหาไม่เจอ → revealedCharacter
-     * เป็น null เสมอ ไม่ว่าจะตอบถูกหรือผิด
-     */
     resolveAnswerId?: (target: TTarget) => string;
-    /** default: ตรวจ status เป็น correct/wrong + guess เป็น object */
     isValidGuessEntry?: (entry: unknown) => entry is GuessEntry<TCharacter>;
-    /** default: ตรวจว่ามี target.character อยู่ (กัน target รุ่นเก่าที่ยังไม่แนบ character)
-     *  ⚠️ ใช้ default นี้ได้เฉพาะโหมดที่ TTarget มี field ชื่อ `character` จริง ๆ
-     *  (เช่น Quote/Silhouette) — โหมดที่ไม่มี (เช่น Release) ต้อง override เอง */
     hasValidTargetShape?: (target: unknown) => boolean;
     derivedCounters?: DerivedCounterConfig<TCharacter>[];
     extraTargetField?: ExtraTargetFieldConfig<TTarget>;
     deferReveal?: boolean;
+    /**
+     * 🆕 ใช้เฉพาะฝั่ง Daily เพื่อ resolve TTarget เต็มจาก id เดียว ตอน
+     * applyRemoteProgress() (รับ progress จากเครื่องอื่นผ่าน server) — Daily target
+     * มาจาก API รายวันเท่านั้น ไม่มี local dataset ให้ lookup ได้เองเหมือน Unlimited
+     * (ที่ derive จาก getAllItems + attachCharacter อัตโนมัติ) จึงต้องให้แต่ละโหมด
+     * implement เอง ถ้าไม่ implement, applyRemoteProgress จะ no-op พร้อม warning
+     * (แปลว่าโหมดนั้นยังไม่รองรับ remote-progress banner ข้ามอุปกรณ์)
+     */
+    getTargetById?: (id: string) => TTarget | undefined;
 }
 
 export interface UnlimitedGuessGameConfig<

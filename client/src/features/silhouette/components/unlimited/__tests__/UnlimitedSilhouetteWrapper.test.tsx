@@ -64,28 +64,79 @@ const LOSS_REVEAL_DELAY_MS = 900;
 
 // ─── 🛡️ 1. FIXTURES & MOCKS ───
 
+// ─── 🛡️ 1. FIXTURES & MOCKS ───
+
 const { hoistedFixtures } = vi.hoisted(() => {
+    // 🎯 Values pulled verbatim from the real characters.json seed data —
+    // not arbitrary placeholders — so this fixture stays representative of
+    // production shape (Character requires all 13 fields; a partial shape
+    // compiles fine as a bare object literal but fails the moment it's
+    // assigned into a typed slot like GuessEntry<Character>['guess']).
     const ICHIGO = {
-        id: 'ichigo', name: 'Ichigo Kurosaki', gender: 'Male',
-        race: ['Shinigami'], affiliation: 'Independent', image: 'ichigo.webp',
+        id: 'ichigo', name: 'Ichigo Kurosaki', gender: 'Male' as const,
+        race: ['Shinigami', 'Quincy', 'Hollow', 'Human', 'Fullbringer'],
+        affiliation: 'Independent',
+        height_cm: 181, age: 19, eye_color: 'Brown', hair_color: 'Orange',
+        first_appearance_chapter: 'Agent of the Shinigami',
+        weapon: ['Weaponized'], release: ['Shikai', 'Bankai'],
+        primary_ability: ['Physical'], image: 'ichigo.webp',
     };
     const RUKIA = {
-        id: 'rukia', name: 'Rukia Kuchiki', gender: 'Female',
-        race: ['Shinigami'], affiliation: 'Gotei 13', image: 'rukia.webp',
+        id: 'rukia', name: 'Rukia Kuchiki', gender: 'Female' as const,
+        race: ['Shinigami'], affiliation: 'Gotei 13',
+        height_cm: 144, age: 100, eye_color: 'Blue', hair_color: 'Black',
+        first_appearance_chapter: 'Agent of the Shinigami',
+        weapon: ['Weaponized'], release: ['Shikai', 'Bankai'],
+        primary_ability: ['Element', 'Kido'], image: 'rukia.webp',
     };
     const ISHIDA = {
-        id: 'ishida', name: 'Uryu Ishida', gender: 'Male',
-        race: ['Quincy'], affiliation: 'Independent', image: 'ishida.webp',
+        id: 'ishida', name: 'Uryu Ishida', gender: 'Male' as const,
+        race: ['Quincy'], affiliation: 'Sternritter',
+        height_cm: 177, age: 19, eye_color: 'Blue', hair_color: 'Blue',
+        first_appearance_chapter: 'Agent of the Shinigami',
+        weapon: ['Weaponized'], release: ['Vollstandig'],
+        primary_ability: ['Special'], image: 'ishida.webp',
     };
     const ORIHIME = {
-        id: 'orihime', name: 'Orihime Inoue', gender: 'Female',
-        race: ['Human'], affiliation: 'Independent', image: 'orihime.webp',
+        id: 'orihime', name: 'Orihime Inoue', gender: 'Female' as const,
+        race: ['Human'], affiliation: 'Independent',
+        height_cm: 157, age: 19, eye_color: 'Brown', hair_color: 'Orange',
+        first_appearance_chapter: 'Agent of the Shinigami',
+        weapon: ['Weaponized'], release: ['None'],
+        primary_ability: ['Support'], image: 'orihime.webp',
     };
     const CHAD = {
-        id: 'chad', name: 'Yasutora Sado', gender: 'Male',
-        race: ['Human'], affiliation: 'Independent', image: 'chad.webp',
+        id: 'chad', name: 'Yasutora Sado', gender: 'Male' as const,
+        race: ['Fullbringer'], affiliation: 'Independent',
+        height_cm: 197, age: 19, eye_color: 'Brown', hair_color: 'Black',
+        first_appearance_chapter: 'Agent of the Shinigami',
+        weapon: ['Weaponized'], release: ['None'],
+        primary_ability: ['Physical'], image: 'chad.webp',
     };
-    const ALL_CHARACTERS = [ICHIGO, RUKIA, ISHIDA, ORIHIME, CHAD];
+
+    // 🆕 Filler-only characters used purely to pad out a "forced loss"
+    // guesses array with unique ids (guessedIds gates re-selecting the
+    // same character in the real SearchBar, so a 12-max-guesses test
+    // can't just repeat one real character — the UI itself would refuse
+    // that). Full Character shape required — same reasoning as above.
+    const FILLERS = Array.from({ length: 11 }, (_, i) => ({
+        id: `filler-${i}`,
+        name: `Filler Soul ${i}`,
+        gender: 'Male' as const,
+        race: ['Human'],
+        affiliation: 'Independent',
+        height_cm: 170,
+        age: 100,
+        eye_color: 'Unknown',
+        hair_color: 'Unknown',
+        first_appearance_chapter: 'Agent of the Shinigami',
+        weapon: ['None'],
+        release: ['None'],
+        primary_ability: ['None'],
+        image: `filler-${i}.webp`,
+    }));
+
+    const ALL_CHARACTERS = [ICHIGO, RUKIA, ISHIDA, ORIHIME, CHAD, ...FILLERS];
 
     // Hidden target shape { id, character_id, image } — matches
     // `SilhouetteTargetHidden` + the `image` field SilhouetteControlPanel reads.
@@ -95,14 +146,14 @@ const { hoistedFixtures } = vi.hoisted(() => {
 
     return {
         hoistedFixtures: {
-            ICHIGO, RUKIA, ISHIDA, ORIHIME, CHAD, ALL_CHARACTERS,
+            ICHIGO, RUKIA, ISHIDA, ORIHIME, CHAD, FILLERS, ALL_CHARACTERS,
             SILHOUETTE_1, SILHOUETTE_2, ALL_SILHOUETTES,
         },
     };
 });
 
 export const {
-    ICHIGO, RUKIA, ISHIDA, ORIHIME, CHAD, ALL_CHARACTERS,
+    ICHIGO, RUKIA, ISHIDA, ORIHIME, CHAD, FILLERS, ALL_CHARACTERS,
     SILHOUETTE_1, SILHOUETTE_2, ALL_SILHOUETTES,
 } = hoistedFixtures;
 
@@ -225,7 +276,7 @@ vi.mock('@/src/shared/ui/control-panel/Central46ConfidentialArchive', () => {
         React.useEffect(() => {
             setLocalSoulName(soulName);
         }, [soulName]);
-        
+
         const onFormSubmit = (e: React.MouseEvent<HTMLButtonElement>) => {
             handleRegisterSoul(e as unknown as React.FormEvent);
             if (inputName) setLocalSoulName(inputName);
@@ -369,12 +420,19 @@ describe('UnlimitedSilhouetteWrapper (unlimited mode) — real component integra
     });
 
     it('shows loss summary after LOSS_REVEAL_DELAY_MS (900ms), shorter than the win delay', async () => {
-        // Force a loss: guesses maxed out with no correct entry.
+        // Force a loss: 12 unique wrong guesses, no correct entry. Must use
+        // distinct character ids — the real SearchBar's guessedIds guard
+        // would refuse a repeat of the same character, so this fixture
+        // reflects that same uniqueness constraint to stay realistic.
         act(() => {
             useSilhouetteGame.setState({
                 guesses: [
                     { guess: RUKIA, status: 'wrong', isNew: true },
-                    ...Array(11).fill({ guess: RUKIA, status: 'wrong', isNew: false }),
+                    ...FILLERS.map((char) => ({
+                        guess: char,
+                        status: 'wrong' as const,
+                        isNew: false,
+                    })),
                 ],
             } satisfies Partial<SilhouetteGameState>);
         });

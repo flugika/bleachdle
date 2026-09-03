@@ -23,6 +23,10 @@ import { useDailyHub } from '@/src/shared/hooks/useDailyHub';
 import { logFullTarget } from '@/src/lib/debug/logFullTarget';
 import { Legend } from '@/src/shared/ui/control-panel/Legend';
 import { useTurnstile } from '@/src/shared/hooks/useTurnstile';
+import { useRemoteProgressSync } from '@/src/shared/hooks/useRemoteProgressSync';
+import { RemoteProgressBanner } from '@/src/shared/ui/pairing/RemoteProgressBanner';
+import { ResyncButton } from '@/src/shared/ui/pairing/ResyncButton';
+import { pullAndApplyMeta } from '@/src/lib/sync/pullAndApplyMeta';
 
 export default function DailySilhouetteWrapper({ initialTarget }: { initialTarget: SilhouetteTargetHidden | null }) {
     const { navigate, state, reportReady } = useSenkaimon();
@@ -30,12 +34,39 @@ export default function DailySilhouetteWrapper({ initialTarget }: { initialTarge
     const isFinalizingRef = useRef(false);
 
     const gameStore = useSilhouetteGame();
-    const { target, revealedCharacter, guesses, setTarget, finalizeGame, hasFinalized, _hasHydrated, stats, loadStats } = gameStore;
+    const { target, revealedCharacter, guesses, setTarget, finalizeGame, hasFinalized, _hasHydrated, stats, loadStats, applyRemoteProgress, applyRemoteStats } = gameStore;
     const characters = getCharacters();
     const isSynced = target !== null && initialTarget !== null && target.id === initialTarget.id;
 
     // 📅 Daily Hub: markModePlayed('silhouette', won) ถูกเรียกตอนเกมจบจริงเท่านั้น (ดู effect ด้านล่าง)
     const { markModePlayed } = useDailyHub();
+
+    const handleRemoteLoad = async (remoteTargetId: string, remoteGuesses: unknown[]) => {
+        // 🆕 reset local ephemeral summary-gating state IMPERATIVELY, in the
+        // same handler that pulls in new remote data — don't rely solely on
+        // a useEffect keyed off target identity to catch this. Resync can be
+        // triggered while a summary is already showing (ResyncButton/banner
+        // stay mounted regardless of showSummary), so the reset must not
+        // depend on a round-trip through React's effect scheduler.
+        setManuallyClosed(false);
+        setRevealDelayDone(false);
+        applyRemoteProgress(remoteTargetId, remoteGuesses);
+
+        // 🆕 resync ควรดึง stats กลับมาด้วย ไม่ใช่แค่ progress — เดิมพึ่งแค่
+        // bootstrap's syncStateOnLoad ซึ่งรันแค่ตอน mount เท่านั้น
+        const meta = await pullAndApplyMeta('silhouette', 'daily');
+        applyRemoteStats(meta.stats);
+    };
+    
+    const remoteProgress = useRemoteProgressSync({
+        gameMode: 'silhouette',
+        gameType: 'daily',
+        hasHydrated: _hasHydrated,
+        localTargetId: target?.id ?? null,
+        localHasFinalized: hasFinalized,
+        localGuessCount: guesses.length,
+        applyRemoteProgress: handleRemoteLoad,
+    });
 
     // 🗓️ target ของ daily มาจาก server เสมอ — setTarget เวอร์ชัน daily (ดู useSilhouetteGame.ts)
     // เช็ค id เองว่าเป็นวันเดิม (sync เฉย ๆ) หรือวันใหม่ (เริ่มรอบสะอาด) ไม่ต้องมี force flag แบบ unlimited
@@ -127,7 +158,7 @@ export default function DailySilhouetteWrapper({ initialTarget }: { initialTarge
                     // จะไม่ถูกนับรอบนี้ (verifyTurnstileToken จะ reject token undefined เอง)
                     console.error('[DailySilhouetteWrapper] turnstile getToken failed:', err);
                 }
-                finalizeGame(isWin, token);
+                await finalizeGame(isWin, token);
                 markModePlayed('silhouette', isWin);
             })();
         }
@@ -175,6 +206,15 @@ export default function DailySilhouetteWrapper({ initialTarget }: { initialTarge
 
             <main className="max-w-[80%] mx-auto px-4 pb-24">
                 <ModeBadge mode="daily" onClick={() => setIsModeSelectorOpen(true)} />
+                {remoteProgress.visible ? (
+                    <RemoteProgressBanner
+                        updatedAt={remoteProgress.updatedAt}
+                        onDismiss={remoteProgress.onDismiss}
+                        onLoad={remoteProgress.onLoad}
+                    />
+                ) : (
+                    <ResyncButton gameMode={remoteProgress.gameMode} gameType={remoteProgress.gameType} applyRemoteProgress={handleRemoteLoad} />
+                )}
                 <SubHeader title={BL_MODES_METADATA.silhouette.title} subtitle={BL_MODES_METADATA.silhouette.statusLine} />
 
                 {!showSummary && (

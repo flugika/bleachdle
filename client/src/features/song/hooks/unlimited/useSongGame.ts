@@ -1,15 +1,19 @@
-// src/features/song/hooks/unlimited/useSongGame.ts
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import { compareBinaryGuess } from '@/src/lib/guessGame/compareBinaryGuess';
 import { defaultIsValidGuessEntry } from '@/src/lib/guessGame/types';
 import { getAllSongSegments, getSongById } from '@/src/features/song/song';
 import { SongGameController, SongGuessEntry } from '@/src/features/song/types';
+import { SyncEngine } from '@/src/lib/sync/syncEngine';
+import { unlimitedRoundKey } from '@/src/lib/sync/roundKey';
 import { MAX_UNLIMITED_SONG_GUESSES } from '@/src/const/guess';
 import { STORAGE_KEYS } from '@/src/const/localStorage';
 import { nestedJSONStorage } from '@/src/lib/store/createNestedStorage';
 import { Stats } from '@/src/lib/guessGame/types';
 import { BleachSong } from '@/src/entities/song/schema';
+import { syncProgressImmediately } from '@/src/lib/sync/syncProgressHelper';
+import { hydrateGuessEntries } from '@/src/lib/sync/hydrateGuessEntries';
+import { fetchActiveRemoteProgress } from '@/src/lib/sync/fetchActiveRemoteProgress';
 
 const isValidGuessEntry = defaultIsValidGuessEntry<BleachSong>;
 
@@ -23,7 +27,9 @@ export const useSongGame = create<SongGameController>()(
             _hasHydrated: false,
             setHasHydrated: (state) => set({ _hasHydrated: state }),
 
-            setTarget: (target) => set({ target }),
+            setTarget: (target) => {
+                set({ target });
+            },
 
             stats: { currentStreak: 0, maxStreak: 0, playedCount: 0, passedCount: 0, guessDistribution: {} },
             loadStats: () => {
@@ -33,28 +39,76 @@ export const useSongGame = create<SongGameController>()(
                 set({ stats: saved });
             },
 
-            addGuess: (songId: string) => set((state) => {
-                const isGameOver = state.guesses.length >= MAX_UNLIMITED_SONG_GUESSES;
-                if (!state.target || isGameOver) return state;
+            addGuess: async (songId: string) => {
+                let shouldFlushImmediately = false;
+                let syncTargetId: string | null = null;
+                let syncGuesses: SongGuessEntry[] = [];
 
-                const guessedSong = getSongById(songId);
-                if (!guessedSong) return state;
+                set((state) => {
+                    const isGameOver = state.guesses.length >= MAX_UNLIMITED_SONG_GUESSES;
+                    if (!state.target || isGameOver) return state;
 
-                const alreadyGuessed = state.guesses.some(g => g.guess.id === guessedSong.id);
-                if (alreadyGuessed) return state;
+                    const guessedSong = getSongById(songId);
+                    if (!guessedSong) return state;
 
-                const status = compareBinaryGuess(guessedSong, state.target.id);
-                const newEntry: SongGuessEntry = { guess: guessedSong, status, isNew: true };
-                const prevGuesses = state.guesses.map(g => ({ ...g, isNew: false }));
+                    const alreadyGuessed = state.guesses.some(g => g.guess.id === guessedSong.id);
+                    if (alreadyGuessed) return state;
 
-                return { guesses: [newEntry, ...prevGuesses] };
-            }),
+                    const status = compareBinaryGuess(guessedSong, state.target.id);
+                    const newEntry: SongGuessEntry = { guess: guessedSong, status, isNew: true };
+                    const prevGuesses = state.guesses.map(g => ({ ...g, isNew: false }));
+                    const allGuesses = [newEntry, ...prevGuesses];
 
-            initializeGame: (force = false) => {
+                    const isNowGameOver = status === 'correct' || allGuesses.length >= MAX_UNLIMITED_SONG_GUESSES;
+
+                    if (isNowGameOver) {
+                        shouldFlushImmediately = true;
+                        syncTargetId = state.target.id;
+                        syncGuesses = allGuesses;
+                    } else {
+                        SyncEngine.getInstance().queueProgress({
+                            gameMode: 'song',
+                            gameType: 'unlimited',
+                            guesses: allGuesses,
+                            targetId: state.target?.id ?? null,
+                        });
+                    }
+
+                    return { guesses: allGuesses };
+                });
+
+                if (shouldFlushImmediately && syncTargetId) {
+                    await syncProgressImmediately('song', 'unlimited', syncTargetId, syncGuesses);
+                }
+            },
+
+            initializeGame: async (force = false, opts: { skipRemoteCheck?: boolean } = {}) => {
                 const { target, _hasHydrated } = get();
 
                 if (!_hasHydrated) return;
-                if (!force && target) return;
+
+                if (!force && target) {
+                    return;
+                }
+
+                // 🆕 กัน 2 เครื่องสุ่มเพลงพร้อมกันได้คนละเพลง
+                if (!opts.skipRemoteCheck) {
+                    const remote = await fetchActiveRemoteProgress('song', 'unlimited');
+
+                    if (remote?.target_id) {
+                        const remoteTarget = getSongById(remote.target_id);
+                        if (remoteTarget) {
+                            const hydrated = hydrateGuessEntries<BleachSong, SongGuessEntry>(remote.guesses, getSongById);
+                            const remoteIsWin = hydrated.some((g) => g.status === 'correct');
+                            const remoteIsOver = remoteIsWin || hydrated.length >= MAX_UNLIMITED_SONG_GUESSES;
+
+                            if (!remoteIsOver) {
+                                set({ target: remoteTarget, guesses: hydrated, hasFinalized: false });
+                                return;
+                            }
+                        }
+                    }
+                }
 
                 const allSegments = getAllSongSegments();
                 const completedData = JSON.parse(localStorage.getItem(STORAGE_KEYS.SONG_COMPLETED) || '{}');
@@ -75,13 +129,19 @@ export const useSongGame = create<SongGameController>()(
                             guesses: [],
                             hasFinalized: false
                         });
+
+                        await syncProgressImmediately('song', 'unlimited', parentSong.id, []);
                     }
                 }
             },
 
-            finalizeGame: (isWin) => {
+            finalizeGame: async (isWin) => {
                 const { target, targetSegmentId, hasFinalized, guesses } = get();
                 if (!target || !targetSegmentId || hasFinalized) return;
+
+                // 🆕 push final guesses ทันที — แทนที่ flushProgressNow เดิม ให้
+                // สอดคล้องกับ mode อื่นและไม่พึ่งพา timing ของ debounce queue
+                await syncProgressImmediately('song', 'unlimited', target.id, guesses);
 
                 const completedData = JSON.parse(localStorage.getItem(STORAGE_KEYS.SONG_COMPLETED) || '{}');
 
@@ -121,6 +181,10 @@ export const useSongGame = create<SongGameController>()(
                     hasFinalized: true,
                     stats: newStats,
                 });
+
+                SyncEngine.getInstance()
+                    .submitResult('song', 'unlimited', unlimitedRoundKey(target.id), isWin, guesses.length)
+                    .catch(() => { });
             },
 
             resetGame: () => {
@@ -139,7 +203,7 @@ export const useSongGame = create<SongGameController>()(
                 set({ target: null, guesses: [], hasFinalized: false });
 
                 setTimeout(() => {
-                    get().initializeGame(true);
+                    get().initializeGame(true, { skipRemoteCheck: true });
                 }, 0);
             },
             resetStreakKeepMax: () => {
@@ -153,11 +217,24 @@ export const useSongGame = create<SongGameController>()(
 
                 set({ stats: resetStats });
             },
+
+            applyRemoteProgress: (remoteTargetId, remoteGuesses) => {
+                const target = getSongById(remoteTargetId);
+                if (!target) return;
+                const hydrated = hydrateGuessEntries<BleachSong, SongGuessEntry>(remoteGuesses, getSongById);
+                const remoteIsWin = hydrated.some(g => g.status === 'correct');
+                const remoteIsOver = remoteIsWin || hydrated.length >= MAX_UNLIMITED_SONG_GUESSES;
+                set({ target, guesses: hydrated, hasFinalized: remoteIsOver });
+            },
+
+            applyRemoteStats: (remoteStats: Stats | null) => {
+                if (!remoteStats) return;
+                set({ stats: remoteStats });
+            },
         }),
         {
             name: 'unlimited',
             storage: nestedJSONStorage(STORAGE_KEYS.SONG_PROGRESS),
-            // ✂️ เก็บแค่ ID ลง LocalStorage เช่นกัน ไม่บันทึกส่วนสปอยล์
             partialize: (state) => ({
                 guesses: state.guesses.map(({ guess, status }) => ({
                     guess: { id: guess.id } as BleachSong,
@@ -168,7 +245,6 @@ export const useSongGame = create<SongGameController>()(
                 targetSegmentId: state.targetSegmentId,
                 hasFinalized: state.hasFinalized,
             }),
-            // 🔄 ทำ Rehydrate ดึงข้อมูลเต็มกลับเข้า Object ปกติ
             onRehydrateStorage: () => (state) => {
                 if (state) {
                     if (state.target?.id) {
@@ -176,13 +252,10 @@ export const useSongGame = create<SongGameController>()(
                     }
 
                     if (Array.isArray(state.guesses)) {
-                        state.guesses = state.guesses.map(g => {
-                            if (g.guess?.id) {
-                                const fullSong = getSongById(g.guess.id);
-                                return fullSong ? { ...g, guess: fullSong } : g;
-                            }
-                            return g;
-                        });
+                        state.guesses = hydrateGuessEntries<BleachSong, SongGuessEntry>(
+                            state.guesses,
+                            getSongById
+                        );
                     }
 
                     const hasCorruptedData = !Array.isArray(state.guesses) ||

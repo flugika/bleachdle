@@ -96,6 +96,26 @@ const { hoistedFixtures } = vi.hoisted(() => {
     };
     const ALL_RELEASES = [RELEASE_1, RELEASE_2, WRONG_1, WRONG_2, WRONG_3];
 
+    // 🆕 Filler-only releases used PURELY to pad out a "forced loss" guesses
+    // array with unique ids (guessedIds gates re-selecting the same
+    // technique in the real ReleaseSearchBar). Intentionally NOT included
+    // in ALL_RELEASES / the getReleases() mock — the Central 46 Archive
+    // lifecycle tests depend on that pool being exactly 5 releases
+    // (isGameCompleted checks completed.length >= releases.length), so
+    // adding fillers there would silently break "last release completed"
+    // transitions, same lesson as UnlimitedSongWrapper's FILLER_SONGS.
+    const FILLER_RELEASES: BleachRelease[] = Array.from({ length: 9 }, (_, i) => ({
+        id: `rel-filler-${i}`,
+        character_id: `filler-char-${i}`,
+        release_type: 'Shikai',
+        trigger_phrase: `Filler Phrase ${i}`,
+        technique_name: `Filler Technique ${i}`,
+        technique_translation: `Filler Translation ${i}`,
+        audio_url: `filler-${i}.mp3`,
+        clip_end_ms: 1000,
+        source_episode: null,
+    }));
+
     // Hidden target shape { id, character_id, release_type, clip_end_ms } —
     // matches `ReleaseTargetHidden` and the real `attachCharacter` mapping
     // in `hooks/unlimited/useReleaseGame.ts`.
@@ -107,12 +127,16 @@ const { hoistedFixtures } = vi.hoisted(() => {
 
     return {
         hoistedFixtures: {
-            RELEASE_1, RELEASE_2, WRONG_1, WRONG_2, WRONG_3, ALL_RELEASES, TARGET_1, TARGET_2,
+            RELEASE_1, RELEASE_2, WRONG_1, WRONG_2, WRONG_3, FILLER_RELEASES,
+            ALL_RELEASES, TARGET_1, TARGET_2,
         },
     };
 });
 
-export const { RELEASE_1, RELEASE_2, WRONG_1, WRONG_2, WRONG_3, ALL_RELEASES, TARGET_1, TARGET_2 } = hoistedFixtures;
+export const {
+    RELEASE_1, RELEASE_2, WRONG_1, WRONG_2, WRONG_3, FILLER_RELEASES,
+    ALL_RELEASES, TARGET_1, TARGET_2,
+} = hoistedFixtures;
 
 // Covers `getReleases`/`getReleaseById` (used directly by the unlimited hook
 // & `page.tsx`) and `getReleasableItems` (used inside the REAL
@@ -210,7 +234,7 @@ vi.mock('@/src/shared/ui/control-panel/Central46ConfidentialArchive', () => {
         React.useEffect(() => {
             setLocalSoulName(soulName);
         }, [soulName]);
-        
+
         const onFormSubmit = (e: React.MouseEvent<HTMLButtonElement>) => {
             handleRegisterSoul(e as unknown as React.FormEvent);
             if (inputName) setLocalSoulName(inputName);
@@ -356,7 +380,9 @@ describe('UnlimitedReleaseWrapper (unlimited mode) — real component integratio
             useReleaseGame.setState({
                 guesses: [
                     { guess: WRONG_1, status: 'wrong', isNew: true },
-                    ...Array(9).fill({ guess: WRONG_1, status: 'wrong', isNew: false }),
+                    ...FILLER_RELEASES.map((release) => ({
+                        guess: release, status: 'wrong' as const, isNew: false,
+                    })),
                 ],
             } satisfies Partial<ReleaseGameState>);
         });

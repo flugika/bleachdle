@@ -116,6 +116,7 @@ vi.mock('@/src/shared/ui/layout/SubHeader', () => ({ SubHeader: () => null }));
 vi.mock('@/src/shared/ui/game-selector/ModeBadge', () => ({ ModeBadge: () => null }));
 vi.mock('@/src/shared/ui/game-selector/ModeSelectorModal', () => ({ ModeSelectorModal: () => null }));
 vi.mock('@/src/shared/ui/Legend', () => ({ Legend: () => null }));
+vi.mock('@/src/lib/debug/logFullTarget', () => ({ logFullTarget: () => {} }));
 
 vi.mock('@/src/features/character/components/shared/CharacterSummaryGuess', () => ({
     CharacterSummaryGuess: ({ isWin, onClose }: { isWin: boolean; onClose: () => void }) => (

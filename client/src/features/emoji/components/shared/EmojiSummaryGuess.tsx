@@ -89,7 +89,7 @@ export const EmojiSummaryGuess = ({
                 subtitle={isWin ? "Symbol Set Traced to Registered Soul" : "Symbol Set Left Unattributed"}
             />
 
-            {mode === 'daily' && target.scheduledDate && (
+            {mode === 'daily' && (
                 <DailyResetTimer targetDate={target.scheduledDate} />
             )}
 

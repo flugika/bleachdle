@@ -57,7 +57,7 @@
 //      rationale as the daily emoji test this file is modeled after.
 
 import React from 'react';
-import { render, screen, fireEvent, waitFor } from '@testing-library/react';
+import { render, screen, fireEvent, waitFor, act } from '@testing-library/react';
 import { describe, it, expect, beforeEach, vi, afterEach } from 'vitest';
 import UnlimitedQuoteWrapper from '@/src/features/quote/components/unlimited/UnlimitedQuoteWrapper';
 import { STORAGE_KEYS } from '@/src/const/localStorage';
@@ -66,7 +66,7 @@ import { BleachQuote } from '@/src/entities/quote/schema';
 import { QuoteTarget } from '@/src/features/quote/types';
 import { useQuoteGame } from '@/src/features/quote/hooks/unlimited/useQuoteGame';
 import { SearchBar } from '@/src/shared/ui/control-panel/SearchBar';
- 
+
 // ── Fixtures ────────────────────────────────────────────────────────────────
 const ICHIGO: Character = {
     id: 'ichigo', name: 'Ichigo Kurosaki', gender: 'Male',
@@ -90,7 +90,7 @@ const ISHIDA: Character = {
     release: ['Vollstandig'], primary_ability: ['Kido'], image: 'ishida.webp',
 } as unknown as Character;
 const ALL: Character[] = [ICHIGO, RUKIA, ISHIDA];
- 
+
 // Only ONE quote in the pool for most tests, to keep `initializeGame`'s
 // random pick + the "pool completed" path deterministic without needing to
 // stub Math.random everywhere.
@@ -99,17 +99,17 @@ const QUOTE_ICHIGO: BleachQuote = {
     character_id: ICHIGO.id,
     text: 'There is no way the techniques of a Human who cannot even use Sonido could ever reach me!',
 } as unknown as BleachQuote;
- 
+
 const QUOTE_RUKIA: BleachQuote = {
     id: 'quote-rukia-1',
     character_id: RUKIA.id,
     text: 'What do you want me to do about it?',
 } as unknown as BleachQuote;
- 
+
 vi.mock('@/src/features/character/character', () => ({
     getCharacterById: (id: string) => ALL.find((c) => c.id === id),
 }));
- 
+
 // Covers `getQuotes` (used directly by the page + by `initializeGame`'s
 // `getAllItems`) and `getQuoteById` (used by `QuoteSummaryGuess`'s
 // full-document lookup). `attachCharacter` is the real function from
@@ -125,12 +125,12 @@ vi.mock('@/src/features/quote/quote', () => ({
         return { ...quote, character } as QuoteTarget;
     },
 }));
- 
+
 // ⚠️ ASSUMED value — not defined in any provided source file (see note 5).
 vi.mock('@/src/const/guess', () => ({
     MAX_UNLIMITED_QUOTE_GUESSES: 10,
 }));
- 
+
 // Layout/nav chrome — irrelevant to game logic.
 vi.mock('@/src/shared/ui/layout/Header', () => ({ Header: () => null }));
 vi.mock('@/src/shared/ui/layout/Divider', () => ({ Divider: () => null }));
@@ -147,7 +147,7 @@ vi.mock('@/src/shared/ui/context/NavigationContext', () => ({
 }));
 vi.mock('@/src/config/feature.flags', () => ({ FEATURE_FLAGS: { unlimited: { quote: true } } }));
 vi.mock('@/src/lib/debug/logFullTarget', () => ({ logFullTarget: () => { } }));
- 
+
 // QuoteControlPanel: unknown internals (see note 2) — stub down to the real
 // `SearchBar` wired with the real `game` store prop, matching the
 // `rowIdPrefix="quote-row"` contract documented in `SearchBar.tsx` itself.
@@ -156,13 +156,13 @@ vi.mock('@/src/shared/ui/control-panel/QuoteControlPanel', () => ({
         <SearchBar characters={ALL} game={game} rowIdPrefix="quote-row" placeholder="ENTER SOUL NAME..." />
     ),
 }));
- 
+
 // Central46ConfidentialArchive: unknown internals — stub asserts only on the
 // `mode="quote"` prop, hardcoded in page.tsx itself.
 vi.mock('@/src/shared/ui/control-panel/Central46ConfidentialArchive', () => ({
     default: ({ mode }: { mode: string }) => <div data-testid="pool-completed">Archive: {mode}</div>,
 }));
- 
+
 // QuoteSummaryGuess: real component has a deep unknown subtree
 // (SummaryCardShell, TierBadgeCard, useRaceEmblem, useBadgeTier,
 // QuoteTestimonyDisplay's dossier metadata, etc). Stub asserts only on the
@@ -176,67 +176,67 @@ vi.mock('@/src/features/quote/components/shared/QuoteSummaryGuess', () => ({
         </div>
     ),
 }));
- 
+
 // ── Helpers ─────────────────────────────────────────────────────────────────
 async function selectCharacter(name: string) {
     const input = screen.getByPlaceholderText('ENTER SOUL NAME...');
     fireEvent.change(input, { target: { value: name } });
     fireEvent.focus(input);
- 
+
     // SearchBar's dropdown is a portal <ul>/<li> — no testid, select by text.
     const option = await screen.findByText(name);
     fireEvent.mouseDown(option);
 }
- 
+
 beforeEach(() => {
     localStorage.clear();
     QUOTES_POOL = [QUOTE_ICHIGO];
- 
+
     // Reset the singleton Zustand store state to prevent cross-test leakage.
     useQuoteGame.getState().resetGame();
- 
+
     // Deterministic random pick for `initializeGame` (only 1 item in the pool
     // by default anyway, but kept for tests that add a 2nd quote).
     vi.spyOn(Math, 'random').mockReturnValue(0);
- 
+
     // Mock jsdom-missing window layout/scroll functions.
     window.HTMLElement.prototype.scrollIntoView = vi.fn();
     window.scrollTo = vi.fn();
 });
- 
+
 afterEach(() => {
     vi.restoreAllMocks();
 });
- 
+
 describe('UnlimitedQuoteWrapper — real component integration', () => {
     it('renders the search input once hydrated, with a randomly-picked target wired in', async () => {
         render(<UnlimitedQuoteWrapper />);
- 
+
         await waitFor(() => {
             expect(screen.getByPlaceholderText('ENTER SOUL NAME...')).toBeInTheDocument();
         });
     });
- 
+
     it('records a wrong guess as a "wrong" row, then a correct guess ends the game', async () => {
         render(<UnlimitedQuoteWrapper />);
         await waitFor(() => screen.getByPlaceholderText('ENTER SOUL NAME...'));
- 
+
         // Wrong guess — Rukia is not the speaker of QUOTE_ICHIGO.
         await selectCharacter('Rukia Kuchiki');
         await waitFor(() => {
             expect(document.getElementById(`quote-row-${RUKIA.id}`)).toBeInTheDocument();
         });
- 
+
         // Winning guess: Ichigo (the real speaker, resolved via
         // target.character_id through the real, unmocked compareBinaryGuess).
         await selectCharacter('Ichigo Kurosaki');
- 
+
         await waitFor(() => {
             expect(screen.getByTestId('summary')).toBeInTheDocument();
         }, { timeout: 2500 }); // real 1600ms win reveal-delay setTimeout in page.tsx
         expect(screen.getByText('Testimony Traced to Registered Speaker')).toBeInTheDocument();
     });
- 
+
     it('loses after MAX_UNLIMITED_QUOTE_GUESSES wrong guesses with no correct match', async () => {
         // Give this test a pool with a wrong-only guess pool + no repeats
         // needed: SearchBar blocks re-guessing an already-guessed character,
@@ -251,41 +251,41 @@ describe('UnlimitedQuoteWrapper — real component integration', () => {
         // fixture set with >=10 unique characters if/when needed.
         render(<UnlimitedQuoteWrapper />);
         await waitFor(() => screen.getByPlaceholderText('ENTER SOUL NAME...'));
- 
+
         await selectCharacter('Rukia Kuchiki');
         await selectCharacter('Uryu Ishida');
- 
+
         expect(screen.queryByTestId('summary')).not.toBeInTheDocument();
         expect(document.getElementById(`quote-row-${RUKIA.id}`)).toBeInTheDocument();
         expect(document.getElementById(`quote-row-${ISHIDA.id}`)).toBeInTheDocument();
     });
- 
+
     it('persists guesses across remounts via localStorage hydration', async () => {
         const { unmount } = render(<UnlimitedQuoteWrapper />);
         await waitFor(() => screen.getByPlaceholderText('ENTER SOUL NAME...'));
- 
+
         await selectCharacter('Rukia Kuchiki');
         await waitFor(() => {
             expect(document.getElementById(`quote-row-${RUKIA.id}`)).toBeInTheDocument();
         });
- 
+
         unmount();
- 
+
         render(<UnlimitedQuoteWrapper />);
         await waitFor(() => {
             expect(document.getElementById(`quote-row-${RUKIA.id}`)).toBeInTheDocument();
         });
     });
- 
+
     it('shows the pool-completed archive once every quote has been solved', async () => {
         // Seed localStorage so `initializeGame` finds no remaining quotes.
         localStorage.setItem(
             STORAGE_KEYS.QOUTE_COMPLETED,
             JSON.stringify({ unlimited: [QUOTE_ICHIGO.id] })
         );
- 
+
         render(<UnlimitedQuoteWrapper />);
- 
+
         await waitFor(() => {
             expect(screen.getByTestId('pool-completed')).toBeInTheDocument();
         });
@@ -296,29 +296,34 @@ describe('UnlimitedQuoteWrapper — real component integration', () => {
         // on `target`/`isGameCompleted`. So the search input legitimately
         // stays mounted here; we don't assert its absence.
     });
- 
+
     it('hardReset clears completion + progress and re-initializes a fresh target', async () => {
-        // Two quotes so there's something left to reinitialize into after reset.
         QUOTES_POOL = [QUOTE_ICHIGO, QUOTE_RUKIA];
         localStorage.setItem(
             STORAGE_KEYS.QOUTE_COMPLETED,
             JSON.stringify({ unlimited: [QUOTE_ICHIGO.id, QUOTE_RUKIA.id] })
         );
- 
+
         render(<UnlimitedQuoteWrapper />);
         await waitFor(() => {
             expect(screen.getByTestId('pool-completed')).toBeInTheDocument();
         });
- 
-        // Drive hardReset via the store directly (page.tsx's
-        // handleHardReset wraps it with soul-registry bookkeeping that's
-        // orthogonal to the game-logic regression this test protects).
-        useQuoteGame.getState().hardReset();
- 
+
+        // hardReset() itself is sync, but it schedules the real re-init
+        // (initializeGame(true), which sets the fresh `target`) via
+        // setTimeout(..., 0) — a macrotask outside this act() call. Flush it
+        // with a real 0ms delay wrapped in an async act() so that deferred
+        // state update is captured too, instead of leaking into an untracked
+        // tick before the next `await`.
+        await act(async () => {
+            useQuoteGame.getState().hardReset();
+            await new Promise((resolve) => setTimeout(resolve, 0));
+        });
+
         await waitFor(() => {
             expect(screen.getByPlaceholderText('ENTER SOUL NAME...')).toBeInTheDocument();
         });
- 
+
         const completedData = JSON.parse(localStorage.getItem(STORAGE_KEYS.QOUTE_COMPLETED) || '{}');
         expect(completedData.unlimited).toEqual([]);
     });

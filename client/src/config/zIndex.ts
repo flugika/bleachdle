@@ -19,9 +19,6 @@ export const Z = {
     // Footer — เป็นส่วนหนึ่งของ static layout เหมือน nav ไม่ใช่ overlay จึงอยู่ระดับใกล้กัน
     footer: 20,
 
-    // คัสเตอร์เอฟเฟกต์ตามเมาส์ (BleachReiatsuCursor) ต้องเหนือทุกอย่างที่เป็น static layout
-    cursor: 40,
-
     // Dropdown / combobox / popover ที่ลอยชั่วคราวเหนือเนื้อหา (search bar suggestions ฯลฯ)
     // ตั้งไว้สูงมากตั้งแต่แรกเพราะ "ต้องชนะทุกอย่างที่เป็น static layout" เสมอ ไม่ว่าจะมี
     // layer ใหม่มาแทรกตรงกลางสเกลอีกกี่ตัวก็ตาม
@@ -35,4 +32,7 @@ export const Z = {
 
     // Toast / snackbar แจ้งเตือน — สูงสุดในระบบ ต้องเห็นเสมอไม่ว่าอะไรจะเปิดอยู่
     toast: 9999,
+
+    // คัสเตอร์เอฟเฟกต์ตามเมาส์ (BleachReiatsuCursor) ต้องเหนือทุกอย่างที่เป็น static layout
+    cursor: 9999,
 } as const;

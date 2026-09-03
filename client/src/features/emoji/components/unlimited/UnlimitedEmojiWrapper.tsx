@@ -22,12 +22,18 @@ import { STORAGE_KEYS } from '@/src/const/localStorage';
 import { BL_MODES_METADATA } from '@/src/config/mode';
 import { logFullTarget } from '@/src/lib/debug/logFullTarget';
 import { Legend } from '@/src/shared/ui/control-panel/Legend';
+import { SyncEngine } from '@/src/lib/sync/syncEngine';
+import { useRemoteProgressSync } from '@/src/shared/hooks/useRemoteProgressSync';
+import { RemoteProgressBanner } from '@/src/shared/ui/pairing/RemoteProgressBanner';
+import { ResyncButton } from '@/src/shared/ui/pairing/ResyncButton';
+import { pullAndApplyMeta } from '@/src/lib/sync/pullAndApplyMeta';
+import { onCompletedSynced } from '@/src/lib/sync/completedSyncEvent';
 
 export default function UnlimitedEmojiWrapper() {
     const { navigate, state, reportReady } = useSenkaimon();
 
     const gameStore = useEmojiGame();
-    const { target, revealedCharacter, guesses, revealedCount, initializeGame, finalizeGame, resetGame, hardReset, hasFinalized, _hasHydrated, resetStreakKeepMax, stats, loadStats } = gameStore;
+    const { target, revealedCharacter, guesses, revealedCount, initializeGame, finalizeGame, resetGame, hardReset, hasFinalized, _hasHydrated, resetStreakKeepMax, stats, loadStats, applyRemoteProgress, applyRemoteStats } = gameStore;
     const emojiSets = getEmojiSets();
 
     const [manuallyClosed, setManuallyClosed] = useState(false);
@@ -38,6 +44,43 @@ export default function UnlimitedEmojiWrapper() {
     const [revealDelayDone, setRevealDelayDone] = useState(false);
     const [finalRoundGuesses, setFinalRoundGuesses] = useState<typeof guesses>([]);
 
+    const handleRemoteLoad = async (remoteTargetId: string, remoteGuesses: unknown[]) => {
+        // 🆕 reset local ephemeral summary-gating state IMPERATIVELY, in the
+        // same handler that pulls in new remote data — don't rely solely on
+        // a useEffect keyed off target identity to catch this. Resync can be
+        // triggered while a summary is already showing (ResyncButton/banner
+        // stay mounted regardless of showSummary), so the reset must not
+        // depend on a round-trip through React's effect scheduler.
+        setManuallyClosed(false);
+        setRevealDelayDone(false);
+        applyRemoteProgress(remoteTargetId, remoteGuesses);
+
+        // 🆕 resync ควรดึง stats/completed/soul-registry มาด้วย ไม่ใช่แค่ progress
+        const meta = await pullAndApplyMeta('emoji', 'unlimited');
+        applyRemoteStats(meta.stats);
+        if (meta.reincarnationCount !== null) {
+            setReincarnationCount(meta.reincarnationCount);
+        }
+        if (meta.soulName) {
+            setSoulName(meta.soulName);
+        }
+
+        // ถ้า unlimited emoji มี isGameCompleted concept (เล่นครบทุกตัวละคร)
+        const allEmojiSets = getEmojiSets();
+        const completedIds = new Set(meta.completed);
+        setIsGameCompleted(allEmojiSets.length > 0 && completedIds.size >= allEmojiSets.length);
+    };
+
+    const remoteProgress = useRemoteProgressSync({
+        gameMode: 'emoji',
+        gameType: 'unlimited',
+        hasHydrated: _hasHydrated,
+        localTargetId: target?.id ?? null,
+        localHasFinalized: hasFinalized,
+        localGuessCount: guesses.length,
+        applyRemoteProgress: handleRemoteLoad,
+    });
+
     useEffect(() => {
         if (state === "closing") {
             setIsModeSelectorOpen(false);
@@ -45,10 +88,19 @@ export default function UnlimitedEmojiWrapper() {
     }, [state]);
 
     useEffect(() => {
+        const recompute = () => {
+            const completedData = JSON.parse(localStorage.getItem(STORAGE_KEYS.EMOJI_COMPLETED) || '{}');
+            const completed = completedData.unlimited || [];
+            setIsGameCompleted(emojiSets.length > 0 && completed.length >= emojiSets.length);
+        };
+        return onCompletedSynced('emoji', recompute);
+    }, [emojiSets]);
+
+    useEffect(() => {
         setManuallyClosed(false);
         logFullTarget(target, emojiSets);
         setRevealDelayDone(false);
-    }, [target, emojiSets]);
+    }, [target, hasFinalized, emojiSets]);
 
     const remainingGuesses = Math.max(0, MAX_UNLIMITED_EMOJI_GUESSES - guesses.length);
 
@@ -87,21 +139,40 @@ export default function UnlimitedEmojiWrapper() {
     useEffect(() => {
         if (!_hasHydrated) return;
 
-        loadStats();
+        let cancelled = false;
 
-        const completedData = JSON.parse(localStorage.getItem(STORAGE_KEYS.EMOJI_COMPLETED) || '{}');
-        const completed = completedData.unlimited || [];
-        setIsGameCompleted(emojiSets.length > 0 && completed.length >= emojiSets.length);
+        (async () => {
+            loadStats();
 
-        const registryData = JSON.parse(localStorage.getItem(STORAGE_KEYS.SOUL_REGISTRY) || '{}');
-        const registry = registryData.emoji || { name: "", count: 0 };
-        if (registry.name) {
-            setSoulName(registry.name);
-        }
-        setReincarnationCount(registry.count || 0);
+            const completedData = JSON.parse(localStorage.getItem(STORAGE_KEYS.EMOJI_COMPLETED) || '{}');
+            const completed = completedData.unlimited || [];
+            setIsGameCompleted(emojiSets.length > 0 && completed.length >= emojiSets.length);
 
-        initializeGame();
-        setIsReady(true);
+            const registryData = JSON.parse(localStorage.getItem(STORAGE_KEYS.SOUL_REGISTRY) || '{}');
+            const registry = registryData.emoji || { name: "", count: 0 };
+            if (registry.name) {
+                setSoulName(registry.name);
+            }
+            setReincarnationCount(registry.count || 0);
+
+            // 🆕 backfill this mode's local name from the global players.soul_name
+            // if it wasn't already set locally — same pattern as every other mode.
+            if (!registry.name) {
+                SyncEngine.getInstance().getSoulName().then((globalName) => {
+                    if (!globalName) return;
+                    setSoulName(globalName);
+                    const rd = JSON.parse(localStorage.getItem(STORAGE_KEYS.SOUL_REGISTRY) || '{}');
+                    rd.emoji = { ...(rd.emoji || { name: '', count: 0 }), name: globalName };
+                    localStorage.setItem(STORAGE_KEYS.SOUL_REGISTRY, JSON.stringify(rd));
+                });
+            }
+
+            await initializeGame();
+
+            if (!cancelled) setIsReady(true);
+        })();
+
+        return () => { cancelled = true; };
     }, [initializeGame, emojiSets.length, _hasHydrated, loadStats]);
 
     useEffect(() => {
@@ -121,7 +192,7 @@ export default function UnlimitedEmojiWrapper() {
     const handleCloseModal = () => {
         setManuallyClosed(true);
         resetGame();
-        initializeGame(true);
+        void initializeGame(true);
         window.scrollTo({ top: 0, behavior: 'smooth' });
     };
 
@@ -136,6 +207,9 @@ export default function UnlimitedEmojiWrapper() {
         registryData.emoji = updated;
         localStorage.setItem(STORAGE_KEYS.SOUL_REGISTRY, JSON.stringify(registryData));
         setSoulName(inputName.trim());
+
+        // 🆕 no gameMode arg — sets players.soul_name globally
+        SyncEngine.getInstance().registerSoulName(inputName.trim()).catch(() => { });
     };
 
     const handleHardReset = () => {
@@ -151,6 +225,7 @@ export default function UnlimitedEmojiWrapper() {
         setReincarnationCount(registryData.emoji.count);
 
         hardReset();
+        SyncEngine.getInstance().reincarnate('emoji').catch(() => { });
     };
 
     const handleSwitchDimension = (targetMode: 'daily' | 'unlimited') => {
@@ -181,6 +256,15 @@ export default function UnlimitedEmojiWrapper() {
 
             <main className="max-w-[80%] mx-auto px-4 pb-24">
                 <ModeBadge mode="unlimited" onClick={() => setIsModeSelectorOpen(true)} />
+                {remoteProgress.visible ? (
+                    <RemoteProgressBanner
+                        updatedAt={remoteProgress.updatedAt}
+                        onDismiss={remoteProgress.onDismiss}
+                        onLoad={remoteProgress.onLoad}
+                    />
+                ) : (
+                    <ResyncButton gameMode={remoteProgress.gameMode} gameType={remoteProgress.gameType} applyRemoteProgress={handleRemoteLoad} />
+                )}
                 <div id="game-sub-header">
                     <SubHeader title={BL_MODES_METADATA.emoji.title} subtitle={BL_MODES_METADATA.emoji.statusLine} />
                 </div>

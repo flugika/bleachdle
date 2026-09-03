@@ -1,4 +1,16 @@
 // app/(game)/unlimited/character/UnlimitedCharacterWrapper.tsx
+//
+// 🆕 changes:
+//   1. SyncEngine.registerSoulName() call fixed — no longer takes a
+//      gameMode arg (soul_name is now global on players.soul_name, not
+//      per-mode). See 14_soul_name_unification.sql.
+//   2. On mount, after reading the LOCAL per-mode name (unchanged
+//      behavior), also check the GLOBAL name via getSoulName(). If a
+//      global name already exists and this mode's local copy doesn't,
+//      backfill it — this is what makes "name yourself once in any mode"
+//      propagate everywhere, without changing Central46ConfidentialArchive's
+//      props/behavior at all (soulName is still just a plain string prop,
+//      same shape as before — only WHERE its value can come from changed).
 "use client";
 
 import { useEffect, useState } from 'react';
@@ -23,6 +35,12 @@ import { BL_MODES_METADATA } from '@/src/config/mode';
 import { EmptyGuessState } from '@/src/features/character/components/shared/EmptyGuessState';
 import { logFullTarget } from '@/src/lib/debug/logFullTarget';
 import { Legend } from '@/src/shared/ui/control-panel/Legend';
+import { SyncEngine } from '@/src/lib/sync/syncEngine';
+import { useRemoteProgressSync } from '@/src/shared/hooks/useRemoteProgressSync';
+import { RemoteProgressBanner } from '@/src/shared/ui/pairing/RemoteProgressBanner';
+import { ResyncButton } from '@/src/shared/ui/pairing/ResyncButton';
+import { pullAndApplyMeta } from '@/src/lib/sync/pullAndApplyMeta';
+import { onCompletedSynced } from '@/src/lib/sync/completedSyncEvent';
 
 export default function UnlimitedCharacterWrapper() {
     const { navigate, state, reportReady } = useSenkaimon();
@@ -31,7 +49,7 @@ export default function UnlimitedCharacterWrapper() {
     const gameStore = useCharacterGame();
     const {
         target, guesses, initializeGame, finalizeGame, resetGame, hardReset,
-        hasFinalized, _hasHydrated, resetStreakKeepMax, stats, loadStats
+        hasFinalized, _hasHydrated, resetStreakKeepMax, stats, loadStats, applyRemoteProgress, applyRemoteStats
     } = gameStore;
     const characters = getCharacters();
 
@@ -49,6 +67,43 @@ export default function UnlimitedCharacterWrapper() {
     const canReset = soulName.trim().length > 0;
 
     const remainingGuesses = Math.max(0, MAX_UNLIMITED_CHARACTER_GUESSES - guesses.length);
+
+    const handleRemoteLoad = async (remoteTargetId: string, remoteGuesses: unknown[]) => {
+        // 🆕 reset local ephemeral summary-gating state IMPERATIVELY, in the
+        // same handler that pulls in new remote data — don't rely solely on
+        // a useEffect keyed off target identity to catch this. Resync can be
+        // triggered while a summary is already showing (ResyncButton/banner
+        // stay mounted regardless of showSummary), so the reset must not
+        // depend on a round-trip through React's effect scheduler.
+        setManuallyClosed(false);
+        setRevealDelayDone(false);
+        applyRemoteProgress(remoteTargetId, remoteGuesses);
+
+        // 🆕 resync ควรดึง stats/completed/soul-registry มาด้วย ไม่ใช่แค่ progress
+        const meta = await pullAndApplyMeta('character', 'unlimited');
+        applyRemoteStats(meta.stats);
+        if (meta.reincarnationCount !== null) {
+            setReincarnationCount(meta.reincarnationCount);
+        }
+        if (meta.soulName) {
+            setSoulName(meta.soulName);
+        }
+
+        // ถ้า unlimited character มี isGameCompleted concept (เล่นครบทุกตัวละคร)
+        const allCharacters = getCharacters();
+        const completedIds = new Set(meta.completed);
+        setIsGameCompleted(allCharacters.length > 0 && completedIds.size >= allCharacters.length);
+    };
+
+    const remoteProgress = useRemoteProgressSync({
+        gameMode: 'character',
+        gameType: 'unlimited',
+        hasHydrated: _hasHydrated,
+        localTargetId: target?.id ?? null,
+        localHasFinalized: hasFinalized,
+        localGuessCount: guesses.length,
+        applyRemoteProgress: handleRemoteLoad,
+    });
 
     // 🎯 คำนวณสถานะการแพ้/ชนะ (คงคุณลักษณะเฉพาะของระบบเปรียบเทียบฟิลด์ตัวละครไว้)
     const latestGuess = guesses[0];
@@ -71,12 +126,21 @@ export default function UnlimitedCharacterWrapper() {
         }
     }, [state]);
 
+    useEffect(() => {
+        const recompute = () => {
+            const completedData = JSON.parse(localStorage.getItem(STORAGE_KEYS.CHARACTER_COMPLETED) || '{}');
+            const completed = completedData.unlimited || [];
+            setIsGameCompleted(characters.length > 0 && completed.length >= characters.length);
+        };
+        return onCompletedSynced('character', recompute);
+    }, [characters]);
+
     // รีเซ็ตสถานะหน้าต่างสรุปผลเมื่อเป้าหมายเกม (Target) มีการเปลี่ยนแปลง
     useEffect(() => {
         setManuallyClosed(false);
         logFullTarget(target);
         setRevealDelayDone(false);
-    }, [target]);
+    }, [target, hasFinalized]);
 
     // ⏳ จัดการเอฟเฟกต์ความล่าช้าก่อนแสดงผลตั๋วสรุป (สดใหม่ vs รีเฟรชหน้าเก่า)
     useEffect(() => {
@@ -104,21 +168,41 @@ export default function UnlimitedCharacterWrapper() {
     useEffect(() => {
         if (!_hasHydrated) return;
 
-        loadStats();
+        let cancelled = false;
 
-        const completedData = JSON.parse(localStorage.getItem(STORAGE_KEYS.CHARACTER_COMPLETED) || '{}');
-        const completed = completedData.unlimited || [];
-        setIsGameCompleted(characters.length > 0 && completed.length >= characters.length);
+        (async () => {
+            loadStats();
 
-        const registryData = JSON.parse(localStorage.getItem(STORAGE_KEYS.SOUL_REGISTRY) || '{}');
-        const registry = registryData.character || { name: "", count: 0 };
-        if (registry.name) {
-            setSoulName(registry.name);
-        }
-        setReincarnationCount(registry.count || 0);
+            const completedData = JSON.parse(localStorage.getItem(STORAGE_KEYS.CHARACTER_COMPLETED) || '{}');
+            const completed = completedData.unlimited || [];
+            setIsGameCompleted(characters.length > 0 && completed.length >= characters.length);
 
-        initializeGame();
-        setIsReady(true);
+            const registryData = JSON.parse(localStorage.getItem(STORAGE_KEYS.SOUL_REGISTRY) || '{}');
+            const registry = registryData.character || { name: "", count: 0 };
+            if (registry.name) {
+                setSoulName(registry.name);
+            }
+            setReincarnationCount(registry.count || 0);
+
+            if (!registry.name) {
+                SyncEngine.getInstance().getSoulName().then((globalName) => {
+                    if (!globalName) return;
+                    setSoulName(globalName);
+                    const rd = JSON.parse(localStorage.getItem(STORAGE_KEYS.SOUL_REGISTRY) || '{}');
+                    rd.character = { ...(rd.character || { name: '', count: 0 }), name: globalName };
+                    localStorage.setItem(STORAGE_KEYS.SOUL_REGISTRY, JSON.stringify(rd));
+                });
+            }
+
+            // 🆕 await ให้ target ถูกตั้งค่าจริงก่อนประกาศ ready — เหตุผลเดียวกับ
+            // song wrapper: initializeGame ตอนนี้รอ fetchActiveRemoteProgress
+            // อยู่ข้างใน ถ้าไม่ await, setIsReady(true) จะยิงก่อน target มา
+            await initializeGame();
+
+            if (!cancelled) setIsReady(true);
+        })();
+
+        return () => { cancelled = true; };
     }, [initializeGame, characters.length, _hasHydrated, loadStats]);
 
     // แจ้งการเชื่อมต่อระบบเซนไกมงเมื่อความพร้อมตัวแปรสมบูรณ์
@@ -153,7 +237,7 @@ export default function UnlimitedCharacterWrapper() {
     const handleCloseModal = () => {
         setManuallyClosed(true);
         resetGame();
-        initializeGame(true);
+        void initializeGame(true); // 🆕 ตั้งใจ fire-and-forget — ไม่บล็อก UI ตอนปิด modal
         window.scrollTo({ top: 0, behavior: 'smooth' });
     };
 
@@ -168,6 +252,9 @@ export default function UnlimitedCharacterWrapper() {
         registryData.character = updated;
         localStorage.setItem(STORAGE_KEYS.SOUL_REGISTRY, JSON.stringify(registryData));
         setSoulName(inputName.trim());
+
+        // 🆕 no gameMode arg — this sets players.soul_name globally now
+        SyncEngine.getInstance().registerSoulName(inputName.trim()).catch(() => { });
     };
 
     const handleHardReset = () => {
@@ -183,6 +270,7 @@ export default function UnlimitedCharacterWrapper() {
         setReincarnationCount(registryData.character.count);
 
         hardReset();
+        SyncEngine.getInstance().reincarnate('character').catch(() => { });
     };
 
     const handleSwitchDimension = (targetMode: 'daily' | 'unlimited') => {
@@ -200,6 +288,15 @@ export default function UnlimitedCharacterWrapper() {
 
             <main className="max-w-[80%] mx-auto px-4 pb-24">
                 <ModeBadge mode="unlimited" onClick={() => setIsModeSelectorOpen(true)} />
+                {remoteProgress.visible ? (
+                    <RemoteProgressBanner
+                        updatedAt={remoteProgress.updatedAt}
+                        onDismiss={remoteProgress.onDismiss}
+                        onLoad={remoteProgress.onLoad}
+                    />
+                ) : (
+                    <ResyncButton gameMode={remoteProgress.gameMode} gameType={remoteProgress.gameType} applyRemoteProgress={handleRemoteLoad} />
+                )}
 
                 {/* 🆕 ใส่ ID ครอบคอมโพเนนต์ส่วนหัวเรื่องสำหรับการทำ Smooth Scrolling */}
                 <div id="game-sub-header">

@@ -105,12 +105,25 @@ const { hoistedSongs } = vi.hoisted(() => {
         segments: [{ id: 'seg-2', segment_name: 'FIRST VOCAL', start_time_ms: 900, difficulty_level: 'normal' }],
     };
 
-    const ALL_SONGS = [SONG_1, SONG_2];
+    // 🆕 Same rationale as UnlimitedSongWrapper.test.tsx's FILLER_SONGS.
+    const FILLER_SONGS = Array.from({ length: 5 }, (_, i) => ({
+        id: `daily-song-filler-${i}`,
+        title: `Filler Track ${i}`,
+        artist: 'Filler Artist',
+        album: 'Filler-EP',
+        audio_url: `/assets/audio/songs/daily-filler-${i}.mp3`,
+        youtube_url: null,
+        spotify_url: null,
+        character_id: null,
+        segments: [{ id: `daily-seg-filler-${i}`, segment_name: 'INTRO', start_time_ms: 500, difficulty_level: 'normal' }],
+    }));
 
-    return { hoistedSongs: { SONG_1, SONG_2, ALL_SONGS } };
+    const ALL_SONGS = [SONG_1, SONG_2, ...FILLER_SONGS];
+
+    return { hoistedSongs: { SONG_1, SONG_2, FILLER_SONGS, ALL_SONGS } };
 });
 
-export const { SONG_1, SONG_2, ALL_SONGS } = hoistedSongs;
+export const { SONG_1, SONG_2, FILLER_SONGS, ALL_SONGS } = hoistedSongs;
 
 vi.mock('@/src/features/song/song', () => ({
     getSongs: () => hoistedSongs.ALL_SONGS,
@@ -120,6 +133,13 @@ vi.mock('@/src/features/song/song', () => ({
 const recordDailyStat = vi.fn().mockResolvedValue(undefined);
 vi.mock('@/src/services/statsClient', () => ({
     recordDailyStat: (...args: unknown[]) => recordDailyStat(...args),
+}));
+
+vi.mock('@/src/shared/hooks/useTurnstile', () => ({
+    useTurnstile: () => ({
+        getToken: vi.fn().mockResolvedValue('mock-test-token'),
+        containerRef: { current: null },
+    }),
 }));
 
 // ⚠️ ASSUMED value — see header disclaimer #5.
@@ -178,15 +198,25 @@ beforeAll(() => {
 
 async function selectSong(title: string) {
     const input = await screen.findByPlaceholderText('ENTER TRACK, ARTIST, OR OP/ED...');
-    fireEvent.change(input, { target: { value: title } });
-    fireEvent.focus(input);
+
+    await act(async () => {
+        fireEvent.change(input, { target: { value: title } });
+        fireEvent.focus(input);
+    });
 
     // Per daily-song-flow.spec.ts: option lives in an <li>.
     const option = await screen.findByText(title);
-    fireEvent.mouseDown(option);
-    fireEvent.click(option);
-}
 
+    await act(async () => {
+        fireEvent.mouseDown(option);
+        fireEvent.click(option);
+        // flush microtasks so any promise chain kicked off synchronously by
+        // this guess (isGameOver effect -> getToken()/finalizeGame() on the
+        // winning guess) settles inside this act() scope rather than leaking
+        // into an untracked tick before the test's next await.
+        await Promise.resolve();
+    });
+}
 async function advanceRevealDelay(ms: number) {
     await act(async () => {
         await vi.advanceTimersByTimeAsync(ms);
@@ -317,7 +347,9 @@ describe('DailySongWrapper (daily mode) — real component integration [SCAFFOLD
             useSongGame.setState({
                 guesses: [
                     { guess: SONG_2, status: 'wrong', isNew: true },
-                    ...Array(5).fill({ guess: SONG_2, status: 'wrong', isNew: false }),
+                    ...FILLER_SONGS.map((song) => ({
+                        guess: song, status: 'wrong' as const, isNew: false,
+                    })),
                 ],
             } satisfies Partial<SongGameState>);
         });

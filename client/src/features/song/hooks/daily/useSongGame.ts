@@ -4,6 +4,8 @@ import { compareBinaryGuess } from '@/src/lib/guessGame/compareBinaryGuess';
 import { defaultIsValidGuessEntry } from '@/src/lib/guessGame/types';
 import { getSongById } from '@/src/features/song/song';
 import { recordDailyStat } from '@/src/services/statsClient';
+import { SyncEngine } from '@/src/lib/sync/syncEngine';
+import { dailyRoundKey } from '@/src/lib/sync/roundKey';
 import { SongGuessEntry, DailySongGameState } from '@/src/features/song/types';
 import { STORAGE_KEYS } from '@/src/const/localStorage';
 import { nestedJSONStorage } from '@/src/lib/store/createNestedStorage';
@@ -11,6 +13,8 @@ import { Stats } from '@/src/lib/guessGame/types';
 import { MAX_DAILY_SONG_GUESSES } from '@/src/const/guess';
 import { BleachSong } from '@/src/entities/song/schema';
 import { getTodayStr } from '@/src/lib/utils/format';
+import { syncProgressImmediately } from '@/src/lib/sync/syncProgressHelper';
+import { hydrateGuessEntries } from '@/src/lib/sync/hydrateGuessEntries';
 
 const isValidGuessEntry = defaultIsValidGuessEntry<BleachSong>;
 
@@ -23,7 +27,7 @@ interface ExtendedDailySongGameState extends Omit<DailySongGameState, 'initializ
     scheduledDate: string | null;
     setTarget: (target: BleachSong, scheduledDate?: string) => void;
     initializeGame: (target?: BleachSong, segmentId?: string, scheduledDate?: string) => void;
-    finalizeGame: (isWin: boolean, turnstileToken?: string) => void;
+    finalizeGame: (isWin: boolean, turnstileToken?: string) => Promise<void>;
 }
 
 export const useSongGame = create<ExtendedDailySongGameState>()(
@@ -38,10 +42,12 @@ export const useSongGame = create<ExtendedDailySongGameState>()(
             _hasHydrated: false,
             setHasHydrated: (state) => set({ _hasHydrated: state }),
 
-            setTarget: (target, scheduledDate) => set({
-                target,
-                scheduledDate: scheduledDate || getTodayStr()
-            }),
+            setTarget: (target, scheduledDate) => {
+                set({
+                    target,
+                    scheduledDate: scheduledDate || getTodayStr()
+                });
+            },
 
             loadStats: () => {
                 if (typeof window === 'undefined') return;
@@ -50,39 +56,56 @@ export const useSongGame = create<ExtendedDailySongGameState>()(
                 set({ stats: saved });
             },
 
-            addGuess: (songId: string) => set((state) => {
-                const isGameOver = state.guesses.length >= MAX_DAILY_SONG_GUESSES;
-                if (!state.target || isGameOver) return state;
+            addGuess: (songId: string) => {
+                set((state) => {
+                    const isGameOver = state.guesses.length >= MAX_DAILY_SONG_GUESSES;
+                    if (!state.target || isGameOver) return state;
 
-                const guessedSong = getSongById(songId);
-                if (!guessedSong) return state;
+                    const guessedSong = getSongById(songId);
+                    if (!guessedSong) return state;
 
-                const alreadyGuessed = state.guesses.some(g => g.guess.id === guessedSong.id);
-                if (alreadyGuessed) return state;
+                    const alreadyGuessed = state.guesses.some(g => g.guess.id === guessedSong.id);
+                    if (alreadyGuessed) return state;
 
-                const status = compareBinaryGuess(guessedSong, state.target.id);
-                const newEntry: SongGuessEntry = { guess: guessedSong, status, isNew: true };
-                const prevGuesses = state.guesses.map(g => ({ ...g, isNew: false }));
+                    const status = compareBinaryGuess(guessedSong, state.target.id);
+                    const newEntry: SongGuessEntry = { guess: guessedSong, status, isNew: true };
+                    const prevGuesses = state.guesses.map(g => ({ ...g, isNew: false }));
+                    const allGuesses = [newEntry, ...prevGuesses];
 
-                return { guesses: [newEntry, ...prevGuesses] };
-            }),
+                    SyncEngine.getInstance().queueProgress({
+                        gameMode: 'song',
+                        gameType: 'daily',
+                        guesses: allGuesses,
+                        targetId: state.target?.id ?? null,
+                    });
 
-            initializeGame: (target, segmentId, scheduledDate) => {
+                    return { guesses: allGuesses };
+                });
+            },
+
+            initializeGame: async (target, segmentId, scheduledDate) => {
                 if (!target || !segmentId) return;
                 const currentSegmentId = get().targetSegmentId;
                 const dateStr = scheduledDate || getTodayStr();
 
                 if (currentSegmentId === segmentId) {
                     set({ scheduledDate: dateStr });
+                    if (get().target && !get().hasFinalized) {
+                        await syncProgressImmediately('song', 'daily', get().target!.id, get().guesses);
+                    }
                     return;
                 }
 
                 set({ target, targetSegmentId: segmentId, scheduledDate: dateStr, guesses: [], hasFinalized: false });
+                await syncProgressImmediately('song', 'daily', target.id, []);
             },
 
-            finalizeGame: (isWin, turnstileToken) => {
+            finalizeGame: async (isWin, turnstileToken) => {
                 const { target, hasFinalized, guesses, scheduledDate } = get();
                 if (!target || hasFinalized) return;
+
+                // 🆕 push final guesses ทันที ไม่รอ debounce
+                await syncProgressImmediately('song', 'daily', target.id, guesses);
 
                 const targetWithDate = target as BleachSong & SongDateMetadata;
                 const targetDate =
@@ -128,10 +151,28 @@ export const useSongGame = create<ExtendedDailySongGameState>()(
                 set({ hasFinalized: true, stats: newStats });
 
                 recordDailyStat('song', isWin, guesses.length, turnstileToken, targetDate).catch(() => { });
+
+                SyncEngine.getInstance()
+                    .submitResult('song', 'daily', dailyRoundKey(targetDate), isWin, guesses.length)
+                    .catch(() => { });
             },
 
             resetGame: () => {
                 set({ target: null, guesses: [], hasFinalized: false, scheduledDate: null });
+            },
+
+            applyRemoteProgress: (remoteTargetId, remoteGuesses) => {
+                const target = getSongById(remoteTargetId);
+                if (!target) return;
+                const hydrated = hydrateGuessEntries<BleachSong, SongGuessEntry>(remoteGuesses, getSongById);
+                const remoteIsWin = hydrated.some(g => g.status === 'correct');
+                const remoteIsOver = remoteIsWin || hydrated.length >= MAX_DAILY_SONG_GUESSES;
+                set({ target, guesses: hydrated, hasFinalized: remoteIsOver });
+            },
+
+            applyRemoteStats: (remoteStats: Stats | null) => {
+                if (!remoteStats) return;
+                set({ stats: remoteStats });
             },
         }),
         {
@@ -155,13 +196,10 @@ export const useSongGame = create<ExtendedDailySongGameState>()(
                     }
 
                     if (Array.isArray(state.guesses)) {
-                        state.guesses = state.guesses.map(g => {
-                            if (g.guess?.id) {
-                                const fullSong = getSongById(g.guess.id);
-                                return fullSong ? { ...g, guess: fullSong } : g;
-                            }
-                            return g;
-                        });
+                        state.guesses = hydrateGuessEntries<BleachSong, SongGuessEntry>(
+                            state.guesses,
+                            getSongById
+                        );
                     }
 
                     const hasCorruptedData = !Array.isArray(state.guesses) ||

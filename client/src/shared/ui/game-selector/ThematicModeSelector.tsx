@@ -1,4 +1,4 @@
-// src/shared/ui/ThematicModeSelector.tsx
+// src/shared/ui/game-selector/ThematicModeSelector.tsx
 "use client";
 
 import React from "react";

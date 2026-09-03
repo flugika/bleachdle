@@ -1,7 +1,6 @@
-// src/shared/ui/button/HowToPlayButton.tsx
+// src/shared/ui/game-selector/HowToPlayButton.tsx
 "use client";
 
-import React from "react";
 import { Tooltip } from "@/src/shared/ui/tooltip";
 
 interface HowToPlayButtonProps {

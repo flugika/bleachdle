@@ -94,7 +94,7 @@ export const SilhouetteSummaryGuess = ({
                 subtitle={isWin ? "VISUAL SPECTRUM TRACED SUCCESSFULLY" : "TARGET IDENTITY DISRUPTED"}
             />
 
-            {mode === 'daily' && target.scheduledDate && (
+            {mode === 'daily' && (
                 <DailyResetTimer targetDate={target.scheduledDate} />
             )}
 

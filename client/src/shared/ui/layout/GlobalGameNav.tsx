@@ -1,4 +1,9 @@
 // src/shared/layout/GlobalGameNav.tsx
+//
+// 🆕 DeviceLinkButton added alongside SpotifyPlaylistButton/AllModesButton —
+// it's not tied to a specific page (no /link-device route to hide itself
+// on), so it doesn't belong in the NAV_BUTTONS path-registry above it; it
+// just always renders wherever this nav renders, same category as those two.
 "use client";
 
 import { useState } from 'react';
@@ -12,6 +17,7 @@ import { StatsButton } from '../game-selector/StatsButton';
 import { SpotifyPlaylistButton } from '../game-selector/SpotifyPlaylistButton';
 import { AboutButton } from '../game-selector/AboutButton';
 import { SupportButton } from '../game-selector/SupportButton';
+import { DeviceLinkButton } from '../game-selector/DeviceLinkButton'; // 🆕
 
 // ─────────────────────────────────────────────
 // 🗺️ ROUTE REGISTRY — single source of truth
@@ -90,6 +96,7 @@ export function GlobalGameNav() {
 
                 <SpotifyPlaylistButton />
                 <AllModesButton />
+                <DeviceLinkButton /> {/* 🆕 no dedicated page, always renders here */}
                 {isValidGamePath && ActiveModal && (
                     <HowToPlayButton onClick={() => setIsHowToOpen(true)} />
                 )}
