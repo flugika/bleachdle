@@ -1,0 +1,8 @@
+{
+    "crons": [
+        {
+            "path": "/api/cron/purge-pairing-codes",
+            "schedule": "*/15 * * * *"
+        }
+    ]
+}
