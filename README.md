@@ -341,10 +341,6 @@ bleachdle
 │  │  │  │     └─ [id]
 │  │  │  │        ├─ route.test.ts
 │  │  │  │        └─ route.ts
-│  │  │  ├─ cron
-│  │  │  │  └─ purge-pairing-codes
-│  │  │  │     ├─ route.test.ts
-│  │  │  │     └─ route.ts
 │  │  │  ├─ device
 │  │  │  │  ├─ init
 │  │  │  │  │  ├─ route.test.ts
@@ -727,6 +723,7 @@ bleachdle
 │  │  │  ├─ store
 │  │  │  │  └─ createNestedStorage.ts
 │  │  │  ├─ supabase
+│  │  │  │  ├─ supabase-admin.ts
 │  │  │  │  ├─ supabase-client.ts
 │  │  │  │  └─ supabase-server.ts
 │  │  │  ├─ support
@@ -943,7 +940,8 @@ bleachdle
 │  │     ├─ 13_pairing_hardening.sql
 │  │     ├─ 14_soul_name_unification.sql
 │  │     ├─ 15_pairing_full_carryover.sql
-│  │     └─ 16_result_integrity_gate.sql
+│  │     ├─ 16_result_integrity_gate.sql
+│  │     └─ 17_purge_pairing_code_cron.sql
 │  ├─ test-results
 │  │  └─ .last-run.json
 │  ├─ tests
@@ -961,7 +959,6 @@ bleachdle
 │  │     ├─ unlimited-silhouette-flow.spec.ts
 │  │     └─ unlimited-song-flow.spec.ts
 │  ├─ tsconfig.json
-│  ├─ vercel.json
 │  └─ vitest.config.ts
 ├─ DEPLOYMENT.md
 └─ README.md
