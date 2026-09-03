@@ -33,7 +33,7 @@ export interface SongGameController {
     loadStats: () => void; // 🆕
     addGuess: (songId: string) => void;
     setTarget: (target: BleachSong) => void;
-    initializeGame: (force?: boolean) => void;
+    initializeGame: (force?: boolean, opts?: { skipRemoteCheck?: boolean }) => Promise<void>;
     finalizeGame: (isWin: boolean) => void;
     resetGame: () => void;
     hardReset: () => void;
@@ -41,6 +41,8 @@ export interface SongGameController {
     _hasHydrated: boolean;
     setHasHydrated: (state: boolean) => void;
     resetStreakKeepMax: () => void; // 🆕
+    applyRemoteProgress: (remoteTargetId: string, remoteGuesses: unknown[]) => void; // 🆕
+    applyRemoteStats: (remoteStats: Stats | null) => void;
 }
 
 export interface DailySongGameState {
@@ -57,6 +59,8 @@ export interface DailySongGameState {
     hasFinalized: boolean;
     _hasHydrated: boolean;
     setHasHydrated: (state: boolean) => void;
+    applyRemoteProgress: (remoteTargetId: string, remoteGuesses: unknown[]) => void; // 🆕
+    applyRemoteStats: (remoteStats: Stats | null) => void;
 }
 
 export type SongGuessable = Pick<SongGameController, 'addGuess' | 'guesses'>;

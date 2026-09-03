@@ -82,6 +82,8 @@ describe('GET /api/stats/daily', () => {
   });
 
   it('should return 429 and log a warning if rate limit is exceeded', async () => {
+    const consoleWarnSpy = vi.spyOn(console, 'warn').mockImplementation(() => { });
+
     vi.mocked(edgeRateLimit).mockReturnValue(false);
 
     const req = new NextRequest('http://localhost/api/stats/daily');
@@ -92,9 +94,19 @@ describe('GET /api/stats/daily', () => {
     expect(body).toEqual({ error: 'Too many requests, please slow down.' });
     expect(logApiEvent).toHaveBeenCalledWith('stats.daily', 'warning', 429, 'rate_limited');
     expect(supabaseServer.rpc).not.toHaveBeenCalled();
+
+    // route.ts also console.warn's the rate-limited IP — confirm it still
+    // fires, just suppressed here to keep test output clean.
+    expect(consoleWarnSpy).toHaveBeenCalledWith(
+      expect.stringContaining('Rate limit exceeded for IP')
+    );
+
+    consoleWarnSpy.mockRestore();
   });
 
   it('should return 500 and log an error if the database RPC fails', async () => {
+    const consoleErrorSpy = vi.spyOn(console, 'error').mockImplementation(() => { });
+
     vi.mocked(edgeRateLimit).mockReturnValue(true);
 
     const mockError = createMockFailureResponse('Database connection timeout', 'TIMEOUT_ERR');
@@ -112,6 +124,13 @@ describe('GET /api/stats/daily', () => {
       500,
       'Database connection timeout'
     );
+    // route.ts destructures `{ error }` from the RPC response and logs just
+    // that inner error object — not the full PostgrestSingleResponse
+    // wrapper (data/count/status/statusText/success). Assert against
+    // `mockError.error` to match what's actually passed to console.error.
+    expect(consoleErrorSpy).toHaveBeenCalledWith('[stats/daily] RPC failed:', mockError.error);
+
+    consoleErrorSpy.mockRestore();
   });
 
   it('should return 200, log success, and return correct stats when successful', async () => {

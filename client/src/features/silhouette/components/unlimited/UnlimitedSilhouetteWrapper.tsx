@@ -24,12 +24,18 @@ import { STORAGE_KEYS } from '@/src/const/localStorage';
 import { BL_MODES_METADATA } from '@/src/config/mode';
 import { logFullTarget } from '@/src/lib/debug/logFullTarget';
 import { Legend } from '@/src/shared/ui/control-panel/Legend';
+import { SyncEngine } from '@/src/lib/sync/syncEngine';
+import { useRemoteProgressSync } from '@/src/shared/hooks/useRemoteProgressSync';
+import { RemoteProgressBanner } from '@/src/shared/ui/pairing/RemoteProgressBanner';
+import { ResyncButton } from '@/src/shared/ui/pairing/ResyncButton';
+import { pullAndApplyMeta } from '@/src/lib/sync/pullAndApplyMeta';
+import { onCompletedSynced } from '@/src/lib/sync/completedSyncEvent';
 
 export default function UnlimitedSilhouetteWrapper() {
     const { navigate, state, reportReady } = useSenkaimon();
 
     const gameStore = useSilhouetteGame();
-    const { target, revealedCharacter, guesses, initializeGame, finalizeGame, resetGame, hardReset, hasFinalized, _hasHydrated, resetStreakKeepMax, stats, loadStats } = gameStore;
+    const { target, revealedCharacter, guesses, initializeGame, finalizeGame, resetGame, hardReset, hasFinalized, _hasHydrated, resetStreakKeepMax, stats, loadStats, applyRemoteProgress, applyRemoteStats } = gameStore;
     const silhouettes = getSilhouettes();
     const characters = getCharacters(); // full roster ตามที่ SilhouetteControlPanel ต้องการ
 
@@ -41,6 +47,43 @@ export default function UnlimitedSilhouetteWrapper() {
     const [revealDelayDone, setRevealDelayDone] = useState(false);
     const [finalRoundGuesses, setFinalRoundGuesses] = useState<typeof guesses>([]);
 
+    const handleRemoteLoad = async (remoteTargetId: string, remoteGuesses: unknown[]) => {
+        // 🆕 reset local ephemeral summary-gating state IMPERATIVELY, in the
+        // same handler that pulls in new remote data — don't rely solely on
+        // a useEffect keyed off target identity to catch this. Resync can be
+        // triggered while a summary is already showing (ResyncButton/banner
+        // stay mounted regardless of showSummary), so the reset must not
+        // depend on a round-trip through React's effect scheduler.
+        setManuallyClosed(false);
+        setRevealDelayDone(false);
+        applyRemoteProgress(remoteTargetId, remoteGuesses);
+
+        // 🆕 resync ควรดึง stats/completed/soul-registry มาด้วย ไม่ใช่แค่ progress
+        const meta = await pullAndApplyMeta('silhouette', 'unlimited');
+        applyRemoteStats(meta.stats);
+        if (meta.reincarnationCount !== null) {
+            setReincarnationCount(meta.reincarnationCount);
+        }
+        if (meta.soulName) {
+            setSoulName(meta.soulName);
+        }
+
+        // ถ้า unlimited silhouette มี isGameCompleted concept (เล่นครบทุกตัวละคร)
+        const allCharacters = getCharacters();
+        const completedIds = new Set(meta.completed);
+        setIsGameCompleted(allCharacters.length > 0 && completedIds.size >= allCharacters.length);
+    };
+
+    const remoteProgress = useRemoteProgressSync({
+        gameMode: 'silhouette',
+        gameType: 'unlimited',
+        hasHydrated: _hasHydrated,
+        localTargetId: target?.id ?? null,
+        localHasFinalized: hasFinalized,
+        localGuessCount: guesses.length,
+        applyRemoteProgress: handleRemoteLoad,
+    });
+
     useEffect(() => {
         if (state === "closing") {
             setIsModeSelectorOpen(false);
@@ -48,15 +91,23 @@ export default function UnlimitedSilhouetteWrapper() {
     }, [state]);
 
     useEffect(() => {
+        const recompute = () => {
+            const completedData = JSON.parse(localStorage.getItem(STORAGE_KEYS.SILHOUETTE_COMPLETED) || '{}');
+            const completed: string[] = completedData.unlimited || [];
+            const uniqueCharacterIds = new Set(silhouettes.map(s => s.character_id));
+            setIsGameCompleted(uniqueCharacterIds.size > 0 && completed.length >= uniqueCharacterIds.size);
+        };
+        return onCompletedSynced('silhouette', recompute);
+    }, [silhouettes]);
+
+    useEffect(() => {
         setManuallyClosed(false);
         logFullTarget(target);
         setRevealDelayDone(false);
-    }, [target]);
+    }, [target, hasFinalized]);
 
     const remainingGuesses = Math.max(0, MAX_UNLIMITED_SILHOUETTE_GUESSES - guesses.length);
 
-    // ⚠️ ระบบ soul-name / reincarnation ก็อปมาจาก quote เพื่อ reuse Central46ConfidentialArchive
-    // ต้องเพิ่ม STORAGE_KEYS.SOUL_REGISTRY ก่อนถึงจะทำงานได้จริง
     const [soulName, setSoulName] = useState('');
     const [inputName, setInputName] = useState('');
     const [reincarnationCount, setReincarnationCount] = useState(0);
@@ -92,25 +143,39 @@ export default function UnlimitedSilhouetteWrapper() {
     useEffect(() => {
         if (!_hasHydrated) return;
 
-        loadStats();
+        let cancelled = false;
 
-        const completedData = JSON.parse(localStorage.getItem(STORAGE_KEYS.SILHOUETTE_COMPLETED) || '{}');
-        const completed: string[] = completedData.unlimited || [];
-        // ⚠️ completedIds เก็บเป็น character_id (dedupe แล้ว) แต่ silhouettes.length คือจำนวน "entries" ดิบ
-        // ถ้าในอนาคตมี 1 ตัวละคร หลาย silhouette entry เงื่อนไขนี้จะไม่ตรงกันอีกต่อไป
-        // ต้อง normalize ทั้งสองฝั่งเป็น unique character_id ก่อนเทียบ
-        const uniqueCharacterIds = new Set(silhouettes.map(s => s.character_id));
-        setIsGameCompleted(uniqueCharacterIds.size > 0 && completed.length >= uniqueCharacterIds.size);
+        (async () => {
+            loadStats();
 
-        const registryData = JSON.parse(localStorage.getItem(STORAGE_KEYS.SOUL_REGISTRY) || '{}');
-        const registry = registryData.silhouette || { name: "", count: 0 };
-        if (registry.name) {
-            setSoulName(registry.name);
-        }
-        setReincarnationCount(registry.count || 0);
+            const completedData = JSON.parse(localStorage.getItem(STORAGE_KEYS.SILHOUETTE_COMPLETED) || '{}');
+            const completed: string[] = completedData.unlimited || [];
+            const uniqueCharacterIds = new Set(silhouettes.map(s => s.character_id));
+            setIsGameCompleted(uniqueCharacterIds.size > 0 && completed.length >= uniqueCharacterIds.size);
 
-        initializeGame();
-        setIsReady(true);
+            const registryData = JSON.parse(localStorage.getItem(STORAGE_KEYS.SOUL_REGISTRY) || '{}');
+            const registry = registryData.silhouette || { name: "", count: 0 };
+            if (registry.name) {
+                setSoulName(registry.name);
+            }
+            setReincarnationCount(registry.count || 0);
+
+            if (!registry.name) {
+                SyncEngine.getInstance().getSoulName().then((globalName) => {
+                    if (!globalName) return;
+                    setSoulName(globalName);
+                    const rd = JSON.parse(localStorage.getItem(STORAGE_KEYS.SOUL_REGISTRY) || '{}');
+                    rd.silhouette = { ...(rd.silhouette || { name: '', count: 0 }), name: globalName };
+                    localStorage.setItem(STORAGE_KEYS.SOUL_REGISTRY, JSON.stringify(rd));
+                });
+            }
+
+            await initializeGame();
+
+            if (!cancelled) setIsReady(true);
+        })();
+
+        return () => { cancelled = true; };
     }, [initializeGame, silhouettes, silhouettes.length, _hasHydrated, loadStats]);
 
     useEffect(() => {
@@ -131,7 +196,7 @@ export default function UnlimitedSilhouetteWrapper() {
     const handleCloseModal = () => {
         setManuallyClosed(true);
         resetGame();
-        initializeGame(true);
+        void initializeGame(true);
         window.scrollTo({ top: 0, behavior: 'smooth' });
     };
 
@@ -146,6 +211,9 @@ export default function UnlimitedSilhouetteWrapper() {
         registryData.silhouette = updated;
         localStorage.setItem(STORAGE_KEYS.SOUL_REGISTRY, JSON.stringify(registryData));
         setSoulName(inputName.trim());
+
+        // 🆕 no gameMode arg — sets players.soul_name globally
+        SyncEngine.getInstance().registerSoulName(inputName.trim()).catch(() => { });
     };
 
     const handleHardReset = () => {
@@ -161,6 +229,7 @@ export default function UnlimitedSilhouetteWrapper() {
         setReincarnationCount(registryData.silhouette.count);
 
         hardReset();
+        SyncEngine.getInstance().reincarnate('silhouette').catch(() => { });
     };
 
     const handleSwitchDimension = (targetMode: 'daily' | 'unlimited') => {
@@ -192,6 +261,15 @@ export default function UnlimitedSilhouetteWrapper() {
             {/* 🌌 คุมระดับ Max-Width ของ Main ให้เท่ากับ Quote และเพิ่มมิติการจัดวาง */}
             <main className="max-w-[80%] mx-auto px-4 pb-24">
                 <ModeBadge mode="unlimited" onClick={() => setIsModeSelectorOpen(true)} />
+                {remoteProgress.visible ? (
+                    <RemoteProgressBanner
+                        updatedAt={remoteProgress.updatedAt}
+                        onDismiss={remoteProgress.onDismiss}
+                        onLoad={remoteProgress.onLoad}
+                    />
+                ) : (
+                    <ResyncButton gameMode={remoteProgress.gameMode} gameType={remoteProgress.gameType} applyRemoteProgress={handleRemoteLoad} />
+                )}
                 <div id="game-sub-header">
                     <SubHeader title={BL_MODES_METADATA.silhouette.title} subtitle={BL_MODES_METADATA.silhouette.statusLine} />
                 </div>
@@ -224,8 +302,6 @@ export default function UnlimitedSilhouetteWrapper() {
                         {showSummary ? (
                             <SilhouetteSummaryGuess isOpen={showSummary} onClose={handleCloseModal} guesses={guesses} target={target} revealedCharacter={revealedCharacter} isWin={isWin} mode="unlimited" stats={stats} />
                         ) : target ? (
-                            /* นำแรปเปอร์ขยายจอตัวเดิม (w-full overflow-x-auto) ออก 
-                               เนื่องจากตัว SilhouetteGuessTable ด้านในถูกออกแบบใหม่ให้จบในตัวแบบพรีเมียมแล้ว */
                             <SilhouetteGuessTable guesses={guesses} />
                         ) : isGameCompleted ? (
                             <div className="w-full max-w-2xl mx-auto">

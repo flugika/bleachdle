@@ -73,15 +73,27 @@ const { hoistedFixtures } = vi.hoisted(() => {
     };
     const ALL_CHARACTERS = [ICHIGO, RUKIA, ISHIDA, ORIHIME, CHAD];
 
-    // Hidden target shape { id, character_id } — matches `EmojiTargetHidden`.
+    const FILLER_CHARACTERS = Array.from({ length: 9 }, (_, i) => ({
+        id: `filler-${i}`,
+        name: `Filler Soul ${i}`,
+        gender: 'Male' as const,
+        race: ['Human'],
+        affiliation: 'Independent',
+        image: `filler-${i}.webp`,
+    }));
+
+    // 🆕 Filler-only characters, purely to pad out a forced-loss guesses
+    // array with unique ids (each guess row is keyed by guess.id). NOT
+    // included in ALL_CHARACTERS/getCharacters() — only used directly
+    // inside test bodies via useEmojiGame.setState.
     const SET_1 = { id: 'set-ichigo', character_id: ICHIGO.id, emoji_list: ['🍓', '⚔️', '🧡', '👹'] };
     const SET_2 = { id: 'set-rukia', character_id: RUKIA.id, emoji_list: ['❄️', '🗡️', '⚪', '👑'] };
     const ALL_SETS = [SET_1, SET_2];
 
-    return { hoistedFixtures: { ICHIGO, RUKIA, ISHIDA, ORIHIME, CHAD, ALL_CHARACTERS, SET_1, SET_2, ALL_SETS } };
+    return { hoistedFixtures: { ICHIGO, RUKIA, ISHIDA, ORIHIME, CHAD, ALL_CHARACTERS, FILLER_CHARACTERS, SET_1, SET_2, ALL_SETS } };
 });
 
-export const { ICHIGO, RUKIA, ISHIDA, ORIHIME, CHAD, ALL_CHARACTERS, SET_1, SET_2, ALL_SETS } = hoistedFixtures;
+export const { ICHIGO, RUKIA, ISHIDA, ORIHIME, CHAD, ALL_CHARACTERS, FILLER_CHARACTERS, SET_1, SET_2, ALL_SETS } = hoistedFixtures;
 
 vi.mock('@/src/features/character/character', () => ({
     getCharacters: () => hoistedFixtures.ALL_CHARACTERS,
@@ -161,7 +173,7 @@ vi.mock('@/src/shared/ui/control-panel/Central46ConfidentialArchive', () => {
         React.useEffect(() => {
             setLocalSoulName(soulName);
         }, [soulName]);
-        
+
         const onFormSubmit = (e: React.MouseEvent<HTMLButtonElement>) => {
             handleRegisterSoul(e as unknown as React.FormEvent);
             if (inputName) setLocalSoulName(inputName);
@@ -307,12 +319,16 @@ describe('UnlimitedEmojiWrapper (unlimited mode) — real component integration'
     });
 
     it('shows loss summary after LOSS_REVEAL_DELAY_MS (900ms), shorter than the win delay', async () => {
-        // Force a loss: guesses maxed out with no correct entry.
+        // Force a loss: guesses maxed out with no correct entry. RUKIA + 9
+        // unique filler characters = 10 total (matches MAX_UNLIMITED_EMOJI_GUESSES),
+        // each with a distinct guess.id to avoid the duplicate-key warning.
         act(() => {
             useEmojiGame.setState({
                 guesses: [
                     { guess: RUKIA, status: 'wrong', isNew: true },
-                    ...Array(9).fill({ guess: RUKIA, status: 'wrong', isNew: false }),
+                    ...FILLER_CHARACTERS.slice(0, 9).map((char) => ({
+                        guess: char, status: 'wrong' as const, isNew: false,
+                    })),
                 ],
                 revealedCount: 4,
             } as unknown as Partial<EmojiGameState>);

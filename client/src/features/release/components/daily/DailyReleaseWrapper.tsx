@@ -24,6 +24,10 @@ import { getReleases } from '../../release';
 import { logFullTarget } from '@/src/lib/debug/logFullTarget';
 import { Legend } from '@/src/shared/ui/control-panel/Legend';
 import { useTurnstile } from '@/src/shared/hooks/useTurnstile';
+import { useRemoteProgressSync } from '@/src/shared/hooks/useRemoteProgressSync';
+import { RemoteProgressBanner } from '@/src/shared/ui/pairing/RemoteProgressBanner';
+import { ResyncButton } from '@/src/shared/ui/pairing/ResyncButton';
+import { pullAndApplyMeta } from '@/src/lib/sync/pullAndApplyMeta';
 
 export default function DailyReleaseWrapper({ initialTarget }: { initialTarget: ReleaseTargetHidden | null }) {
     const { navigate, state, reportReady } = useSenkaimon();
@@ -31,12 +35,39 @@ export default function DailyReleaseWrapper({ initialTarget }: { initialTarget: 
     const isFinalizingRef = useRef(false);
 
     const gameStore = useReleaseGame();
-    const { target, revealedCharacter, guesses, setTarget, finalizeGame, resetGame, hasFinalized, _hasHydrated, stats, loadStats } = gameStore;
+    const { target, revealedCharacter, guesses, setTarget, finalizeGame, resetGame, hasFinalized, _hasHydrated, stats, loadStats, applyRemoteProgress, applyRemoteStats } = gameStore;
     const releases = getReleases();
     // 🎯 sync check เทียบ target.id ตรงๆ — เหมือน quote (ทั้งคู่ reconcile ด้วย .id ของ target)
     const isSynced = target !== null && initialTarget !== null && target.id === initialTarget.id;
 
     const { markModePlayed } = useDailyHub();
+
+    const handleRemoteLoad = async (remoteTargetId: string, remoteGuesses: unknown[]) => {
+        // 🆕 reset local ephemeral summary-gating state IMPERATIVELY, in the
+        // same handler that pulls in new remote data — don't rely solely on
+        // a useEffect keyed off target identity to catch this. Resync can be
+        // triggered while a summary is already showing (ResyncButton/banner
+        // stay mounted regardless of showSummary), so the reset must not
+        // depend on a round-trip through React's effect scheduler.
+        setManuallyClosed(false);
+        setRevealDelayDone(false);
+        applyRemoteProgress(remoteTargetId, remoteGuesses);
+
+        // 🆕 resync ควรดึง stats กลับมาด้วย ไม่ใช่แค่ progress — เดิมพึ่งแค่
+        // bootstrap's syncStateOnLoad ซึ่งรันแค่ตอน mount เท่านั้น
+        const meta = await pullAndApplyMeta('release', 'daily');
+        applyRemoteStats(meta.stats);
+    };
+
+    const remoteProgress = useRemoteProgressSync({
+        gameMode: 'release',
+        gameType: 'daily',
+        hasHydrated: _hasHydrated,
+        localTargetId: target?.id ?? null,
+        localHasFinalized: hasFinalized,
+        localGuessCount: guesses.length,
+        applyRemoteProgress: handleRemoteLoad,
+    });
 
     useEffect(() => {
         if (!_hasHydrated) return;
@@ -113,7 +144,7 @@ export default function DailyReleaseWrapper({ initialTarget }: { initialTarget: 
                     // จะไม่ถูกนับรอบนี้ (verifyTurnstileToken จะ reject token undefined เอง)
                     console.error('[DailyReleaseWrapper] turnstile getToken failed:', err);
                 }
-                finalizeGame(isWin, token);
+                await finalizeGame(isWin, token);
                 markModePlayed('release', isWin);
             })();
         }
@@ -161,6 +192,15 @@ export default function DailyReleaseWrapper({ initialTarget }: { initialTarget: 
 
             <main className="max-w-[80%] mx-auto px-4 pb-24">
                 <ModeBadge mode="daily" onClick={() => setIsModeSelectorOpen(true)} />
+                {remoteProgress.visible ? (
+                    <RemoteProgressBanner
+                        updatedAt={remoteProgress.updatedAt}
+                        onDismiss={remoteProgress.onDismiss}
+                        onLoad={remoteProgress.onLoad}
+                    />
+                ) : (
+                    <ResyncButton gameMode={remoteProgress.gameMode} gameType={remoteProgress.gameType} applyRemoteProgress={handleRemoteLoad} />
+                )}
                 <div id="game-sub-header">
                     <SubHeader title={BL_MODES_METADATA.release.title} subtitle={BL_MODES_METADATA.release.statusLine} />
                 </div>

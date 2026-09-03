@@ -24,6 +24,10 @@ import { useDailyHub } from '@/src/shared/hooks/useDailyHub';
 import { logFullTarget } from '@/src/lib/debug/logFullTarget';
 import { Legend } from '@/src/shared/ui/control-panel/Legend';
 import { useTurnstile } from '@/src/shared/hooks/useTurnstile';
+import { useRemoteProgressSync } from '@/src/shared/hooks/useRemoteProgressSync';
+import { RemoteProgressBanner } from '@/src/shared/ui/pairing/RemoteProgressBanner';
+import { ResyncButton } from '@/src/shared/ui/pairing/ResyncButton';
+import { pullAndApplyMeta } from '@/src/lib/sync/pullAndApplyMeta';
 
 interface DailySongWrapperProps {
     initialTarget: BleachSong;
@@ -36,10 +40,36 @@ export default function DailySongWrapper({ initialTarget, initialSegmentId }: Da
     const isFinalizingRef = useRef(false);
 
     const gameStore = useSongGame();
-    const { target, scheduledDate, guesses, initializeGame, finalizeGame, resetGame, hasFinalized, _hasHydrated, stats, loadStats } = gameStore;
+    const { target, scheduledDate, guesses, initializeGame, finalizeGame, resetGame, hasFinalized, _hasHydrated, stats, loadStats, applyRemoteProgress, applyRemoteStats } = gameStore;
     const songs = getSongs();
 
     const { markModePlayed } = useDailyHub();
+
+    const handleRemoteLoad = async (remoteTargetId: string, remoteGuesses: unknown[]) => {
+        // 🆕 reset local ephemeral summary-gating state IMPERATIVELY, in the
+        // same handler that pulls in new remote data — don't rely solely on
+        // a useEffect keyed off target identity to catch this. Resync can be
+        // triggered while a summary is already showing (ResyncButton/banner
+        // stay mounted regardless of showSummary), so the reset must not
+        // depend on a round-trip through React's effect scheduler.
+        setManuallyClosed(false);
+        setRevealDelayDone(false);
+        applyRemoteProgress(remoteTargetId, remoteGuesses);
+
+        // 🆕 resync ควรดึง stats กลับมาด้วย ไม่ใช่แค่ progress
+        const meta = await pullAndApplyMeta('song', 'daily');
+        applyRemoteStats(meta.stats);
+    };
+
+    const remoteProgress = useRemoteProgressSync({
+        gameMode: 'song',
+        gameType: 'daily',
+        hasHydrated: _hasHydrated,
+        localTargetId: target?.id ?? null,
+        localHasFinalized: hasFinalized,
+        localGuessCount: guesses.length,
+        applyRemoteProgress: handleRemoteLoad,
+    });
 
     useEffect(() => {
         if (!_hasHydrated) return;
@@ -135,7 +165,7 @@ export default function DailySongWrapper({ initialTarget, initialSegmentId }: Da
                     // จะไม่ถูกนับรอบนี้ (verifyTurnstileToken จะ reject token undefined เอง)
                     console.error('[DailySongWrapper] turnstile getToken failed:', err);
                 }
-                finalizeGame(isWin, token);
+                await finalizeGame(isWin, token);
                 markModePlayed('song', isWin);
             })();
         }
@@ -192,6 +222,15 @@ export default function DailySongWrapper({ initialTarget, initialSegmentId }: Da
 
             <main className="max-w-[80%] mx-auto px-4 pb-24">
                 <ModeBadge mode="daily" onClick={() => setIsModeSelectorOpen(true)} />
+                {remoteProgress.visible ? (
+                    <RemoteProgressBanner
+                        updatedAt={remoteProgress.updatedAt}
+                        onDismiss={remoteProgress.onDismiss}
+                        onLoad={remoteProgress.onLoad}
+                    />
+                ) : (
+                    <ResyncButton gameMode={remoteProgress.gameMode} gameType={remoteProgress.gameType} applyRemoteProgress={handleRemoteLoad} />
+                )}
                 <div id="game-sub-header">
                     <SubHeader title={BL_MODES_METADATA.song.title} subtitle={BL_MODES_METADATA.song.statusLine} />
                 </div>

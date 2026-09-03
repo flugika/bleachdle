@@ -1,8 +1,12 @@
-// src/shared/lib/guessGame/createUnlimitedGuessGameStore.ts
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import { nestedJSONStorage } from '@/src/lib/store/createNestedStorage';
 import { Stats } from '@/src/lib/guessGame/types';
+import { SyncEngine } from '@/src/lib/sync/syncEngine';
+import { unlimitedRoundKey } from '@/src/lib/sync/roundKey';
+import { syncProgressImmediately } from '@/src/lib/sync/syncProgressHelper';
+import { hydrateGuessEntries } from '@/src/lib/sync/hydrateGuessEntries';
+import { fetchActiveRemoteProgress } from '@/src/lib/sync/fetchActiveRemoteProgress';
 import {
     GuessEntry,
     UnlimitedGuessGameConfig,
@@ -22,21 +26,23 @@ export interface UnlimitedGuessGameState<TCharacter, TTarget> {
     loadStats: () => void;
     addGuess: (characterId: string) => void;
     setTarget: (target: TTarget) => void;
-    initializeGame: (force?: boolean) => void;
-    finalizeGame: (isWin: boolean) => void;
+    /**
+     * 🆕 opts.skipRemoteCheck — ใช้จาก hardReset() เท่านั้น เพื่อข้าม
+     * remote-progress lookup ตอน force สุ่มข้อใหม่ เพราะ hardReset แปลว่า
+     * "เริ่มใหม่หมด" ตรงเจตนา ไม่ควรดึงรอบเก่าที่ค้างบน server กลับมา
+     */
+    initializeGame: (force?: boolean, opts?: { skipRemoteCheck?: boolean }) => Promise<void>;
+    finalizeGame: (isWin: boolean) => Promise<void>;
     resetGame: () => void;
     hardReset: () => void;
     resetStreakKeepMax: () => void;
+    applyRemoteProgress: (remoteTargetId: string, remoteGuesses: unknown[]) => void;
+    applyRemoteStats: (remoteStats: Stats | null) => void;
 }
 
 export function createUnlimitedGuessGameStore<
     TItem,
     TCharacter extends { id: string },
-    // 🔧 FIX: ตัด `character: TCharacter` ออกจาก constraint — ไม่มี logic ในไฟล์นี้
-    // ที่อ่าน target.character ตรง ๆ เลย (compare ใช้ target.character_id ผ่าน
-    // compareBinaryGuess) การบังคับ field นี้ไว้เฉย ๆ ทำให้โหมดที่ "สิ่งที่ทาย" ไม่ใช่
-    // Character (เช่น Release ที่ทายด้วยตัว release เอง) ต้องยัด field character ปลอม
-    // เข้าไปให้ตรง type ทั้งที่ความหมายผิด (เห็น .character แต่ได้ release ไม่ใช่ตัวละคร)
     TTarget extends { id: string; character_id: string }
 >(config: UnlimitedGuessGameConfig<TItem, TCharacter, TTarget>) {
     const compareGuess = config.compareGuess ?? ((guess: TCharacter, target: TTarget) => compareBinaryGuess(guess, target.character_id));
@@ -44,10 +50,17 @@ export function createUnlimitedGuessGameStore<
     const isValidGuessEntry = config.isValidGuessEntry ?? defaultIsValidGuessEntry<TCharacter>;
     const hasValidTargetShape = config.hasValidTargetShape ?? defaultHasValidTargetShape;
 
-    // 🆕 เหมือน daily factory
     const derivedCounters = config.derivedCounters ?? [];
     const initialExtra = () =>
         Object.fromEntries(derivedCounters.map((d) => [d.key, d.initial])) as Record<string, number>;
+
+    const resolveTargetById = (id: string): TTarget | undefined => {
+        for (const item of config.getAllItems()) {
+            const target = config.attachCharacter(item);
+            if (target && target.id === id) return target;
+        }
+        return undefined;
+    };
 
     type State = UnlimitedGuessGameState<TCharacter, TTarget> & Record<string, unknown>;
     const getCounter = (state: State, key: string) => state[key] as number;
@@ -61,7 +74,12 @@ export function createUnlimitedGuessGameStore<
                 hasFinalized: false,
                 _hasHydrated: false,
                 setHasHydrated: (state) => set({ _hasHydrated: state } as Partial<State>),
-                setTarget: (target) => set({ target } as Partial<State>),
+                setTarget: async (target) => {
+                    set({ target } as Partial<State>);
+                    if (target && !get().hasFinalized) {
+                        await syncProgressImmediately(config.gameKey, 'unlimited', target.id, get().guesses);
+                    }
+                },
                 ...initialExtra(),
 
                 stats: { currentStreak: 0, maxStreak: 0, playedCount: 0, passedCount: 0, guessDistribution: {} },
@@ -74,32 +92,76 @@ export function createUnlimitedGuessGameStore<
                     set({ stats: saved } as Partial<State>);
                 },
 
-                addGuess: (characterId) => set((state) => {
-                    const isGameOver = state.guesses.length >= config.maxGuesses('unlimited');
-                    if (!state.target || isGameOver) return state;
+                addGuess: (characterId) => {
+                    set((state) => {
+                        const isGameOver = state.guesses.length >= config.maxGuesses('unlimited');
+                        if (!state.target || isGameOver) return state;
 
-                    const guessedCharacter = config.getCharacterById(characterId);
-                    if (!guessedCharacter) return state;
+                        const guessedCharacter = config.getCharacterById(characterId);
+                        if (!guessedCharacter) return state;
 
-                    const alreadyGuessed = state.guesses.some((g) => g.guess.id === guessedCharacter.id);
-                    if (alreadyGuessed) return state;
+                        const alreadyGuessed = state.guesses.some((g) => g.guess.id === guessedCharacter.id);
+                        if (alreadyGuessed) return state;
 
-                    const status = compareGuess(guessedCharacter, state.target);
-                    const newEntry: GuessEntry<TCharacter> = { guess: guessedCharacter, status, isNew: true };
-                    const prevGuesses = state.guesses.map((g) => ({ ...g, isNew: false }));
-                    const allGuesses = [newEntry, ...prevGuesses];
+                        const status = compareGuess(guessedCharacter, state.target);
+                        const newEntry: GuessEntry<TCharacter> = { guess: guessedCharacter, status, isNew: true };
+                        const prevGuesses = state.guesses.map((g) => ({ ...g, isNew: false }));
+                        const allGuesses = [newEntry, ...prevGuesses];
 
-                    const extraUpdates = Object.fromEntries(
-                        derivedCounters.map((d) => [d.key, d.compute(allGuesses)])
-                    );
+                        const extraUpdates = Object.fromEntries(
+                            derivedCounters.map((d) => [d.key, d.compute(allGuesses)])
+                        );
+                        SyncEngine.getInstance().queueProgress({
+                            gameMode: config.gameKey,
+                            gameType: 'unlimited',
+                            guesses: allGuesses,
+                            targetId: state.target?.id ?? null,
+                        });
 
-                    return { guesses: allGuesses, ...extraUpdates } as Partial<State>;
-                }),
+                        return { guesses: allGuesses, ...extraUpdates } as Partial<State>;
+                    });
+                },
 
-                initializeGame: (force = false) => {
+                initializeGame: async (force = false, opts = {}) => {
                     const { target, _hasHydrated } = get();
                     if (!_hasHydrated) return;
-                    if (!force && target) return;
+
+                    if (!force && target) {
+                        return;
+                    }
+
+                    // 🆕 กัน 2 เครื่องสุ่มข้อพร้อมกันได้คนละข้อ — เช็ค remote ก่อน
+                    // สุ่มใหม่เสมอ (เว้นแต่ hardReset สั่ง skip) bounded ด้วย timeout
+                    // ในตัว fetchActiveRemoteProgress เอง ไม่บล็อกไม่จำกัดเวลา
+                    if (!opts.skipRemoteCheck) {
+                        const remote = await fetchActiveRemoteProgress(config.gameKey, 'unlimited');
+
+                        if (remote?.target_id) {
+                            const remoteTarget = resolveTargetById(remote.target_id);
+                            if (remoteTarget) {
+                                const hydrated = hydrateGuessEntries<TCharacter, GuessEntry<TCharacter>>(
+                                    remote.guesses,
+                                    config.getCharacterById
+                                );
+                                const answerId = resolveAnswerId(remoteTarget);
+                                const remoteIsWin = hydrated.some((g) => g.guess.id === answerId);
+                                const remoteIsOver = remoteIsWin || hydrated.length >= config.maxGuesses('unlimited');
+
+                                if (!remoteIsOver) {
+                                    const extraUpdates = Object.fromEntries(
+                                        derivedCounters.map((d) => [d.key, d.compute(hydrated)])
+                                    );
+                                    set({
+                                        target: remoteTarget,
+                                        guesses: hydrated,
+                                        hasFinalized: false,
+                                        ...extraUpdates,
+                                    } as Partial<State>);
+                                    return;
+                                }
+                            }
+                        }
+                    }
 
                     const allItems = config.getAllItems();
                     const completedData = JSON.parse(localStorage.getItem(config.storageKeys.completed) || '{}');
@@ -116,17 +178,21 @@ export function createUnlimitedGuessGameStore<
                     const nextTarget = config.attachCharacter(randomItem);
 
                     if (!nextTarget) {
-                        console.error(`[${config.gameKey}] item references a missing character. Skipping.`);
                         set({ target: null, guesses: [], hasFinalized: false, ...initialExtra() } as Partial<State>);
                         return;
                     }
 
                     set({ target: nextTarget, guesses: [], hasFinalized: false, ...initialExtra() } as Partial<State>);
+
+                    await syncProgressImmediately(config.gameKey, 'unlimited', nextTarget.id, []);
                 },
 
-                finalizeGame: (isWin) => {
+                finalizeGame: async (isWin) => {
                     const { target, hasFinalized, guesses } = get();
                     if (!target || hasFinalized) return;
+
+                    // 🆕 push final guesses ทันที ไม่รอ debounce — เหตุผลเดียวกับ daily
+                    await syncProgressImmediately(config.gameKey, 'unlimited', target.id, guesses);
 
                     const completedData = JSON.parse(localStorage.getItem(config.storageKeys.completed) || '{}');
                     const key = config.getCompletionKey(target);
@@ -140,11 +206,9 @@ export function createUnlimitedGuessGameStore<
                         currentStreak: 0, maxStreak: 0, playedCount: 0, passedCount: 0, guessDistribution: {},
                     };
 
-                    // 🆕 อัปเดต played/passed count
                     const playedCount = savedStats.playedCount + (isWin ? 1 : 0);
                     const passedCount = savedStats.passedCount + (isWin ? 0 : 1);
 
-                    // 🆕 อัปเดต guess distribution เฉพาะตอนชนะ (ตอบถูก)
                     const guessDistribution = { ...savedStats.guessDistribution };
                     if (isWin) {
                         const bucket = guesses.length >= 6 ? '6' : String(guesses.length);
@@ -162,14 +226,15 @@ export function createUnlimitedGuessGameStore<
                     localStorage.setItem(config.storageKeys.stats, JSON.stringify(statsData));
 
                     const extraFinal = Object.fromEntries(derivedCounters.map((d) => [d.key, d.finalizeValue]));
-                    // 🩹 FIX: เดิม hardcode `target.character_id` — ใช้ได้กับ Quote (guess เป็น
-                    // Character, character_id คือคำตอบ) แต่ Release "คำตอบ" คือ target.id เอง
-                    // (release เอง) ไม่ใช่ character_id (id เจ้าของท่า) ทำให้ getReleaseById
-                    // หาไม่เจอ → revealedCharacter เป็น null เสมอ ไม่ว่าจะตอบถูกหรือผิด
                     const revealedCharacter = config.getCharacterById(resolveAnswerId(target)) ?? null;
 
                     set({ hasFinalized: true, stats: newStats, revealedCharacter, ...extraFinal } as unknown as Partial<State>);
+
+                    SyncEngine.getInstance()
+                        .submitResult(config.gameKey, 'unlimited', unlimitedRoundKey(target.id), isWin, guesses.length)
+                        .catch(() => { });
                 },
+
                 resetGame: () => set({ target: null, revealedCharacter: null, guesses: [], hasFinalized: false, ...initialExtra() } as unknown as Partial<State>),
 
                 hardReset: () => {
@@ -182,7 +247,9 @@ export function createUnlimitedGuessGameStore<
                     localStorage.setItem(config.storageKeys.completed, JSON.stringify(completedData));
 
                     set({ target: null, guesses: [], hasFinalized: false, ...initialExtra() } as Partial<State>);
-                    setTimeout(() => get().initializeGame(true), 0);
+                    // 🆕 skipRemoteCheck: true — hardReset ต้องเริ่มใหม่จริงๆ ไม่ดึง
+                    // รอบเก่าที่ค้างบน server กลับมาแทน
+                    setTimeout(() => { get().initializeGame(true, { skipRemoteCheck: true }); }, 0);
                 },
 
                 resetStreakKeepMax: () => {
@@ -195,24 +262,65 @@ export function createUnlimitedGuessGameStore<
                     localStorage.setItem(config.storageKeys.stats, JSON.stringify(statsData));
                     set({ stats: resetStats } as Partial<State>);
                 },
+
+                applyRemoteProgress: (remoteTargetId, remoteGuesses) => {
+                    const target = resolveTargetById(remoteTargetId);
+                    if (!target) return;
+
+                    const hydrated = hydrateGuessEntries<TCharacter, GuessEntry<TCharacter>>(
+                        remoteGuesses,
+                        config.getCharacterById
+                    );
+
+                    const answerId = resolveAnswerId(target);
+                    const remoteIsWin = hydrated.some((g) => g.guess.id === answerId);
+                    const remoteIsOver = remoteIsWin || hydrated.length >= config.maxGuesses('unlimited');
+
+                    // 🆕 ถ้ารอบที่ sync มาจบไปแล้ว ต้องเฉลย revealedCharacter เหมือนที่
+                    // finalizeGame ทำ — เพราะ hasFinalized: true ตรงนี้จะไม่มี finalizeGame
+                    // มาเรียกซ้ำอีกแล้ว (wrapper เช็ค !hasFinalized ก่อน) ถ้าไม่ตั้งเอง
+                    // revealedCharacter จะค้าง null ทำให้ Summary การ์ดไม่โชว์รูป/ชื่อจริง
+                    const revealedCharacter = remoteIsOver
+                        ? config.getCharacterById(answerId) ?? null
+                        : null;
+
+                    set({
+                        target,
+                        guesses: hydrated,
+                        hasFinalized: remoteIsOver,
+                        revealedCharacter,
+                        ...initialExtra(),
+                    } as Partial<State>);
+                },
+
+                applyRemoteStats: (remoteStats: Stats | null) => {
+                    if (!remoteStats) return;
+                    set({ stats: remoteStats } as Partial<State>);
+                },
             }),
             {
                 name: 'unlimited',
                 storage: nestedJSONStorage(config.storageKeys.progress),
                 partialize: (state) => ({
-                    guesses: state.guesses.map(({ guess, status }) => ({ guess, status, isNew: false })),
+                    guesses: state.guesses.map(({ guess, status }) => ({ guess: { id: guess.id }, status, isNew: false })),
                     target: state.target,
                     revealedCharacter: state.revealedCharacter,
                     hasFinalized: state.hasFinalized,
-                    // 🔧 ใช้ getCounter แทน (state as State)[d.key] ตรงๆ
                     ...Object.fromEntries(derivedCounters.map((d) => [d.key, getCounter(state, d.key)])),
                 }),
                 onRehydrateStorage: () => (state) => {
                     if (!state) return;
+
+                    if (Array.isArray(state.guesses)) {
+                        state.guesses = hydrateGuessEntries<TCharacter, GuessEntry<TCharacter>>(
+                            state.guesses,
+                            config.getCharacterById
+                        );
+                    }
+
                     const hasCorruptedGuesses = !Array.isArray(state.guesses) || state.guesses.some((g) => !isValidGuessEntry(g));
                     const hasStaleTargetShape = state.target != null && !hasValidTargetShape(state.target);
 
-                    // 🔧 ใช้ getCounter แทน (state as State)[d.key] ตรงๆ
                     const hasInvalidExtra = derivedCounters.some((d) => {
                         const val = getCounter(state, d.key);
                         return typeof val !== 'number' || !d.isValidRange(val);
@@ -222,7 +330,7 @@ export function createUnlimitedGuessGameStore<
                         state.guesses = [];
                         state.target = null;
                         state.hasFinalized = false;
-                        derivedCounters.forEach((d) => { (state as State)[d.key] = d.initial; }); // ← นี่คือ "เขียน" ค่า ไม่ใช่ "อ่าน" เลยไม่ผ่าน getCounter
+                        derivedCounters.forEach((d) => { (state as State)[d.key] = d.initial; });
                     } else if (hasInvalidExtra) {
                         derivedCounters.forEach((d) => { (state as State)[d.key] = d.initial; });
                     }

@@ -1,15 +1,19 @@
-// src/features/character/hooks/unlimited/useCharacterGame.ts
 import { create } from 'zustand';
 import { Character } from '@/src/entities/character/schema';
 import { compareCharacter } from '@/src/features/character/compareCharacter';
 import { ComparisonOutcome } from '@/src/features/character/types';
 import { getCharacterById, getCharacters } from '@/src/features/character/character';
 import { persist } from 'zustand/middleware';
+import { SyncEngine } from '@/src/lib/sync/syncEngine';
+import { unlimitedRoundKey } from '@/src/lib/sync/roundKey';
 import { MAX_UNLIMITED_CHARACTER_GUESSES } from '@/src/const/guess';
-import { STORAGE_KEYS } from '@/src/const/localStorage'
+import { STORAGE_KEYS } from '@/src/const/localStorage';
 import { nestedJSONStorage } from '@/src/lib/store/createNestedStorage';
 import { isValidCharacterGuessEntry } from '../../validGuessEntry';
 import { Stats } from '@/src/lib/guessGame/types';
+import { syncProgressImmediately } from '@/src/lib/sync/syncProgressHelper';
+import { hydrateGuessEntries } from '@/src/lib/sync/hydrateGuessEntries';
+import { fetchActiveRemoteProgress } from '@/src/lib/sync/fetchActiveRemoteProgress';
 
 interface GuessEntry {
     guess: Character;
@@ -21,18 +25,20 @@ interface CharacterGameState {
     targetId: string | null;
     target: Character | null;
     guesses: GuessEntry[];
-    stats: Stats; // 🆕
+    stats: Stats;
     addGuess: (guessId: string) => void;
     setTarget: (target: Character) => void;
-    initializeGame: (force?: boolean) => void;
+    initializeGame: (force?: boolean, opts?: { skipRemoteCheck?: boolean }) => Promise<void>;
     finalizeGame: (isWin: boolean) => void;
-    loadStats: () => void; // 🆕
+    loadStats: () => void;
     resetGame: () => void;
     hardReset: () => void;
     hasFinalized: boolean;
-    _hasHydrated: boolean;                    // 👈 เพิ่ม (เดิม unlimited ไม่มี ต่างจาก daily)
-    setHasHydrated: (state: boolean) => void; // 👈 เพิ่ม
-    resetStreakKeepMax: () => void; // 🆕ว
+    _hasHydrated: boolean;
+    setHasHydrated: (state: boolean) => void;
+    resetStreakKeepMax: () => void;
+    applyRemoteProgress: (remoteTargetId: string, remoteGuesses: unknown[]) => void;
+    applyRemoteStats: (remoteStats: Stats | null) => void;
 }
 
 export const useCharacterGame = create<CharacterGameState>()(
@@ -41,14 +47,15 @@ export const useCharacterGame = create<CharacterGameState>()(
             targetId: null,
             target: null,
             guesses: [],
-            stats: { currentStreak: 0, maxStreak: 0, playedCount: 0, passedCount: 0, guessDistribution: {} }, // 🆕
+            stats: { currentStreak: 0, maxStreak: 0, playedCount: 0, passedCount: 0, guessDistribution: {} },
             hasFinalized: false,
             _hasHydrated: false,
             setHasHydrated: (state) => set({ _hasHydrated: state }),
 
-            setTarget: (target) => set({ target, targetId: target.id }),
+            setTarget: (target) => {
+                set({ target, targetId: target.id });
+            },
 
-            // 🆕 ย้ายมาจาก component: อ่าน STORAGE_KEYS.CHARACTER_STATS เข้า store
             loadStats: () => {
                 if (typeof window === 'undefined') return;
                 const statsData = JSON.parse(localStorage.getItem(STORAGE_KEYS.CHARACTER_STATS) || '{}');
@@ -56,35 +63,57 @@ export const useCharacterGame = create<CharacterGameState>()(
                 set({ stats: saved });
             },
 
-            addGuess: (guessId: string) => set((state) => {
-                const isGameOver = state.guesses.length >= MAX_UNLIMITED_CHARACTER_GUESSES; // หรือ 10 ในกรณี daily
-                if (!state.target || isGameOver) return state;
+            addGuess: (guessId: string) => {
+                set((state) => {
+                    const isGameOver = state.guesses.length >= MAX_UNLIMITED_CHARACTER_GUESSES;
+                    if (!state.target || isGameOver) return state;
 
-                const guessedCharacter = getCharacterById(guessId);
-                if (!guessedCharacter) return state;
+                    const guessedCharacter = getCharacterById(guessId);
+                    if (!guessedCharacter) return state;
 
-                const result = compareCharacter(guessedCharacter, state.target);
+                    const result = compareCharacter(guessedCharacter, state.target);
 
-                const newEntry: GuessEntry = { guess: guessedCharacter, result, isNew: true };
-                const prevGuesses: GuessEntry[] = state.guesses.map(g => ({ ...g, isNew: false }));
+                    const newEntry: GuessEntry = { guess: guessedCharacter, result, isNew: true };
+                    const prevGuesses: GuessEntry[] = state.guesses.map(g => ({ ...g, isNew: false }));
+                    const allGuesses = [newEntry, ...prevGuesses];
 
-                return { guesses: [newEntry, ...prevGuesses] };
-            }),
+                    SyncEngine.getInstance().queueProgress({
+                        gameMode: 'character',
+                        gameType: 'unlimited',
+                        guesses: allGuesses,
+                        targetId: state.target?.id ?? null,
+                    });
 
-            // 🛡️ ROOT-CAUSE FIX:
-            // เดิมเช็ค `target && guesses.length > 0` — target ที่เพิ่งสุ่มสดๆ guesses ยังเป็น []
-            // เสมอ ทำให้ทุกครั้งที่ initializeGame() โดนเรียกซ้ำ (StrictMode double-invoke ตอน dev,
-            // component remount ตอนสลับหน้าผ่าน Senkaimon transition, ฯลฯ) guard นี้ผ่านไม่ทัน
-            // แล้วสุ่ม target ใหม่ทับของเดิมทันที ตอนนี้เช็คแค่ "มี target แล้วหรือยัง" ก็พอ
-            // ไม่สนใจจำนวน guesses เพราะ target ที่ตั้งแล้วคือ "init เสร็จแล้ว" ไม่ว่าจะทายไปกี่ครั้ง
-            //
-            // 🛡️ HYDRATION GUARD:
-            // กัน race condition ระหว่าง persist rehydrate (async จาก localStorage) กับ effect
-            // ฝั่ง component ที่อาจยิงก่อน/หลัง hydrate เสร็จคนละรอบ ทำให้สุ่มซ้อนกัน 2 ครั้ง
-            initializeGame: (force = false) => {
+                    return { guesses: allGuesses };
+                });
+            },
+
+            initializeGame: async (force = false, opts = {}) => {
                 const { targetId, _hasHydrated } = get();
                 if (!_hasHydrated) return;
-                if (!force && targetId) return;
+
+                if (!force && targetId) {
+                    return;
+                }
+
+                // 🆕 กัน 2 เครื่องสุ่มตัวละครพร้อมกันได้คนละตัว
+                if (!opts.skipRemoteCheck) {
+                    const remote = await fetchActiveRemoteProgress('character', 'unlimited');
+
+                    if (remote?.target_id) {
+                        const remoteTarget = getCharacterById(remote.target_id);
+                        if (remoteTarget) {
+                            const hydrated = hydrateGuessEntries<Character, GuessEntry>(remote.guesses, getCharacterById);
+                            const remoteIsWin = hydrated.some((g) => g.guess.id === remoteTarget.id);
+                            const remoteIsOver = remoteIsWin || hydrated.length >= MAX_UNLIMITED_CHARACTER_GUESSES;
+
+                            if (!remoteIsOver) {
+                                set({ target: remoteTarget, targetId: remoteTarget.id, guesses: hydrated, hasFinalized: false });
+                                return;
+                            }
+                        }
+                    }
+                }
 
                 const allCharacters = getCharacters();
                 const completedData = JSON.parse(localStorage.getItem(STORAGE_KEYS.CHARACTER_COMPLETED) || '{}');
@@ -96,14 +125,17 @@ export const useCharacterGame = create<CharacterGameState>()(
                 } else {
                     const picked = remainingCharacters[Math.floor(Math.random() * remainingCharacters.length)];
                     set({ target: picked, targetId: picked.id, guesses: [], hasFinalized: false });
+                    await syncProgressImmediately('character', 'unlimited', picked.id, []);
                 }
             },
-            finalizeGame: (isWin) => {
+
+            finalizeGame: async (isWin) => {
                 const { target, hasFinalized, guesses } = get();
 
-                if (!target || hasFinalized) {
-                    return;
-                }
+                if (!target || hasFinalized) return;
+
+                // 🆕 push final guesses ทันที ไม่รอ debounce
+                await syncProgressImmediately('character', 'unlimited', target.id, guesses);
 
                 const completedData = JSON.parse(
                     localStorage.getItem(STORAGE_KEYS.CHARACTER_COMPLETED) || "{}"
@@ -148,12 +180,18 @@ export const useCharacterGame = create<CharacterGameState>()(
 
                 set({
                     hasFinalized: true,
-                    stats: newStats, // 🆕
+                    stats: newStats,
                 });
+
+                SyncEngine.getInstance()
+                    .submitResult('character', 'unlimited', unlimitedRoundKey(target.id), isWin, guesses.length)
+                    .catch(() => { });
             },
+
             resetGame: () => {
                 set({ targetId: null, target: null, guesses: [], hasFinalized: false });
             },
+
             hardReset: () => {
                 const progressData = JSON.parse(localStorage.getItem(STORAGE_KEYS.CHARACTER_PROGRESS) || '{}');
                 delete progressData.unlimited;
@@ -166,9 +204,10 @@ export const useCharacterGame = create<CharacterGameState>()(
                 set({ targetId: null, target: null, guesses: [], hasFinalized: false });
 
                 setTimeout(() => {
-                    get().initializeGame(true);
+                    get().initializeGame(true, { skipRemoteCheck: true });
                 }, 0);
             },
+
             resetStreakKeepMax: () => {
                 const statsData = JSON.parse(localStorage.getItem(STORAGE_KEYS.CHARACTER_STATS) || '{}');
                 const saved: Stats = statsData.unlimited || {
@@ -179,33 +218,57 @@ export const useCharacterGame = create<CharacterGameState>()(
                 localStorage.setItem(STORAGE_KEYS.CHARACTER_STATS, JSON.stringify(statsData));
                 set({ stats: resetStats });
             },
+
+            applyRemoteProgress: (remoteTargetId, remoteGuesses) => {
+                const target = getCharacterById(remoteTargetId);
+                if (!target) return;
+                const hydrated = hydrateGuessEntries<Character, GuessEntry>(remoteGuesses, getCharacterById);
+                const remoteIsWin = hydrated.some((g) => g.guess.id === target.id);
+                const remoteIsOver = remoteIsWin || hydrated.length >= MAX_UNLIMITED_CHARACTER_GUESSES;
+                set({ target, targetId: target.id, guesses: hydrated, hasFinalized: remoteIsOver });
+            },
+
+            applyRemoteStats: (remoteStats: Stats | null) => {
+                if (!remoteStats) return;
+                set({ stats: remoteStats });
+            },
         }),
         {
             name: 'unlimited',
             storage: nestedJSONStorage(STORAGE_KEYS.CHARACTER_PROGRESS),
             partialize: (state) => ({
-                guesses: state.guesses,
+                guesses: state.guesses.map(({ guess, result }) => ({
+                    guess: { id: guess.id } as Character,
+                    result,
+                    isNew: false,
+                })),
                 targetId: state.targetId,
                 hasFinalized: state.hasFinalized,
             }),
-            // 👇 หัวใจของ fix: บอก store ว่า rehydrate เสร็จแล้วจริงๆ (เหมือน daily store)
             onRehydrateStorage: () => (state) => {
                 if (state) {
-                    // 🛡️ ตรวจ guesses ทุกตัว ถ้าเจอโครงสร้างไม่ตรง (legacy/corrupted) ให้ล้างรอบนั้นทิ้งทันที
+                    if (Array.isArray(state.guesses)) {
+                        state.guesses = hydrateGuessEntries<Character, GuessEntry>(
+                            state.guesses,
+                            getCharacterById
+                        );
+                    }
+
                     const hasCorruptedData = !Array.isArray(state.guesses) ||
                         state.guesses.some(g => !isValidCharacterGuessEntry(g));
 
                     if (hasCorruptedData) {
                         state.guesses = [];
                         state.target = null;
+                        state.targetId = null;
                         state.hasFinalized = false;
                     } else if (state.targetId) {
-                        state.target = getCharacterById(state.targetId) ?? null;   // 👈 resolve จาก id
+                        state.target = getCharacterById(state.targetId) ?? null;
                     }
 
                     state._hasHydrated = true;
                 }
             },
-        }
+        },
     )
 );

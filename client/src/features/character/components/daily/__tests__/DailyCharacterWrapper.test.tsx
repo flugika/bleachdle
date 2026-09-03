@@ -36,7 +36,7 @@
 //     provided).
 //   - FEATURE_FLAGS.daily.character is assumed `true` for these tests.
 
-import { render, screen, fireEvent, waitFor } from '@testing-library/react'; // beforeAll มาจาก vitest ไม่ใช่ testing-library — ดูด้านล่าง
+import { render, screen, fireEvent, waitFor, act } from '@testing-library/react'; // beforeAll มาจาก vitest ไม่ใช่ testing-library — ดูด้านล่าง
 import { describe, it, expect, beforeEach, beforeAll, vi } from 'vitest';
 import DailyCharacterWrapper from '@/src/features/character/components/daily/DailyCharacterWrapper';
 import { useCharacterGame } from '@/src/features/character/hooks/daily/useCharacterGame'; // 🆕 เพิ่ม import นี้
@@ -75,6 +75,14 @@ vi.mock('@/src/features/character/character', () => ({
 }));
 
 const recordDailyStat = vi.fn().mockResolvedValue(undefined);
+
+vi.mock('@/src/shared/hooks/useTurnstile', () => ({
+    useTurnstile: () => ({
+        getToken: vi.fn().mockResolvedValue('mock-test-token'),
+        containerRef: { current: null },
+    }),
+}));
+
 vi.mock('@/src/services/statsClient', () => ({ recordDailyStat: (...args: unknown[]) => recordDailyStat(...args) }));
 
 // Layout/nav chrome — irrelevant to game logic, stub to keep this a focused
@@ -113,12 +121,23 @@ vi.mock('@/src/features/character/components/shared/CharacterSummaryGuess', () =
 // ── Helpers ─────────────────────────────────────────────────────────────────
 async function selectCharacter(name: string) {
     const input = screen.getByPlaceholderText('ENTER SOUL NAME...');
-    fireEvent.change(input, { target: { value: name } });
-    fireEvent.focus(input);
+
+    await act(async () => {
+        fireEvent.change(input, { target: { value: name } });
+        fireEvent.focus(input);
+    });
 
     // SearchBar's dropdown is a portal <ul>/<li> — no testid, select by role/text.
     const option = await screen.findByText(name);
-    fireEvent.mouseDown(option);
+
+    await act(async () => {
+        fireEvent.mouseDown(option);
+        // flush microtasks so any promise chain kicked off synchronously by
+        // this guess (isGameOver effect -> getToken()/finalizeGame() on the
+        // winning guess) settles inside this act() scope rather than leaking
+        // into an untracked tick before the test's next await.
+        await Promise.resolve();
+    });
 }
 
 beforeEach(() => {

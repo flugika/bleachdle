@@ -248,6 +248,8 @@ describe('POST /api/support', () => {
     });
 
     it('should return 500 if database validation or injection operation throws an internal error', async () => {
+        const consoleErrorSpy = vi.spyOn(console, 'error').mockImplementation(() => { });
+
         const mockDbError = createMockFailureResponse('Database structure error');
         mockInsertFn.mockResolvedValueOnce(mockDbError);
 
@@ -265,6 +267,14 @@ describe('POST /api/support', () => {
         expect(res.status).toBe(500);
         expect(body).toEqual({ ok: false, error: 'Server error.' });
         expect(logApiEvent).toHaveBeenCalledWith('support', 'error', 500, 'Database structure error');
+
+        // route.ts's catch block re-throws insertErr as-is and logs the
+        // raw error object/instance — confirm it's still logged (not
+        // swallowed) even though we're suppressing the actual console
+        // output here to keep CI/test output clean.
+        expect(consoleErrorSpy).toHaveBeenCalledWith('[/api/support] error:', mockDbError.error);
+
+        consoleErrorSpy.mockRestore();
     });
 
     it('should successfully sanitize inputs, insert ticket to DB, set response cookies, and return 200', async () => {

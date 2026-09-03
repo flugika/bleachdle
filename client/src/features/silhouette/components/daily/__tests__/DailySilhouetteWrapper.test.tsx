@@ -71,9 +71,9 @@
 //
 //   7. FEATURE_FLAGS.daily.silhouette is assumed `true` for these tests.
 
-import React from 'react';
+import React, { act } from 'react';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
-import { describe, it, expect, beforeEach, vi } from 'vitest';
+import { describe, it, expect, beforeEach, vi, afterEach } from 'vitest';
 import DailySilhouetteWrapper from '@/src/features/silhouette/components/daily/DailySilhouetteWrapper';
 import { STORAGE_KEYS } from '@/src/const/localStorage';
 import { Character } from '@/src/entities/character/schema';
@@ -165,6 +165,13 @@ vi.mock('@/src/services/statsClient', () => ({
     recordDailyStat: (...args: unknown[]) => recordDailyStat(...args),
 }));
 
+vi.mock('@/src/shared/hooks/useTurnstile', () => ({
+    useTurnstile: () => ({
+        getToken: vi.fn().mockResolvedValue('mock-test-token'),
+        containerRef: { current: null },
+    }),
+}));
+
 // ⚠️ ASSUMED value — not defined in any provided source file. Adjust if the
 // real constant in `src/const/guess.ts` differs, or the loss-path test below
 // will guess the wrong number of times and never reach `isGameOver`.
@@ -195,6 +202,17 @@ vi.mock('@/src/shared/hooks/useDailyHub', () => ({
 }));
 vi.mock('@/src/config/feature.flags', () => ({ FEATURE_FLAGS: { daily: { silhouette: true } } }));
 vi.mock('@/src/lib/debug/logFullTarget', () => ({ logFullTarget: () => { } }));
+vi.mock('@/src/lib/sync/syncEngine', () => ({
+    SyncEngine: {
+        getInstance: () => ({
+            queueProgress: vi.fn(),
+            submitResult: vi.fn().mockResolvedValue(undefined),
+        }),
+    },
+}));
+vi.mock('@/src/lib/sync/syncProgressHelper', () => ({
+    syncProgressImmediately: vi.fn(),
+}));
 
 // Badge-tier hook: internals (useBadgeTier) NOT provided — stub to a fixed
 // tier so TierBadgeCard/NarrativeFlavorText render deterministically. This
@@ -220,24 +238,36 @@ vi.mock('../../shared/SilhouetteImage', () => ({
 // ── Helpers ─────────────────────────────────────────────────────────────────
 async function selectCharacter(name: string) {
     const input = screen.getByPlaceholderText('ENTER SOUL NAME...');
-    fireEvent.change(input, { target: { value: name } });
-    fireEvent.focus(input);
 
-    // SearchBar's dropdown is a portal <ul>/<li> — no testid, select by text.
+    await act(async () => {
+        fireEvent.change(input, { target: { value: name } });
+        fireEvent.focus(input);
+    });
+
     const option = await screen.findByText(name);
-    fireEvent.mouseDown(option);
+
+    await act(async () => {
+        fireEvent.mouseDown(option);
+        // flush microtasks so any promise chain kicked off synchronously by
+        // this guess (isGameOver effect -> getToken()/finalizeGame() on the
+        // 8th wrong guess) settles inside this act() scope rather than
+        // leaking into an untracked tick before the test's next await.
+        await Promise.resolve();
+    });
 }
 
 beforeEach(() => {
     localStorage.clear();
     recordDailyStat.mockClear();
 
-    // 1. Reset the singleton Zustand store state to prevent cross-test leakage
     useSilhouetteGame.getState().resetGame();
 
-    // 2. Mock jsdom-missing window layout/scroll functions
     window.HTMLElement.prototype.scrollIntoView = vi.fn();
     window.scrollTo = vi.fn();
+});
+
+afterEach(() => {
+    vi.restoreAllMocks();
 });
 
 describe('DailySilhouetteWrapper (daily mode) — real component integration', () => {
@@ -294,10 +324,6 @@ describe('DailySilhouetteWrapper (daily mode) — real component integration', (
         render(<DailySilhouetteWrapper initialTarget={ICHIGO_SILHOUETTE} />);
         await waitFor(() => screen.getByPlaceholderText('ENTER SOUL NAME...'));
 
-        // ⚠️ Consumes exactly MAX_DAILY_SILHOUETTE_GUESSES (assumed 8) distinct
-        // wrong guesses — SearchBar no-ops on re-selecting an already-guessed
-        // character, so this must be 8 genuinely different characters, not a
-        // repeat, or the round will never reach isGameOver.
         const wrongCharacters = [RUKIA, ISHIDA, ORIHIME, CHAD, RENJI, URYU_2, KISUKE, YORUICHI];
         expect(wrongCharacters).toHaveLength(8);
 
@@ -310,18 +336,25 @@ describe('DailySilhouetteWrapper (daily mode) — real component integration', (
 
         await waitFor(() => {
             expect(screen.getByText('TARGET IDENTITY DISRUPTED')).toBeInTheDocument();
-        }, { timeout: 3500 }); // real 900ms loss reveal-delay setTimeout
+        }, { timeout: 3500 });
 
-        // Loss still reveals the true answer's name (see createDailyGuessGameStore's
-        // "reveal on both win and loss" fix, `resolveAnswerId` -> getCharacterById).
-        // NOTE: SilhouetteSummaryGuess renders the name with a CSS `uppercase`
-        // class, but that's a visual transform only — the actual DOM text node
-        // keeps its original casing, so assert on "Ichigo Kurosaki", not the
-        // visually-rendered "ICHIGO KUROSAKI" (a common false-assertion trap).
         expect(screen.getByText('Ichigo Kurosaki')).toBeInTheDocument();
 
         const completed = JSON.parse(localStorage.getItem(STORAGE_KEYS.SILHOUETTE_COMPLETED) || '{}');
         expect(completed.daily ?? []).toEqual([]);
+
+        await waitFor(() => {
+            expect(recordDailyStat).toHaveBeenCalledWith('silhouette', false, 8, 'mock-test-token', expect.any(String));
+        });
+
+        // recordDailyStat being called doesn't guarantee the store's own
+        // subsequent `hasFinalized = true` state update (set *after*
+        // `await recordDailyStat(...)` resolves inside finalizeGame) has
+        // already committed through React — wait for that directly so no
+        // pending state update lands outside this test's act() scope.
+        await waitFor(() => {
+            expect(useSilhouetteGame.getState().hasFinalized).toBe(true);
+        });
     });
 
     it('persists guesses across remounts via localStorage hydration', async () => {

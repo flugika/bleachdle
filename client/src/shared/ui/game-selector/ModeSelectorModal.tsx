@@ -1,4 +1,4 @@
-// src/components/ModeSelectorModal.tsx
+// src/shared/ui/game-selector/ModeSelectorModal.tsx
 "use client";
 
 import React, { useMemo } from "react";

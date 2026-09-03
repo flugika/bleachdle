@@ -27,12 +27,6 @@ import { FEATURE_FLAGS } from '@/src/config/feature.flags';
 const DEFAULT_RELEASE_DURATION_MS = 60_000; // fallback 60s ก่อนเมทาดาต้าจริงโหลดเสร็จ
 const STEP_MS = 50;
 
-// 🩹 audio_url ใน releases.json เป็นแค่ชื่อไฟล์เปล่าๆ (เช่น "Bankai_Izuru_Kira.mp3")
-// ไม่ใช่ path เต็ม เลยต้องเติม base path นี้ก่อนใช้เป็น audio.src เสมอ
-// ปรับให้ตรงกับที่เก็บไฟล์จริงถ้าไม่ใช่ public/assets/releases
-const AUDIO_BASE_PATH = '/api/asset/release/';
-const resolveAudioSrc = (audioUrl: string) => `${AUDIO_BASE_PATH}${audioUrl}`;
-
 const COLOR = {
     track: '#1c1c2b',        // ยังไม่ถูกเล่น / เกิน clip_end_ms ที่ทดสอบอยู่
     window: 'rgba(200, 169, 110, 0.30)', // ช่วง 0 → clip_end_ms ที่กำลังทดสอบ (ยังไม่เล่น)
@@ -116,7 +110,6 @@ function useAudioEngine() {
             const audio = audioRef.current;
             if (!audio) return;
 
-            // กดซ้ำที่ปุ่มเดิม -> หยุด
             if (playingId === playId) {
                 stop(releaseId);
                 return;
@@ -124,8 +117,10 @@ function useAudioEngine() {
 
             clearCutoffTimer();
 
-            // 🩹 audioUrl ที่มาจาก releases.json เป็นแค่ชื่อไฟล์เปล่าๆ ต้องเติม base path ก่อนเสมอ
-            audio.src = resolveAudioSrc(audioUrl);
+            // 🆕 ใช้ endpoint เดียวกับที่เกมจริงใช้ (src/app/api/asset/[type]/[id]/route.ts)
+            // ซึ่ง resolve path จริงฝั่งเซิร์ฟเวอร์เองผ่าน resolveAssetPath('release', id)
+            // ไม่ต้องพึ่งการเดา base path จาก client อีกต่อไป — เลิกใช้ resolveAudioSrc
+            audio.src = `/api/asset/release/${releaseId}`;
             audio.currentTime = 0;
             setPlayingId(playId);
             setLivePositions((prev) => ({ ...prev, [releaseId]: 0 }));
@@ -149,8 +144,6 @@ function useAudioEngine() {
                 }
             };
             audio.onerror = () => {
-                // 🩹 เคสหลัก: ไฟล์ไม่มีจริงใน /assets/releases (404) — audio element จะยิง error
-                // event นี้แทนที่จะ throw ให้ catch ข้างบนจับ ต้องดักแยกไว้
                 setPlaybackErrors((prev) => ({ ...prev, [releaseId]: `File not found: ${audio.src}` }));
                 stop(releaseId);
             };

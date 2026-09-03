@@ -67,8 +67,8 @@
 //   6. FEATURE_FLAGS.daily.release is assumed `true` for these tests.
 
 import React from 'react';
-import { render, screen, fireEvent, waitFor } from '@testing-library/react';
-import { describe, it, expect, beforeEach, vi } from 'vitest';
+import { render, screen, fireEvent, waitFor, act } from '@testing-library/react';
+import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
 import DailyReleaseWrapper from '@/src/features/release/components/daily/DailyReleaseWrapper';
 import { STORAGE_KEYS } from '@/src/const/localStorage';
 import { BleachRelease } from '@/src/entities/release/schema';
@@ -143,6 +143,26 @@ vi.mock('@/src/features/release/release', () => ({
 const recordDailyStat = vi.fn().mockResolvedValue(undefined);
 vi.mock('@/src/services/statsClient', () => ({
     recordDailyStat: (...args: unknown[]) => recordDailyStat(...args),
+}));
+
+vi.mock('@/src/shared/hooks/useTurnstile', () => ({
+    useTurnstile: () => ({
+        getToken: vi.fn().mockResolvedValue('mock-test-token'),
+        containerRef: { current: null },
+    }),
+}));
+
+vi.mock('@/src/lib/sync/syncEngine', () => ({
+    SyncEngine: {
+        getInstance: () => ({
+            queueProgress: vi.fn(),
+            submitResult: vi.fn().mockResolvedValue(undefined),
+        }),
+    },
+}));
+
+vi.mock('@/src/lib/sync/syncProgressHelper', () => ({
+    syncProgressImmediately: vi.fn(),
 }));
 
 // ⚠️ ASSUMED values — not defined in any provided source file, same
@@ -224,26 +244,69 @@ vi.mock('@/src/features/release/components/shared/ReleaseSummaryGuess', () => ({
 // "ENTER TECHNIQUE NAME..." and the searchable/displayed string is the
 // release's `technique_name`, not a character's `name`.
 async function selectTechnique(techniqueName: string) {
-    const input = screen.getByPlaceholderText('ENTER TECHNIQUE NAME...');
-    fireEvent.change(input, { target: { value: techniqueName } });
-    fireEvent.focus(input);
+    const input = await screen.findByPlaceholderText('ENTER TECHNIQUE NAME...');
 
-    // ReleaseSearchBar's dropdown is a portal <ul>/<li> — no testid, select by text.
+    await act(async () => {
+        fireEvent.change(input, { target: { value: techniqueName } });
+        fireEvent.focus(input);
+    });
+
     const option = await screen.findByText(techniqueName);
-    fireEvent.mouseDown(option);
+
+    await act(async () => {
+        fireEvent.mouseDown(option);
+        // flush the microtask queue so any promise chains kicked off
+        // synchronously by the click (e.g. addGuess -> isGameOver effect ->
+        // getToken()/finalizeGame()) settle inside this act() scope instead
+        // of leaking into an untracked tick between here and the next
+        // await in the test body.
+        await Promise.resolve();
+    });
 }
 
 beforeEach(() => {
+    vi.useFakeTimers({ shouldAdvanceTime: true });
+
     localStorage.clear();
     recordDailyStat.mockClear();
 
-    // 1. Reset the singleton Zustand store state to prevent cross-test leakage
+    vi.stubGlobal(
+        'fetch',
+        vi.fn().mockResolvedValue({
+            ok: true,
+            status: 200,
+            json: async () => ({}),
+        } as Response)
+    );
+
     useReleaseGame.getState().resetGame();
 
-    // 2. Mock jsdom-missing window layout/scroll functions
     window.HTMLElement.prototype.scrollIntoView = vi.fn();
     window.scrollTo = vi.fn();
+
+    // 🛡️ DailyReleaseWrapper runs a real setInterval (1000ms) driving the
+    // `timeLeft` countdown ticker — pure UI chrome, never asserted on in
+    // this suite. Under `shouldAdvanceTime: true`, this interval can fire
+    // on its own (outside any act() scope) whenever real wall-clock time
+    // between our awaits crosses the 1000ms boundary — unrelated to the
+    // async getToken()/finalizeGame() chain (already confirmed clean after
+    // mocking SyncEngine/syncProgressImmediately above). Stub interval
+    // scheduling itself so it never fires; setTimeout stays faked normally
+    // for advanceRevealDelay().
+    vi.spyOn(global, 'setInterval').mockImplementation(() => 0 as unknown as NodeJS.Timeout);
 });
+
+afterEach(() => {
+    vi.restoreAllMocks();
+    vi.useRealTimers();
+    vi.unstubAllGlobals();
+});
+
+async function advanceRevealDelay(ms: number) {
+    await act(async () => {
+        await vi.advanceTimersByTimeAsync(ms);
+    });
+}
 
 describe('DailyReleaseWrapper (daily mode) — real component integration', () => {
     it("renders the search input once hydrated, with today's target wired in", async () => {
@@ -277,9 +340,13 @@ describe('DailyReleaseWrapper (daily mode) — real component integration', () =
         // factory default `target.character_id`).
         await selectTechnique('Daiguren Hyorinmaru');
 
+        // Wait for the async finalize chain to actually complete (getToken →
+        // finalizeGame → recordDailyStat) instead of guessing microtask counts.
         await waitFor(() => {
-            expect(screen.getByTestId('summary')).toBeInTheDocument();
-        }, { timeout: 3500 }); // real 1600ms win reveal-delay setTimeout in DailyReleaseWrapper
+            expect(recordDailyStat).toHaveBeenCalled();
+        });
+
+        await advanceRevealDelay(3500);
         expect(screen.getByText('Release Traced to Registered Technique')).toBeInTheDocument();
 
         // 2 guesses total (1 wrong + 1 correct).
@@ -293,23 +360,17 @@ describe('DailyReleaseWrapper (daily mode) — real component integration', () =
         render(<DailyReleaseWrapper initialTarget={TARGET_HIDDEN} />);
         await waitFor(() => screen.getByPlaceholderText('ENTER TECHNIQUE NAME...'));
 
-        // 1. ลองเดาคำตอบแบบรัว ๆ ครบทั้ง 6 เพลงตามที่เราเตรียมไว้ในฟิกซ์เจอร์
         await selectTechnique('Zangetsu');
         await selectTechnique('Sode no Shirayuki');
         await selectTechnique('Licht Regen');
         await selectTechnique('Tensa Zangetsu');
         await selectTechnique('Segunda Etapa');
-        await selectTechnique('Zabimaru');
+        await selectTechnique('Zabimaru'); // 6th wrong guess → isGameOver flips true here
 
-        // หากระบบจริงจำกัดจำนวนไว้ "น้อยกว่า 6" เช่น 5 ครั้ง เกมจะจบตั้งแต่ 'Segunda Etapa' แล้ว
-        // แต่ถ้าเก็บมากกว่า 6 (เช่น 10 ครั้ง เหมือน Unlimited Mode) ระบบจะไม่ขึ้นหน้า Summary เพราะเกมยังไม่จบ
-        await waitFor(() => {
-            expect(screen.getByTestId('summary')).toBeInTheDocument();
-        }, { timeout: 3500 });
+        await advanceRevealDelay(3500);
 
         expect(screen.getByText('Release Remains Unclassified')).toBeInTheDocument();
 
-        // 2. ตรวจจับการยิง Stat โดยไม่ไปล็อคตายตัวที่เลข 6 เผื่อว่าระบบจริงถูกตั้งไว้ไม่เท่ากัน
         await waitFor(() => {
             expect(recordDailyStat).toHaveBeenCalledWith('release', false, expect.any(Number), 'mock-test-token', today);
         });

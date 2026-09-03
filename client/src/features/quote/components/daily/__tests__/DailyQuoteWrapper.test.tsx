@@ -51,7 +51,7 @@
 //   7. FEATURE_FLAGS.daily.quote is assumed `true` for these tests.
 
 import React from 'react';
-import { render, screen, fireEvent, waitFor } from '@testing-library/react';
+import { render, screen, fireEvent, waitFor, act } from '@testing-library/react';
 import { describe, it, expect, beforeEach, vi } from 'vitest';
 import DailyQuoteWrapper from '@/src/features/quote/components/daily/DailyQuoteWrapper';
 import { STORAGE_KEYS } from '@/src/const/localStorage';
@@ -129,6 +129,13 @@ vi.mock('@/src/services/statsClient', () => ({
     recordDailyStat: (...args: unknown[]) => recordDailyStat(...args),
 }));
 
+vi.mock('@/src/shared/hooks/useTurnstile', () => ({
+    useTurnstile: () => ({
+        getToken: vi.fn().mockResolvedValue('mock-test-token'),
+        containerRef: { current: null },
+    }),
+}));
+
 // ⚠️ ASSUMED value — not defined in any provided source file (see note 4).
 vi.mock('@/src/const/guess', () => ({
     MAX_DAILY_QUOTE_GUESSES: 6,
@@ -177,12 +184,23 @@ vi.mock('@/src/features/quote/components/shared/QuoteSummaryGuess', () => ({
 // ── Helpers ─────────────────────────────────────────────────────────────────
 async function selectCharacter(name: string) {
     const input = screen.getByPlaceholderText('ENTER SOUL NAME...');
-    fireEvent.change(input, { target: { value: name } });
-    fireEvent.focus(input);
+
+    await act(async () => {
+        fireEvent.change(input, { target: { value: name } });
+        fireEvent.focus(input);
+    });
 
     // SearchBar's dropdown is a portal <ul>/<li> — no testid, select by text.
     const option = await screen.findByText(name);
-    fireEvent.mouseDown(option);
+
+    await act(async () => {
+        fireEvent.mouseDown(option);
+        // flush microtasks so any promise chain kicked off synchronously by
+        // this guess (isGameOver effect -> getToken()/finalizeGame() on the
+        // winning guess) settles inside this act() scope rather than leaking
+        // into an untracked tick before the test's next await.
+        await Promise.resolve();
+    });
 }
 
 beforeEach(() => {

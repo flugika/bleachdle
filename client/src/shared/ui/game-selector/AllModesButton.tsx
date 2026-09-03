@@ -1,4 +1,4 @@
-// src/shared/ui/AllModesButton.tsx
+// src/shared/ui/game-selector/AllModesButton.tsx
 "use client";
 
 import { useState } from 'react';

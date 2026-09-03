@@ -22,9 +22,9 @@ export const FEATURE_FLAGS = {
     },
 
     mockup: {
-        song: false,
-        silhouette: false,
-        release: false,
+        song: true,
+        silhouette: true,
+        release: true,
     },
 
     support: true,

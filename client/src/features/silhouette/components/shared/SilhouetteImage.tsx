@@ -216,6 +216,25 @@ export const SilhouetteImage = ({
                     />
                 )}
 
+                {/* pattern def — ประกาศครั้งเดียว ไม่วนซ้ำใน loop */}
+                <svg width="0" height="0" style={{ position: 'absolute' }} aria-hidden="true">
+                    <defs>
+                        <pattern
+                            id="asanoha"
+                            patternUnits="objectBoundingBox"
+                            width={1 / 3}
+                            height={1 / 3}
+                            viewBox="0 0 100 100"
+                        >
+                            <g fill="none" stroke="#c8a96e" strokeWidth="2.2">
+                                <path d="M50 0 L100 25 V75 L50 100 L0 75 V25 Z" />
+                                <path d="M50 0 L50 100 M0 25 L100 75 M100 25 L0 75" />
+                                <path d="M50 0 L0 25 M50 0 L100 25 M50 100 L0 75 M50 100 L100 75" />
+                            </g>
+                        </pattern>
+                    </defs>
+                </svg>
+
                 <div
                     className="absolute inset-0 grid z-40 transition-opacity duration-500"
                     style={{
@@ -228,14 +247,22 @@ export const SilhouetteImage = ({
                         return (
                             <div
                                 key={i}
-                                className="transition-all duration-700 ease-out border border-[#c8a96e]/15 shadow-[inset_0_0_12px_rgba(0,0,0,0.9)]"
+                                className="relative transition-all duration-700 ease-out border border-[#c8a96e]/25 shadow-[inset_0_0_12px_rgba(0,0,0,0.9)] overflow-hidden"
                                 style={{
-                                    backgroundColor: '#010103',
+                                    background: 'radial-gradient(circle at 30% 20%, #332e24 0%, #1a1712 70%)',
                                     opacity: isBoxRevealed ? 0 : 1,
                                     transform: isBoxRevealed ? 'scale(0.85)' : 'scale(1)',
                                     pointerEvents: 'none',
                                 }}
-                            />
+                            >
+                                <svg
+                                    className="absolute inset-0 w-full h-full pointer-events-none"
+                                    style={{ opacity: 0.18 }}
+                                    aria-hidden="true"
+                                >
+                                    <rect width="100%" height="100%" fill="url(#asanoha)" />
+                                </svg>
+                            </div>
                         );
                     })}
                 </div>

@@ -95,23 +95,37 @@ export function useTurnstile() {
     }, [isTest]);
 
     const getToken = useCallback((): Promise<string> => {
-        // คืนค่า mock token ทันทีเมื่อรันแบบ test
         if (isTest) {
             return Promise.resolve('mock-test-token');
         }
 
         return new Promise((resolve, reject) => {
-            if (!window.turnstile || !widgetIdRef.current) {
-                reject(new Error('Turnstile widget not ready yet'));
-                return;
-            }
-            if (pendingRef.current) {
-                reject(new Error('A Turnstile challenge is already in flight'));
-                return;
-            }
-            pendingRef.current = { resolve, reject };
-            window.turnstile.reset(widgetIdRef.current);
-            window.turnstile.execute(widgetIdRef.current);
+            const MAX_RETRIES = 50; // 5 วินาที (50 * 100ms)
+            let retries = 0;
+
+            const checkReadyAndExecute = () => {
+                if (window.turnstile && widgetIdRef.current) {
+                    if (pendingRef.current) {
+                        reject(new Error('A Turnstile challenge is already in flight'));
+                        return;
+                    }
+                    pendingRef.current = { resolve, reject };
+                    try {
+                        window.turnstile.reset(widgetIdRef.current);
+                        window.turnstile.execute(widgetIdRef.current);
+                    } catch (err) {
+                        pendingRef.current = null;
+                        reject(err instanceof Error ? err : new Error('Turnstile execution failed'));
+                    }
+                } else if (retries < MAX_RETRIES) {
+                    retries++;
+                    setTimeout(checkReadyAndExecute, 100);
+                } else {
+                    reject(new Error('Turnstile widget not ready after timeout'));
+                }
+            };
+
+            checkReadyAndExecute();
         });
     }, [isTest]);
 

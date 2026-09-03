@@ -158,7 +158,10 @@ function ReleaseTypeBadge({ type }: { type: string }) {
 function InvokeWardPlayer({ releaseId, clipEndMs, layout = 'vertical' }: { releaseId: string; clipEndMs?: number | null; layout?: 'vertical' | 'horizontal' }) {
     const audioRef = useRef<HTMLAudioElement>(null);
     const [playing, setPlaying] = useState(false);
-    const [barHeight, setBarHeight] = useState(4);
+
+    // 1. เปลี่ยนจาก state เดี่ยวเป็น Array ของความสูงทั้ง 7 แท่ง
+    const BAR_COUNT = 7;
+    const [barHeights, setBarHeights] = useState<number[]>(() => Array(BAR_COUNT).fill(4));
 
     useEffect(() => {
         const el = audioRef.current;
@@ -177,15 +180,31 @@ function InvokeWardPlayer({ releaseId, clipEndMs, layout = 'vertical' }: { relea
     };
 
     const isHz = layout === 'horizontal';
-    const btnSize = isHz ? 34 : 64; // ย่อปุ่มลงให้กระทัดรัดเหมือนตราประทับเล็กๆ
+    const btnSize = isHz ? 34 : 64;
+
+    // 2. สุ่มความสูงแยกตามแต่ละแท่งแบบ Smooth Waveform เมื่อกำลังเล่น Audio
     useEffect(() => {
-        if (!playing) { setBarHeight(4); return; }
-        const id = setInterval(() => setBarHeight(Math.random() * 12), 150);
-        return () => clearInterval(id);
+        if (!playing) {
+            setBarHeights(Array(BAR_COUNT).fill(4));
+            return;
+        }
+
+        const interval = setInterval(() => {
+            setBarHeights(
+                Array.from({ length: BAR_COUNT }, (_, i) => {
+                    // ถ่วงน้ำหนักให้แท่งตรงกลางตอบสนองสูงกว่าแท่งริมขอบ (เลียนแบบ Frequency Waveform จริง)
+                    const centerWeight = 1 - Math.abs(i - Math.floor(BAR_COUNT / 2)) * 0.12;
+                    const randomAmp = Math.random() * 11 + 4;
+                    return Math.min(16, Math.max(3, Math.round(randomAmp * centerWeight)));
+                })
+            );
+        }, 90); // รีเฟรชความสูงทุก 90ms ให้จังหวะกำลังพอดี
+
+        return () => clearInterval(interval);
     }, [playing]);
 
     return (
-        <div className={`relative z-10 flex ${isHz ? 'flex-row items-center gap-1 px-6' : 'flex-col items-center justify-center'}`}>
+        <div className={`relative z-10 flex ${isHz ? 'flex-row items-center gap-1.5 px-6' : 'flex-col items-center justify-center'}`}>
             <audio ref={audioRef} src={`/api/asset/release/${releaseId}`} onEnded={() => setPlaying(false)} preload="none" />
             <button
                 type="button" onClick={handlePlay}
@@ -196,14 +215,15 @@ function InvokeWardPlayer({ releaseId, clipEndMs, layout = 'vertical' }: { relea
                 <span className="absolute inset-1 rounded-full transition-all duration-300" style={{ border: `1px solid ${playing ? T.gold : T.goldDim}`, boxShadow: playing ? `0 0 15px ${T.gold}88, inset 0 0 10px ${T.gold}44` : 'none', background: T.parchmentMid }} />
                 <svg className={`relative z-10 ${isHz ? 'w-3.5 h-3.5' : 'w-6 h-6'} transition-colors ${playing ? 'text-white drop-shadow-[0_0_8px_rgba(255,255,255,0.8)]' : 'text-[#c9a45e] group-hover:text-white'}`} viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z" /></svg>
             </button>
-            <div className={`flex ${isHz ? 'items-center gap-[3px]' : 'mt-3 items-end justify-center gap-[3px] h-3'}`}>
-                {Array.from({ length: 7 }).map((_, i) => (
+            <div className={`flex ${isHz ? 'items-center gap-[3px] h-4' : 'mt-3 items-end justify-center gap-[3px] h-4'}`}>
+                {barHeights.map((h, i) => (
                     <span
                         key={i}
-                        className={`w-[2px] bg-[#c9a45e] transition-all duration-75 ${isHz ? 'rounded-full' : 'rounded-t-sm'}`}
+                        className={`w-[2px] bg-[#c9a45e] transition-all duration-100 ease-out ${isHz ? 'rounded-full' : 'rounded-t-sm'}`}
                         style={{
-                            height: `${barHeight}px`,
-                            opacity: playing ? 0.9 : 0.3
+                            height: `${h}px`,
+                            opacity: playing ? Math.min(1, 0.45 + (h / 16) * 0.55) : 0.3,
+                            boxShadow: playing ? `0 0 6px ${T.gold}aa` : 'none'
                         }}
                     />
                 ))}

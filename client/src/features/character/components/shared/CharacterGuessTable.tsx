@@ -172,13 +172,15 @@ export const ResultCell = ({ value, status, colIndex, animate, size = "" }: Cell
 
     const isHighlight = status !== 'wrong';
 
+    const NO_SHADOW = '0 0 0 0 rgba(0,0,0,0)';
+
     const variants = {
-        hidden: { rotateY: 90, opacity: 0, scale: 0.92 },
+        hidden: { rotateY: 90, opacity: 0, scale: 0.92, boxShadow: NO_SHADOW },
         visible: {
             rotateY: [90, -6, 0],
             opacity: 1,
             scale: isHighlight ? [0.92, 1.08, 1] : [0.92, 1],
-            boxShadow: isHighlight ? ['none', glow, 'none'] : 'none',
+            boxShadow: isHighlight ? [NO_SHADOW, glow, NO_SHADOW] : NO_SHADOW,
         },
     };
 

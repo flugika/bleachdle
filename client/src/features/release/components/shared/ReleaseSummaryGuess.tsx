@@ -110,7 +110,7 @@ export const ReleaseSummaryGuess = ({
                 subtitle={isWin ? "Release Traced to Registered Technique" : "Release Remains Unclassified"}
             />
 
-            {mode === 'daily' && target.scheduledDate && (
+            {mode === 'daily' && (
                 <DailyResetTimer targetDate={target.scheduledDate} />
             )}
 

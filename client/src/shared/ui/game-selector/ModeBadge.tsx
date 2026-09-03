@@ -1,3 +1,4 @@
+// src/shared/ui/game-selector/ModeBadge.tsx
 "use client";
 
 interface ModeBadgeProps {

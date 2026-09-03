@@ -70,7 +70,7 @@ export const CharacterSummaryGuess = ({ isOpen, onClose, guesses, target, isWin,
                 subtitleColorClassName="text-[#eed9c4]/50"
             />
 
-            {mode === 'daily' && target.scheduledDate && (
+            {mode === 'daily' && (
                 <DailyResetTimer targetDate={target.scheduledDate} />
             )}
 

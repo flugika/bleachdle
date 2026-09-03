@@ -1,4 +1,10 @@
 // src/features/song/components/unlimited/UnlimitedSongWrapper.tsx
+//
+// 🆕 changes: same as UnlimitedCharacterWrapper —
+//   1. registerSoulName() no longer takes gameMode (global on players.soul_name).
+//   2. On mount, backfill this mode's local name from the global name if
+//      this mode never had one saved locally — safe/additive, no change to
+//      Central46ConfidentialArchive's prop contract.
 "use client";
 
 import { useEffect, useState } from 'react';
@@ -22,13 +28,19 @@ import { STORAGE_KEYS } from '@/src/const/localStorage';
 import { BL_MODES_METADATA } from '@/src/config/mode';
 import { logFullTarget } from '@/src/lib/debug/logFullTarget';
 import { Legend } from '@/src/shared/ui/control-panel/Legend';
+import { SyncEngine } from '@/src/lib/sync/syncEngine';
+import { useRemoteProgressSync } from '@/src/shared/hooks/useRemoteProgressSync';
+import { RemoteProgressBanner } from '@/src/shared/ui/pairing/RemoteProgressBanner';
+import { ResyncButton } from '@/src/shared/ui/pairing/ResyncButton';
+import { pullAndApplyMeta } from '@/src/lib/sync/pullAndApplyMeta';
+import { onCompletedSynced } from '@/src/lib/sync/completedSyncEvent';
 
 export default function UnlimitedSongWrapper() {
     const { navigate, state, reportReady } = useSenkaimon(); // 👈 pattern เดียวกับหน้า character unlimited เป๊ะ
 
     // 🛡️ subscribe store ครั้งเดียว แล้วส่ง object เดิมต่อให้ SongSearchBar ผ่าน prop `game`
     const gameStore = useSongGame();
-    const { target, guesses, initializeGame, finalizeGame, resetGame, hardReset, hasFinalized, _hasHydrated, resetStreakKeepMax, stats, loadStats } = gameStore;
+    const { target, guesses, initializeGame, finalizeGame, resetGame, hardReset, hasFinalized, _hasHydrated, resetStreakKeepMax, stats, loadStats, applyRemoteProgress, applyRemoteStats } = gameStore;
     const songs = getSongs();
 
     const [manuallyClosed, setManuallyClosed] = useState(false);
@@ -39,6 +51,43 @@ export default function UnlimitedSongWrapper() {
     const [revealDelayDone, setRevealDelayDone] = useState(false);
     const [finalRoundGuesses, setFinalRoundGuesses] = useState<typeof guesses>([]);
 
+    const handleRemoteLoad = async (remoteTargetId: string, remoteGuesses: unknown[]) => {
+        // 🆕 reset local ephemeral summary-gating state IMPERATIVELY, in the
+        // same handler that pulls in new remote data — don't rely solely on
+        // a useEffect keyed off target identity to catch this. Resync can be
+        // triggered while a summary is already showing (ResyncButton/banner
+        // stay mounted regardless of showSummary), so the reset must not
+        // depend on a round-trip through React's effect scheduler.
+        setManuallyClosed(false);
+        setRevealDelayDone(false);
+        applyRemoteProgress(remoteTargetId, remoteGuesses);
+
+        // 🆕 resync ควรดึง stats/completed/soul-registry มาด้วย ไม่ใช่แค่ progress
+        const meta = await pullAndApplyMeta('song', 'unlimited');
+        applyRemoteStats(meta.stats);
+        if (meta.reincarnationCount !== null) {
+            setReincarnationCount(meta.reincarnationCount);
+        }
+        if (meta.soulName) {
+            setSoulName(meta.soulName);
+        }
+
+        // ถ้า unlimited song มี isGameCompleted concept (เล่นครบทุกเพลง)
+        const completedData = JSON.parse(localStorage.getItem(STORAGE_KEYS.SONG_COMPLETED) || '{}');
+        const completed = completedData.unlimited || [];
+        setIsGameCompleted(songs.length > 0 && completed.length >= songs.length);
+    };
+
+    const remoteProgress = useRemoteProgressSync({
+        gameMode: 'song',
+        gameType: 'unlimited',
+        hasHydrated: _hasHydrated,
+        localTargetId: target?.id ?? null,
+        localHasFinalized: hasFinalized,
+        localGuessCount: guesses.length,
+        applyRemoteProgress: handleRemoteLoad,
+    });
+
     // 🛡️ FIX (ปัญหา modal ค้าง): ปิด modal ทันทีที่ประตูเซนไกมงเริ่ม "closing"
     useEffect(() => {
         if (state === "closing") {
@@ -47,10 +96,19 @@ export default function UnlimitedSongWrapper() {
     }, [state]);
 
     useEffect(() => {
+        const recompute = () => {
+            const completedData = JSON.parse(localStorage.getItem(STORAGE_KEYS.SONG_COMPLETED) || '{}');
+            const completed = completedData.unlimited || [];
+            setIsGameCompleted(songs.length > 0 && completed.length >= songs.length);
+        };
+        return onCompletedSynced('song', recompute);
+    }, [songs]);
+
+    useEffect(() => {
         setManuallyClosed(false);
         logFullTarget(target);
         setRevealDelayDone(false);
-    }, [target]);
+    }, [target, hasFinalized]);
 
     const remainingGuesses = Math.max(0, MAX_UNLIMITED_SONG_GUESSES - guesses.length);
 
@@ -94,21 +152,41 @@ export default function UnlimitedSongWrapper() {
     useEffect(() => {
         if (!_hasHydrated) return;
 
-        loadStats();
+        let cancelled = false;
 
-        const completedData = JSON.parse(localStorage.getItem(STORAGE_KEYS.SONG_COMPLETED) || '{}');
-        const completed = completedData.unlimited || [];
-        setIsGameCompleted(songs.length > 0 && completed.length >= songs.length);
+        (async () => {
+            loadStats();
 
-        const registryData = JSON.parse(localStorage.getItem(STORAGE_KEYS.SOUL_REGISTRY) || '{}');
-        const registry = registryData.song || { name: "", count: 0 };
-        if (registry.name) {
-            setSoulName(registry.name);
-        }
-        setReincarnationCount(registry.count || 0);
+            const completedData = JSON.parse(localStorage.getItem(STORAGE_KEYS.SONG_COMPLETED) || '{}');
+            const completed = completedData.unlimited || [];
+            setIsGameCompleted(songs.length > 0 && completed.length >= songs.length);
 
-        initializeGame();
-        setIsReady(true);
+            const registryData = JSON.parse(localStorage.getItem(STORAGE_KEYS.SOUL_REGISTRY) || '{}');
+            const registry = registryData.song || { name: "", count: 0 };
+            if (registry.name) {
+                setSoulName(registry.name);
+            }
+            setReincarnationCount(registry.count || 0);
+
+            if (!registry.name) {
+                SyncEngine.getInstance().getSoulName().then((globalName) => {
+                    if (!globalName) return;
+                    setSoulName(globalName);
+                    const rd = JSON.parse(localStorage.getItem(STORAGE_KEYS.SOUL_REGISTRY) || '{}');
+                    rd.song = { ...(rd.song || { name: '', count: 0 }), name: globalName };
+                    localStorage.setItem(STORAGE_KEYS.SOUL_REGISTRY, JSON.stringify(rd));
+                });
+            }
+
+            // 🆕 await ให้ target ถูกตั้งค่าจริง (ไม่ว่าจะมาจาก remote-check หรือ
+            // สุ่มใหม่) ก่อนประกาศว่า ready — กัน reportReady() ยิงเร็วเกินไป
+            // ระหว่างที่ยังรอ fetchActiveRemoteProgress อยู่ข้างใน
+            await initializeGame();
+
+            if (!cancelled) setIsReady(true);
+        })();
+
+        return () => { cancelled = true; };
     }, [initializeGame, songs.length, _hasHydrated, loadStats]);
 
     // 🚪 แจ้ง NavigationContext กลับไปตอน "isReady" เป็น true จริงๆ (หลัง hydrate + initializeGame เสร็จ)
@@ -129,7 +207,7 @@ export default function UnlimitedSongWrapper() {
     const handleCloseModal = () => {
         setManuallyClosed(true);
         resetGame();
-        initializeGame(true);
+        void initializeGame(true);
         window.scrollTo({ top: 0, behavior: 'smooth' });
     };
 
@@ -145,6 +223,9 @@ export default function UnlimitedSongWrapper() {
         registryData.song = updated;
         localStorage.setItem(STORAGE_KEYS.SOUL_REGISTRY, JSON.stringify(registryData));
         setSoulName(inputName.trim());
+
+        // 🆕 no gameMode arg — sets players.soul_name globally
+        SyncEngine.getInstance().registerSoulName(inputName.trim()).catch(() => { });
     };
 
     // ── 🛡️ คอมโบ Reset ข้อมูลโดยการเจาะทำลายเฉพาะกิ่งก้านของโหมด song/unlimited เท่านั้น
@@ -161,6 +242,7 @@ export default function UnlimitedSongWrapper() {
         setReincarnationCount(registryData.song.count);
 
         hardReset();
+        SyncEngine.getInstance().reincarnate('song').catch(() => { });
     };
 
     const handleSwitchDimension = (targetMode: 'daily' | 'unlimited') => {
@@ -192,6 +274,15 @@ export default function UnlimitedSongWrapper() {
             <main className="max-w-[80%] mx-auto px-4 pb-24">
                 {/* mode ยังคง "unlimited" เพราะ /song อยู่ใต้มิติ unlimited เดิม แค่คนละประเภทเกม */}
                 <ModeBadge mode="unlimited" onClick={() => setIsModeSelectorOpen(true)} />
+                {remoteProgress.visible ? (
+                    <RemoteProgressBanner
+                        updatedAt={remoteProgress.updatedAt}
+                        onDismiss={remoteProgress.onDismiss}
+                        onLoad={remoteProgress.onLoad}
+                    />
+                ) : (
+                    <ResyncButton gameMode={remoteProgress.gameMode} gameType={remoteProgress.gameType} applyRemoteProgress={handleRemoteLoad} />
+                )}
                 <div id="game-sub-header">
                     <SubHeader title={BL_MODES_METADATA.song.title} subtitle={BL_MODES_METADATA.song.statusLine} />
                 </div>
