@@ -341,6 +341,13 @@ bleachdle
 │  │  │  │     └─ [id]
 │  │  │  │        ├─ route.test.ts
 │  │  │  │        └─ route.ts
+<<<<<<< HEAD
+=======
+│  │  │  ├─ cron
+│  │  │  │  └─ purge-pairing-codes
+│  │  │  │     ├─ route.test.ts
+│  │  │  │     └─ route.ts
+>>>>>>> 0d5859c (Feat/device pairing (#29))
 │  │  │  ├─ device
 │  │  │  │  ├─ init
 │  │  │  │  │  ├─ route.test.ts
@@ -940,8 +947,12 @@ bleachdle
 │  │     ├─ 13_pairing_hardening.sql
 │  │     ├─ 14_soul_name_unification.sql
 │  │     ├─ 15_pairing_full_carryover.sql
+<<<<<<< HEAD
 │  │     ├─ 16_result_integrity_gate.sql
 │  │     └─ 17_purge_pairing_code_cron.sql
+=======
+│  │     └─ 16_result_integrity_gate.sql
+>>>>>>> 0d5859c (Feat/device pairing (#29))
 │  ├─ test-results
 │  │  └─ .last-run.json
 │  ├─ tests
@@ -959,6 +970,7 @@ bleachdle
 │  │     ├─ unlimited-silhouette-flow.spec.ts
 │  │     └─ unlimited-song-flow.spec.ts
 │  ├─ tsconfig.json
+│  ├─ vercel.json
 │  └─ vitest.config.ts
 ├─ DEPLOYMENT.md
 └─ README.md
