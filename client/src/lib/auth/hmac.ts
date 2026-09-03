@@ -10,14 +10,15 @@
 
 import { createHmac, randomBytes, timingSafeEqual } from 'crypto';
 
-const SERVER_SECRET = process.env.DEVICE_SECRET_HMAC_KEY;
-
-if (!SERVER_SECRET && process.env.NODE_ENV === 'production') {
-    // Fail loud at boot, not silently at request time with an empty key.
-    throw new Error(
-        '[hmac] DEVICE_SECRET_HMAC_KEY is not set. Refusing to start in production ' +
-        'without it — device auth would be forgeable.'
-    );
+function getServerSecret(): string {
+    const secret = process.env.DEVICE_SECRET_HMAC_KEY;
+    if (!secret && process.env.NODE_ENV === 'production') {
+        throw new Error(
+            '[hmac] DEVICE_SECRET_HMAC_KEY is not set. Refusing to start in production ' +
+            'without it — device auth would be forgeable.'
+        );
+    }
+    return secret || 'dev-only-insecure-fallback';
 }
 
 /** Generates a new random bearer secret for a device. 256 bits, base64url. */
@@ -27,24 +28,18 @@ export function generateDeviceSecret(): string {
 
 /** Hashes a raw device_secret for storage in player_devices.device_secret_hash. */
 export function hashDeviceSecret(secret: string): string {
-    return createHmac('sha256', SERVER_SECRET || 'dev-only-insecure-fallback')
+    return createHmac('sha256', getServerSecret())
         .update(secret)
         .digest('hex');
 }
 
-/** Constant-time-safe hash of a client IP for rate-limit bucketing —
- *  never store raw IPs, this lets device_provision_log exist without being
- *  a privacy liability even if the table were ever exposed. */
+/** Constant-time-safe hash of a client IP for rate-limit bucketing */
 export function hashIp(ip: string): string {
-    return createHmac('sha256', SERVER_SECRET || 'dev-only-insecure-fallback')
+    return createHmac('sha256', getServerSecret())
         .update(ip)
         .digest('hex');
 }
 
-/**
- * Constant-time compare of a freshly-hashed candidate secret against the
- * stored hash. Always use this instead of `===` on hashes.
- */
 export function verifyDeviceSecret(candidateSecret: string, storedHash: string): boolean {
     const candidateHash = hashDeviceSecret(candidateSecret);
 
