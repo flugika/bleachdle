@@ -101,7 +101,7 @@ export default function UnlimitedEmojiWrapper() {
         setManuallyClosed(false);
         logFullTarget(target, emojiSets);
         setRevealDelayDone(false);
-    }, [target?.id, emojiSets]);
+    }, [target, emojiSets]);
 
     const remainingGuesses = Math.max(0, MAX_UNLIMITED_EMOJI_GUESSES - guesses.length);
 

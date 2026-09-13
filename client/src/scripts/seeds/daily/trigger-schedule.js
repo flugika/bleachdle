@@ -20,6 +20,7 @@ async function triggerDatabaseSchedule() {
     } catch (err) {
         console.error('\n❌ Critical Error during RPC execution:');
         console.error(err.message || err);
+        process.exit(1);
     }
 }
 

@@ -106,7 +106,7 @@ export default function UnlimitedReleaseWrapper() {
         setManuallyClosed(false);
         logFullTarget(target);
         setRevealDelayDone(false);
-    }, [target?.id]);
+    }, [target]);
 
     const remainingGuesses = Math.max(0, MAX_UNLIMITED_RELEASE_GUESSES - guesses.length);
 

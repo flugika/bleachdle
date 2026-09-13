@@ -44,7 +44,7 @@ const eslintConfig = defineConfig([
       // ═══════════════════════════════════════════════
 
       "@typescript-eslint/no-explicit-any": "warn",
-      "@typescript-eslint/no-unused-vars": "warn",
+      "@typescript-eslint/no-unused-vars": ["warn", { "ignoreRestSiblings": true }],
       "@typescript-eslint/ban-ts-comment": "warn",
       "@typescript-eslint/no-empty-object-type": "warn",
       "@next/next/no-img-element": "warn",

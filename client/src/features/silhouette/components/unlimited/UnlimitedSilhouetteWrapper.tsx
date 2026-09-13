@@ -105,7 +105,7 @@ export default function UnlimitedSilhouetteWrapper() {
         setManuallyClosed(false);
         logFullTarget(target);
         setRevealDelayDone(false);
-    }, [target?.id]);
+    }, [target]);
 
     const remainingGuesses = Math.max(0, MAX_UNLIMITED_SILHOUETTE_GUESSES - guesses.length);
 
