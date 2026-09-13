@@ -109,7 +109,7 @@ export default function UnlimitedSongWrapper() {
         setManuallyClosed(false);
         logFullTarget(target);
         setRevealDelayDone(false);
-    }, [target, hasFinalized]);
+    }, [target]);
 
     const remainingGuesses = Math.max(0, MAX_UNLIMITED_SONG_GUESSES - guesses.length);
 

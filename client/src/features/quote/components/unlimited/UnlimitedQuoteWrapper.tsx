@@ -101,7 +101,7 @@ export default function UnlimitedQuoteWrapper() {
         setManuallyClosed(false);
         logFullTarget(target);
         setRevealDelayDone(false);
-    }, [target, hasFinalized]);
+    }, [target]);
 
     const remainingGuesses = Math.max(0, MAX_UNLIMITED_QUOTE_GUESSES - guesses.length);
 
