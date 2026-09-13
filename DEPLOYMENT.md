@@ -108,3 +108,116 @@ is the gate; Vercel's check is the second opinion.
   than scaffolding an empty test job now.
 - **Rate limiting on game APIs, Turnstile re-enable, Supabase migration:**
   application-level roadmap items, not CI/CD concerns.
+
+---
+
+## 6. Local dev workflow (before CI even sees it)
+
+CI is the gate, but running the same checks locally first means you catch
+problems before pushing — faster feedback, fewer wasted CI minutes, and no
+"fix lint" follow-up commits cluttering the PR.
+
+### 6.1 Standard loop for any change
+
+```bash
+# from client/
+pnpm lint
+pnpm test
+pnpm build
+```
+
+Run all three before pushing. `pnpm build` matters even for small changes —
+type errors and import issues sometimes only surface at build time, not in
+`pnpm lint` or in editor tooling.
+
+### 6.2 Starting a new feature/fix — branch hygiene
+
+Always branch from an up-to-date `main`. Never branch from another feature
+branch unless you specifically mean to stack work on it.
+
+```bash
+git checkout main
+git pull origin main
+git checkout -b fix/short-description
+```
+
+Why `pull` before `checkout -b`: branching off a stale local `main` means
+the new branch is already missing recent commits, which just means bigger
+conflicts later when merging `main` back in.
+
+### 6.3 While working — keep the branch in sync
+
+For anything longer-lived than a day or two, merge `main` in periodically
+instead of letting the branch drift for weeks and facing one huge conflict
+at the end:
+
+```bash
+git checkout main
+git pull origin main
+git checkout fix/short-description
+git merge main
+# resolve any conflicts now, while they're small
+```
+
+### 6.4 Before pushing / opening a PR
+
+```bash
+pnpm lint
+pnpm test
+pnpm build
+
+git checkout main
+git pull origin main
+git checkout fix/short-description
+git merge main
+# resolve conflicts if any → git add → git commit
+
+git push origin fix/short-description
+```
+
+Open the PR on GitHub. CI (`ci.yml`) and Vercel's preview build both kick
+off automatically — no extra step needed on your end.
+
+### 6.5 Merging the PR
+
+- Wait for **`CI success`** to go green (required check per §4).
+- Vercel preview failing is worth a look but isn't blocking — use judgment.
+- Use **Squash and merge**. This repo's branches often accumulate messy
+  intermediate commits (WIP fixes, merge-main-back-in commits, etc.) —
+  squashing means `main` gets one clean commit per PR regardless of what
+  happened inside the branch.
+- Delete the branch after merging (GitHub prompts for this automatically).
+
+### 6.6 After merge
+
+```bash
+git checkout main
+git pull origin main
+git branch -d fix/short-description
+```
+
+Back to §6.2 for the next piece of work — always fresh off `main`, never off
+whatever branch you happened to be sitting on.
+
+### 6.7 Rules of thumb / things that have caused pain before
+
+- **Never** run `git checkout -b` from a branch other than `main` unless
+  intentional — the new branch inherits that branch's entire history, which
+  is how PRs end up with 15+ unrelated-looking commits.
+- **Never** click VS Code's "Sync Changes" button while a merge/conflict is
+  in progress — depending on `pull.rebase` config it can kick off a rebase
+  on top of an unfinished merge and leave the repo in a confusing state.
+  Resolve via terminal (`git status` → fix → `git add` → `git commit`) when
+  a merge is underway.
+- **Never** switch branches or run `git pull` mid-conflict. Finish resolving
+  (`add` + `commit`, or `merge --abort` / `rebase --abort` to bail out
+  cleanly) before doing anything else.
+- When unsure what state the repo is in, `git status` first. It tells you
+  directly if there's an unfinished merge or rebase — don't guess.
+- If things get tangled beyond a quick fix, aborting back to a clean state
+  and redoing the merge is faster and safer than untangling it live:
+  ```bash
+  git merge --abort      # if mid-merge
+  git rebase --abort     # if mid-rebase
+  git status             # confirm it's clean before retrying
+  ```
