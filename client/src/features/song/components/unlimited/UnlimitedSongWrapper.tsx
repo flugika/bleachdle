@@ -89,43 +89,6 @@ export default function UnlimitedSongWrapper() {
         applyRemoteProgress: handleRemoteLoad,
     });
 
-    const handleRemoteLoad = async (remoteTargetId: string, remoteGuesses: unknown[]) => {
-        // 🆕 reset local ephemeral summary-gating state IMPERATIVELY, in the
-        // same handler that pulls in new remote data — don't rely solely on
-        // a useEffect keyed off target identity to catch this. Resync can be
-        // triggered while a summary is already showing (ResyncButton/banner
-        // stay mounted regardless of showSummary), so the reset must not
-        // depend on a round-trip through React's effect scheduler.
-        setManuallyClosed(false);
-        setRevealDelayDone(false);
-        applyRemoteProgress(remoteTargetId, remoteGuesses);
-
-        // 🆕 resync ควรดึง stats/completed/soul-registry มาด้วย ไม่ใช่แค่ progress
-        const meta = await pullAndApplyMeta('song', 'unlimited');
-        applyRemoteStats(meta.stats);
-        if (meta.reincarnationCount !== null) {
-            setReincarnationCount(meta.reincarnationCount);
-        }
-        if (meta.soulName) {
-            setSoulName(meta.soulName);
-        }
-
-        // ถ้า unlimited song มี isGameCompleted concept (เล่นครบทุกเพลง)
-        const completedData = JSON.parse(localStorage.getItem(STORAGE_KEYS.SONG_COMPLETED) || '{}');
-        const completed = completedData.unlimited || [];
-        setIsGameCompleted(songs.length > 0 && completed.length >= songs.length);
-    };
-
-    const remoteProgress = useRemoteProgressSync({
-        gameMode: 'song',
-        gameType: 'unlimited',
-        hasHydrated: _hasHydrated,
-        localTargetId: target?.id ?? null,
-        localHasFinalized: hasFinalized,
-        localGuessCount: guesses.length,
-        applyRemoteProgress: handleRemoteLoad,
-    });
-
     // 🛡️ FIX (ปัญหา modal ค้าง): ปิด modal ทันทีที่ประตูเซนไกมงเริ่ม "closing"
     useEffect(() => {
         if (state === "closing") {
