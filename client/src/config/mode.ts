@@ -36,14 +36,14 @@ export const BL_MODES_METADATA: Record<SubFeatureKey, ModeConfig> = {
         technicalTerm: "REISHI PULSE: CLASSIFIED",
         statusLine: "System // Scanning for Reiatsu Signature",
     },
-    song: {
-        id: "song",
-        title: "REIATSU RESONANCE", // 🔒 locked
-        romaji: "REIATSU SHINDŌ • 霊圧振動",
-        symbol: "音", // Sound / Echo
-        desc: "Listen to a short audio clip and name the Bleach song or OST track.",
-        technicalTerm: "HADŌ RESONANCE: ACTIVE",
-        statusLine: "System // Tuning Into Spiritual Frequency",
+    emoji: {
+        id: "emoji",
+        title: "REISHI SYMBOLOGY",
+        romaji: "REISHI MONSHŌ • 霊子紋章",
+        symbol: "紋", // Crest / Emblem
+        desc: "Guess the character from a set of emoji clues.",
+        technicalTerm: "SEAL TYPE: SEIREITEI GRID",
+        statusLine: "System // Decoding Spirit Particle Cipher",
     },
     quote: {
         id: "quote",
@@ -53,6 +53,15 @@ export const BL_MODES_METADATA: Record<SubFeatureKey, ModeConfig> = {
         desc: "Read the line, then guess which character said it.",
         technicalTerm: "BAKUDŌ COMMAND: VERBAL",
         statusLine: "System // Replaying Recorded Voice Print",
+    },
+    release: {
+        id: "release",
+        title: "KAIHŌ INVOCATION",
+        romaji: "KAIHŌ SENGEN • 解放宣言",
+        symbol: "解", // Release
+        desc: "See the release moment, then type the exact command used to unleash the Zanpakutō.",
+        technicalTerm: "SHIKAI SEAL: UNLOCKED",
+        statusLine: "System // Awaiting Release Command",
     },
     silhouette: {
         id: "silhouette",
@@ -65,23 +74,14 @@ export const BL_MODES_METADATA: Record<SubFeatureKey, ModeConfig> = {
         technicalTerm: "KAGE MOCKUP: ENCRYPTED",
         statusLine: "System // Unveiling Reiatsu Grid",
     },
-    emoji: {
-        id: "emoji",
-        title: "REISHI SYMBOLOGY",
-        romaji: "REISHI MONSHŌ • 霊子紋章",
-        symbol: "紋", // Crest / Emblem
-        desc: "Guess the character from a set of emoji clues.",
-        technicalTerm: "SEAL TYPE: SEIREITEI GRID",
-        statusLine: "System // Decoding Spirit Particle Cipher",
-    },
-    release: {
-        id: "release",
-        title: "KAIHŌ INVOCATION",
-        romaji: "KAIHŌ SENGEN • 解放宣言",
-        symbol: "解", // Release
-        desc: "See the release moment, then type the exact command used to unleash the Zanpakutō.",
-        technicalTerm: "SHIKAI SEAL: UNLOCKED",
-        statusLine: "System // Awaiting Release Command",
+    song: {
+        id: "song",
+        title: "REIATSU RESONANCE", // 🔒 locked
+        romaji: "REIATSU SHINDŌ • 霊圧振動",
+        symbol: "音", // Sound / Echo
+        desc: "Listen to a short audio clip and name the Bleach song or OST track.",
+        technicalTerm: "HADŌ RESONANCE: ACTIVE",
+        statusLine: "System // Tuning Into Spiritual Frequency",
     },
 };
 
@@ -106,7 +106,7 @@ export const DIMENSION_ACCENT: Record<Dimension, { label: string; kanji: string;
 
 // 🗺️ ลำดับอ้างอิง — กรองผ่าน FEATURE_FLAGS[dimension] ก่อนเข้า .map() เสมอ
 // โหมดที่ flag = false จะไม่ถูก render ออกมาเลย ไม่ใช่แค่ disabled ค้างไว้ให้เห็น
-export const MODE_ORDER: SubFeatureKey[] = ['character', 'song', 'quote', 'silhouette', 'emoji', 'release'];
+export const MODE_ORDER: SubFeatureKey[] = ['character', 'emoji', 'quote', 'release', 'silhouette', 'song'];
 
 // 🎨 สีประจำตัวของแต่ละ discipline — ดึงจากโทนที่มีจริงใน TYBW (น้ำเงิน/ฟ้า/ส้ม/แดง/ทอง)
 export const MODE_ACCENT: Record<SubFeatureKey, { base: string; bright: string; glow: string }> = {
