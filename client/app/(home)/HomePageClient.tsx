@@ -28,11 +28,25 @@ const GAME_MODES = [
         description: "Guess the character one clue at a time — race, affiliation, height, first appearance, and more.",
     },
     {
+        id: "emoji",
+        accent: MODE_ACCENT.emoji.base,
+        name: "EMOJI",
+        tagline: "Four symbols, one soul",
+        description: "A character is encoded into four emoji. One is shown to start — each wrong guess unlocks another.",
+    },
+    {
         id: "quote",
         accent: MODE_ACCENT.quote.base,
         name: "QUOTE",
         tagline: "Who said it?",
         description: "A single line of dialogue is pulled from the series. Read it, feel it out, and name the character.",
+    },
+    {
+        id: "release",
+        accent: MODE_ACCENT.release.base,
+        name: "RELEASE",
+        tagline: "Command the blade",
+        description: "Listen to a short audio clip of a release command. Search by technique name or its English meaning to guess the correct blade.",
     },
     {
         id: "silhouette",
@@ -42,25 +56,11 @@ const GAME_MODES = [
         description: "The character's silhouette is locked behind a grid of panels. Every wrong guess randomly shatters a tile, exposing another piece of the shadow.",
     },
     {
-        id: "emoji",
-        accent: MODE_ACCENT.emoji.base,
-        name: "EMOJI",
-        tagline: "Four symbols, one soul",
-        description: "A character is encoded into four emoji. One is shown to start — each wrong guess unlocks another.",
-    },
-    {
         id: "song",
         accent: MODE_ACCENT.song.base,
         name: "SONG",
         tagline: "Name that track",
         description: "Listen to a short clip from a Bleach opening, ending, or OST track. Name the track before time runs out.",
-    },
-    {
-        id: "release",
-        accent: MODE_ACCENT.release.base,
-        name: "RELEASE",
-        tagline: "Command the blade",
-        description: "Listen to a short audio clip of a release command. Search by technique name or its English meaning to guess the correct blade.",
     },
 ] as const;
 

@@ -38,7 +38,7 @@
 "use client";
 
 import React, { useMemo, useState } from "react";
-import { MODE_ACCENT, SubFeatureKey } from "@/src/config/mode";
+import { MODE_ACCENT, MODE_ORDER, SubFeatureKey } from "@/src/config/mode";
 import { DailyStatsBar } from "@/src/shared/ui/daily-hub/DailyStatsBar";
 import { Modal } from "@/src/shared/ui/modal"; // 🆕
 
@@ -131,8 +131,6 @@ const T = {
     muted: "#cdc0aa",
     mutedMid: "#a8998a",
 } as const;
-
-const MODE_ORDER: SubFeatureKey[] = ["character", "quote", "silhouette", "emoji", "song", "release"];
 
 const MODE_KANJI: Record<string, string> = {
     character: "士",

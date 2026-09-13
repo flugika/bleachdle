@@ -22,9 +22,7 @@
 import { useEffect, useState } from "react";
 import StatsHubPage, { ModeStat, BadgeTier } from "@/src/features/stats/components/StatsHubPage";
 import { STORAGE_KEYS } from "@/src/const/localStorage"; // adjust path if STORAGE_KEYS lives elsewhere
-import { SubFeatureKey } from "@/src/config/mode";
-
-const MODE_ORDER: SubFeatureKey[] = ["character", "quote", "silhouette", "emoji", "song", "release"];
+import { MODE_ORDER, SubFeatureKey } from "@/src/config/mode";
 
 // STATS keys hold { daily?: Stats, unlimited?: Stats } written by
 // createDailyGuessGameStore / createUnlimitedGuessGameStore's finalizeGame().
