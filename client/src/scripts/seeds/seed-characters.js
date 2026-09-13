@@ -34,6 +34,7 @@ async function seedCharacters() {
     } catch (err) {
         console.error('\n❌ Critical Error during seeding process:');
         console.error(err.message || err);
+        process.exit(1);
     }
 }
 

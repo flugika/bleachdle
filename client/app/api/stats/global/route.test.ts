@@ -8,6 +8,7 @@ import { supabaseServer } from '@/src/lib/supabase/supabase-server';
 import { edgeRateLimit } from '@/src/lib/rateLimit';
 import { logApiEvent } from '@/src/services/monitor/logEvent';
 import type { PostgrestSingleResponse } from '@supabase/supabase-js';
+import { resolvePlayerFromCookie } from '@/src/lib/auth/resolvePlayer';
 
 // ─── 🛠️ TYPE-SAFE MOCK BUILDERS ──────────────────────────────────────────────
 function createMockSuccessResponse<T>(data: T): PostgrestResponseSuccess<T> {
@@ -71,6 +72,10 @@ vi.mock('@/src/lib/rateLimit', () => ({
 
 vi.mock('@/src/services/monitor/logEvent', () => ({
     logApiEvent: vi.fn(),
+}));
+
+vi.mock('@/src/lib/auth/resolvePlayer', () => ({
+    resolvePlayerFromCookie: vi.fn(),
 }));
 
 // Mock the valid stat modes to keep the test environment predictable and fully controlled
@@ -171,19 +176,18 @@ describe('GET /api/stats/global', () => {
         expect(logApiEvent).toHaveBeenCalledWith('stats.global', 'success', 200);
     });
 
-    it('should use unlimited dimension and call get_global_stats_alltime without date parameters', async () => {
+    it('should use unlimited dimension and call get_player_stats for the resolved player', async () => {
         vi.mocked(edgeRateLimit).mockReturnValue(true);
+        vi.mocked(resolvePlayerFromCookie).mockResolvedValue('player-123');
 
         const mockData = {
             song: {
                 played: 5,
-                passed: 0, // total = 5 -> win_rate = (5/5)*100 = 100%
-                guess_distribution: { '3': 4, 'invalid_key': 2 }, // solves = 4, guesses = (3*4) = 12 -> avg = 12/4 = 3
+                passed: 0,
+                guess_distribution: { '3': 4, 'invalid_key': 2 },
             },
         };
-
-        const mockResponse = createMockSuccessResponse(mockData);
-        vi.mocked(supabaseServer.rpc).mockResolvedValueOnce(mockResponse);
+        vi.mocked(supabaseServer.rpc).mockResolvedValueOnce(createMockSuccessResponse(mockData));
 
         const req = new NextRequest('http://localhost/api/stats/global?dimension=unlimited');
         const res = await GET(req);
@@ -191,14 +195,28 @@ describe('GET /api/stats/global', () => {
 
         expect(res.status).toBe(200);
         expect(body.dimension).toBe('unlimited');
-        expect(supabaseServer.rpc).toHaveBeenCalledWith('get_global_stats_alltime', undefined);
-
-        expect(body.globalTickerStats.song).toEqual({
-            played: 5,
-            passed: 0,
-            win_rate: 100,
-            avg_guesses: 3,
+        expect(supabaseServer.rpc).toHaveBeenCalledWith('get_player_stats', {
+            p_player_id: 'player-123',
+            p_game_type: 'unlimited',
         });
+        expect(body.globalTickerStats.song).toEqual({
+            played: 5, passed: 0, win_rate: 100, avg_guesses: 3,
+        });
+    });
+
+    it('should return empty stats and skip RPC when no player is linked (unlimited)', async () => {
+        vi.mocked(edgeRateLimit).mockReturnValue(true);
+        vi.mocked(resolvePlayerFromCookie).mockResolvedValue(null);
+
+        const req = new NextRequest('http://localhost/api/stats/global?dimension=unlimited');
+        const res = await GET(req);
+        const body = await res.json();
+
+        expect(res.status).toBe(200);
+        expect(body.global).toEqual({});
+        expect(body.globalTickerStats).toEqual({});
+        expect(supabaseServer.rpc).not.toHaveBeenCalled();
+        expect(logApiEvent).toHaveBeenCalledWith('stats.global', 'success', 200, 'no_linked_player');
     });
 
     it('should return empty objects fallback and safe stats metrics when RPC returns null data', async () => {

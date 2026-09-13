@@ -6,7 +6,7 @@
 //      this mode never had one saved locally.
 "use client";
 
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { ReleaseGuessTable } from '@/src/features/release/components/shared/ReleaseGuessTable';
 import { ReleaseControlPanel } from '@/src/shared/ui/control-panel/ReleaseControlPanel';
 import { useReleaseGame } from '@/src/features/release/hooks/unlimited/useReleaseGame';
@@ -48,6 +48,7 @@ export default function UnlimitedReleaseWrapper() {
     const [isModeSelectorOpen, setIsModeSelectorOpen] = useState(false);
     const [revealDelayDone, setRevealDelayDone] = useState(false);
     const [finalRoundGuesses, setFinalRoundGuesses] = useState<typeof guesses>([]);
+    const isFinalizingRef = useRef(false);
 
     const handleRemoteLoad = async (remoteTargetId: string, remoteGuesses: unknown[]) => {
         // 🆕 reset local ephemeral summary-gating state IMPERATIVELY, in the
@@ -135,9 +136,12 @@ export default function UnlimitedReleaseWrapper() {
     }, [isGameOver, isFreshFinish, isWin]);
 
     useEffect(() => {
-        if (_hasHydrated && isGameOver && !hasFinalized) {
+        if (_hasHydrated && isGameOver && !hasFinalized && !isFinalizingRef.current) {
+            isFinalizingRef.current = true;
             setFinalRoundGuesses(guesses);
-            finalizeGame(isWin);
+            Promise.resolve(finalizeGame(isWin)).finally(() => {
+                isFinalizingRef.current = false; // ปลดล็อกไว้เผื่อต้อง retry
+            });
         }
     }, [guesses, isGameOver, hasFinalized, isWin, _hasHydrated, finalizeGame]);
 

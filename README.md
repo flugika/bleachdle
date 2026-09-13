@@ -374,6 +374,18 @@ bleachdle
 │  │  │  │  ├─ daily
 │  │  │  │  │  ├─ route.test.ts
 │  │  │  │  │  └─ route.ts
+│  │  │  │  ├─ create
+│  │  │  │  │  ├─ route.test.ts
+│  │  │  │  │  └─ route.ts
+│  │  │  │  ├─ devices
+│  │  │  │  │  ├─ route.test.ts
+│  │  │  │  │  └─ route.ts
+│  │  │  │  ├─ redeem
+│  │  │  │  │  ├─ route.test.ts
+│  │  │  │  │  └─ route.ts
+│  │  │  │  └─ status
+│  │  │  │     └─ route.ts
+│  │  │  ├─ stats
 │  │  │  │  ├─ finalize
 │  │  │  │  │  ├─ route.test.ts
 │  │  │  │  │  └─ route.ts
@@ -941,7 +953,8 @@ bleachdle
 │  │     ├─ 14_soul_name_unification.sql
 │  │     ├─ 15_pairing_full_carryover.sql
 │  │     ├─ 16_result_integrity_gate.sql
-│  │     └─ 17_purge_pairing_code_cron.sql
+│  │     ├─ 17_purge_pairing_code_cron.sql
+│  │     └─ 18_unlimited_stats.sql
 │  ├─ test-results
 │  │  └─ .last-run.json
 │  ├─ tests

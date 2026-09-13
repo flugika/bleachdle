@@ -1,22 +1,4 @@
 // src/app/api/stats/global/route.ts
-//
-// GET /api/stats/global?dimension=daily|unlimited
-//
-// Backs the Stats Hub page. "daily" reads today's row from `daily_stats`.
-// "unlimited" currently falls back to an all-time SUM across every stored
-// day (see get_global_stats.sql note) because Unlimited has no server-side
-// table of its own yet — it's local-only. That distinction is surfaced via
-// the `dimension` field in the response rather than hidden, so the client
-// (or a future dev) doesn't mistake it for true Unlimited telemetry.
-//
-// Response shape:
-//   {
-//     dimension: "daily" | "unlimited",
-//     global: Record<SubFeatureKey, { played, passed, guess_distribution }>,
-//     globalTickerStats: Record<string, { played, passed, win_rate, avg_guesses }>,
-//     topSouls: []   // always empty for now — no server-side soul registry table exists;
-//                    // see note below if you want a real cross-player leaderboard
-//   }
 
 import { NextRequest, NextResponse } from 'next/server';
 import { supabaseServer } from '@/src/lib/supabase/supabase-server';
@@ -24,8 +6,9 @@ import { getTodayStr } from '@/src/lib/utils/format';
 import { getRateLimitKey, edgeRateLimit } from '@/src/lib/rateLimit';
 import { VALID_STAT_MODES, type StatMode } from '@/src/entities/stats/types';
 import { logApiEvent } from "@/src/services/monitor/logEvent";
+import { resolvePlayerFromCookie } from '@/src/lib/auth/resolvePlayer'; // 🆕
 
-export const revalidate = 60; // matches app/api/stats/daily/route.ts — stats don't need realtime
+export const revalidate = 60;
 
 const ENDPOINT = 'stats.global';
 
@@ -48,7 +31,7 @@ function avgGuesses(s: RawModeStat | undefined): number | null {
     let totalGuesses = 0;
     let totalSolves = 0;
     for (const [bucket, count] of Object.entries(s.guess_distribution ?? {})) {
-        if (bucket === 'fail') continue; // 🩹 same bug as SQL's _stat_summary: 'fail' isn't a numeric guess count
+        if (bucket === 'fail') continue;
         const n = Number(bucket);
         if (!Number.isFinite(n)) continue;
         totalGuesses += n * count;
@@ -73,9 +56,8 @@ function buildTickerStats(global: RawGlobalStats) {
 }
 
 export async function GET(req: NextRequest) {
-    // 🛡️ Rate limit first, same pattern as /api/stats/daily
     const limitKey = getRateLimitKey(req);
-    const isAllowed = edgeRateLimit(limitKey, 10, 10000); // 10 req / 10s per IP
+    const isAllowed = edgeRateLimit(limitKey, 30, 10000);
     if (!isAllowed) {
         console.warn(`[stats/global] Rate limit exceeded for IP: ${limitKey}`);
         logApiEvent(ENDPOINT, 'warning', 429, 'rate_limited');
@@ -85,15 +67,50 @@ export async function GET(req: NextRequest) {
     const dimensionParam = req.nextUrl.searchParams.get('dimension');
     const dimension: 'daily' | 'unlimited' = dimensionParam === 'unlimited' ? 'unlimited' : 'daily';
 
-    const rpcName = dimension === 'daily' ? 'get_global_stats_today' : 'get_global_stats_alltime';
-    const rpcArgs = dimension === 'daily' ? { p_date: getTodayStr() } : undefined;
+    // ── DAILY: unchanged — this stays a true cross-player aggregate,
+    // because daily is one shared puzzle everyone plays that day. ──
+    if (dimension === 'daily') {
+        const { data, error } = await supabaseServer.rpc('get_global_stats_today', { p_date: getTodayStr() });
+        if (error) {
+            console.error('[stats/global] RPC get_global_stats_today failed:', error);
+            logApiEvent(ENDPOINT, 'error', 500, error.message);
+            return NextResponse.json({ error: 'Failed to load global stats' }, { status: 500 });
+        }
+        const global: RawGlobalStats = data ?? {};
+        logApiEvent(ENDPOINT, 'success', 200);
+        return NextResponse.json({
+            dimension,
+            global,
+            globalTickerStats: buildTickerStats(global),
+            topSouls: [] as { name: string; cycles: number }[],
+        });
+    }
 
-    const { data, error } = await supabaseServer.rpc(rpcName, rpcArgs);
+    // ── UNLIMITED: per-player only. No SUM across players — each player's
+    // unlimited progress is their own, not a shared daily puzzle. ──
+    const playerId = await resolvePlayerFromCookie(req); // 🆕 real impl, not the guessed one
+
+    if (!playerId) {
+        // No linked device yet — not an error, just nothing to show server-side.
+        // Client already has a localStorage fallback for this case.
+        logApiEvent(ENDPOINT, 'success', 200, 'no_linked_player');
+        return NextResponse.json({
+            dimension,
+            global: {},
+            globalTickerStats: {},
+            topSouls: [] as { name: string; cycles: number }[],
+        });
+    }
+
+    const { data, error } = await supabaseServer.rpc('get_player_stats', {
+        p_player_id: playerId,
+        p_game_type: 'unlimited',
+    });
 
     if (error) {
-        console.error(`[stats/global] RPC ${rpcName} failed:`, error);
+        console.error('[stats/global] RPC get_player_stats failed:', error);
         logApiEvent(ENDPOINT, 'error', 500, error.message);
-        return NextResponse.json({ error: 'Failed to load global stats' }, { status: 500 });
+        return NextResponse.json({ error: 'Failed to load stats' }, { status: 500 });
     }
 
     const global: RawGlobalStats = data ?? {};
@@ -103,11 +120,8 @@ export async function GET(req: NextRequest) {
         dimension,
         global,
         globalTickerStats: buildTickerStats(global),
-        // No server-side soul registry table exists yet (Unlimited progress is
-        // local-only, no submission endpoint). Returning [] rather than
-        // fabricating names. If you want a real leaderboard, you'll need a
-        // table Unlimited writes to on full clear, plus a submit endpoint
-        // with the same rate-limit/validation treatment as /api/stats/finalize.
+        // Leaderboard across players is a separate concern from "my ticker" —
+        // still legitimately empty until a real leaderboard query is built.
         topSouls: [] as { name: string; cycles: number }[],
     });
 }

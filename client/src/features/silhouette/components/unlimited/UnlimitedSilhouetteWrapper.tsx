@@ -1,7 +1,7 @@
 // src/features/silhouette/components/unlimited/UnlimitedSilhouetteWrapper.tsx
 "use client";
 
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { SilhouetteGuessTable } from '@/src/features/silhouette/components/shared/SilhouetteGuessTable';
 import { SilhouetteControlPanel } from '@/src/shared/ui/control-panel/SilhouetteControlPanel';
 import { useSilhouetteGame } from '@/src/features/silhouette/hooks/unlimited/useSilhouetteGame';
@@ -46,6 +46,7 @@ export default function UnlimitedSilhouetteWrapper() {
     const [isModeSelectorOpen, setIsModeSelectorOpen] = useState(false);
     const [revealDelayDone, setRevealDelayDone] = useState(false);
     const [finalRoundGuesses, setFinalRoundGuesses] = useState<typeof guesses>([]);
+    const isFinalizingRef = useRef(false);
 
     const handleRemoteLoad = async (remoteTargetId: string, remoteGuesses: unknown[]) => {
         // 🆕 reset local ephemeral summary-gating state IMPERATIVELY, in the
@@ -134,9 +135,12 @@ export default function UnlimitedSilhouetteWrapper() {
     }, [isGameOver, isFreshFinish, isWin]);
 
     useEffect(() => {
-        if (_hasHydrated && isGameOver && !hasFinalized) {
+        if (_hasHydrated && isGameOver && !hasFinalized && !isFinalizingRef.current) {
+            isFinalizingRef.current = true;
             setFinalRoundGuesses(guesses);
-            finalizeGame(isWin);
+            Promise.resolve(finalizeGame(isWin)).finally(() => {
+                isFinalizingRef.current = false; // ปลดล็อกไว้เผื่อต้อง retry
+            });
         }
     }, [guesses, isGameOver, hasFinalized, isWin, _hasHydrated, finalizeGame]);
 

@@ -7,7 +7,7 @@
 //      Central46ConfidentialArchive's prop contract.
 "use client";
 
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { SongGuessTable } from '@/src/features/song/components/shared/SongGuessTable';
 import { SongControlPanel } from '@/src/shared/ui/control-panel/SongControlPanel';
 import { useSongGame } from '@/src/features/song/hooks/unlimited/useSongGame';
@@ -50,6 +50,7 @@ export default function UnlimitedSongWrapper() {
     const [isModeSelectorOpen, setIsModeSelectorOpen] = useState(false);
     const [revealDelayDone, setRevealDelayDone] = useState(false);
     const [finalRoundGuesses, setFinalRoundGuesses] = useState<typeof guesses>([]);
+    const isFinalizingRef = useRef(false);
 
     const handleRemoteLoad = async (remoteTargetId: string, remoteGuesses: unknown[]) => {
         // 🆕 reset local ephemeral summary-gating state IMPERATIVELY, in the
@@ -142,9 +143,12 @@ export default function UnlimitedSongWrapper() {
     }, [isGameOver, isFreshFinish, isWin]);
 
     useEffect(() => {
-        if (_hasHydrated && isGameOver && !hasFinalized) {
+        if (_hasHydrated && isGameOver && !hasFinalized && !isFinalizingRef.current) {
+            isFinalizingRef.current = true;
             setFinalRoundGuesses(guesses);
-            finalizeGame(isWin);
+            Promise.resolve(finalizeGame(isWin)).finally(() => {
+                isFinalizingRef.current = false; // ปลดล็อกไว้เผื่อต้อง retry
+            });
         }
     }, [guesses, isGameOver, hasFinalized, isWin, _hasHydrated, finalizeGame]);
 

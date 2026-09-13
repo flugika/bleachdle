@@ -212,7 +212,6 @@ function runCommit() {
         const hadRefField = Object.prototype.hasOwnProperty.call(entry, REF_ID_FIELD);
         if (hadRefField) committedCount++;
 
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars -- destructuring here is how we drop this key from `rest`
         const { [REF_ID_FIELD]: _drop, ...rest } = entry;
         return { ...rest, character_id: realId };
     });

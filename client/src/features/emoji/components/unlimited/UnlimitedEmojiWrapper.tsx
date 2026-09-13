@@ -1,7 +1,7 @@
 // src/features/emoji/components/unlimited/UnlimitedEmojiWrapper.tsx
 "use client";
 
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { EmojiGuessTable } from '@/src/features/emoji/components/shared/EmojiGuessTable';
 import { EmojiControlPanel } from '@/src/shared/ui/control-panel/EmojiControlPanel';
 import { useEmojiGame } from '@/src/features/emoji/hooks/unlimited/useEmojiGame';
@@ -43,6 +43,7 @@ export default function UnlimitedEmojiWrapper() {
     const [isModeSelectorOpen, setIsModeSelectorOpen] = useState(false);
     const [revealDelayDone, setRevealDelayDone] = useState(false);
     const [finalRoundGuesses, setFinalRoundGuesses] = useState<typeof guesses>([]);
+    const isFinalizingRef = useRef(false);
 
     const handleRemoteLoad = async (remoteTargetId: string, remoteGuesses: unknown[]) => {
         // 🆕 reset local ephemeral summary-gating state IMPERATIVELY, in the
@@ -130,9 +131,12 @@ export default function UnlimitedEmojiWrapper() {
     }, [isGameOver, isFreshFinish, isWin]);
 
     useEffect(() => {
-        if (_hasHydrated && isGameOver && !hasFinalized) {
+        if (_hasHydrated && isGameOver && !hasFinalized && !isFinalizingRef.current) {
+            isFinalizingRef.current = true;
             setFinalRoundGuesses(guesses);
-            finalizeGame(isWin);
+            Promise.resolve(finalizeGame(isWin)).finally(() => {
+                isFinalizingRef.current = false; // ปลดล็อกไว้เผื่อต้อง retry
+            });
         }
     }, [guesses, isGameOver, hasFinalized, isWin, _hasHydrated, finalizeGame]);
 
