@@ -371,6 +371,21 @@ bleachdle
 │  │  │  │  └─ status
 │  │  │  │     └─ route.ts
 │  │  │  ├─ stats
+│  │  │  │  ├─ daily
+│  │  │  │  │  ├─ route.test.ts
+│  │  │  │  │  └─ route.ts
+│  │  │  │  ├─ create
+│  │  │  │  │  ├─ route.test.ts
+│  │  │  │  │  └─ route.ts
+│  │  │  │  ├─ devices
+│  │  │  │  │  ├─ route.test.ts
+│  │  │  │  │  └─ route.ts
+│  │  │  │  ├─ redeem
+│  │  │  │  │  ├─ route.test.ts
+│  │  │  │  │  └─ route.ts
+│  │  │  │  └─ status
+│  │  │  │     └─ route.ts
+│  │  │  ├─ stats
 │  │  │  │  ├─ finalize
 │  │  │  │  │  ├─ route.test.ts
 │  │  │  │  │  └─ route.ts
@@ -421,7 +436,8 @@ bleachdle
 │  │  ├─ soul-society-archives
 │  │  │  └─ page.tsx
 │  │  ├─ stats
-│  │  │  └─ page.tsx
+│  │  │  ├─ page.tsx
+│  │  │  └─ test
 │  │  ├─ support
 │  │  │  └─ page.tsx
 │  │  └─ [...catchAll]

@@ -85,6 +85,43 @@ export default function UnlimitedSilhouetteWrapper() {
         applyRemoteProgress: handleRemoteLoad,
     });
 
+    const handleRemoteLoad = async (remoteTargetId: string, remoteGuesses: unknown[]) => {
+        // 🆕 reset local ephemeral summary-gating state IMPERATIVELY, in the
+        // same handler that pulls in new remote data — don't rely solely on
+        // a useEffect keyed off target identity to catch this. Resync can be
+        // triggered while a summary is already showing (ResyncButton/banner
+        // stay mounted regardless of showSummary), so the reset must not
+        // depend on a round-trip through React's effect scheduler.
+        setManuallyClosed(false);
+        setRevealDelayDone(false);
+        applyRemoteProgress(remoteTargetId, remoteGuesses);
+
+        // 🆕 resync ควรดึง stats/completed/soul-registry มาด้วย ไม่ใช่แค่ progress
+        const meta = await pullAndApplyMeta('silhouette', 'unlimited');
+        applyRemoteStats(meta.stats);
+        if (meta.reincarnationCount !== null) {
+            setReincarnationCount(meta.reincarnationCount);
+        }
+        if (meta.soulName) {
+            setSoulName(meta.soulName);
+        }
+
+        // ถ้า unlimited silhouette มี isGameCompleted concept (เล่นครบทุกตัวละคร)
+        const allCharacters = getCharacters();
+        const completedIds = new Set(meta.completed);
+        setIsGameCompleted(allCharacters.length > 0 && completedIds.size >= allCharacters.length);
+    };
+
+    const remoteProgress = useRemoteProgressSync({
+        gameMode: 'silhouette',
+        gameType: 'unlimited',
+        hasHydrated: _hasHydrated,
+        localTargetId: target?.id ?? null,
+        localHasFinalized: hasFinalized,
+        localGuessCount: guesses.length,
+        applyRemoteProgress: handleRemoteLoad,
+    });
+
     useEffect(() => {
         if (state === "closing") {
             setIsModeSelectorOpen(false);
@@ -105,7 +142,7 @@ export default function UnlimitedSilhouetteWrapper() {
         setManuallyClosed(false);
         logFullTarget(target);
         setRevealDelayDone(false);
-    }, [target]);
+    }, [target, hasFinalized]);
 
     const remainingGuesses = Math.max(0, MAX_UNLIMITED_SILHOUETTE_GUESSES - guesses.length);
 

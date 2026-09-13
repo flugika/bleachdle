@@ -141,7 +141,7 @@ export default function UnlimitedCharacterWrapper() {
         setManuallyClosed(false);
         logFullTarget(target);
         setRevealDelayDone(false);
-    }, [target]);
+    }, [target, hasFinalized]);
 
     // ⏳ จัดการเอฟเฟกต์ความล่าช้าก่อนแสดงผลตั๋วสรุป (สดใหม่ vs รีเฟรชหน้าเก่า)
     useEffect(() => {
