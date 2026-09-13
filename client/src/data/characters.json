@@ -295,30 +295,6 @@
         "image": "Oscar_Joaquin_De_La_Rosa.webp"
     },
     {
-        "id": "18fddac6-d9d9-4e6a-8837-ba146980b153",
-        "name": "Kagine",
-        "gender": "Male",
-        "race": [
-            "Human"
-        ],
-        "affiliation": "Human",
-        "height_cm": -1,
-        "age": -1,
-        "eye_color": "Brown",
-        "hair_color": "Black",
-        "first_appearance_chapter": "Agent of the Shinigami",
-        "weapon": [
-            "None"
-        ],
-        "release": [
-            "None"
-        ],
-        "primary_ability": [
-            "None"
-        ],
-        "image": "Kagine.webp"
-    },
-    {
         "id": "a5e8c1b2-3d4f-4a6b-9c8d-7e6f5a4b3c2d",
         "name": "Mizuiro Kojima",
         "gender": "Male",

@@ -13,7 +13,7 @@
 //      same shape as before — only WHERE its value can come from changed).
 "use client";
 
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { CharacterGuessTable } from '@/src/features/character';
 import { CharacterControlPanel } from '@/src/shared/ui/control-panel/CharacterControlPanel';
 import { useCharacterGame } from '@/src/features/character/hooks/unlimited/useCharacterGame';
@@ -65,6 +65,7 @@ export default function UnlimitedCharacterWrapper() {
     const [inputName, setInputName] = useState('');
     const [reincarnationCount, setReincarnationCount] = useState(0);
     const canReset = soulName.trim().length > 0;
+    const isFinalizingRef = useRef(false);
 
     const remainingGuesses = Math.max(0, MAX_UNLIMITED_CHARACTER_GUESSES - guesses.length);
 
@@ -140,7 +141,7 @@ export default function UnlimitedCharacterWrapper() {
         setManuallyClosed(false);
         logFullTarget(target);
         setRevealDelayDone(false);
-    }, [target, hasFinalized]);
+    }, [target?.id]);
 
     // ⏳ จัดการเอฟเฟกต์ความล่าช้าก่อนแสดงผลตั๋วสรุป (สดใหม่ vs รีเฟรชหน้าเก่า)
     useEffect(() => {
@@ -158,11 +159,14 @@ export default function UnlimitedCharacterWrapper() {
 
     // บันทึกและสรุปผลข้อมูลสถิติลงคลังระบบ
     useEffect(() => {
-        if (_hasHydrated && isGameOver && !hasFinalized) {
+        if (_hasHydrated && isGameOver && !hasFinalized && !isFinalizingRef.current) {
+            isFinalizingRef.current = true;
             setFinalRoundGuesses(guesses);
-            finalizeGame(isWin);
+            Promise.resolve(finalizeGame(isWin)).finally(() => {
+                isFinalizingRef.current = false; // ปลดล็อกไว้เผื่อต้อง retry
+            });
         }
-    }, [isGameOver, hasFinalized, isWin, _hasHydrated, finalizeGame, guesses]);
+    }, [guesses, isGameOver, hasFinalized, isWin, _hasHydrated, finalizeGame]);
 
     // 🛡️ รอกระบวนการ Hydration เสร็จสิ้นก่อนดึงประวัติมาใช้งานจากหน่วยความจำ
     useEffect(() => {

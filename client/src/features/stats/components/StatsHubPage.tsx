@@ -170,9 +170,9 @@ const FALLBACK_ACCENT = { base: "#c8a96e", bright: "#f2cf8a", glow: "rgba(200,16
 
 function winRate(s: ModeStat | undefined): number | null {
     if (!s) return null;
-    const total = s.played;
+    const total = s.played + s.passed;   // 🔧 รวม passed เข้ามาด้วย
     if (total === 0) return null;
-    return Math.round((s.played / total) * 1000) / 10; // 1 decimal
+    return Math.round((s.played / total) * 1000) / 10;
 }
 
 function avgGuesses(s: ModeStat | undefined): number | null {

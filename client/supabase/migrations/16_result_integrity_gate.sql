@@ -103,7 +103,7 @@ declare
     v_bucket text;
     v_inserted boolean;
     v_progress record;
-    v_min_round_seconds constant int := 3;
+    v_min_round_seconds constant int := 1;
 begin
     if p_round_key is null or length(trim(p_round_key)) = 0 then
         raise exception 'round_key is required';

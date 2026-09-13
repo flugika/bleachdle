@@ -371,9 +371,6 @@ bleachdle
 │  │  │  │  └─ status
 │  │  │  │     └─ route.ts
 │  │  │  ├─ stats
-│  │  │  │  ├─ daily
-│  │  │  │  │  ├─ route.test.ts
-│  │  │  │  │  └─ route.ts
 │  │  │  │  ├─ finalize
 │  │  │  │  │  ├─ route.test.ts
 │  │  │  │  │  └─ route.ts
@@ -424,8 +421,7 @@ bleachdle
 │  │  ├─ soul-society-archives
 │  │  │  └─ page.tsx
 │  │  ├─ stats
-│  │  │  ├─ page.tsx
-│  │  │  └─ test
+│  │  │  └─ page.tsx
 │  │  ├─ support
 │  │  │  └─ page.tsx
 │  │  └─ [...catchAll]
@@ -941,7 +937,8 @@ bleachdle
 │  │     ├─ 14_soul_name_unification.sql
 │  │     ├─ 15_pairing_full_carryover.sql
 │  │     ├─ 16_result_integrity_gate.sql
-│  │     └─ 17_purge_pairing_code_cron.sql
+│  │     ├─ 17_purge_pairing_code_cron.sql
+│  │     └─ 18_unlimited_stats.sql
 │  ├─ test-results
 │  │  └─ .last-run.json
 │  ├─ tests
