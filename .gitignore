@@ -49,3 +49,5 @@ client/assets-private/character_cutout
 client/assets-private/character_silhouette/_contact_sheet*
 client/src/data/silhouette-cells.debug.json
 client/src/data/emojis.backup.json
+.vercel
+.env*
