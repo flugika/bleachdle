@@ -76,7 +76,7 @@ export const BL_MODES_METADATA: Record<SubFeatureKey, ModeConfig> = {
     },
     song: {
         id: "song",
-        title: "REIATSU RESONANCE", // 🔒 locked
+        title: "REIATSU RESONANCE",
         romaji: "REIATSU SHINDŌ • 霊圧振動",
         symbol: "音", // Sound / Echo
         desc: "Listen to a short audio clip and name the Bleach song or OST track.",
