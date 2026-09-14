@@ -247,6 +247,7 @@ const GuessRow = ({ guess, result, isNew = false }: GuessEntry) => {
                         className="w-full h-full object-cover"
                         title={guess.name}
                         fill
+                        unoptimized
                         sizes="w-[72px] h-[72px]"
                     />
                 </div>

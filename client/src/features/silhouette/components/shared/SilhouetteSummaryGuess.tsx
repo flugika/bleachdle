@@ -176,6 +176,7 @@ export const SilhouetteSummaryGuess = ({
                                     className="w-full h-full object-cover filter brightness-[90%] contrast-[105%]"
                                     draggable={false}
                                     fill
+                                    unoptimized
                                     sizes="w-full h-full"
                                 />
                             </div>

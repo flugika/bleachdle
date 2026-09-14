@@ -210,6 +210,7 @@ export const SilhouetteGuessTable = ({ guesses }: { guesses: SilhouetteGuessEntr
                                                 (e.currentTarget as HTMLImageElement).style.display = 'none';
                                             }}
                                             fill
+                                            unoptimized
                                             sizes="w-20 h-24"
                                         />
                                     </div>

@@ -155,7 +155,7 @@ function CharacterAvatar({ image }: { image?: string | null }) {
             className="relative inline-block w-4 h-4 rounded-full overflow-hidden shrink-0 border align-middle -mt-0.5"
             style={{ borderColor: `${T.gold}66` }}
         >
-            <Image src={image} alt="" fill sizes='w-4 h-4 ' className="object-cover grayscale" />
+            <Image src={image} alt="" fill unoptimized sizes='w-4 h-4' className="object-cover grayscale" />
         </span>
     );
 }

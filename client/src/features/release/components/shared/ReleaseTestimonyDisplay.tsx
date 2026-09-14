@@ -286,6 +286,7 @@ export function ReleaseTestimonyDisplay({ target, revealed = null, isSolved = fa
                             src={characterImage}
                             alt="wielder bg"
                             fill
+                            unoptimized
                             sizes="66vw"
                             className="object-cover opacity-60 filter grayscale brightness-125 contrast-150"
                             style={{ objectPosition: 'right center' }}
