@@ -291,7 +291,6 @@ This project is non-commercial: it is not monetized in any form (no ads, no paid
 ```
 bleachdle
 ├─ client
-│  ├─ AGENTS.md
 │  ├─ app
 │  │  ├─ (admin)
 │  │  │  └─ monitor
@@ -466,7 +465,6 @@ bleachdle
 │  │     ├─ Aisslinger_Wernarr_cutout_silhouette.webp
 │  │     ├─ Akon_cutout_silhouette.webp
 │  │     └─ ...
-│  ├─ CLAUDE.md
 │  ├─ eslint.config.mjs
 │  ├─ next.config.ts
 │  ├─ package.json

@@ -179,6 +179,7 @@ export function EmojiGuessCard({ guess, status, isNew, attemptNumber }: EmojiGue
                     className="w-full h-full object-cover grayscale transition-transform duration-500 group-hover:scale-105"
                     style={{ filter: theme.photoFilter }}
                     fill
+                    unoptimized
                     sizes="w-24 h-28"
                 />
 

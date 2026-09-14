@@ -92,6 +92,7 @@ export const CharacterSummaryGuess = ({ isOpen, onClose, guesses, target, isWin,
                                     src={`/assets/emblems/${emblem.file}`}
                                     alt="Soul Race Emblem"
                                     fill
+                                    unoptimized
                                     className="object-contain"
                                     priority={false}
                                 />
@@ -123,6 +124,7 @@ export const CharacterSummaryGuess = ({ isOpen, onClose, guesses, target, isWin,
                                     src={`/api/asset/character/${answerCharacter.id}`}
                                     alt={answerCharacter.name}
                                     fill
+                                    unoptimized
                                     className="object-cover grayscale-[10%] brightness-[95%]"
                                 />
                             </div>
@@ -200,6 +202,7 @@ export const CharacterSummaryGuess = ({ isOpen, onClose, guesses, target, isWin,
                                     alt={entry.guess.name}
                                     fill
                                     sizes="210px"
+                                    unoptimized
                                     className="border border-white/5 object-cover bg-neutral-900"
                                 />
                             </div>

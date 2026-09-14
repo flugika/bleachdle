@@ -118,6 +118,7 @@ export const QuoteSummaryGuess = ({
                                 src={`/assets/emblems/${emblem.file}`}
                                 alt="Soul Race Emblem"
                                 fill
+                                unoptimized
                                 className="object-contain"
                                 priority={false}
                             />
@@ -149,6 +150,7 @@ export const QuoteSummaryGuess = ({
                                     src={`/assets/emblems/${emblem.file}`}
                                     alt="Soul Race Emblem"
                                     fill
+                                    unoptimized
                                     className="object-contain"
                                     priority={false}
                                 />
@@ -174,6 +176,7 @@ export const QuoteSummaryGuess = ({
                                     src={`/api/asset/character/${answerCharacter.id}`}
                                     alt={answerCharacter.name}
                                     fill
+                                    unoptimized
                                     className="object-cover grayscale-[10%] brightness-[95%]"
                                 />
                             </div>
@@ -252,6 +255,7 @@ export const QuoteSummaryGuess = ({
                                     src={`/api/asset/character/${entry.guess.id}`}
                                     alt={entry.guess.name}
                                     fill
+                                    unoptimized
                                     sizes="210px"
                                     className="border border-white/5 object-cover bg-neutral-900"
                                 />

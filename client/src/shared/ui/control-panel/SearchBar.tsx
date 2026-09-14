@@ -258,6 +258,7 @@ export const SearchBar = ({
                                             src={`/api/asset/character/${item.id}`}
                                             alt={item.name}
                                             fill
+                                            unoptimized
                                             className={`object-cover transition-all duration-200 ${isGuessed ? 'grayscale opacity-60' : ''}`}
                                         />
                                     </div>

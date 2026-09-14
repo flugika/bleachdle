@@ -234,6 +234,7 @@ export function QuoteGuessCard({ guess, status, isNew, attemptNumber }: QuoteGue
                     className="w-full h-full object-cover"
                     style={{ filter: theme.photoFilter }}
                     fill
+                    unoptimized
                     sizes="w-16 h-16"
                 />
                 {/* corner brackets */}
