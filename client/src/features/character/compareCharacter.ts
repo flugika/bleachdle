@@ -33,25 +33,23 @@ const compareNumber = (guess: number, target: number): MatchResult => {
 };
 
 const compareAge = (guess: number, target: number): MatchResult => {
-    // กรณีข้อมูลไม่ทราบแน่ชัด (-1)
+    // Unknown data
     if (guess === -1 || target === -1) {
         return guess === target ? 'correct' : 'wrong';
     }
 
-    // กรณีเลขไม่เท่ากัน ให้เช็ค Range
+    // Exact comparison for ages under 100
+    if (guess < 100 && target < 100) {
+        return compareNumber(guess, target);
+    }
+
+    // 100–999 → same range
+    // 1000+ → same range
     const guessRange = getAgeRange(guess);
     const targetRange = getAgeRange(target);
 
-    // กรณีเลขตรงกันเป๊ะ
     if (guessRange === targetRange) return 'correct';
 
-    // ถ้าอยู่ใน Range เดียวกัน แต่เลขไม่เท่ากัน (เช่น 19 กับ 20)
-    // สำหรับ < 100 เราอยากให้มันบอก higher/lower ได้ปกติ
-    if (guessRange === targetRange && guessRange < 100) {
-        return guess < target ? 'higher' : 'lower';
-    }
-
-    // ถ้า Range ต่างกัน ให้เปรียบเทียบตาม Range
     return guessRange < targetRange ? 'higher' : 'lower';
 };
 
